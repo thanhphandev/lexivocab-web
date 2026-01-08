@@ -1,0 +1,40 @@
+{
+    "Header": {
+        "features": "Tính năng",
+        "how_it_works": "Cách hoạt động",
+        "language": "Ngôn ngữ"
+    },
+    "Hero": {
+        "badge": "🚀 Phiên bản mới v1.0",
+        "title": "Học từ vựng thụ động ngay khi <highlight>lướt web</highlight>",
+        "highlight": "lướt web",
+        "subtitle": "Đừng để việc tra từ làm gián đoạn dòng chảy đọc của bạn. LexiVocab giúp bạn dịch, lưu và ôn tập từ vựng tiếng Anh một cách tự nhiên nhất.",
+        "cta_install": "Thêm vào Chrome",
+        "cta_demo": "Xem Demo",
+        "users_count": "1000+ người dùng",
+        "rating": "5.0 đánh giá",
+        "saved_word": "Đã lưu từ!"
+    },
+    "Features": {
+        "section_badge": "Tính năng nổi bật",
+        "title": "Mọi thứ bạn cần để học từ vựng hiệu quả",
+        "subtitle": "LexiVocab được thiết kế để giúp bạn xây dựng vốn từ vựng mà không cần thay đổi thói quen lướt web.",
+        "smart_bubble_title": "Smart Bubble",
+        "smart_bubble_desc": "Bôi đen từ bất kỳ để dịch nhanh. Lưu từ chỉ với 1 cú click mà không cần mở tab mới.",
+        "context_trans_title": "Dịch theo ngữ cảnh",
+        "context_trans_desc": "AI tự động phân tích câu để đưa ra nghĩa chính xác nhất và lưu kèm câu ví dụ.",
+        "highlight_title": "Tự động tô màu",
+        "highlight_desc": "Gặp lại từ đã lưu? Chúng tôi sẽ tô màu nó để nhắc nhở bạn ôn tập ngay lập tức.",
+        "highlight_badge": "HOT",
+        "dashboard_title": "Dashboard Từ vựng",
+        "dashboard_desc": "Quản lý kho từ vựng cá nhân, luyện nghe phát âm và theo dõi tiến độ học tập."
+    },
+    "Footer": {
+        "copyright": "© 2024 LexiVocab. Developed by Phan Van Thanh.",
+        "privacy": "Chính sách bảo mật",
+        "terms": "Điều khoản sử dụng",
+        "legal": "Pháp lý",
+        "connect": "Kết nối",
+        "made_with_love": "Được tạo với ❤️ cho người học ngôn ngữ trên toàn thế giới"
+    }
+}

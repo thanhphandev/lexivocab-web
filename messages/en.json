@@ -1,0 +1,39 @@
+{
+    "Header": {
+        "features": "Features",
+        "how_it_works": "How it Works",
+        "language": "Language"
+    },
+    "Hero": {
+        "badge": "🚀 New Release v1.0",
+        "title": "Learn vocabulary passively while <highlight>browsing the web</highlight>",
+        "subtitle": "Don't let dictionary lookups interrupt your reading flow. LexiVocab helps you translate, save, and review English vocabulary naturally.",
+        "cta_install": "Add to Chrome",
+        "cta_demo": "Watch Demo",
+        "users_count": "1000+ users",
+        "rating": "5.0 rating",
+        "saved_word": "Word saved!"
+    },
+    "Features": {
+        "section_badge": "Key Features",
+        "title": "Everything you need to learn vocabulary effectively",
+        "subtitle": "LexiVocab is designed to help you build your vocabulary without changing your browsing habits.",
+        "smart_bubble_title": "Smart Bubble",
+        "smart_bubble_desc": "Highlight any text to translate quickly. Save words with just one click without opening a new tab.",
+        "context_trans_title": "Contextual Translation",
+        "context_trans_desc": "AI automatically analyzes sentences to provide the most accurate meaning and saves with example sentences.",
+        "highlight_title": "Auto Highlight",
+        "highlight_desc": "Encounter a saved word again? We'll highlight it to remind you to review immediately.",
+        "highlight_badge": "HOT",
+        "dashboard_title": "Vocabulary Dashboard",
+        "dashboard_desc": "Manage your personal vocabulary, practice pronunciation, and track learning progress."
+    },
+    "Footer": {
+        "copyright": "© 2024 LexiVocab. Developed by Phan Van Thanh.",
+        "privacy": "Privacy Policy",
+        "terms": "Terms of Service",
+        "legal": "Legal",
+        "connect": "Connect",
+        "made_with_love": "Made with ❤️ for language learners worldwide"
+    }
+}

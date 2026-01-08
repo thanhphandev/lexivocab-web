@@ -1,0 +1,39 @@
+{
+    "Header": {
+        "features": "機能",
+        "how_it_works": "使い方",
+        "language": "言語"
+    },
+    "Hero": {
+        "badge": "🚀 新リリース v1.0",
+        "title": "ウェブを<highlight>閲覧</highlight>しながら自然に単語を学ぶ",
+        "subtitle": "辞書を引くために読書の流れを中断しないでください。LexiVocabは、英語の単語を自然に翻訳、保存、復習するのに役立ちます。",
+        "cta_install": "Chromeに追加",
+        "cta_demo": "デモを見る",
+        "users_count": "1000人以上のユーザー",
+        "rating": "5.0評価",
+        "saved_word": "単語を保存しました！"
+    },
+    "Features": {
+        "section_badge": "主な機能",
+        "title": "効果的に単語を学ぶために必要なすべて",
+        "subtitle": "LexiVocabは、ブラウジングの習慣を変えずに語彙を増やすように設計されています。",
+        "smart_bubble_title": "スマートバブル",
+        "smart_bubble_desc": "テキストをハイライトして素早く翻訳。新しいタブを開かずにワンクリックで単語を保存。",
+        "context_trans_title": "文脈翻訳",
+        "context_trans_desc": "AIが文章を自動分析し、最も正確な意味を提供し、例文と一緒に保存します。",
+        "highlight_title": "自動ハイライト",
+        "highlight_desc": "保存した単語に再会しましたか？すぐに復習できるようにハイライトします。",
+        "highlight_badge": "HOT",
+        "dashboard_title": "単語ダッシュボード",
+        "dashboard_desc": "個人の語彙を管理し、発音を練習し、学習進捗を追跡します。"
+    },
+    "Footer": {
+        "copyright": "© 2024 LexiVocab. Developed by Phan Van Thanh.",
+        "privacy": "プライバシーポリシー",
+        "terms": "利用規約",
+        "legal": "法的情報",
+        "connect": "つながる",
+        "made_with_love": "世界中の言語学習者のために❤️を込めて作られました"
+    }
+}
