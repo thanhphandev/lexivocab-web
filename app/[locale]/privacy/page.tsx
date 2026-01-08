@@ -1,10 +1,49 @@
 import { useTranslations } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { siteConfig } from '@/lib/config';
+import type { Metadata } from 'next';
 
 interface PageProps {
     params: Promise<{ locale: string }>;
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+    const { locale } = await params;
+    const t = await getTranslations({ locale, namespace: 'Privacy' });
+
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://lexivocab.com';
+
+    return {
+        title: t('title'),
+        description: t('intro_desc'),
+        alternates: {
+            canonical: `${baseUrl}/${locale}/privacy`,
+            languages: {
+                'en': `${baseUrl}/en/privacy`,
+                'vi': `${baseUrl}/vi/privacy`,
+                'ja': `${baseUrl}/ja/privacy`,
+                'zh': `${baseUrl}/zh/privacy`,
+            },
+        },
+        openGraph: {
+            title: `${t('title')} | LexiVocab`,
+            description: t('intro_desc'),
+            url: `${baseUrl}/${locale}/privacy`,
+            siteName: 'LexiVocab',
+            type: 'website',
+        },
+        twitter: {
+            card: 'summary',
+            title: `${t('title')} | LexiVocab`,
+            description: t('intro_desc'),
+        },
+        robots: {
+            index: true,
+            follow: true,
+        },
+    };
 }
 
 export default async function PrivacyPage({ params }: PageProps) {

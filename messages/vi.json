@@ -1,4 +1,10 @@
 {
+    "Metadata": {
+        "title": "LexiVocab - Học từ vựng khi lướt web",
+        "titleTemplate": "%s | LexiVocab",
+        "description": "Tiện ích Chrome giúp bạn dịch, lưu và ôn tập từ vựng tiếng Anh một cách tự nhiên khi lướt web. Làm chủ từ vựng chỉ với một cú nhấp chuột.",
+        "keywords": "học từ vựng, học tiếng anh, tiện ích chrome, xây dựng vốn từ, học ngôn ngữ, flashcard, dịch từ, dịch theo ngữ cảnh"
+    },
     "Header": {
         "features": "Tính năng",
         "how_it_works": "Cách hoạt động",

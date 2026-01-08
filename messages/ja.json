@@ -1,4 +1,10 @@
 {
+    "Metadata": {
+        "title": "LexiVocab - ブラウジングしながら語彙を学ぶ",
+        "titleTemplate": "%s | LexiVocab",
+        "description": "ウェブ閲覧中に英語の語彙を自然に翻訳、保存、復習できるChrome拡張機能。ワンクリックで語彙をマスター。",
+        "keywords": "語彙学習, 英語学習, Chrome拡張機能, 語彙構築, 言語学習, フラッシュカード, 単語翻訳, 文脈翻訳"
+    },
     "Header": {
         "features": "機能",
         "how_it_works": "使い方",

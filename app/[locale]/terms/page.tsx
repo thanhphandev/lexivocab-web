@@ -1,10 +1,50 @@
 import { useTranslations } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { siteConfig } from '@/lib/config';
+import type { Metadata } from 'next';
 
 interface PageProps {
     params: Promise<{ locale: string }>;
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+    const { locale } = await params;
+    const t = await getTranslations({ locale, namespace: 'Terms' });
+    const tMeta = await getTranslations({ locale, namespace: 'Metadata' });
+
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://lexivocab.com';
+
+    return {
+        title: t('title'),
+        description: t('acceptance_desc'),
+        alternates: {
+            canonical: `${baseUrl}/${locale}/terms`,
+            languages: {
+                'en': `${baseUrl}/en/terms`,
+                'vi': `${baseUrl}/vi/terms`,
+                'ja': `${baseUrl}/ja/terms`,
+                'zh': `${baseUrl}/zh/terms`,
+            },
+        },
+        openGraph: {
+            title: `${t('title')} | LexiVocab`,
+            description: t('acceptance_desc'),
+            url: `${baseUrl}/${locale}/terms`,
+            siteName: 'LexiVocab',
+            type: 'website',
+        },
+        twitter: {
+            card: 'summary',
+            title: `${t('title')} | LexiVocab`,
+            description: t('acceptance_desc'),
+        },
+        robots: {
+            index: true,
+            follow: true,
+        },
+    };
 }
 
 export default async function TermsPage({ params }: PageProps) {

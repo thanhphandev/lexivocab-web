@@ -1,4 +1,10 @@
 {
+    "Metadata": {
+        "title": "LexiVocab - 浏览时学习词汇",
+        "titleTemplate": "%s | LexiVocab",
+        "description": "Chrome扩展程序，帮助您在浏览网页时自然地翻译、保存和复习英语词汇。一键掌握词汇。",
+        "keywords": "词汇学习, 学英语, Chrome扩展, 词汇构建, 语言学习, 闪卡, 单词翻译, 语境翻译"
+    },
     "Header": {
         "features": "功能",
         "how_it_works": "使用方法",

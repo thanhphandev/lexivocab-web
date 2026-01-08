@@ -1,4 +1,10 @@
 {
+    "Metadata": {
+        "title": "LexiVocab - Learn Vocabulary While Browsing",
+        "titleTemplate": "%s | LexiVocab",
+        "description": "Chrome extension that helps you translate, save, and review English vocabulary naturally while browsing the web. Master vocabulary one click at a time.",
+        "keywords": "vocabulary learning, learn english, chrome extension, vocabulary builder, language learning, flashcards, word translator, contextual translation"
+    },
     "Header": {
         "features": "Features",
         "how_it_works": "How it Works",
