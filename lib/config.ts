@@ -19,5 +19,11 @@ export const siteConfig = {
     author: {
         name: 'Thanh Phan',
         url: 'https://github.com/thanhphandev',
+    },
+
+    // Telegram Logic (Server-side only usually, but we keep structure here)
+    telegram: {
+        botToken: process.env.TELEGRAM_BOT_TOKEN,
+        chatId: process.env.TELEGRAM_CHAT_ID,
     }
 } as const;

@@ -100,5 +100,48 @@
         "legal": "Pháp lý",
         "connect": "Kết nối",
         "made_with_love": "Được tạo với ❤️ cho người học ngôn ngữ trên toàn thế giới"
+    },
+    "Uninstall": {
+        "title": "Rất tiếc khi phải chia tay bạn",
+        "subtitle": "Phản hồi của bạn giúp chúng tôi cải thiện LexiVocab tốt hơn cho mọi người. Bạn có thể cho chúng tôi biết lý do gỡ cài đặt không?",
+        "reasons": {
+            "buggy": "Nó bị lỗi hoặc hoạt động không chính xác",
+            "slow": "Nó làm chậm trình duyệt của tôi",
+            "complicated": "Nó quá phức tạp để sử dụng",
+            "alternative": "Tôi tìm thấy một giải pháp thay thế tốt hơn",
+            "not_useful": "Tôi không thấy nó hữu ích nữa",
+            "other": "Lý do khác"
+        },
+        "comment_placeholder": "Vui lòng cho chúng tôi biết thêm về cách chúng tôi có thể cải thiện... (Tùy chọn)",
+        "submit": "Gửi phản hồi",
+        "submitting": "Đang gửi...",
+        "thank_you_title": "Cảm ơn phản hồi của bạn!",
+        "thank_you_desc": "Chúng tôi thực sự trân trọng ý kiến đóng góp của bạn. Chúng tôi sẽ làm việc chăm chỉ để cải thiện LexiVocab.",
+        "back_home": "Quay lại trang chủ",
+        "reinstall": "Cài đặt lại tiện ích"
+    },
+    "Feedback": {
+        "title": "Góp ý & Báo lỗi",
+        "subtitle": "Bạn gặp lỗi hay có ý tưởng tính năng mới? Chúng tôi rất muốn lắng nghe bạn!",
+        "types": {
+            "bug": "Báo cáo lỗi",
+            "feature": "Yêu cầu tính năng",
+            "other": "Khác"
+        },
+        "message_label": "Nội dung",
+        "message_placeholder": "Mô tả chi tiết vấn đề hoặc ý tưởng...",
+        "contact_label": "Email (Tùy chọn)",
+        "contact_placeholder": "email@example.com",
+        "upload_label": "Đính kèm ảnh (Tùy chọn)",
+        "upload_placeholder": "Kéo thả hoặc click để tải ảnh lên",
+        "remove_image": "Xóa ảnh",
+        "rating_label": "Đánh giá trải nghiệm",
+        "submit": "Gửi phản hồi",
+        "submitting": "Đang gửi...",
+        "success_title": "Đã gửi thành công!",
+        "success_desc": "Cảm ơn bạn đã giúp LexiVocab ngày càng hoàn thiện hơn.",
+        "error_title": "Có lỗi xảy ra",
+        "error_desc": "Vui lòng thử lại sau.",
+        "back_home": "Quay lại trang chủ"
     }
 }
