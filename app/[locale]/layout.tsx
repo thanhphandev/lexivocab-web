@@ -44,8 +44,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         },
         description: t('description'),
         keywords: t('keywords'),
-        authors: [{ name: 'Phan Van Thanh' }],
-        creator: 'Phan Van Thanh',
+        authors: [{ name: 'Thanh Phan' }],
+        creator: 'Thanh Phan',
         publisher: 'LexiVocab',
         applicationName: 'LexiVocab',
 

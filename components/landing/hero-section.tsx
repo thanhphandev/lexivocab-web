@@ -3,53 +3,108 @@
 import { Button } from "@/components/ui/button";
 import { useTranslations } from 'next-intl';
 import { motion } from "framer-motion";
-import { Download, Sparkles } from "lucide-react";
+import { Download, Sparkles, Play, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import { siteConfig } from "@/lib/config";
+
+// Avatar data with local images
+const avatars = [
+    { src: '/avatars/avatar-1.png', alt: 'User 1' },
+    { src: '/avatars/avatar-2.png', alt: 'User 2' },
+    { src: '/avatars/avatar-3.png', alt: 'User 3' },
+    { src: '/avatars/avatar-4.png', alt: 'User 4' },
+];
 
 export default function HeroSection() {
     const t = useTranslations('Hero');
 
     return (
-        <section className="relative w-full min-h-[90vh] flex items-center justify-center overflow-hidden">
-            {/* Animated Background */}
+        <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden">
+            {/* Modern Mesh Gradient Background */}
             <div className="absolute inset-0 -z-10">
-                <div className="absolute inset-0 bg-gradient-to-br from-orange-50 via-white to-amber-50" />
-                <div className="absolute top-0 left-1/4 w-96 h-96 bg-orange-200/30 rounded-full blur-3xl animate-pulse" />
-                <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-amber-200/40 rounded-full blur-3xl animate-pulse delay-1000" />
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-orange-100/20 to-amber-100/20 rounded-full blur-3xl" />
+                {/* Base gradient */}
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(251,146,60,0.15),rgba(255,255,255,0))]" />
+
+                {/* Animated gradient orbs */}
+                <motion.div
+                    className="absolute top-20 left-[10%] w-[500px] h-[500px] rounded-full"
+                    style={{
+                        background: 'radial-gradient(circle, rgba(251,146,60,0.15) 0%, transparent 70%)',
+                    }}
+                    animate={{
+                        scale: [1, 1.2, 1],
+                        x: [0, 30, 0],
+                        y: [0, -20, 0],
+                    }}
+                    transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+                />
+                <motion.div
+                    className="absolute bottom-20 right-[10%] w-[400px] h-[400px] rounded-full"
+                    style={{
+                        background: 'radial-gradient(circle, rgba(245,158,11,0.12) 0%, transparent 70%)',
+                    }}
+                    animate={{
+                        scale: [1.2, 1, 1.2],
+                        x: [0, -20, 0],
+                        y: [0, 30, 0],
+                    }}
+                    transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+                />
+
+                {/* Grid pattern overlay */}
+                <div
+                    className="absolute inset-0 opacity-[0.015]"
+                    style={{
+                        backgroundImage: `
+                            linear-gradient(to right, #000 1px, transparent 1px),
+                            linear-gradient(to bottom, #000 1px, transparent 1px)
+                        `,
+                        backgroundSize: '60px 60px',
+                    }}
+                />
             </div>
 
-            <div className="container px-4 md:px-6 mx-auto relative z-10">
-                <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="container px-4 md:px-6 mx-auto relative z-10 pt-20 md:pt-0">
+                <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
                     {/* Left Content */}
                     <motion.div
-                        initial={{ opacity: 0, x: -50 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.7 }}
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}
                         className="space-y-8"
                     >
-                        {/* Badge */}
+                        {/* Badge with shimmer effect */}
                         <motion.div
-                            initial={{ opacity: 0, scale: 0.8 }}
+                            initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ duration: 0.5, delay: 0.2 }}
-                            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-orange-100 to-amber-100 border border-orange-200/50"
+                            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-orange-100 to-amber-50 border border-orange-200/60 shadow-sm"
                         >
-                            <Sparkles className="w-4 h-4 text-orange-500" />
-                            <span className="text-sm font-medium text-orange-700">{t('badge')}</span>
+                            <span className="relative flex h-2 w-2">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75" />
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500" />
+                            </span>
+                            <span className="text-sm font-medium bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
+                                {t('badge')}
+                            </span>
                         </motion.div>
 
-                        {/* Headline */}
-                        <div className="space-y-4">
-                            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight">
+                        {/* Headline with improved typography */}
+                        <div className="space-y-6">
+                            <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight leading-[1.1]">
                                 {t.rich('title', {
                                     highlight: (chunks) => (
                                         <span className="relative inline-block">
-                                            <span className="relative z-10 bg-gradient-to-r from-orange-500 to-amber-500 bg-clip-text text-transparent">
+                                            <span className="relative z-10 bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 bg-clip-text text-transparent">
                                                 {chunks}
                                             </span>
-                                            <span className="absolute bottom-2 left-0 w-full h-3 bg-gradient-to-r from-orange-200 to-amber-200 -z-0 -rotate-1" />
+                                            <motion.span
+                                                className="absolute -bottom-1 left-0 w-full h-4 bg-gradient-to-r from-orange-200/60 to-amber-200/60 -z-0 rounded-sm"
+                                                initial={{ scaleX: 0 }}
+                                                animate={{ scaleX: 1 }}
+                                                transition={{ delay: 0.8, duration: 0.6 }}
+                                                style={{ originX: 0 }}
+                                            />
                                         </span>
                                     )
                                 })}
@@ -59,7 +114,7 @@ export default function HeroSection() {
                             </p>
                         </div>
 
-                        {/* CTA Buttons */}
+                        {/* CTA Buttons with enhanced styles */}
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
@@ -69,75 +124,118 @@ export default function HeroSection() {
                             <a href={siteConfig.chromeWebStoreUrl} target="_blank" rel="noopener noreferrer">
                                 <Button
                                     size="lg"
-                                    className="h-14 px-8 text-lg font-semibold bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 shadow-lg shadow-orange-500/25 transition-all hover:shadow-xl hover:shadow-orange-500/30 hover:-translate-y-0.5"
+                                    className="group h-14 px-8 text-lg font-semibold bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 shadow-lg shadow-orange-500/25 transition-all duration-300 hover:shadow-xl hover:shadow-orange-500/30 hover:-translate-y-1"
                                 >
-                                    <Download className="w-5 h-5 mr-2" />
+                                    <Download className="w-5 h-5 mr-2 transition-transform group-hover:-translate-y-0.5" />
                                     {t('cta_install')}
+                                    <ChevronRight className="w-4 h-4 ml-1 transition-transform group-hover:translate-x-0.5" />
                                 </Button>
                             </a>
                             <Button
                                 variant="outline"
                                 size="lg"
-                                className="h-14 px-8 text-lg font-semibold border-2 border-orange-200 hover:bg-orange-50 hover:border-orange-300 transition-all"
+                                className="group h-14 px-8 text-lg font-semibold border-2 border-orange-200/80 hover:bg-orange-50 hover:border-orange-300 transition-all duration-300"
                                 onClick={() => document.getElementById('demo-video')?.scrollIntoView({ behavior: 'smooth' })}
                             >
+                                <Play className="w-5 h-5 mr-2 text-orange-500 transition-transform group-hover:scale-110" />
                                 {t('cta_demo')}
                             </Button>
                         </motion.div>
 
-                        {/* Trust Badges */}
+                        {/* Social Proof - Avatars with real images */}
                         <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ duration: 0.5, delay: 0.6 }}
-                            className="flex items-center gap-6 pt-4"
+                            className="flex flex-col sm:flex-row sm:items-center gap-6 pt-6 border-t border-orange-100"
                         >
+                            <div className="flex items-center gap-3">
+                                <div className="flex -space-x-3">
+                                    {avatars.map((avatar, i) => (
+                                        <motion.div
+                                            key={i}
+                                            initial={{ opacity: 0, x: -10 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: 0.7 + i * 0.1 }}
+                                            className="relative w-10 h-10 rounded-full overflow-hidden ring-2 ring-white shadow-md"
+                                        >
+                                            <Image
+                                                src={avatar.src}
+                                                alt={avatar.alt}
+                                                fill
+                                                className="object-cover"
+                                            />
+                                        </motion.div>
+                                    ))}
+                                    <motion.div
+                                        initial={{ opacity: 0, x: -10 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ delay: 1.1 }}
+                                        className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-100 to-amber-100 ring-2 ring-white shadow-md flex items-center justify-center"
+                                    >
+                                        <span className="text-xs font-bold text-orange-600">+996</span>
+                                    </motion.div>
+                                </div>
+                                <div className="flex flex-col">
+                                    <span className="text-sm font-semibold text-foreground">{t('users_count')}</span>
+                                    <span className="text-xs text-muted-foreground">Active learners</span>
+                                </div>
+                            </div>
+
+                            <div className="hidden sm:block w-px h-10 bg-orange-200" />
+
                             <div className="flex items-center gap-2">
-                                <div className="flex -space-x-2">
-                                    {[1, 2, 3, 4].map((i) => (
-                                        <div key={i} className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-300 to-amber-300 border-2 border-white flex items-center justify-center text-xs font-bold text-white">
-                                            {String.fromCharCode(64 + i)}
-                                        </div>
+                                <div className="flex items-center">
+                                    {[1, 2, 3, 4, 5].map((i) => (
+                                        <motion.svg
+                                            key={i}
+                                            initial={{ opacity: 0, scale: 0 }}
+                                            animate={{ opacity: 1, scale: 1 }}
+                                            transition={{ delay: 0.8 + i * 0.05 }}
+                                            className="w-5 h-5 text-amber-400 fill-current"
+                                            viewBox="0 0 20 20"
+                                        >
+                                            <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                                        </motion.svg>
                                     ))}
                                 </div>
-                                <span className="text-sm text-muted-foreground">{t('users_count')}</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                                {[1, 2, 3, 4, 5].map((i) => (
-                                    <svg key={i} className="w-5 h-5 text-amber-400 fill-current" viewBox="0 0 20 20">
-                                        <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
-                                    </svg>
-                                ))}
-                                <span className="text-sm text-muted-foreground ml-1">{t('rating')}</span>
+                                <div className="flex flex-col">
+                                    <span className="text-sm font-semibold text-foreground">{t('rating')}</span>
+                                    <span className="text-xs text-muted-foreground">Chrome Web Store</span>
+                                </div>
                             </div>
                         </motion.div>
                     </motion.div>
 
-                    {/* Right Content - Video */}
+                    {/* Right Content - Video with enhanced frame */}
                     <motion.div
-                        initial={{ opacity: 0, x: 50 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.7, delay: 0.3 }}
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.8, delay: 0.3 }}
                         className="relative"
                         id="demo-video"
                     >
-                        <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-orange-500/20 border border-orange-100">
-                            {/* Browser Frame */}
-                            <div className="bg-gradient-to-r from-slate-100 to-slate-50 px-4 py-3 flex items-center gap-2 border-b">
-                                <div className="flex gap-1.5">
-                                    <div className="w-3 h-3 rounded-full bg-red-400" />
-                                    <div className="w-3 h-3 rounded-full bg-yellow-400" />
-                                    <div className="w-3 h-3 rounded-full bg-green-400" />
+                        {/* Glow effect behind video */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 to-amber-500/20 blur-3xl transform scale-110 -z-10" />
+
+                        <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-orange-500/10 border border-orange-100/50 bg-white">
+                            {/* Modern Browser Frame */}
+                            <div className="bg-gradient-to-b from-slate-50 to-white px-4 py-3 flex items-center gap-3 border-b border-slate-100">
+                                <div className="flex gap-2">
+                                    <div className="w-3 h-3 rounded-full bg-red-400 hover:bg-red-500 transition-colors cursor-pointer" />
+                                    <div className="w-3 h-3 rounded-full bg-yellow-400 hover:bg-yellow-500 transition-colors cursor-pointer" />
+                                    <div className="w-3 h-3 rounded-full bg-green-400 hover:bg-green-500 transition-colors cursor-pointer" />
                                 </div>
-                                <div className="flex-1 mx-4">
-                                    <div className="bg-white rounded-md px-4 py-1.5 text-sm text-muted-foreground flex items-center gap-2 max-w-md mx-auto">
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div className="flex-1 mx-2">
+                                    <div className="bg-slate-100 rounded-lg px-4 py-2 text-sm text-muted-foreground flex items-center gap-2 max-w-sm mx-auto">
+                                        <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                                         </svg>
-                                        lexivocab.com
+                                        <span className="font-medium">lexivocab.com</span>
                                     </div>
                                 </div>
                             </div>
+
                             {/* Video */}
                             <video
                                 autoPlay
@@ -150,40 +248,59 @@ export default function HeroSection() {
                             </video>
                         </div>
 
-                        {/* Floating Elements */}
+                        {/* Floating Card - Extension Info */}
                         <motion.div
-                            animate={{ y: [0, -10, 0] }}
-                            transition={{ duration: 3, repeat: Infinity }}
-                            className="absolute -top-6 -right-6 bg-white rounded-xl shadow-lg p-4 border"
+                            animate={{ y: [0, -8, 0] }}
+                            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                            className="absolute -top-6 -right-6 md:-right-8 bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl shadow-orange-500/10 p-4 border border-orange-100"
                         >
-                            <div className="flex items-center gap-2">
-                                <div className="w-10 h-10 rounded-lg flex items-center justify-center">
-                                    <Image src="/icon.png" alt="LexiVocab" width={24} height={24} />
+                            <div className="flex items-center gap-3">
+                                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-100 to-amber-100 flex items-center justify-center shadow-inner">
+                                    <Image src="/icon.png" alt="LexiVocab" width={28} height={28} />
                                 </div>
                                 <div>
-                                    <p className="text-sm font-semibold">LexiVocab</p>
+                                    <p className="text-sm font-bold text-foreground">LexiVocab</p>
                                     <p className="text-xs text-muted-foreground">Chrome Extension</p>
                                 </div>
                             </div>
                         </motion.div>
 
+                        {/* Floating Card - Success State */}
                         <motion.div
-                            animate={{ y: [0, 10, 0] }}
-                            transition={{ duration: 4, repeat: Infinity, delay: 0.5 }}
-                            className="absolute -bottom-4 -left-4 bg-white rounded-xl shadow-lg p-3 border"
+                            animate={{ y: [0, 8, 0] }}
+                            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+                            className="absolute -bottom-4 -left-4 md:-left-6 bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl shadow-green-500/10 p-3 border border-green-100"
                         >
-                            <div className="flex items-center gap-2">
-                                <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
-                                    <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-100 to-emerald-100 flex items-center justify-center">
+                                    <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                                     </svg>
                                 </div>
-                                <span className="text-sm font-medium text-green-700">{t('saved_word')}</span>
+                                <div>
+                                    <span className="text-sm font-semibold text-green-700">{t('saved_word')}</span>
+                                    <p className="text-xs text-green-600/70">+1 vocabulary</p>
+                                </div>
                             </div>
                         </motion.div>
                     </motion.div>
                 </div>
             </div>
+
+            {/* Scroll indicator */}
+            <motion.div
+                className="absolute bottom-8 left-1/2 -translate-x-1/2"
+                animate={{ y: [0, 10, 0] }}
+                transition={{ duration: 2, repeat: Infinity }}
+            >
+                <div className="w-6 h-10 rounded-full border-2 border-orange-300 flex items-start justify-center p-2">
+                    <motion.div
+                        className="w-1.5 h-1.5 rounded-full bg-orange-400"
+                        animate={{ y: [0, 12, 0] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                    />
+                </div>
+            </motion.div>
         </section>
     );
 }

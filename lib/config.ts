@@ -8,7 +8,7 @@ export const siteConfig = {
 
     // Social links
     social: {
-        github: 'https://github.com/phanvanthanh',
+        github: 'https://github.com/thanhphandev',
         twitter: 'https://twitter.com/lexivocab',
     },
 
@@ -17,7 +17,7 @@ export const siteConfig = {
 
     // Author
     author: {
-        name: 'Phan Van Thanh',
-        url: 'https://github.com/phanvanthanh',
+        name: 'Thanh Phan',
+        url: 'https://github.com/thanhphandev',
     }
 } as const;
