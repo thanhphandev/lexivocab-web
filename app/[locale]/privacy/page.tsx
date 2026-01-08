@@ -1,6 +1,7 @@
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
+import { siteConfig } from '@/lib/config';
 
 interface PageProps {
     params: Promise<{ locale: string }>;
@@ -8,6 +9,12 @@ interface PageProps {
 
 export default async function PrivacyPage({ params }: PageProps) {
     const { locale } = await params;
+
+    return <PrivacyContent locale={locale} />;
+}
+
+function PrivacyContent({ locale }: { locale: string }) {
+    const t = useTranslations('Privacy');
 
     return (
         <main className="min-h-screen py-20">
@@ -17,75 +24,71 @@ export default async function PrivacyPage({ params }: PageProps) {
                     className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary mb-8 transition-colors"
                 >
                     <ArrowLeft className="w-4 h-4" />
-                    Back to Home
+                    {t('back')}
                 </Link>
 
                 <article className="prose prose-orange max-w-none">
-                    <h1 className="text-4xl font-bold mb-8">Privacy Policy</h1>
-                    <p className="text-muted-foreground mb-8">Last updated: January 8, 2024</p>
+                    <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-orange-500 to-amber-500 bg-clip-text text-transparent">
+                        {t('title')}
+                    </h1>
+                    <p className="text-muted-foreground mb-8">{t('last_updated')}</p>
 
-                    <section className="space-y-6">
-                        <div>
-                            <h2 className="text-2xl font-semibold mb-4">1. Introduction</h2>
+                    <section className="space-y-8">
+                        <div className="p-6 rounded-xl bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-100">
+                            <h2 className="text-2xl font-semibold mb-4 text-foreground">{t('intro_title')}</h2>
                             <p className="text-muted-foreground leading-relaxed">
-                                Welcome to LexiVocab. We respect your privacy and are committed to protecting your personal data.
-                                This privacy policy will inform you about how we look after your personal data when you use our
-                                Chrome extension and website.
+                                {t('intro_desc')}
                             </p>
                         </div>
 
                         <div>
-                            <h2 className="text-2xl font-semibold mb-4">2. Data We Collect</h2>
+                            <h2 className="text-2xl font-semibold mb-4">{t('data_title')}</h2>
                             <p className="text-muted-foreground leading-relaxed mb-4">
-                                LexiVocab collects minimal data to provide you with the best vocabulary learning experience:
+                                {t('data_desc')}
                             </p>
-                            <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
-                                <li><strong>Vocabulary Data:</strong> Words you save, their translations, and context sentences. This data is stored locally on your device.</li>
-                                <li><strong>Settings:</strong> Your preferences such as highlight colors and language settings.</li>
-                                <li><strong>Usage Analytics:</strong> Anonymous usage statistics to improve our service (optional).</li>
+                            <ul className="list-disc pl-6 space-y-3 text-muted-foreground">
+                                <li><strong className="text-foreground">Vocabulary Data:</strong> {t('data_vocab')}</li>
+                                <li><strong className="text-foreground">Settings:</strong> {t('data_settings')}</li>
+                                <li><strong className="text-foreground">Analytics:</strong> {t('data_analytics')}</li>
                             </ul>
                         </div>
 
                         <div>
-                            <h2 className="text-2xl font-semibold mb-4">3. How We Use Your Data</h2>
+                            <h2 className="text-2xl font-semibold mb-4">{t('usage_title')}</h2>
                             <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
-                                <li>To provide and maintain our service</li>
-                                <li>To improve and personalize your experience</li>
-                                <li>To understand how users interact with our extension</li>
+                                <li>{t('usage_provide')}</li>
+                                <li>{t('usage_improve')}</li>
+                                <li>{t('usage_understand')}</li>
                             </ul>
                         </div>
 
                         <div>
-                            <h2 className="text-2xl font-semibold mb-4">4. Data Storage</h2>
+                            <h2 className="text-2xl font-semibold mb-4">{t('storage_title')}</h2>
                             <p className="text-muted-foreground leading-relaxed">
-                                All your vocabulary data is stored locally on your device using Chrome's storage API.
-                                We do not upload your personal vocabulary data to any external servers.
+                                {t('storage_desc')}
                             </p>
                         </div>
 
                         <div>
-                            <h2 className="text-2xl font-semibold mb-4">5. Third-Party Services</h2>
+                            <h2 className="text-2xl font-semibold mb-4">{t('third_party_title')}</h2>
                             <p className="text-muted-foreground leading-relaxed">
-                                We may use third-party translation APIs to provide contextual translations.
-                                These services receive only the text you choose to translate and do not have access
-                                to your personal information or saved vocabulary.
+                                {t('third_party_desc')}
                             </p>
                         </div>
 
                         <div>
-                            <h2 className="text-2xl font-semibold mb-4">6. Your Rights</h2>
+                            <h2 className="text-2xl font-semibold mb-4">{t('rights_title')}</h2>
                             <p className="text-muted-foreground leading-relaxed">
-                                You have the right to access, correct, or delete your data at any time through the
-                                extension's settings. You can also export your vocabulary data or clear all stored data.
+                                {t('rights_desc')}
                             </p>
                         </div>
 
-                        <div>
-                            <h2 className="text-2xl font-semibold mb-4">7. Contact Us</h2>
+                        <div className="p-6 rounded-xl bg-muted/50 border">
+                            <h2 className="text-2xl font-semibold mb-4">{t('contact_title')}</h2>
                             <p className="text-muted-foreground leading-relaxed">
-                                If you have any questions about this Privacy Policy, please contact us at:
-                                <a href="mailto:support@lexivocab.com" className="text-primary hover:underline ml-1">
-                                    support@lexivocab.com
+                                {t('contact_desc')}
+                                <a href={`mailto:${siteConfig.email}`} className="text-primary hover:underline ml-1 font-medium">
+                                    {siteConfig.email}
                                 </a>
                             </p>
                         </div>
