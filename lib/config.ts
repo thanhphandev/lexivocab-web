@@ -4,7 +4,7 @@ export const siteConfig = {
     description: 'Learn vocabulary passively while browsing the web',
 
     // Chrome Web Store link - Update this when extension is published
-    chromeWebStoreUrl: 'https://chrome.google.com/webstore/detail/lexivocab',
+    chromeWebStoreUrl: process.env.NEXT_PUBLIC_EXTENSION_URL || 'https://chrome.google.com/webstore/detail/lexivocab',
 
     // Social links
     social: {

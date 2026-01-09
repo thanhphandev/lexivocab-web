@@ -18,6 +18,7 @@ import {
     ErrorAlert,
     type Option
 } from '@/components/feedback';
+import { submitFeedback } from '@/actions/feedback';
 
 export default function FeedbackPage() {
     const t = useTranslations('Feedback');
@@ -69,12 +70,9 @@ export default function FeedbackPage() {
             if (rating) formData.append('rating', rating.toString());
             images.forEach((image) => formData.append('images', image));
 
-            const response = await fetch('/api/feedback', {
-                method: 'POST',
-                body: formData,
-            });
+            const result = await submitFeedback(formData);
 
-            if (!response.ok) throw new Error('Failed to submit');
+            if (!result.success) throw new Error(result.error);
             setIsSubmitted(true);
         } catch (err) {
             console.error(err);

@@ -53,17 +53,6 @@ export function OptionSelector({ options, selected, onSelect, columns = 2 }: Opt
                     )}>
                         {option.label}
                     </span>
-                    {selected === option.id && (
-                        <motion.div
-                            layoutId="option-check"
-                            className="absolute right-4"
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                        >
-                            <CheckCircle2 className="w-5 h-5 text-orange-500" />
-                        </motion.div>
-                    )}
                 </motion.button>
             ))}
         </div>
