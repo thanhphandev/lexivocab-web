@@ -9,7 +9,6 @@ export const siteConfig = {
     // Social links
     social: {
         github: 'https://github.com/thanhphandev',
-        twitter: 'https://twitter.com/lexivocab',
     },
 
     // Contact
@@ -17,7 +16,7 @@ export const siteConfig = {
 
     // Author
     author: {
-        name: 'Thanh Phan',
+        name: 'Phan Văn Thành',
         url: 'https://github.com/thanhphandev',
     },
 
