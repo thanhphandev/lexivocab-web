@@ -142,5 +142,14 @@
         "error_title": "出错了",
         "error_desc": "请稍后再试。",
         "back_home": "返回主页"
+    },
+    "Welcome": {
+        "demo_badge": "立即体验",
+        "demo_title": "体验 LexiVocab",
+        "demo_description": "高亮下面的单词「serendipity」，看看 LexiVocab 如何帮助您保存和学习新词汇。",
+        "demo_hint": "高亮加粗的单词",
+        "demo_text_1": "语言学习通常通过",
+        "demo_text_2": "发生——那些在恰当时刻遇到完美单词的幸运巧合。",
+        "demo_text_3": "扩大词汇量的最佳方式是通过自然接触。阅读目标语言的文章、新闻和内容可以帮助您在语境中理解单词，使其更容易记忆。"
     }
 }

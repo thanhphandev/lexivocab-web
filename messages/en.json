@@ -142,5 +142,14 @@
         "error_title": "Something went wrong",
         "error_desc": "Please try again later.",
         "back_home": "Back to Home"
+    },
+    "Welcome": {
+        "demo_badge": "Try It Now",
+        "demo_title": "Experience LexiVocab in Action",
+        "demo_description": "Highlight the word \"serendipity\" below to see how LexiVocab helps you save and learn new vocabulary.",
+        "demo_hint": "Highlight the bold word",
+        "demo_text_1": "Language learning often happens through",
+        "demo_text_2": "— those happy accidents when you encounter the perfect word at the right moment.",
+        "demo_text_3": "The best way to expand your vocabulary is through natural exposure. Reading articles, news, and content in your target language helps you understand words in context, making them easier to remember."
     }
 }

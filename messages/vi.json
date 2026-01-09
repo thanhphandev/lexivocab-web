@@ -143,5 +143,14 @@
         "error_title": "Có lỗi xảy ra",
         "error_desc": "Vui lòng thử lại sau.",
         "back_home": "Quay lại trang chủ"
+    },
+    "Welcome": {
+        "demo_badge": "Thử Ngay",
+        "demo_title": "Trải nghiệm LexiVocab",
+        "demo_description": "Bôi đen từ \"serendipity\" bên dưới để xem cách LexiVocab giúp bạn lưu và học từ vựng mới.",
+        "demo_hint": "Bôi đen từ in đậm",
+        "demo_text_1": "Việc học ngôn ngữ thường xảy ra thông qua",
+        "demo_text_2": "— những tình cờ may mắn khi bạn gặp từ phù hợp vào đúng thời điểm.",
+        "demo_text_3": "Cách tốt nhất để mở rộng vốn từ vựng là thông qua tiếp xúc tự nhiên. Đọc các bài báo, tin tức bằng ngôn ngữ mục tiêu giúp bạn hiểu từ trong ngữ cảnh, giúp nhớ dễ hơn."
     }
 }
