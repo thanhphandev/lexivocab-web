@@ -231,21 +231,96 @@ export default function HeroSection() {
                                         <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                                         </svg>
-                                        <span className="font-medium">lexivocab.com</span>
+                                        <span className="font-medium">lexivocab.store</span>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Video */}
-                            <video
-                                autoPlay
-                                loop
-                                muted
-                                playsInline
-                                className="w-full aspect-video object-cover"
-                            >
-                                <source src="/marketing.mp4" type="video/mp4" />
-                            </video>
+                            {/* Webpage Content Mockup */}
+                            <div className="relative w-full aspect-video bg-white text-left overflow-hidden font-sans select-none p-6 md:p-8">
+                                <div className="max-w-[120%] -ml-[10%] -mt-4 text-sm md:text-base leading-relaxed text-slate-800 space-y-4 filter blur-[0.5px]">
+                                    <p>
+                                        <span className="font-bold">Plants</span> are the <span className="text-blue-600">eukaryotes</span> that comprise the <span className="text-blue-600">kingdom Plantae</span>; they are predominantly <span className="text-blue-600">photosynthetic</span>. This means that they obtain their energy from <span className="text-blue-600">sunlight</span>, using <span className="text-blue-600">chloroplasts</span> derived from <span className="text-blue-600">endosymbiosis</span> with <span className="text-blue-600">cyanobacteria</span> to produce <span className="text-blue-600">sugars</span> from <span className="text-blue-600">carbon dioxide</span> and water, using the green pigment <span className="text-blue-600">chlorophyll</span>. Exceptions are <span className="text-blue-600">parasitic plants</span> that have lost the genes for chlorophyll and <span className="relative inline-block mx-1">
+                                            <span className="bg-blue-600 text-white px-1 py-0.5 rounded-sm">photosynthesis</span>
+
+                                            {/* Floating Action Button */}
+                                            <motion.div
+                                                initial={{ scale: 0, opacity: 0 }}
+                                                animate={{ scale: 1, opacity: 1 }}
+                                                transition={{ delay: 1.5, type: "spring" }}
+                                                className="absolute -top-10 left-1/2 -translate-x-1/2 bg-orange-500 text-white p-1.5 rounded-md shadow-lg shadow-orange-500/30 z-20"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2" /><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" /></svg>
+                                            </motion.div>
+                                        </span>, and obtain their energy from other plants or fungi. Most plants are...
+                                    </p>
+                                    <p>
+                                        Historically, the definition of plants encompassed all living things that were not <span className="text-blue-600">animals</span>, and included <span className="text-blue-600">algae</span> and <span className="text-blue-600">fungi</span>; however, all current definitions of kingdom Plantae exclude these organisms. By the definition used in this article, plants form the clade <span className="text-blue-600">Viridiplantae</span> (Latin string for "green plants"), which consists of the <span className="text-blue-600">green algae</span> and the <span className="text-blue-600">embryophytes</span> or <span className="text-blue-600">land plants</span> (hornworts, <span className="text-blue-600">liverworts</span>, <span className="text-blue-600">mosses</span>, <span className="text-blue-600">lycophytes</span>, <span className="text-blue-600">ferns</span>, <span className="text-blue-600">conifers</span> and other <span className="text-blue-600">gymnosperms</span>, and <span className="text-blue-600">flowering plants</span>).
+                                    </p>
+                                </div>
+
+                                {/* Popup Card Mockup */}
+                                <motion.div
+                                    initial={{ opacity: 0, scale: 0.9, y: 10 }}
+                                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                                    transition={{ duration: 0.5, delay: 0.8 }}
+                                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] bg-white rounded-2xl shadow-2xl shadow-orange-500/20 overflow-hidden z-10 font-sans border border-orange-100"
+                                >
+                                    {/* Header */}
+                                    <div className="bg-gradient-to-r from-orange-400 to-orange-500 p-5 text-white relative">
+                                        <div className="flex justify-between items-start mb-2">
+                                            <span className="text-xs font-medium text-orange-50 uppercase tracking-wider">Save Word</span>
+                                            <button className="text-white/80 hover:text-white">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
+                                            </button>
+                                        </div>
+                                        <div className="flex items-baseline gap-2 mb-1">
+                                            <h3 className="text-xl font-bold">Photosynthesis</h3>
+                                            <span className="text-[10px] bg-white/20 px-1.5 py-0.5 rounded-full backdrop-blur-sm text-white border border-white/10">Noun</span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-sm font-mono text-orange-50">/ˌfoʊ.təˈsɪn.θə.sɪs/</span>
+                                            <button className="p-1 hover:bg-white/10 rounded-full transition-colors">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" /><path d="M15.54 8.46a5 5 0 0 1 0 7.07" /><path d="M19.07 4.93a10 10 0 0 1 0 14.14" /></svg>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {/* Body */}
+                                    <div className="p-4 space-y-4">
+                                        {/* Context Quote */}
+                                        <div className="bg-slate-50 p-3 rounded-lg border border-slate-100 italic text-xs text-slate-500 leading-relaxed relative">
+                                            <span className="absolute -top-2 left-2 text-3xl text-orange-200 font-serif leading-none">"</span>
+                                            Exceptions are parasitic plants that have lost the genes for chlorophyll and photosynthesis, and... obtain their energy from other plants or fungi.
+                                            <span className="absolute -bottom-4 right-2 text-3xl text-orange-200 font-serif leading-none rotate-180">"</span>
+                                        </div>
+
+                                        {/* Input Section */}
+                                        <div className="space-y-1.5">
+                                            <div className="flex justify-between items-center">
+                                                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Meaning</label>
+                                                <div className="flex items-center gap-1 text-[10px] text-green-600 bg-green-50 px-1.5 py-0.5 rounded border border-green-100">
+                                                    <Sparkles className="w-2.5 h-2.5" />
+                                                    <span>AI</span>
+                                                </div>
+                                            </div>
+                                            <div className="bg-white border rounded-lg p-2.5 text-sm text-slate-800 shadow-sm focus-within:ring-2 focus-within:ring-orange-500/20 focus-within:border-orange-500 transition-all">
+                                                quang hợp
+                                            </div>
+                                        </div>
+
+                                        {/* Buttons */}
+                                        <div className="grid grid-cols-2 gap-3 pt-1">
+                                            <Button variant="ghost" className="h-9 text-sm text-slate-500 hover:text-slate-700 hover:bg-slate-50">
+                                                Cancel
+                                            </Button>
+                                            <Button className="h-9 text-sm bg-orange-500 hover:bg-orange-600 text-white font-medium shadow-lg shadow-orange-500/25">
+                                                Save
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            </div>
                         </div>
 
                         {/* Floating Card - Extension Info */}
