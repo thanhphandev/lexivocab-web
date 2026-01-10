@@ -97,6 +97,7 @@
         "copyright": "© 2026 LexiVocab. Developed by Phan Văn Thành.",
         "privacy": "Chính sách bảo mật",
         "terms": "Điều khoản sử dụng",
+        "changelog": "Nhật ký thay đổi",
         "legal": "Pháp lý",
         "connect": "Kết nối",
         "made_with_love": "Được tạo với ❤️ cho người học ngôn ngữ trên toàn thế giới"
@@ -152,5 +153,13 @@
         "demo_text_1": "Việc học ngôn ngữ thường xảy ra thông qua",
         "demo_text_2": "— những tình cờ may mắn khi bạn gặp từ phù hợp vào đúng thời điểm.",
         "demo_text_3": "Cách tốt nhất để mở rộng vốn từ vựng là thông qua tiếp xúc tự nhiên. Đọc các bài báo, tin tức bằng ngôn ngữ mục tiêu giúp bạn hiểu từ trong ngữ cảnh, giúp nhớ dễ hơn."
+    },
+    "Changelog": {
+        "title": "Nhật ký thay đổi",
+        "subtitle": "Theo dõi các cập nhật và cải tiến mới nhất của LexiVocab",
+        "version_title": "Phiên bản {version}",
+        "release_date": "Phát hành {date}",
+        "initial_release": "Phát hành phiên bản đầu tiên của tiện ích LexiVocab",
+        "update_enforcement": "Thêm cơ chế bắt buộc cập nhật phiên bản"
     }
 }

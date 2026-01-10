@@ -96,6 +96,7 @@
         "copyright": "© 2026 LexiVocab. Developed by Phan Văn Thành.",
         "privacy": "隐私政策",
         "terms": "服务条款",
+        "changelog": "更新日志",
         "legal": "法律信息",
         "connect": "联系我们",
         "made_with_love": "为全球语言学习者用❤️制作"
@@ -151,5 +152,13 @@
         "demo_text_1": "语言学习通常通过",
         "demo_text_2": "发生——那些在恰当时刻遇到完美单词的幸运巧合。",
         "demo_text_3": "扩大词汇量的最佳方式是通过自然接触。阅读目标语言的文章、新闻和内容可以帮助您在语境中理解单词，使其更容易记忆。"
+    },
+    "Changelog": {
+        "title": "更新日志",
+        "subtitle": "追踪 LexiVocab 的最新更新和改进",
+        "version_title": "版本 {version}",
+        "release_date": "发布于 {date}",
+        "initial_release": "LexiVocab 扩展程序首次发布",
+        "update_enforcement": "添加版本强制更新机制"
     }
 }

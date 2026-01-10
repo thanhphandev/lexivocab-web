@@ -96,6 +96,7 @@
         "copyright": "© 2026 LexiVocab. Developed by Phan Văn Thành.",
         "privacy": "プライバシーポリシー",
         "terms": "利用規約",
+        "changelog": "変更履歴",
         "legal": "法的情報",
         "connect": "つながる",
         "made_with_love": "世界中の言語学習者のために❤️を込めて作られました"
@@ -151,5 +152,13 @@
         "demo_text_1": "言語学習はしばしば",
         "demo_text_2": "を通じて起こります — 完璧な単語に適切なタイミングで出会う幸運な偶然。",
         "demo_text_3": "語彙を増やす最良の方法は、自然な露出を通じてです。対象言語で記事、ニュース、コンテンツを読むことで、文脈の中で単語を理解し、覚えやすくなります。"
+    },
+    "Changelog": {
+        "title": "変更履歴",
+        "subtitle": "LexiVocab の最新の更新と改善を追跡",
+        "version_title": "バージョン {version}",
+        "release_date": "{date} にリリース",
+        "initial_release": "LexiVocab 拡張機能の初回リリース",
+        "update_enforcement": "バージョン強制更新メカニズムを追加"
     }
 }

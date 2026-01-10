@@ -56,6 +56,9 @@ export default function Footer({ locale }: { locale: string }) {
                             <Link href={`/${locale}/terms`} className="hover:text-primary transition-colors">
                                 {t('terms')}
                             </Link>
+                            <Link href={`/${locale}/changelog`} className="hover:text-primary transition-colors">
+                                {t('changelog')}
+                            </Link>
                         </nav>
                     </div>
 

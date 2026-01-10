@@ -96,6 +96,7 @@
         "copyright": "© 2026 LexiVocab. Developed by Phan Văn Thành.",
         "privacy": "Privacy Policy",
         "terms": "Terms of Service",
+        "changelog": "Changelog",
         "legal": "Legal",
         "connect": "Connect",
         "made_with_love": "Made with ❤️ for language learners worldwide"
@@ -151,5 +152,13 @@
         "demo_text_1": "Language learning often happens through",
         "demo_text_2": "— those happy accidents when you encounter the perfect word at the right moment.",
         "demo_text_3": "The best way to expand your vocabulary is through natural exposure. Reading articles, news, and content in your target language helps you understand words in context, making them easier to remember."
+    },
+    "Changelog": {
+        "title": "Changelog",
+        "subtitle": "Track the latest updates and improvements to LexiVocab",
+        "version_title": "Version {version}",
+        "release_date": "Released on {date}",
+        "initial_release": "Initial release of LexiVocab extension",
+        "update_enforcement": "Added version update enforcement mechanism"
     }
 }
