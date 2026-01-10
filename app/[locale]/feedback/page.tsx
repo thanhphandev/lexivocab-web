@@ -60,29 +60,25 @@ export default function FeedbackPage() {
         setIsSubmitting(true);
         setError(null);
 
-        try {
-            const formData = new FormData();
-            formData.append('type', type);
-            formData.append('message', message);
-            if (contact) formData.append('contact', contact);
-            if (rating) formData.append('rating', rating.toString());
-            images.forEach((image) => formData.append('images', image));
+        // Optimistic update: Show success immediately
+        setIsSubmitted(true);
 
-            const response = await fetch('/api/feedback', {
-                method: 'POST',
-                body: formData,
-            });
+        const formData = new FormData();
+        formData.append('type', type);
+        formData.append('message', message);
+        if (contact) formData.append('contact', contact);
+        if (rating) formData.append('rating', rating.toString());
+        images.forEach((image) => formData.append('images', image));
 
-            const result = await response.json();
-
-            if (!result.success) throw new Error(result.error);
-            setIsSubmitted(true);
-        } catch (err) {
-            console.error(err);
-            setError('Failed to send feedback. Please try again.');
-        } finally {
+        // Fire and forget (or log on failure)
+        fetch('/api/feedback', {
+            method: 'POST',
+            body: formData,
+        }).catch(err => {
+            console.error('Feedback submission failed:', err);
+        }).finally(() => {
             setIsSubmitting(false);
-        }
+        });
     };
 
     return (

@@ -38,23 +38,22 @@ export default function UninstallPage() {
         if (!selectedReason) return;
 
         setIsSubmitting(true);
+        // Optimistic update
+        setIsSubmitted(true);
 
-        try {
-            const formData = new FormData();
-            formData.append('type', 'uninstall');
-            formData.append('reason', selectedReason);
-            if (comment) formData.append('message', comment);
+        const formData = new FormData();
+        formData.append('type', 'uninstall');
+        formData.append('reason', selectedReason);
+        if (comment) formData.append('message', comment);
 
-            await fetch('/api/feedback', {
-                method: 'POST',
-                body: formData,
-            });
-        } catch (err) {
+        fetch('/api/feedback', {
+            method: 'POST',
+            body: formData,
+        }).catch(err => {
             console.error(err);
-        } finally {
+        }).finally(() => {
             setIsSubmitting(false);
-            setIsSubmitted(true);
-        }
+        });
     };
 
     return (
