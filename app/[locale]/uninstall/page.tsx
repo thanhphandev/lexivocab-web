@@ -16,8 +16,6 @@ import {
 } from '@/components/feedback';
 import { useRouter } from 'next/navigation';
 import { siteConfig } from '@/lib/config';
-import { submitFeedback } from '@/actions/feedback';
-
 export default function UninstallPage() {
     const t = useTranslations('Uninstall');
     const [selectedReason, setSelectedReason] = useState<string | null>(null);
@@ -47,7 +45,10 @@ export default function UninstallPage() {
             formData.append('reason', selectedReason);
             if (comment) formData.append('message', comment);
 
-            await submitFeedback(formData);
+            await fetch('/api/feedback', {
+                method: 'POST',
+                body: formData,
+            });
         } catch (err) {
             console.error(err);
         } finally {
