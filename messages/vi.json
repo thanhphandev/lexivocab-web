@@ -161,5 +161,12 @@
         "release_date": "Phát hành {date}",
         "initial_release": "Phát hành phiên bản đầu tiên của tiện ích LexiVocab",
         "update_enforcement": "Thêm cơ chế bắt buộc cập nhật phiên bản"
+    },
+    "VideoDemo": {
+        "badge": "Video Demo",
+        "title": "Xem LexiVocab hoạt động thực tế",
+        "subtitle": "Khám phá cách LexiVocab giúp bạn học từ vựng một cách tự nhiên và hiệu quả khi lướt web",
+        "watch_now": "Nhấn để xem video",
+        "watch_youtube": "Xem trên YouTube"
     }
 }

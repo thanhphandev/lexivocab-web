@@ -160,5 +160,12 @@
         "release_date": "{date} にリリース",
         "initial_release": "LexiVocab 拡張機能の初回リリース",
         "update_enforcement": "バージョン強制更新メカニズムを追加"
+    },
+    "VideoDemo": {
+        "badge": "動画デモ",
+        "title": "LexiVocabの動作を見る",
+        "subtitle": "LexiVocabがウェブ閲覧中に自然で効率的な語彙学習をどのようにサポートするかをご覧ください",
+        "watch_now": "クリックして動画を見る",
+        "watch_youtube": "YouTubeで見る"
     }
 }

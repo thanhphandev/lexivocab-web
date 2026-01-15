@@ -104,7 +104,7 @@ export default function Header({ locale }: { locale: string }) {
                             <Menu className="h-5 w-5" />
                         </Button>
                     </SheetTrigger>
-                    <SheetContent side="right" className="w-80">
+                    <SheetContent side="right" className="w-80 p-4">
                         <div className="flex items-center gap-3 mb-8">
                             <Image src="/icon.png" alt="LexiVocab" width={32} height={32} />
                             <span className="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-amber-500">

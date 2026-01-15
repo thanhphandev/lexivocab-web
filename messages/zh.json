@@ -160,5 +160,12 @@
         "release_date": "发布于 {date}",
         "initial_release": "LexiVocab 扩展程序首次发布",
         "update_enforcement": "添加版本强制更新机制"
+    },
+    "VideoDemo": {
+        "badge": "视频演示",
+        "title": "观看 LexiVocab 实际运行",
+        "subtitle": "了解 LexiVocab 如何帮助您在浏览网页时自然高效地学习词汇",
+        "watch_now": "点击观看视频",
+        "watch_youtube": "在YouTube上观看"
     }
 }

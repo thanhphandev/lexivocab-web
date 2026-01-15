@@ -49,7 +49,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         publisher: 'LexiVocab',
         applicationName: 'LexiVocab',
 
-        // Open Graph
+        // Open Graph - Use absolute URLs for better crawler compatibility
         openGraph: {
             type: 'website',
             locale: localeToOg[locale] || 'en_US',
@@ -60,33 +60,31 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
             description: t('description'),
             images: [
                 {
-                    url: '/opengraph-image.png',
+                    url: `${baseUrl}/opengraph-image.png`,
+                    secureUrl: `${baseUrl}/opengraph-image.png`,
                     width: 1200,
                     height: 630,
-                    alt: 'LexiVocab - Learn Vocabulary While Browsing',
+                    alt: t('title'),
+                    type: 'image/png',
                 }
             ],
         },
 
-        // Twitter Card
+        // Twitter Card - Use absolute URLs
         twitter: {
             card: 'summary_large_image',
+            site: '@lexivocab',
+            creator: '@lexivocab',
             title: t('title'),
             description: t('description'),
-            images: ['/twitter-image.png'],
-            creator: '@lexivocab',
+            images: {
+                url: `${baseUrl}/twitter-image.png`,
+                alt: t('title'),
+            },
         },
 
-        // Icons
-        icons: {
-            icon: [
-                { url: '/icon.png', sizes: '32x32', type: 'image/png' },
-                { url: '/favicon.ico', sizes: '32x32' },
-            ],
-            apple: [
-                { url: '/apple-icon.png', sizes: '180x180', type: 'image/png' },
-            ],
-        },
+        // Icons - Next.js will auto-detect files in app folder
+        // favicon.ico, icon.png, apple-icon.png are in app folder
 
         // Robots
         robots: {

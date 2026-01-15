@@ -213,7 +213,6 @@ export default function HeroSection() {
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 0.8, delay: 0.3 }}
                         className="relative hidden lg:block"
-                        id="demo-video"
                     >
                         {/* Glow effect behind image */}
                         <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 to-amber-500/20 blur-3xl transform scale-105 -z-10" />

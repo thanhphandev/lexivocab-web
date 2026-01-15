@@ -160,5 +160,12 @@
         "release_date": "Released on {date}",
         "initial_release": "Initial release of LexiVocab extension",
         "update_enforcement": "Added version update enforcement mechanism"
+    },
+    "VideoDemo": {
+        "badge": "Video Demo",
+        "title": "See LexiVocab in Action",
+        "subtitle": "Discover how LexiVocab helps you learn vocabulary naturally and efficiently while browsing the web",
+        "watch_now": "Click to watch video",
+        "watch_youtube": "Watch on YouTube"
     }
 }
