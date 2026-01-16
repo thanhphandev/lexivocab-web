@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const t = await getTranslations({ locale, namespace: 'Terms' });
     const tMeta = await getTranslations({ locale, namespace: 'Metadata' });
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://lexivocab.com';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://lexivocab.store';
 
     return {
         title: t('title'),

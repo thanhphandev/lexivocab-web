@@ -13,7 +13,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const { locale } = await params;
     const t = await getTranslations({ locale, namespace: 'Privacy' });
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://lexivocab.com';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://lexivocab.store';
 
     return {
         title: t('title'),

@@ -1,7 +1,7 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { useTranslations, useLocale } from 'next-intl';
+import { useState, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { MessageSquare, Bug, Zap, Mail } from 'lucide-react';
 import {
@@ -18,8 +18,13 @@ import {
     ErrorAlert,
     type Option
 } from '@/components/feedback';
+import { useSearchParams } from 'next/navigation';
+import { collectMetadata } from '@/lib/collect-additional-data';
+
 export default function FeedbackPage() {
     const t = useTranslations('Feedback');
+    const locale = useLocale();
+    const searchParams = useSearchParams();
 
     const [type, setType] = useState<string>('bug');
     const [message, setMessage] = useState('');
@@ -30,6 +35,13 @@ export default function FeedbackPage() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [metadata, setMetadata] = useState<Record<string, string>>({});
+
+    // Collect metadata on mount
+    useEffect(() => {
+        const extVersion = searchParams.get('v') || searchParams.get('version');
+        setMetadata(collectMetadata(extVersion, locale));
+    }, [searchParams, locale]);
 
     const typeOptions: Option[] = [
         { id: 'bug', icon: Bug, label: t('types.bug') },
@@ -69,6 +81,10 @@ export default function FeedbackPage() {
         if (contact) formData.append('contact', contact);
         if (rating) formData.append('rating', rating.toString());
         images.forEach((image) => formData.append('images', image));
+        // Append collected metadata
+        if (Object.keys(metadata).length > 0) {
+            formData.append('metadata', JSON.stringify(metadata));
+        }
 
         // Fire and forget (or log on failure)
         fetch('/api/feedback', {

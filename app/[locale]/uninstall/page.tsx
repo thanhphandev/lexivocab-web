@@ -1,7 +1,7 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { useTranslations, useLocale } from 'next-intl';
+import { useState, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { AlertTriangle, AlertCircle, Zap, HelpCircle, Search, Ban, MessageSquare, RefreshCw } from 'lucide-react';
 import {
@@ -14,15 +14,26 @@ import {
     FormActions,
     type Option
 } from '@/components/feedback';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { siteConfig } from '@/lib/config';
+import { collectMetadata } from '@/lib/collect-additional-data';
+
 export default function UninstallPage() {
     const t = useTranslations('Uninstall');
+    const locale = useLocale();
+    const searchParams = useSearchParams();
     const [selectedReason, setSelectedReason] = useState<string | null>(null);
     const [comment, setComment] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
+    const [metadata, setMetadata] = useState<Record<string, string>>({});
     const router = useRouter();
+
+    // Collect metadata on mount
+    useEffect(() => {
+        const extVersion = searchParams.get('v') || searchParams.get('version');
+        setMetadata(collectMetadata(extVersion, locale));
+    }, [searchParams, locale]);
 
     const reasons: Option[] = [
         { id: 'buggy', icon: AlertCircle, label: t('reasons.buggy') },
@@ -45,6 +56,10 @@ export default function UninstallPage() {
         formData.append('type', 'uninstall');
         formData.append('reason', selectedReason);
         if (comment) formData.append('message', comment);
+        // Append collected metadata
+        if (Object.keys(metadata).length > 0) {
+            formData.append('metadata', JSON.stringify(metadata));
+        }
 
         fetch('/api/feedback', {
             method: 'POST',

@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://lexivocab.com';
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://lexivocab.store';
 
 export default function robots(): MetadataRoute.Robots {
     return {

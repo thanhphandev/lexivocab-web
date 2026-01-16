@@ -34,7 +34,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const { locale } = await params;
     const t = await getTranslations({ locale, namespace: 'Metadata' });
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://lexivocab.com';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://lexivocab.store';
 
     return {
         metadataBase: new URL(baseUrl),
@@ -98,13 +98,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
                 'max-snippet': -1,
             },
         },
-
-        // Verification (add your verification codes here)
-        // verification: {
-        //     google: 'your-google-verification-code',
-        // },
-
-        // Alternate languages
         alternates: {
             canonical: `${baseUrl}/${locale}`,
             languages: {

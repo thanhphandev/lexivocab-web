@@ -18,7 +18,18 @@ export async function POST(req: Request) {
         const message = formData.get('message') as string | null;
         const contact = formData.get('contact') as string | null;
         const rating = formData.get('rating') as string | null;
+        const metadataRaw = formData.get('metadata') as string | null;
         const images = formData.getAll('images') as File[];
+
+        // Parse metadata if present
+        let metadata: Record<string, string> = {};
+        if (metadataRaw) {
+            try {
+                metadata = JSON.parse(metadataRaw);
+            } catch {
+                // Ignore parse errors
+            }
+        }
 
         const botToken = process.env.TELEGRAM_BOT_TOKEN;
         const chatId = process.env.TELEGRAM_CHAT_ID;
@@ -54,6 +65,20 @@ export async function POST(req: Request) {
         if (rating && rating !== 'null') text += `⭐ *Rating:* ${escapeMarkdown(rating)}/5\n`;
         if (message) text += `💬 *Message:* \n${escapeMarkdown(message)}\n`;
         if (contact) text += `📧 *Contact:* ${escapeMarkdown(contact)}\n`;
+
+        // Add metadata section if available
+        if (Object.keys(metadata).length > 0) {
+            text += `--------------------------------\n`;
+            text += `📊 *Environment:*\n`;
+            if (metadata.browser) text += `   🌐 Browser: ${escapeMarkdown(metadata.browser)}\n`;
+            if (metadata.os) text += `   💻 OS: ${escapeMarkdown(metadata.os)}\n`;
+            if (metadata.extVersion && metadata.extVersion !== 'N/A') {
+                text += `   📦 Ext Version: ${escapeMarkdown(metadata.extVersion)}\n`;
+            }
+            if (metadata.language) text += `   🌍 Language: ${escapeMarkdown(metadata.language)}\n`;
+            if (metadata.screen) text += `   📐 Screen: ${escapeMarkdown(metadata.screen)}\n`;
+            if (metadata.locale) text += `   🏳️ Locale: ${escapeMarkdown(metadata.locale)}\n`;
+        }
 
         text += `--------------------------------\n`;
 
