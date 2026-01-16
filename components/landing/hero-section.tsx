@@ -30,6 +30,7 @@ export default function HeroSection() {
                     className="absolute top-20 left-[10%] w-[500px] h-[500px] rounded-full"
                     style={{
                         background: 'radial-gradient(circle, rgba(251,146,60,0.15) 0%, transparent 70%)',
+                        willChange: 'transform',
                     }}
                     animate={{
                         scale: [1, 1.2, 1],
@@ -42,6 +43,7 @@ export default function HeroSection() {
                     className="absolute bottom-20 right-[10%] w-[400px] h-[400px] rounded-full"
                     style={{
                         background: 'radial-gradient(circle, rgba(245,158,11,0.12) 0%, transparent 70%)',
+                        willChange: 'transform',
                     }}
                     animate={{
                         scale: [1.2, 1, 1.2],

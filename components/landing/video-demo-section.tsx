@@ -22,6 +22,7 @@ export default function VideoDemoSection() {
                     className="absolute top-20 right-[10%] w-[600px] h-[600px] rounded-full"
                     style={{
                         background: 'radial-gradient(circle, rgba(251,146,60,0.15) 0%, transparent 70%)',
+                        willChange: 'transform',
                     }}
                     animate={{
                         scale: [1, 1.15, 1],
@@ -33,6 +34,7 @@ export default function VideoDemoSection() {
                     className="absolute bottom-10 left-[5%] w-[400px] h-[400px] rounded-full"
                     style={{
                         background: 'radial-gradient(circle, rgba(245,158,11,0.1) 0%, transparent 70%)',
+                        willChange: 'transform',
                     }}
                     animate={{
                         scale: [1.1, 1, 1.1],
