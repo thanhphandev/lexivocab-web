@@ -159,7 +159,10 @@
         "version_title": "版本 {version}",
         "release_date": "发布于 {date}",
         "initial_release": "LexiVocab 扩展程序首次发布",
-        "update_enforcement": "添加版本强制更新机制"
+        "update_enforcement": "添加版本强制更新机制",
+        "mode_toggle_feature": "模式切换: 在标准模式和紧凑模式之间快速切换",
+        "realtime_input_translation": "实时输入翻译: 连续按3次空格键即可翻译正在输入的文本",
+        "highlight_performance_optimization": "改进词汇高亮性能"
     },
     "VideoDemo": {
         "badge": "视频演示",

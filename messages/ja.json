@@ -159,7 +159,10 @@
         "version_title": "バージョン {version}",
         "release_date": "{date} にリリース",
         "initial_release": "LexiVocab 拡張機能の初回リリース",
-        "update_enforcement": "バージョン強制更新メカニズムを追加"
+        "update_enforcement": "バージョン強制更新メカニズムを追加",
+        "mode_toggle_feature": "モード切替: スタンダードモードとコンパクトモードを素早く切り替え",
+        "realtime_input_translation": "リアルタイム入力翻訳: スペースキーを3回押すと入力中のテキストを翻訳",
+        "highlight_performance_optimization": "単語ハイライトのパフォーマンスを改善"
     },
     "VideoDemo": {
         "badge": "動画デモ",

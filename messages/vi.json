@@ -160,7 +160,10 @@
         "version_title": "Phiên bản {version}",
         "release_date": "Phát hành {date}",
         "initial_release": "Phát hành phiên bản đầu tiên của tiện ích LexiVocab",
-        "update_enforcement": "Thêm cơ chế bắt buộc cập nhật phiên bản"
+        "update_enforcement": "Thêm cơ chế bắt buộc cập nhật phiên bản",
+        "mode_toggle_feature": "Chuyển đổi chế độ: Chuyển nhanh giữa Standard Mode và Compact Mode",
+        "realtime_input_translation": "Dịch khi gõ: Dịch văn bản ngay khi nhập bằng cách nhấn Space 3 lần",
+        "highlight_performance_optimization": "Tối ưu hiệu suất tô màu từ vựng"
     },
     "VideoDemo": {
         "badge": "Video Demo",
