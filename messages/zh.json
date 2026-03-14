@@ -1,174 +1,339 @@
 {
-    "Metadata": {
-        "title": "LexiVocab - 浏览时学习词汇",
-        "titleTemplate": "%s | LexiVocab",
-        "description": "Chrome扩展程序，帮助您在浏览网页时自然地翻译、保存和复习英语词汇。一键掌握词汇。",
-        "keywords": "词汇学习, 学英语, Chrome扩展, 词汇构建, 语言学习, 闪卡, 单词翻译, 语境翻译"
+  "Metadata": {
+    "title": "LexiVocab - 浏览时学习词汇",
+    "titleTemplate": "%s | LexiVocab",
+    "description": "Chrome扩展程序，帮助您在浏览网页时自然地翻译、保存和复习英语词汇。一键掌握词汇。",
+    "keywords": "词汇学习, 学英语, Chrome扩展, 词汇构建, 语言学习, 闪卡, 单词翻译, 语境翻译"
+  },
+  "Header": {
+    "features": "功能",
+    "how_it_works": "使用方法",
+    "language": "语言"
+  },
+  "Auth": {
+    "loginTitle": "欢迎回来",
+    "loginSubtitle": "登录以管理您的词汇并追踪进度",
+    "registerTitle": "创建账号",
+    "registerSubtitle": "今天就开始掌握新词汇",
+    "email": "电子邮箱",
+    "emailPlaceholder": "you@example.com",
+    "password": "密码",
+    "passwordPlaceholder": "••••••••",
+    "fullName": "全名",
+    "fullNamePlaceholder": "张三",
+    "loginButton": "登 录",
+    "registerButton": "注册账号",
+    "noAccount": "没有账号？",
+    "hasAccount": "已有账号？",
+    "registerLink": "去注册",
+    "loginLink": "去登录"
+  },
+  "Dashboard": {
+    "subtitle": "智能词汇构建器",
+    "nav": {
+      "home": "仪表板",
+      "vocabulary": "词汇",
+      "review": "复习",
+      "analytics": "分析",
+      "billing": "账单",
+      "settings": "设置",
+      "collapse": "折叠侧边栏",
+      "logout": "退出登录"
     },
-    "Header": {
-        "features": "功能",
-        "how_it_works": "使用方法",
-        "language": "语言"
+    "home": {
+      "title": "欢迎回来",
+      "subtitle": "这是您的学习进度概览",
+      "stats": {
+        "totalWords": "总单词数",
+        "activeWords": "学习中单词",
+        "masteredWords": "已掌握单词",
+        "dueToday": "今日待复习",
+        "reviewsToday": "今日复习数",
+        "reviewsThisWeek": "本周复习数",
+        "currentStreak": "当前连续学习",
+        "totalStudyDays": "总学习天数"
+      },
+      "heatmap": {
+        "title": "学习历史",
+        "less": "少",
+        "more": "多"
+      }
     },
-    "Hero": {
-        "badge": "🚀 全新发布 v1.0",
-        "title": "在<highlight>浏览网页</highlight>时被动学习词汇",
-        "subtitle": "不要让查词典打断你的阅读流程。LexiVocab帮助你自然地翻译、保存和复习英语词汇。",
-        "cta_install": "添加到Chrome",
-        "cta_demo": "观看演示",
-        "users_count": "1000+ 用户",
-        "rating": "5.0 评分",
-        "saved_word": "单词已保存！"
+    "vocabulary": {
+      "title": "词汇管理",
+      "subtitle": "管理您所有保存的单词，添加新单词或批量导入。",
+      "searchPlaceholder": "搜索单词...",
+      "addWord": "添加单词",
+      "batchImport": "批量导入",
+      "statusFilter": {
+        "all": "所有状态",
+        "active": "学习中",
+        "archived": "已归档"
+      },
+      "table": {
+        "word": "单词",
+        "meaning": "含义",
+        "context": "语境",
+        "level": "等级",
+        "nextReview": "下次复习",
+        "status": "状态",
+        "actions": "操作"
+      },
+      "badges": {
+        "active": "学习中",
+        "archived": "已归档",
+        "new": "新单词",
+        "learning": "学习中",
+        "mastered": "已掌握"
+      },
+      "actions": {
+        "edit": "编辑",
+        "archive": "归档",
+        "unarchive": "恢复",
+        "delete": "删除",
+        "source": "打开来源链接"
+      },
+      "empty": "未找到相关词汇。"
     },
-    "Features": {
-        "section_badge": "核心功能",
-        "title": "高效学习词汇所需的一切",
-        "subtitle": "LexiVocab旨在帮助您在不改变浏览习惯的情况下扩大词汇量。",
-        "smart_bubble_title": "智能气泡",
-        "smart_bubble_desc": "选中任意文本即可快速翻译。无需打开新标签页，一键保存单词。",
-        "context_trans_title": "语境翻译",
-        "context_trans_desc": "AI自动分析句子，提供最准确的含义，并附带例句保存。",
-        "highlight_title": "自动高亮",
-        "highlight_desc": "再次遇到已保存的单词？我们会高亮显示，提醒您立即复习。",
-        "highlight_badge": "热门",
-        "dashboard_title": "词汇仪表板",
-        "dashboard_desc": "管理您的个人词汇库，练习发音，跟踪学习进度。"
+    "review": {
+      "title": "每日复习",
+      "subtitle": "通过间隔重复掌握您的词汇",
+      "startSession": "开始复习",
+      "sessionComplete": "复习完成！",
+      "sessionStats": "您今天复习了 {count} 个单词。继续保持！",
+      "backToDashboard": "返回控制台",
+      "noReviews": "您已跟上进度！目前没有待复习的单词。",
+      "cardFront": "点击查看释义",
+      "quality": {
+        "0": "重来",
+        "1": "困难",
+        "2": "良好",
+        "3": "简单"
+      },
+      "progress": "第 {current} / {total} 个单词"
     },
-    "Privacy": {
-        "title": "隐私政策",
-        "last_updated": "最后更新：2026年1月8日",
-        "back": "返回主页",
-        "intro_title": "1. 简介",
-        "intro_desc": "欢迎使用 LexiVocab。我们尊重您的隐私并致力于保护您的个人数据。本隐私政策将告知您在使用我们的 Chrome 扩展程序和网站时我们如何处理您的个人数据。",
-        "data_title": "2. 我们收集的数据",
-        "data_desc": "LexiVocab 收集最少的数据以为您提供最佳的词汇学习体验：",
-        "data_vocab": "词汇数据：您保存的单词、翻译和上下文例句。此数据本地存储在您的设备上。",
-        "data_settings": "设置：您的偏好设置，如高亮颜色和语言设置。",
-        "data_analytics": "使用分析：用于改进我们服务的匿名使用统计数据（可选）。",
-        "usage_title": "3. 我们如何使用您的数据",
-        "usage_provide": "提供和维护我们的服务",
-        "usage_improve": "改进和个性化您的体验",
-        "usage_understand": "了解用户如何与我们的扩展程序交互",
-        "storage_title": "4. 数据存储",
-        "storage_desc": "您的所有词汇数据均使用 Chrome 存储 API 本地存储在您的设备上。我们不会将您的个人词汇数据上传到任何外部服务器。",
-        "third_party_title": "5. 第三方服务",
-        "third_party_desc": "我们可能会使用第三方翻译 API 来提供上下文翻译。这些服务仅接收您选择翻译的文本，无权访问您的个人信息或已保存的词汇。",
-        "rights_title": "6. 您的权利",
-        "rights_desc": "您有权随时通过扩展程序设置访问、更正或删除您的数据。您还可以导出词汇数据或清除所有已保存的数据。",
-        "contact_title": "7. 联系我们",
-        "contact_desc": "如果您对本隐私政策有任何疑问，请通过以下方式联系我们："
+    "analytics": {
+      "title": "学习分析",
+      "subtitle": "深入了解您的词汇学习之旅",
+      "heatmaps": "学习热力图",
+      "streaks": "活动连续记录",
+      "currentStreak": "当前连续天数",
+      "longestStreak": "最长连续天数",
+      "activeDays": "活跃天数",
+      "distribution": "单词分布",
+      "performance": "复习表现"
     },
-    "Terms": {
-        "title": "使用条款",
-        "last_updated": "最后更新：2026年1月8日",
-        "back": "返回主页",
-        "acceptance_title": "1. 接受条款",
-        "acceptance_desc": "安装并使用 LexiVocab Chrome 扩展程序即表示您同意受这些使用条款的约束。如果您不同意这些条款，请勿使用我们的服务。",
-        "description_title": "2. 服务描述",
-        "description_desc": "LexiVocab 是一款 Chrome 浏览器扩展程序，旨在帮助用户在浏览网页时学习词汇。功能包括文本翻译、词汇保存、单词高亮和词汇管理。",
-        "responsibilities_title": "3. 用户责任",
-        "resp_personal": "仅将扩展程序用于个人非商业目的",
-        "resp_reverse": "请勿尝试逆向工程或修改扩展程序",
-        "resp_illegal": "请勿将扩展程序用于任何非法活动",
-        "resp_copyright": "从网站保存内容时请尊重版权",
-        "ip_title": "4. 知识产权",
-        "ip_desc": "LexiVocab 及其原创内容、功能和功能归 Phan Van Thanh 所有，受国际版权、商标和其他知识产权法保护。",
-        "disclaimer_title": "5. 免责声明",
-        "disclaimer_desc": "本扩展程序按“原样”提供，没有任何保证。我们不保证翻译的准确性，也不保证服务不会中断或没有错误。",
-        "liability_title": "6. 责任限制",
-        "liability_desc": "在任何情况下，LexiVocab 或其开发者均不对因您使用本扩展程序而引起的任何间接、偶然、特殊、后果性或惩罚性损害承担责任。",
-        "changes_title": "7. 条款变更",
-        "changes_desc": "我们要保留随时修改这些条款的权利。我们将通过扩展程序或我们的网站通知用户任何重大变更。",
-        "contact_title": "8. 联系方式",
-        "contact_desc": "如果对这些使用条款有任何疑问，请通过以下方式联系我们："
-    },
-    "HowItWorks": {
-        "title": "只需3个简单步骤即可开始",
-        "subtitle": "只需不到1分钟即可安装并开始学习新词汇。",
-        "step1_title": "添加到Chrome",
-        "step1_desc": "从Chrome网上应用店免费安装LexiVocab。",
-        "step2_title": "浏览 & 查词",
-        "step2_desc": "阅读文章或新闻时，高亮显示任何您想查询的单词。",
-        "step3_title": "保存 & 学习",
-        "step3_desc": "将词汇保存到您的个人库中，并在适当的时间收到复习提醒。"
-    },
-    "Footer": {
-        "copyright": "© 2026 LexiVocab. Developed by Phan Văn Thành.",
-        "privacy": "隐私政策",
-        "terms": "服务条款",
-        "changelog": "更新日志",
-        "legal": "法律信息",
-        "connect": "联系我们",
-        "made_with_love": "为全球语言学习者用❤️制作"
-    },
-    "Uninstall": {
-        "title": "我们很遗憾看到您离开",
-        "subtitle": "您的反馈有助于我们为每个人改进LexiVocab。您能告诉我们为什么卸载吗？",
-        "reasons": {
-            "buggy": "它有错误或无法正常工作",
-            "slow": "它拖慢了我的浏览器速度",
-            "complicated": "它太复杂难用",
-            "alternative": "我找到了更好的替代品",
-            "not_useful": "我觉得它不再有用了",
-            "other": "其他原因"
-        },
-        "comment_placeholder": "请告诉我们更多关于我们如何改进的信息...（可选）",
-        "submit": "发送反馈",
-        "submitting": "正在发送...",
-        "thank_you_title": "感谢您的反馈！",
-        "thank_you_desc": "我们非常感谢您的投入。我们将努力改进LexiVocab。",
-        "back_home": "返回主页",
-        "reinstall": "重新安装扩展"
-    },
-    "Feedback": {
-        "title": "反馈与支持",
-        "subtitle": "有错误报告或功能请求？我们很乐意倾听！",
-        "types": {
-            "bug": "报告错误",
-            "feature": "请求功能",
-            "other": "其他"
-        },
-        "message_label": "您的留言",
-        "message_placeholder": "详细描述问题或想法...",
-        "contact_label": "电子邮件（可选）",
-        "contact_placeholder": "your@email.com",
-        "upload_label": "附件（可选）",
-        "upload_placeholder": "点击或拖动图片上传",
-        "remove_image": "删除图片",
-        "rating_label": "评价您的体验",
-        "submit": "提交反馈",
-        "submitting": "提交中...",
-        "success_title": "反馈已发送！",
-        "success_desc": "感谢您帮助我们改进 LexiVocab。",
-        "error_title": "出错了",
-        "error_desc": "请稍后再试。",
-        "back_home": "返回主页"
-    },
-    "Welcome": {
-        "demo_badge": "立即体验",
-        "demo_title": "体验 LexiVocab",
-        "demo_description": "高亮下面的单词「serendipity」，看看 LexiVocab 如何帮助您保存和学习新词汇。",
-        "demo_hint": "高亮加粗的单词",
-        "demo_text_1": "语言学习通常通过",
-        "demo_text_2": "发生——那些在恰当时刻遇到完美单词的幸运巧合。",
-        "demo_text_3": "扩大词汇量的最佳方式是通过自然接触。阅读目标语言的文章、新闻和内容可以帮助您在语境中理解单词，使其更容易记忆。"
-    },
-    "Changelog": {
-        "title": "更新日志",
-        "subtitle": "追踪 LexiVocab 的最新更新和改进",
-        "version_title": "版本 {version}",
-        "release_date": "发布于 {date}",
-        "initial_release": "LexiVocab 扩展程序首次发布",
-        "update_enforcement": "添加版本强制更新机制",
-        "mode_toggle_feature": "模式切换: 在标准模式和紧凑模式之间快速切换",
-        "realtime_input_translation": "实时输入翻译: 连续按3次空格键即可翻译正在输入的文本",
-        "highlight_performance_optimization": "改进词汇高亮性能"
-    },
-    "VideoDemo": {
-        "badge": "视频演示",
-        "title": "观看 LexiVocab 实际运行",
-        "subtitle": "了解 LexiVocab 如何帮助您在浏览网页时自然高效地学习词汇",
-        "watch_now": "点击观看视频",
-        "watch_youtube": "在YouTube上观看"
+    "settings": {
+      "title": "设置",
+      "subtitle": "管理您的账户和应用偏好。",
+      "profile": {
+        "title": "个人资料",
+        "desc": "更新您的个人信息。",
+        "name": "全名",
+        "email": "电子邮箱",
+        "role": "账户类型",
+        "joined": "加入时间"
+      },
+      "preferences": {
+        "title": "偏好设置",
+        "desc": "自定义您的体验。",
+        "theme": "主题",
+        "language": "语言",
+        "dailyGoal": "每日复习目标",
+        "sync": "自动同步扩展数据"
+      },
+      "account": {
+        "title": "账户操作",
+        "desc": "管理您的安全和数据。",
+        "changePassword": "修改密码",
+        "exportData": "导出我的数据",
+        "deleteAccount": "删除账户"
+      },
+      "save": "保存更改"
     }
+  },
+  "Hero": {
+    "badge": "🚀 全新发布 v1.0",
+    "title": "在<highlight>浏览网页</highlight>时被动学习词汇",
+    "subtitle": "不要让查词典打断你的阅读流程。LexiVocab帮助你自然地翻译、保存和复习英语词汇。",
+    "cta_install": "添加到Chrome",
+    "cta_demo": "观看演示",
+    "users_count": "1000+ 用户",
+    "rating": "5.0 评分",
+    "saved_word": "单词已保存！"
+  },
+  "Features": {
+    "section_badge": "核心功能",
+    "title": "高效学习词汇所需的一切",
+    "subtitle": "LexiVocab旨在帮助您在不改变浏览习惯的情况下扩大词汇量。",
+    "smart_bubble_title": "智能气泡",
+    "smart_bubble_desc": "选中任意文本即可快速翻译。无需打开新标签页，一键保存单词。",
+    "context_trans_title": "语境翻译",
+    "context_trans_desc": "AI自动分析句子，提供最准确的含义，并附带例句保存。",
+    "highlight_title": "自动高亮",
+    "highlight_desc": "再次遇到已保存的单词？我们会高亮显示，提醒您立即复习。",
+    "highlight_badge": "热门",
+    "dashboard_title": "词汇仪表板",
+    "dashboard_desc": "管理您的个人词汇库，练习发音，跟踪学习进度。"
+  },
+  "Privacy": {
+    "title": "隐私政策",
+    "last_updated": "最后更新：2026年1月8日",
+    "back": "返回主页",
+    "intro_title": "1. 简介",
+    "intro_desc": "欢迎使用 LexiVocab。我们尊重您的隐私并致力于保护您的个人数据。本隐私政策将告知您在使用我们的 Chrome 扩展程序和网站时我们如何处理您的个人数据。",
+    "data_title": "2. 我们收集的数据",
+    "data_desc": "LexiVocab 收集最少的数据以为您提供最佳的词汇学习体验：",
+    "data_vocab": "词汇数据：您保存的单词、翻译和上下文例句。此数据本地存储在您的设备上。",
+    "data_settings": "设置：您的偏好设置，如高亮颜色和语言设置。",
+    "data_analytics": "使用分析：用于改进我们服务的匿名使用统计数据（可选）。",
+    "usage_title": "3. 我们如何使用您的数据",
+    "usage_provide": "提供和维护我们的服务",
+    "usage_improve": "改进和个性化您的体验",
+    "usage_understand": "了解用户如何与我们的扩展程序交互",
+    "storage_title": "4. 数据存储",
+    "storage_desc": "您的所有词汇数据均使用 Chrome 存储 API 本地存储在您的设备上。我们不会将您的个人词汇数据上传到任何外部服务器。",
+    "third_party_title": "5. 第三方服务",
+    "third_party_desc": "我们可能会使用第三方翻译 API 来提供上下文翻译。这些服务仅接收您选择翻译的文本，无权访问您的个人信息或已保存的词汇。",
+    "rights_title": "6. 您的权利",
+    "rights_desc": "您有权随时通过扩展程序设置访问、更正或删除您的数据。您还可以导出词汇数据或清除所有已保存的数据。",
+    "contact_title": "7. 联系我们",
+    "contact_desc": "如果您对本隐私政策有任何疑问，请通过以下方式联系我们："
+  },
+  "Terms": {
+    "title": "使用条款",
+    "last_updated": "最后更新：2026年1月8日",
+    "back": "返回主页",
+    "acceptance_title": "1. 接受条款",
+    "acceptance_desc": "安装并使用 LexiVocab Chrome 扩展程序即表示您同意受这些使用条款的约束。如果您不同意这些条款，请勿使用我们的服务。",
+    "description_title": "2. 服务描述",
+    "description_desc": "LexiVocab 是一款 Chrome 浏览器扩展程序，旨在帮助用户在浏览网页时学习词汇。功能包括文本翻译、词汇保存、单词高亮和词汇管理。",
+    "responsibilities_title": "3. 用户责任",
+    "resp_personal": "仅将扩展程序用于个人非商业目的",
+    "resp_reverse": "请勿尝试逆向工程或修改扩展程序",
+    "resp_illegal": "请勿将扩展程序用于任何非法活动",
+    "resp_copyright": "从网站保存内容时请尊重版权",
+    "ip_title": "4. 知识产权",
+    "ip_desc": "LexiVocab 及其原创内容、功能和功能归 Phan Van Thanh 所有，受国际版权、商标和其他知识产权法保护。",
+    "disclaimer_title": "5. 免责声明",
+    "disclaimer_desc": "本扩展程序按“原样”提供，没有任何保证。我们不保证翻译的准确性，也不保证服务不会中断或没有错误。",
+    "liability_title": "6. 责任限制",
+    "liability_desc": "在任何情况下，LexiVocab 或其开发者均不对因您使用本扩展程序而引起的任何间接、偶然、特殊、后果性或惩罚性损害承担责任。",
+    "changes_title": "7. 条款变更",
+    "changes_desc": "我们要保留随时修改这些条款的权利。我们将通过扩展程序或我们的网站通知用户任何重大变更。",
+    "contact_title": "8. 联系方式",
+    "contact_desc": "如果对这些使用条款有任何疑问，请通过以下方式联系我们："
+  },
+  "HowItWorks": {
+    "title": "只需3个简单步骤即可开始",
+    "subtitle": "只需不到1分钟即可安装并开始学习新词汇。",
+    "step1_title": "添加到Chrome",
+    "step1_desc": "从Chrome网上应用店免费安装LexiVocab。",
+    "step2_title": "浏览 & 查词",
+    "step2_desc": "阅读文章或新闻时，高亮显示任何您想查询的单词。",
+    "step3_title": "保存 & 学习",
+    "step3_desc": "将词汇保存到您的个人库中，并在适当的时间收到复习提醒。"
+  },
+  "Footer": {
+    "copyright": "© 2026 LexiVocab. Developed by Phan Văn Thành.",
+    "privacy": "隐私政策",
+    "terms": "服务条款",
+    "changelog": "更新日志",
+    "legal": "法律信息",
+    "connect": "联系我们",
+    "made_with_love": "为全球语言学习者用❤️制作"
+  },
+  "Uninstall": {
+    "title": "我们很遗憾看到您离开",
+    "subtitle": "您的反馈有助于我们为每个人改进LexiVocab。您能告诉我们为什么卸载吗？",
+    "reasons": {
+      "buggy": "它有错误或无法正常工作",
+      "slow": "它拖慢了我的浏览器速度",
+      "complicated": "它太复杂难用",
+      "alternative": "我找到了更好的替代品",
+      "not_useful": "我觉得它不再有用了",
+      "other": "其他原因"
+    },
+    "comment_placeholder": "请告诉我们更多关于我们如何改进的信息...（可选）",
+    "submit": "发送反馈",
+    "submitting": "正在发送...",
+    "thank_you_title": "感谢您的反馈！",
+    "thank_you_desc": "我们非常感谢您的投入。我们将努力改进LexiVocab。",
+    "back_home": "返回主页",
+    "reinstall": "重新安装扩展"
+  },
+  "Feedback": {
+    "title": "反馈与支持",
+    "subtitle": "有错误报告或功能请求？我们很乐意倾听！",
+    "types": {
+      "bug": "报告错误",
+      "feature": "请求功能",
+      "other": "其他"
+    },
+    "message_label": "您的留言",
+    "message_placeholder": "详细描述问题或想法...",
+    "contact_label": "电子邮件（可选）",
+    "contact_placeholder": "your@email.com",
+    "upload_label": "附件（可选）",
+    "upload_placeholder": "点击或拖动图片上传",
+    "remove_image": "删除图片",
+    "rating_label": "评价您的体验",
+    "submit": "提交反馈",
+    "submitting": "提交中...",
+    "success_title": "反馈已发送！",
+    "success_desc": "感谢您帮助我们改进 LexiVocab。",
+    "error_title": "出错了",
+    "error_desc": "请稍后再试。",
+    "back_home": "返回主页"
+  },
+  "Welcome": {
+    "demo_badge": "立即体验",
+    "demo_title": "体验 LexiVocab",
+    "demo_description": "高亮下面的单词「serendipity」，看看 LexiVocab 如何帮助您保存和学习新词汇。",
+    "demo_hint": "高亮加粗的单词",
+    "demo_text_1": "语言学习通常通过",
+    "demo_text_2": "发生——那些在恰当时刻遇到完美单词的幸运巧合。",
+    "demo_text_3": "扩大词汇量的最佳方式是通过自然接触。阅读目标语言的文章、新闻和内容可以帮助您在语境中理解单词，使其更容易记忆。"
+  },
+  "Changelog": {
+    "title": "更新日志",
+    "subtitle": "追踪 LexiVocab 的最新更新和改进",
+    "version_title": "版本 {version}",
+    "release_date": "发布于 {date}",
+    "initial_release": "LexiVocab 扩展程序首次发布",
+    "update_enforcement": "添加版本强制更新机制",
+    "mode_toggle_feature": "模式切换: 在标准模式和紧凑模式之间快速切换",
+    "realtime_input_translation": "实时输入翻译: 连续按3次空格键即可翻译正在输入的文本",
+    "highlight_performance_optimization": "改进词汇高亮性能"
+  },
+  "VideoDemo": {
+    "badge": "视频演示",
+    "title": "观看 LexiVocab 实际运行",
+    "subtitle": "了解 LexiVocab 如何帮助您在浏览网页时自然高效地学习词汇",
+    "watch_now": "点击观看视频",
+    "watch_youtube": "在YouTube上观看"
+  },
+  "Checkout": {
+    "processing_title": "Processing payment...",
+    "processing_subtitle": "Please do not close this window",
+    "success_title": "Payment Successful!",
+    "success_subtitle": "Thank you for upgrading to Premium. Your account has been updated.",
+    "error_title": "Payment Failed",
+    "try_again": "Try Again",
+    "go_dashboard": "Go to Dashboard"
+  },
+  "Admin.auditLogs": {
+    "title": "Audit Logs",
+    "subtitle": "Monitor system activities",
+    "searchPlaceholder": "Search by Action or Email...",
+    "table": {
+      "date": "Date",
+      "user": "User",
+      "action": "Action",
+      "entity": "Entity",
+      "details": "Details"
+    },
+    "empty": "No data found",
+    "emptySubtitle": "No audit logs found matching the filters."
+  }
 }

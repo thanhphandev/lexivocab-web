@@ -1,175 +1,390 @@
 {
-    "Metadata": {
-        "title": "LexiVocab - Học từ vựng khi lướt web",
-        "titleTemplate": "%s | LexiVocab",
-        "description": "Tiện ích Chrome giúp bạn dịch, lưu và ôn tập từ vựng tiếng Anh một cách tự nhiên khi lướt web. Làm chủ từ vựng chỉ với một cú nhấp chuột.",
-        "keywords": "học từ vựng, học tiếng anh, tiện ích chrome, xây dựng vốn từ, học ngôn ngữ, flashcard, dịch từ, dịch theo ngữ cảnh"
+  "Metadata": {
+    "title": "LexiVocab - Học từ vựng khi lướt web",
+    "titleTemplate": "%s | LexiVocab",
+    "description": "Tiện ích Chrome giúp bạn dịch, lưu và ôn tập từ vựng tiếng Anh một cách tự nhiên khi lướt web. Làm chủ từ vựng chỉ với một cú nhấp chuột.",
+    "keywords": "học từ vựng, học tiếng anh, tiện ích chrome, xây dựng vốn từ, học ngôn ngữ, flashcard, dịch từ, dịch theo ngữ cảnh"
+  },
+  "Header": {
+    "features": "Tính năng",
+    "how_it_works": "Cách hoạt động",
+    "language": "Ngôn ngữ"
+  },
+  "Auth": {
+    "loginTitle": "Chào mừng trở lại",
+    "loginSubtitle": "Đăng nhập để quản lý từ vựng và theo dõi tiến độ",
+    "registerTitle": "Tạo tài khoản",
+    "registerSubtitle": "Bắt đầu làm chủ từ vựng mới ngay hôm nay",
+    "email": "Địa chỉ email",
+    "emailPlaceholder": "ban@example.com",
+    "password": "Mật khẩu",
+    "passwordPlaceholder": "••••••••",
+    "fullName": "Họ và tên",
+    "fullNamePlaceholder": "Nguyễn Văn A",
+    "loginButton": "Đăng nhập",
+    "registerButton": "Tạo tài khoản",
+    "noAccount": "Chưa có tài khoản?",
+    "hasAccount": "Đã có tài khoản?",
+    "registerLink": "Đăng ký",
+    "loginLink": "Đăng nhập"
+  },
+  "Dashboard": {
+    "subtitle": "Xây dựng từ vựng thông minh",
+    "nav": {
+      "home": "Tổng quan",
+      "vocabulary": "Từ vựng",
+      "review": "Ôn tập",
+      "analytics": "Phân tích",
+      "billing": "Thanh toán",
+      "settings": "Cài đặt",
+      "collapse": "Thu gọn Menu",
+      "logout": "Đăng xuất"
     },
-    "Header": {
-        "features": "Tính năng",
-        "how_it_works": "Cách hoạt động",
-        "language": "Ngôn ngữ"
+    "home": {
+      "title": "Chào mừng trở lại",
+      "subtitle": "Đây là tổng quan tiến độ học tập của bạn",
+      "stats": {
+        "totalWords": "Tổng số từ",
+        "activeWords": "Đang học",
+        "masteredWords": "Đã thành thạo",
+        "dueToday": "Cần ôn hôm nay",
+        "reviewsToday": "Đã ôn hôm nay",
+        "reviewsThisWeek": "Đã ôn tuần này",
+        "currentStreak": "Chuỗi học liên tiếp",
+        "totalStudyDays": "Tổng số ngày học"
+      },
+      "heatmap": {
+        "title": "Lịch sử học tập",
+        "less": "Ít hơn",
+        "more": "Nhiều hơn"
+      }
     },
-    "Hero": {
-        "badge": "🚀 Phiên bản mới v1.0",
-        "title": "Học từ vựng thụ động ngay khi <highlight>lướt web</highlight>",
-        "highlight": "lướt web",
-        "subtitle": "Đừng để việc tra từ làm gián đoạn việc đọc của bạn. LexiVocab giúp bạn dịch, lưu và ôn tập từ vựng tiếng Anh một cách tự nhiên nhất.",
-        "cta_install": "Thêm vào Chrome",
-        "cta_demo": "Xem Demo",
-        "users_count": "1000+ người dùng",
-        "rating": "5.0 đánh giá",
-        "saved_word": "Đã lưu từ!"
+    "vocabulary": {
+      "title": "Quản lý từ vựng",
+      "subtitle": "Quản lý tất cả từ vựng bạn đã lưu, thêm từ mới hoặc nhập hàng loạt.",
+      "searchPlaceholder": "Tìm kiếm từ...",
+      "addWord": "Thêm từ",
+      "batchImport": "Nhập hàng loạt",
+      "statusFilter": {
+        "all": "Tất cả trạng thái",
+        "active": "Đang học",
+        "archived": "Đã lưu trữ"
+      },
+      "table": {
+        "word": "Từ vựng",
+        "meaning": "Ý nghĩa",
+        "context": "Ngữ cảnh",
+        "level": "Cấp độ",
+        "nextReview": "Ôn tập kế tiếp",
+        "status": "Trạng thái",
+        "tag": "Thư mục",
+        "actions": "Hành động"
+      },
+      "badges": {
+        "active": "Đang học",
+        "archived": "Lưu trữ",
+        "new": "Mới",
+        "learning": "Đang học",
+        "mastered": "Thành thạo"
+      },
+      "actions": {
+        "edit": "Chỉnh sửa",
+        "archive": "Lưu trữ",
+        "unarchive": "Khôi phục",
+        "delete": "Xóa",
+        "source": "Mở liên kết gốc"
+      },
+      "empty": "Không tìm thấy từ vựng nào."
     },
-    "Features": {
-        "section_badge": "Tính năng nổi bật",
-        "title": "Mọi thứ bạn cần để học từ vựng hiệu quả",
-        "subtitle": "LexiVocab được thiết kế để giúp bạn xây dựng vốn từ vựng mà không cần thay đổi thói quen lướt web.",
-        "smart_bubble_title": "Smart Bubble",
-        "smart_bubble_desc": "Bôi đen từ bất kỳ để dịch nhanh. Lưu từ chỉ với 1 cú click mà không cần mở tab mới.",
-        "context_trans_title": "Dịch theo ngữ cảnh",
-        "context_trans_desc": "AI tự động phân tích câu để đưa ra nghĩa chính xác nhất và lưu kèm câu ví dụ.",
-        "highlight_title": "Tự động tô màu",
-        "highlight_desc": "Gặp lại từ đã lưu? Chúng tôi sẽ tô màu nó để nhắc nhở bạn ôn tập ngay lập tức.",
-        "highlight_badge": "HOT",
-        "dashboard_title": "Dashboard Từ vựng",
-        "dashboard_desc": "Quản lý kho từ vựng cá nhân, luyện nghe phát âm và theo dõi tiến độ học tập."
+    "review": {
+      "title": "Ôn tập hàng ngày",
+      "subtitle": "Làm chủ từ vựng với khoảng cách lặp lại",
+      "startSession": "Bắt đầu ôn tập",
+      "sessionComplete": "Đã hoàn thành ôn tập!",
+      "sessionStats": "Bạn đã ôn tập {count} từ hôm nay. Hãy tiếp tục phát huy!",
+      "backToDashboard": "Trở về Tổng quan",
+      "noReviews": "Bạn đã hoàn thành mục tiêu! Không có từ nào cần ôn tập lúc này.",
+      "cardFront": "Chạm để xem nghĩa",
+      "quality": {
+        "0": "Lại",
+        "1": "Khó",
+        "2": "Tốt",
+        "3": "Dễ"
+      },
+      "progress": "{current} / {total} từ"
     },
-    "Privacy": {
-        "title": "Chính sách bảo mật",
-        "last_updated": "Cập nhật lần cuối: 8 tháng 1, 2026",
-        "back": "Quay lại trang chủ",
-        "intro_title": "1. Giới thiệu",
-        "intro_desc": "Chào mừng bạn đến với LexiVocab. Chúng tôi tôn trọng quyền riêng tư của bạn và cam kết bảo vệ dữ liệu cá nhân của bạn. Chính sách bảo mật này sẽ thông báo cho bạn về cách chúng tôi chăm sóc dữ liệu cá nhân của bạn khi bạn sử dụng tiện ích mở rộng Chrome và trang web của chúng tôi.",
-        "data_title": "2. Dữ liệu chúng tôi thu thập",
-        "data_desc": "LexiVocab thu thập dữ liệu tối thiểu để cung cấp cho bạn trải nghiệm học từ vựng tốt nhất:",
-        "data_vocab": "Dữ liệu từ vựng: Các từ bạn lưu, bản dịch và câu ngữ cảnh. Dữ liệu này được lưu trữ cục bộ trên thiết bị của bạn.",
-        "data_settings": "Cài đặt: Tùy chọn của bạn như màu tô sáng và cài đặt ngôn ngữ.",
-        "data_analytics": "Phân tích sử dụng: Thống kê sử dụng ẩn danh để cải thiện dịch vụ của chúng tôi (tùy chọn).",
-        "usage_title": "3. Cách chúng tôi sử dụng dữ liệu của bạn",
-        "usage_provide": "Để cung cấp và duy trì dịch vụ của chúng tôi",
-        "usage_improve": "Để cải thiện và cá nhân hóa trải nghiệm của bạn",
-        "usage_understand": "Để hiểu cách người dùng tương tác với tiện ích mở rộng của chúng tôi",
-        "storage_title": "4. Lưu trữ dữ liệu",
-        "storage_desc": "Tất cả dữ liệu từ vựng của bạn được lưu trữ cục bộ trên thiết bị của bạn bằng API lưu trữ của Chrome. Chúng tôi không tải dữ liệu từ vựng cá nhân của bạn lên bất kỳ máy chủ bên ngoài nào.",
-        "third_party_title": "5. Dịch vụ bên thứ ba",
-        "third_party_desc": "Chúng tôi có thể sử dụng API dịch thuật của bên thứ ba để cung cấp bản dịch theo ngữ cảnh. Các dịch vụ này chỉ nhận văn bản bạn chọn dịch và không có quyền truy cập vào thông tin cá nhân hoặc từ vựng đã lưu của bạn.",
-        "rights_title": "6. Quyền của bạn",
-        "rights_desc": "Bạn có quyền truy cập, sửa hoặc xóa dữ liệu của mình bất cứ lúc nào thông qua cài đặt của tiện ích mở rộng. Bạn cũng có thể xuất dữ liệu từ vựng hoặc xóa tất cả dữ liệu đã lưu.",
-        "contact_title": "7. Liên hệ với chúng tôi",
-        "contact_desc": "Nếu bạn có bất kỳ câu hỏi nào về Chính sách bảo mật này, vui lòng liên hệ với chúng tôi tại:"
+    "analytics": {
+      "title": "Phân tích học tập",
+      "subtitle": "Chi tiết về hành trình học từ vựng của bạn",
+      "heatmaps": "Biểu đồ hoạt động",
+      "streaks": "Chuỗi hoạt động",
+      "currentStreak": "Chuỗi hiện tại",
+      "longestStreak": "Chuỗi dài nhất",
+      "activeDays": "Ngày hoạt động",
+      "distribution": "Phân bổ từ vựng",
+      "performance": "Hiệu suất ôn tập"
     },
-    "Terms": {
-        "title": "Điều khoản sử dụng",
-        "last_updated": "Cập nhật lần cuối: 8 tháng 1, 2026",
-        "back": "Quay lại trang chủ",
-        "acceptance_title": "1. Chấp nhận điều khoản",
-        "acceptance_desc": "Bằng cách cài đặt và sử dụng Tiện ích mở rộng Chrome LexiVocab, bạn đồng ý bị ràng buộc bởi các Điều khoản sử dụng này. Nếu bạn không đồng ý với các điều khoản này, vui lòng không sử dụng dịch vụ của chúng tôi.",
-        "description_title": "2. Mô tả dịch vụ",
-        "description_desc": "LexiVocab là một tiện ích mở rộng trình duyệt Chrome được thiết kế để giúp người dùng học từ vựng khi duyệt web. Các tính năng bao gồm dịch văn bản, lưu từ vựng, tô sáng từ và quản lý từ vựng.",
-        "responsibilities_title": "3. Trách nhiệm của người dùng",
-        "resp_personal": "Chỉ sử dụng tiện ích mở rộng cho mục đích cá nhân, phi thương mại",
-        "resp_reverse": "Không cố gắng thiết kế ngược hoặc sửa đổi tiện ích mở rộng",
-        "resp_illegal": "Không sử dụng tiện ích mở rộng cho bất kỳ hoạt động bất hợp pháp nào",
-        "resp_copyright": "Tôn trọng bản quyền khi lưu nội dung từ các trang web",
-        "ip_title": "4. Sở hữu trí tuệ",
-        "ip_desc": "LexiVocab và nội dung gốc, tính năng và chức năng của nó thuộc sở hữu của Phan Văn Thành và được bảo vệ bởi luật bản quyền quốc tế, nhãn hiệu và các luật sở hữu trí tuệ khác.",
-        "disclaimer_title": "5. Từ chối bảo hành",
-        "disclaimer_desc": "Tiện ích mở rộng được cung cấp \"nguyên trạng\" mà không có bất kỳ bảo hành nào. Chúng tôi không đảm bảo độ chính xác của bản dịch hoặc dịch vụ sẽ không bị gián đoạn hoặc không có lỗi.",
-        "liability_title": "6. Giới hạn trách nhiệm",
-        "liability_desc": "Trong mọi trường hợp, LexiVocab hoặc nhà phát triển của nó sẽ không chịu trách nhiệm về bất kỳ thiệt hại gián tiếp, ngẫu nhiên, đặc biệt, do hậu quả hoặc trừng phạt nào phát sinh từ việc bạn sử dụng tiện ích mở rộng.",
-        "changes_title": "7. Thay đổi điều khoản",
-        "changes_desc": "Chúng tôi có quyền sửa đổi các điều khoản này bất cứ lúc nào. Chúng tôi sẽ thông báo cho người dùng về những thay đổi quan trọng thông qua tiện ích mở rộng hoặc trang web của chúng tôi.",
-        "contact_title": "8. Liên hệ",
-        "contact_desc": "Nếu có bất kỳ câu hỏi nào về Điều khoản sử dụng này, vui lòng liên hệ với chúng tôi tại:"
-    },
-    "HowItWorks": {
-        "title": "Bắt đầu trong 3 bước đơn giản",
-        "subtitle": "Chỉ mất chưa đến 1 phút để cài đặt và bắt đầu học từ vựng mới.",
-        "step1_title": "Thêm vào Chrome",
-        "step1_desc": "Cài đặt LexiVocab từ Chrome Web Store hoàn toàn miễn phí.",
-        "step2_title": "Lướt web & Tra từ",
-        "step2_desc": "Bôi đen bất kỳ từ nào bạn muốn tra cứu khi đang đọc báo, xem tin tức.",
-        "step3_title": "Lưu & Học tập",
-        "step3_desc": "Lưu từ vựng vào kho cá nhân và hệ thống sẽ nhắc bạn ôn tập đúng lúc."
-    },
-    "Footer": {
-        "copyright": "© 2026 LexiVocab. Developed by Phan Văn Thành.",
-        "privacy": "Chính sách bảo mật",
-        "terms": "Điều khoản sử dụng",
-        "changelog": "Nhật ký thay đổi",
-        "legal": "Pháp lý",
-        "connect": "Kết nối",
-        "made_with_love": "Được tạo với ❤️ cho người học ngôn ngữ trên toàn thế giới"
-    },
-    "Uninstall": {
-        "title": "Rất tiếc khi phải chia tay bạn",
-        "subtitle": "Phản hồi của bạn giúp chúng tôi cải thiện LexiVocab tốt hơn cho mọi người. Bạn có thể cho chúng tôi biết lý do gỡ cài đặt không?",
-        "reasons": {
-            "buggy": "Nó bị lỗi hoặc hoạt động không chính xác",
-            "slow": "Nó làm chậm trình duyệt của tôi",
-            "complicated": "Nó quá phức tạp để sử dụng",
-            "alternative": "Tôi tìm thấy một giải pháp thay thế tốt hơn",
-            "not_useful": "Tôi không thấy nó hữu ích nữa",
-            "other": "Lý do khác"
-        },
-        "comment_placeholder": "Vui lòng cho chúng tôi biết thêm về cách chúng tôi có thể cải thiện... (Tùy chọn)",
-        "submit": "Gửi phản hồi",
-        "submitting": "Đang gửi...",
-        "thank_you_title": "Cảm ơn phản hồi của bạn!",
-        "thank_you_desc": "Chúng tôi thực sự trân trọng ý kiến đóng góp của bạn. Chúng tôi sẽ làm việc chăm chỉ để cải thiện LexiVocab.",
-        "back_home": "Quay lại trang chủ",
-        "reinstall": "Cài đặt lại tiện ích"
-    },
-    "Feedback": {
-        "title": "Góp ý & Báo lỗi",
-        "subtitle": "Bạn gặp lỗi hay có ý tưởng tính năng mới? Chúng tôi rất muốn lắng nghe bạn!",
-        "types": {
-            "bug": "Báo cáo lỗi",
-            "feature": "Yêu cầu tính năng",
-            "other": "Khác"
-        },
-        "message_label": "Nội dung",
-        "message_placeholder": "Mô tả chi tiết vấn đề hoặc ý tưởng...",
-        "contact_label": "Email (Tùy chọn)",
-        "contact_placeholder": "email@example.com",
-        "upload_label": "Đính kèm ảnh (Tùy chọn)",
-        "upload_placeholder": "Kéo thả hoặc click để tải ảnh lên",
-        "remove_image": "Xóa ảnh",
-        "rating_label": "Đánh giá trải nghiệm",
-        "submit": "Gửi phản hồi",
-        "submitting": "Đang gửi...",
-        "success_title": "Đã gửi thành công!",
-        "success_desc": "Cảm ơn bạn đã giúp LexiVocab ngày càng hoàn thiện hơn.",
-        "error_title": "Có lỗi xảy ra",
-        "error_desc": "Vui lòng thử lại sau.",
-        "back_home": "Quay lại trang chủ"
-    },
-    "Welcome": {
-        "demo_badge": "Thử Ngay",
-        "demo_title": "Trải nghiệm LexiVocab",
-        "demo_description": "Bôi đen từ \"serendipity\" bên dưới để xem cách LexiVocab giúp bạn lưu và học từ vựng mới.",
-        "demo_hint": "Bôi đen từ in đậm",
-        "demo_text_1": "Việc học ngôn ngữ thường xảy ra thông qua",
-        "demo_text_2": "— những tình cờ may mắn khi bạn gặp từ phù hợp vào đúng thời điểm.",
-        "demo_text_3": "Cách tốt nhất để mở rộng vốn từ vựng là thông qua tiếp xúc tự nhiên. Đọc các bài báo, tin tức bằng ngôn ngữ mục tiêu giúp bạn hiểu từ trong ngữ cảnh, giúp nhớ dễ hơn."
-    },
-    "Changelog": {
-        "title": "Nhật ký thay đổi",
-        "subtitle": "Theo dõi các cập nhật và cải tiến mới nhất của LexiVocab",
-        "version_title": "Phiên bản {version}",
-        "release_date": "Phát hành {date}",
-        "initial_release": "Phát hành phiên bản đầu tiên của tiện ích LexiVocab",
-        "update_enforcement": "Thêm cơ chế bắt buộc cập nhật phiên bản",
-        "mode_toggle_feature": "Chuyển đổi chế độ: Chuyển nhanh giữa Standard Mode và Compact Mode",
-        "realtime_input_translation": "Dịch khi gõ: Dịch văn bản ngay khi nhập bằng cách nhấn Space 3 lần",
-        "highlight_performance_optimization": "Tối ưu hiệu suất tô màu từ vựng"
-    },
-    "VideoDemo": {
-        "badge": "Video Demo",
-        "title": "Xem LexiVocab hoạt động thực tế",
-        "subtitle": "Khám phá cách LexiVocab giúp bạn học từ vựng một cách tự nhiên và hiệu quả khi lướt web",
-        "watch_now": "Nhấn để xem video",
-        "watch_youtube": "Xem trên YouTube"
+    "settings": {
+      "title": "Cài đặt",
+      "subtitle": "Quản lý tài khoản và tùy chọn ứng dụng.",
+      "profile": {
+        "title": "Hồ sơ",
+        "desc": "Cập nhật thông tin cá nhân của bạn.",
+        "name": "Họ và tên",
+        "email": "Địa chỉ email",
+        "role": "Loại tài khoản",
+        "joined": "Tham gia lúc"
+      },
+      "preferences": {
+        "title": "Tùy chọn",
+        "desc": "Tùy chỉnh trải nghiệm của bạn.",
+        "theme": "Giao diện",
+        "language": "Ngôn ngữ",
+        "dailyGoal": "Mục tiêu ôn tập hàng ngày",
+        "sync": "Đồng bộ dữ liệu tiện ích tự động"
+      },
+      "account": {
+        "title": "Hành động tài khoản",
+        "desc": "Quản lý bảo mật và dữ liệu của bạn.",
+        "changePassword": "Đổi mật khẩu",
+        "exportData": "Xuất dữ liệu của tôi",
+        "deleteAccount": "Xóa tài khoản"
+      },
+      "save": "Lưu thay đổi"
     }
+  },
+  "Hero": {
+    "badge": "🚀 Phiên bản mới v1.0",
+    "title": "Học từ vựng thụ động ngay khi <highlight>lướt web</highlight>",
+    "highlight": "lướt web",
+    "subtitle": "Đừng để việc tra từ làm gián đoạn việc đọc của bạn. LexiVocab giúp bạn dịch, lưu và ôn tập từ vựng tiếng Anh một cách tự nhiên nhất.",
+    "cta_install": "Thêm vào Chrome",
+    "cta_demo": "Xem Demo",
+    "users_count": "1000+ người dùng",
+    "rating": "5.0 đánh giá",
+    "saved_word": "Đã lưu từ!"
+  },
+  "Features": {
+    "section_badge": "Tính năng nổi bật",
+    "title": "Mọi thứ bạn cần để học từ vựng hiệu quả",
+    "subtitle": "LexiVocab được thiết kế để giúp bạn xây dựng vốn từ vựng mà không cần thay đổi thói quen lướt web.",
+    "smart_bubble_title": "Smart Bubble",
+    "smart_bubble_desc": "Bôi đen từ bất kỳ để dịch nhanh. Lưu từ chỉ với 1 cú click mà không cần mở tab mới.",
+    "context_trans_title": "Dịch theo ngữ cảnh",
+    "context_trans_desc": "AI tự động phân tích câu để đưa ra nghĩa chính xác nhất và lưu kèm câu ví dụ.",
+    "highlight_title": "Tự động tô màu",
+    "highlight_desc": "Gặp lại từ đã lưu? Chúng tôi sẽ tô màu nó để nhắc nhở bạn ôn tập ngay lập tức.",
+    "highlight_badge": "HOT",
+    "dashboard_title": "Dashboard Từ vựng",
+    "dashboard_desc": "Quản lý kho từ vựng cá nhân, luyện nghe phát âm và theo dõi tiến độ học tập."
+  },
+  "Pricing": {
+    "title": "Tăng tốc vốn từ vựng của bạn",
+    "subtitle": "Bắt đầu miễn phí, nâng cấp khi bạn sẵn sàng. Thanh toán một lần, sử dụng trọn đời.",
+    "badge": "Bảng giá đơn giản, minh bạch",
+    "free_plan": "Miễn phí",
+    "free_desc": "Bắt đầu học tập",
+    "free_price": "$0",
+    "forever": "mãi mãi",
+    "premium_plan": "Cao cấp",
+    "premium_desc": "Mở khóa tất cả tính năng",
+    "premium_price": "$9.99",
+    "lifetime": "trọn đời",
+    "best_value": "GIÁ TRỊ NHẤT",
+    "go_dashboard": "Tới Bảng Điểu Khiển",
+    "get_started": "Bắt đầu miễn phí",
+    "already_premium": "Bạn là thành viên Cao cấp ✨",
+    "upgrade": "Nâng cấp Cao cấp",
+    "processing": "Đang xử lý...",
+    "secure_payment": "Thanh toán an toàn. Mua một lần.",
+    "select_method": "Chọn hình thức thanh toán",
+    "method_paypal": "Thanh toán bằng PayPal",
+    "method_sepay": "Chuyển khoản Ngân hàng (SePay - VietQR)",
+    "payment_notice": "Sau khi thanh toán, tài khoản sẽ được nâng cấp tự động qua SePay.",
+    "features": {
+      "save_words": "Lưu tối đa 50 từ vựng",
+      "unlimited_vocab": "Lưu từ vựng không giới hạn",
+      "spaced_repetition": "Ôn tập ngắt quãng (SM-2)",
+      "chrome_extension": "Tiện ích Chrome",
+      "dashboard": "Bảng điều khiển & Phân tích",
+      "batch_import": "Nhập / Xuất hàng loạt",
+      "ai_features": "Tính năng AI thông minh",
+      "priority_support": "Hỗ trợ ưu tiên",
+      "data_export": "Xuất dữ liệu CSV & JSON"
+    },
+    "trust": {
+      "secure": "Thanh toán an toàn",
+      "lifetime": "Truy cập trọn đời",
+      "no_fees": "Không phí ẩn"
+    }
+  },
+  "Privacy": {
+    "title": "Chính sách bảo mật",
+    "last_updated": "Cập nhật lần cuối: 8 tháng 1, 2026",
+    "back": "Quay lại trang chủ",
+    "intro_title": "1. Giới thiệu",
+    "intro_desc": "Chào mừng bạn đến với LexiVocab. Chúng tôi tôn trọng quyền riêng tư của bạn và cam kết bảo vệ dữ liệu cá nhân của bạn. Chính sách bảo mật này sẽ thông báo cho bạn về cách chúng tôi chăm sóc dữ liệu cá nhân của bạn khi bạn sử dụng tiện ích mở rộng Chrome và trang web của chúng tôi.",
+    "data_title": "2. Dữ liệu chúng tôi thu thập",
+    "data_desc": "LexiVocab thu thập dữ liệu tối thiểu để cung cấp cho bạn trải nghiệm học từ vựng tốt nhất:",
+    "data_vocab": "Dữ liệu từ vựng: Các từ bạn lưu, bản dịch và câu ngữ cảnh. Dữ liệu này được lưu trữ cục bộ trên thiết bị của bạn.",
+    "data_settings": "Cài đặt: Tùy chọn của bạn như màu tô sáng và cài đặt ngôn ngữ.",
+    "data_analytics": "Phân tích sử dụng: Thống kê sử dụng ẩn danh để cải thiện dịch vụ của chúng tôi (tùy chọn).",
+    "usage_title": "3. Cách chúng tôi sử dụng dữ liệu của bạn",
+    "usage_provide": "Để cung cấp và duy trì dịch vụ của chúng tôi",
+    "usage_improve": "Để cải thiện và cá nhân hóa trải nghiệm của bạn",
+    "usage_understand": "Để hiểu cách người dùng tương tác với tiện ích mở rộng của chúng tôi",
+    "storage_title": "4. Lưu trữ dữ liệu",
+    "storage_desc": "Tất cả dữ liệu từ vựng của bạn được lưu trữ cục bộ trên thiết bị của bạn bằng API lưu trữ của Chrome. Chúng tôi không tải dữ liệu từ vựng cá nhân của bạn lên bất kỳ máy chủ bên ngoài nào.",
+    "third_party_title": "5. Dịch vụ bên thứ ba",
+    "third_party_desc": "Chúng tôi có thể sử dụng API dịch thuật của bên thứ ba để cung cấp bản dịch theo ngữ cảnh. Các dịch vụ này chỉ nhận văn bản bạn chọn dịch và không có quyền truy cập vào thông tin cá nhân hoặc từ vựng đã lưu của bạn.",
+    "rights_title": "6. Quyền của bạn",
+    "rights_desc": "Bạn có quyền truy cập, sửa hoặc xóa dữ liệu của mình bất cứ lúc nào thông qua cài đặt của tiện ích mở rộng. Bạn cũng có thể xuất dữ liệu từ vựng hoặc xóa tất cả dữ liệu đã lưu.",
+    "contact_title": "7. Liên hệ với chúng tôi",
+    "contact_desc": "Nếu bạn có bất kỳ câu hỏi nào về Chính sách bảo mật này, vui lòng liên hệ với chúng tôi tại:"
+  },
+  "Terms": {
+    "title": "Điều khoản sử dụng",
+    "last_updated": "Cập nhật lần cuối: 8 tháng 1, 2026",
+    "back": "Quay lại trang chủ",
+    "acceptance_title": "1. Chấp nhận điều khoản",
+    "acceptance_desc": "Bằng cách cài đặt và sử dụng Tiện ích mở rộng Chrome LexiVocab, bạn đồng ý bị ràng buộc bởi các Điều khoản sử dụng này. Nếu bạn không đồng ý với các điều khoản này, vui lòng không sử dụng dịch vụ của chúng tôi.",
+    "description_title": "2. Mô tả dịch vụ",
+    "description_desc": "LexiVocab là một tiện ích mở rộng trình duyệt Chrome được thiết kế để giúp người dùng học từ vựng khi duyệt web. Các tính năng bao gồm dịch văn bản, lưu từ vựng, tô sáng từ và quản lý từ vựng.",
+    "responsibilities_title": "3. Trách nhiệm của người dùng",
+    "resp_personal": "Chỉ sử dụng tiện ích mở rộng cho mục đích cá nhân, phi thương mại",
+    "resp_reverse": "Không cố gắng thiết kế ngược hoặc sửa đổi tiện ích mở rộng",
+    "resp_illegal": "Không sử dụng tiện ích mở rộng cho bất kỳ hoạt động bất hợp pháp nào",
+    "resp_copyright": "Tôn trọng bản quyền khi lưu nội dung từ các trang web",
+    "ip_title": "4. Sở hữu trí tuệ",
+    "ip_desc": "LexiVocab và nội dung gốc, tính năng và chức năng của nó thuộc sở hữu của Phan Văn Thành và được bảo vệ bởi luật bản quyền quốc tế, nhãn hiệu và các luật sở hữu trí tuệ khác.",
+    "disclaimer_title": "5. Từ chối bảo hành",
+    "disclaimer_desc": "Tiện ích mở rộng được cung cấp \"nguyên trạng\" mà không có bất kỳ bảo hành nào. Chúng tôi không đảm bảo độ chính xác của bản dịch hoặc dịch vụ sẽ không bị gián đoạn hoặc không có lỗi.",
+    "liability_title": "6. Giới hạn trách nhiệm",
+    "liability_desc": "Trong mọi trường hợp, LexiVocab hoặc nhà phát triển của nó sẽ không chịu trách nhiệm về bất kỳ thiệt hại gián tiếp, ngẫu nhiên, đặc biệt, do hậu quả hoặc trừng phạt nào phát sinh từ việc bạn sử dụng tiện ích mở rộng.",
+    "changes_title": "7. Thay đổi điều khoản",
+    "changes_desc": "Chúng tôi có quyền sửa đổi các điều khoản này bất cứ lúc nào. Chúng tôi sẽ thông báo cho người dùng về những thay đổi quan trọng thông qua tiện ích mở rộng hoặc trang web của chúng tôi.",
+    "contact_title": "8. Liên hệ",
+    "contact_desc": "Nếu có bất kỳ câu hỏi nào về Điều khoản sử dụng này, vui lòng liên hệ với chúng tôi tại:"
+  },
+  "HowItWorks": {
+    "title": "Bắt đầu trong 3 bước đơn giản",
+    "subtitle": "Chỉ mất chưa đến 1 phút để cài đặt và bắt đầu học từ vựng mới.",
+    "step1_title": "Thêm vào Chrome",
+    "step1_desc": "Cài đặt LexiVocab từ Chrome Web Store hoàn toàn miễn phí.",
+    "step2_title": "Lướt web & Tra từ",
+    "step2_desc": "Bôi đen bất kỳ từ nào bạn muốn tra cứu khi đang đọc báo, xem tin tức.",
+    "step3_title": "Lưu & Học tập",
+    "step3_desc": "Lưu từ vựng vào kho cá nhân và hệ thống sẽ nhắc bạn ôn tập đúng lúc."
+  },
+  "Footer": {
+    "copyright": "© 2026 LexiVocab. Developed by Phan Văn Thành.",
+    "privacy": "Chính sách bảo mật",
+    "terms": "Điều khoản sử dụng",
+    "changelog": "Nhật ký thay đổi",
+    "legal": "Pháp lý",
+    "connect": "Kết nối",
+    "made_with_love": "Được tạo với ❤️ cho người học ngôn ngữ trên toàn thế giới"
+  },
+  "Uninstall": {
+    "title": "Rất tiếc khi phải chia tay bạn",
+    "subtitle": "Phản hồi của bạn giúp chúng tôi cải thiện LexiVocab tốt hơn cho mọi người. Bạn có thể cho chúng tôi biết lý do gỡ cài đặt không?",
+    "reasons": {
+      "buggy": "Nó bị lỗi hoặc hoạt động không chính xác",
+      "slow": "Nó làm chậm trình duyệt của tôi",
+      "complicated": "Nó quá phức tạp để sử dụng",
+      "alternative": "Tôi tìm thấy một giải pháp thay thế tốt hơn",
+      "not_useful": "Tôi không thấy nó hữu ích nữa",
+      "other": "Lý do khác"
+    },
+    "comment_placeholder": "Vui lòng cho chúng tôi biết thêm về cách chúng tôi có thể cải thiện... (Tùy chọn)",
+    "submit": "Gửi phản hồi",
+    "submitting": "Đang gửi...",
+    "thank_you_title": "Cảm ơn phản hồi của bạn!",
+    "thank_you_desc": "Chúng tôi thực sự trân trọng ý kiến đóng góp của bạn. Chúng tôi sẽ làm việc chăm chỉ để cải thiện LexiVocab.",
+    "back_home": "Quay lại trang chủ",
+    "reinstall": "Cài đặt lại tiện ích"
+  },
+  "Feedback": {
+    "title": "Góp ý & Báo lỗi",
+    "subtitle": "Bạn gặp lỗi hay có ý tưởng tính năng mới? Chúng tôi rất muốn lắng nghe bạn!",
+    "types": {
+      "bug": "Báo cáo lỗi",
+      "feature": "Yêu cầu tính năng",
+      "other": "Khác"
+    },
+    "message_label": "Nội dung",
+    "message_placeholder": "Mô tả chi tiết vấn đề hoặc ý tưởng...",
+    "contact_label": "Email (Tùy chọn)",
+    "contact_placeholder": "email@example.com",
+    "upload_label": "Đính kèm ảnh (Tùy chọn)",
+    "upload_placeholder": "Kéo thả hoặc click để tải ảnh lên",
+    "remove_image": "Xóa ảnh",
+    "rating_label": "Đánh giá trải nghiệm",
+    "submit": "Gửi phản hồi",
+    "submitting": "Đang gửi...",
+    "success_title": "Đã gửi thành công!",
+    "success_desc": "Cảm ơn bạn đã giúp LexiVocab ngày càng hoàn thiện hơn.",
+    "error_title": "Có lỗi xảy ra",
+    "error_desc": "Vui lòng thử lại sau.",
+    "back_home": "Quay lại trang chủ"
+  },
+  "Welcome": {
+    "demo_badge": "Thử Ngay",
+    "demo_title": "Trải nghiệm LexiVocab",
+    "demo_description": "Bôi đen từ \"serendipity\" bên dưới để xem cách LexiVocab giúp bạn lưu và học từ vựng mới.",
+    "demo_hint": "Bôi đen từ in đậm",
+    "demo_text_1": "Việc học ngôn ngữ thường xảy ra thông qua",
+    "demo_text_2": "— những tình cờ may mắn khi bạn gặp từ phù hợp vào đúng thời điểm.",
+    "demo_text_3": "Cách tốt nhất để mở rộng vốn từ vựng là thông qua tiếp xúc tự nhiên. Đọc các bài báo, tin tức bằng ngôn ngữ mục tiêu giúp bạn hiểu từ trong ngữ cảnh, giúp nhớ dễ hơn."
+  },
+  "Changelog": {
+    "title": "Nhật ký thay đổi",
+    "subtitle": "Theo dõi các cập nhật và cải tiến mới nhất của LexiVocab",
+    "version_title": "Phiên bản {version}",
+    "release_date": "Phát hành {date}",
+    "initial_release": "Phát hành phiên bản đầu tiên của tiện ích LexiVocab",
+    "update_enforcement": "Thêm cơ chế bắt buộc cập nhật phiên bản",
+    "mode_toggle_feature": "Chuyển đổi chế độ: Chuyển nhanh giữa Standard Mode và Compact Mode",
+    "realtime_input_translation": "Dịch khi gõ: Dịch văn bản ngay khi nhập bằng cách nhấn Space 3 lần",
+    "highlight_performance_optimization": "Tối ưu hiệu suất tô màu từ vựng"
+  },
+  "VideoDemo": {
+    "badge": "Video Demo",
+    "title": "Xem LexiVocab hoạt động thực tế",
+    "subtitle": "Khám phá cách LexiVocab giúp bạn học từ vựng một cách tự nhiên và hiệu quả khi lướt web",
+    "watch_now": "Nhấn để xem video",
+    "watch_youtube": "Xem trên YouTube"
+  },
+  "Checkout": {
+    "processing_title": "Đang xử lý thanh toán...",
+    "processing_subtitle": "Vui lòng không đóng cửa sổ này",
+    "success_title": "Thanh toán thành công!",
+    "success_subtitle": "Cảm ơn bạn đã nâng cấp Premium. Tài khoản của bạn đã được cập nhật.",
+    "error_title": "Thanh toán thất bại",
+    "try_again": "Thử lại",
+    "go_dashboard": "Về Dashboard"
+  },
+  "Admin.auditLogs": {
+    "title": "Nhật ký hệ thống",
+    "subtitle": "Theo dõi các hoạt động trong hệ thống",
+    "searchPlaceholder": "Tìm kiếm theo Action hoặc Email...",
+    "table": {
+      "date": "Thời gian",
+      "user": "Người dùng",
+      "action": "Hành động",
+      "entity": "Thực thể",
+      "details": "Chi tiết"
+    },
+    "empty": "Không có dữ liệu",
+    "emptySubtitle": "Không tìm thấy nhật ký nào khớp với bộ lọc."
+  },
+  "Tags": {
+    "title": "Thư mục của bạn",
+    "createPlaceholder": "Tên thư mục mới...",
+    "empty": "Chưa có thư mục nào. Hãy tạo mới để phân loại từ vựng.",
+    "deleteConfirm": "Bạn có chắc chắn muốn xóa thư mục này?",
+    "add": "Thêm",
+    "placeholder": "Phân loại vào thư mục...",
+    "default": "Mặc định (Không thư mục)"
+  }
 }

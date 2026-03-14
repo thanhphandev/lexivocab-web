@@ -15,13 +15,16 @@ import {
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { locales, languageNames } from '@/lib/i18n';
 import { siteConfig } from '@/lib/config';
+import { useAuth } from '@/lib/auth/auth-context';
 
 export default function Header({ locale }: { locale: string }) {
     const t = useTranslations('Header');
     const tHero = useTranslations('Hero');
+    const tAuth = useTranslations('Auth');
 
     const router = useRouter();
     const pathname = usePathname();
+    const { isAuthenticated, isLoading } = useAuth();
 
     const handleLanguageChange = (newLocale: string) => {
         const segments = pathname.split('/');
@@ -85,15 +88,34 @@ export default function Header({ locale }: { locale: string }) {
                             </DropdownMenuContent>
                         </DropdownMenu>
 
-                        <a href={siteConfig.chromeWebStoreUrl} target="_blank" rel="noopener noreferrer">
-                            <Button
-                                size="sm"
-                                className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-md shadow-orange-500/20"
-                            >
-                                <Download className="w-4 h-4 mr-2" />
-                                {tHero('cta_install')}
-                            </Button>
-                        </a>
+                        <div className="flex items-center gap-2 border-l pl-4 ml-2 border-border/50">
+                            {isLoading ? (
+                                <div className="w-20 h-8 animate-pulse bg-muted rounded-md" />
+                            ) : isAuthenticated ? (
+                                <Link href={`/${locale}/dashboard`}>
+                                    <Button
+                                        className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm font-semibold px-5"
+                                    >
+                                        Dashboard
+                                    </Button>
+                                </Link>
+                            ) : (
+                                <>
+                                    <Link href={`/${locale}/auth/login`}>
+                                        <Button variant="ghost" className="font-semibold text-muted-foreground hover:text-foreground">
+                                            {tAuth('loginLink')}
+                                        </Button>
+                                    </Link>
+                                    <Link href={`/${locale}/auth/register`}>
+                                        <Button
+                                            className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm font-semibold px-5"
+                                        >
+                                            {tAuth('registerButton')}
+                                        </Button>
+                                    </Link>
+                                </>
+                            )}
+                        </div>
                     </div>
                 </div>
 
@@ -136,15 +158,30 @@ export default function Header({ locale }: { locale: string }) {
                                     ))}
                                 </div>
                             </div>
-                            <hr className="my-2" />
-                            <a href={siteConfig.chromeWebStoreUrl} target="_blank" rel="noopener noreferrer" className="w-full">
-                                <Button
-                                    className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600"
-                                >
-                                    <Download className="w-4 h-4 mr-2" />
-                                    {tHero('cta_install')}
-                                </Button>
-                            </a>
+                            <div className="flex flex-col gap-2 mt-4">
+                                {isLoading ? (
+                                    <div className="w-full h-10 animate-pulse bg-muted rounded-md" />
+                                ) : isAuthenticated ? (
+                                    <Link href={`/${locale}/dashboard`} className="w-full">
+                                        <Button className="w-full justify-center bg-primary text-primary-foreground">
+                                            Dashboard
+                                        </Button>
+                                    </Link>
+                                ) : (
+                                    <>
+                                        <Link href={`/${locale}/auth/login`} className="w-full">
+                                            <Button variant="outline" className="w-full justify-center">
+                                                {tAuth('loginLink')}
+                                            </Button>
+                                        </Link>
+                                        <Link href={`/${locale}/auth/register`} className="w-full">
+                                            <Button className="w-full justify-center bg-primary text-primary-foreground">
+                                                {tAuth('registerButton')}
+                                            </Button>
+                                        </Link>
+                                    </>
+                                )}
+                            </div>
                         </nav>
                     </SheetContent>
                 </Sheet>

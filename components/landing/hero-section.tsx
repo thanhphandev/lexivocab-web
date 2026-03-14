@@ -3,8 +3,10 @@
 import { Button } from "@/components/ui/button";
 import { useTranslations } from 'next-intl';
 import { motion } from "framer-motion";
-import { Download, Sparkles, Play, ChevronRight } from "lucide-react";
+import { Download, Sparkles, Play, ChevronRight, ArrowRight, Chrome } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
+import { useLocale } from "next-intl";
 import { siteConfig } from "@/lib/config";
 
 // Avatar data with local images
@@ -17,6 +19,8 @@ const avatars = [
 
 export default function HeroSection() {
     const t = useTranslations('Hero');
+    const tAuth = useTranslations('Auth');
+    const locale = useLocale();
 
     return (
         <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden">
@@ -123,25 +127,26 @@ export default function HeroSection() {
                             transition={{ duration: 0.5, delay: 0.4 }}
                             className="flex flex-col sm:flex-row gap-4"
                         >
-                            <a href={siteConfig.chromeWebStoreUrl} target="_blank" rel="noopener noreferrer">
+                            <Link href={`/${locale}/auth/register`}>
                                 <Button
                                     size="lg"
-                                    className="group h-14 px-8 text-lg font-semibold bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 shadow-lg shadow-orange-500/25 transition-all duration-300 hover:shadow-xl hover:shadow-orange-500/30 hover:-translate-y-1"
+                                    className="group h-14 px-8 text-lg font-semibold bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/25 transition-all duration-300 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-1"
                                 >
-                                    <Download className="w-5 h-5 mr-2 transition-transform group-hover:-translate-y-0.5" />
+                                    {tAuth('registerButton')}
+                                    <ArrowRight className="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1" />
+                                </Button>
+                            </Link>
+
+                            <a href={siteConfig.chromeWebStoreUrl} target="_blank" rel="noopener noreferrer">
+                                <Button
+                                    variant="outline"
+                                    size="lg"
+                                    className="group h-14 px-8 text-lg font-semibold border-2 hover:bg-muted transition-all duration-300"
+                                >
+                                    <Chrome className="w-5 h-5 mr-2 text-muted-foreground transition-transform group-hover:scale-110" />
                                     {t('cta_install')}
-                                    <ChevronRight className="w-4 h-4 ml-1 transition-transform group-hover:translate-x-0.5" />
                                 </Button>
                             </a>
-                            <Button
-                                variant="outline"
-                                size="lg"
-                                className="group h-14 px-8 text-lg font-semibold border-2 border-orange-200/80 hover:bg-orange-50 hover:border-orange-300 transition-all duration-300"
-                                onClick={() => document.getElementById('demo-video')?.scrollIntoView({ behavior: 'smooth' })}
-                            >
-                                <Play className="w-5 h-5 mr-2 text-orange-500 transition-transform group-hover:scale-110" />
-                                {t('cta_demo')}
-                            </Button>
                         </motion.div>
 
                         {/* Social Proof - Avatars with real images */}
@@ -209,25 +214,43 @@ export default function HeroSection() {
                         </motion.div>
                     </motion.div>
 
-                    {/* Right Content - Showcase Image */}
+                    {/* Right Content - Mockup Showcase */}
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.8, delay: 0.3 }}
+                        initial={{ opacity: 0, scale: 0.95, rotateX: 10, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, rotateX: 0, y: 0 }}
+                        transition={{ duration: 0.8, delay: 0.3, type: "spring", stiffness: 100 }}
+                        style={{ perspective: 1000 }}
                         className="relative hidden lg:block"
                     >
                         {/* Glow effect behind image */}
-                        <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 to-amber-500/20 blur-3xl transform scale-105 -z-10" />
+                        <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-amber-500/20 blur-[80px] -z-10 rounded-full" />
 
-                        <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-orange-500/10 border border-orange-100/50">
-                            <Image
-                                src="/hero-showcase.png"
-                                alt="LexiVocab Showcase"
-                                width={800}
-                                height={600}
-                                className="w-full h-auto object-cover"
-                                priority
-                            />
+                        {/* Browser Window Mockup */}
+                        <div className="relative rounded-xl overflow-hidden shadow-2xl shadow-primary/10 border border-border/50 bg-background/50 backdrop-blur-xl">
+                            {/* Browser Header */}
+                            <div className="flex items-center px-4 py-3 border-b border-border/50 bg-muted/30">
+                                <div className="flex gap-2">
+                                    <div className="w-3 h-3 rounded-full bg-red-400/80" />
+                                    <div className="w-3 h-3 rounded-full bg-amber-400/80" />
+                                    <div className="w-3 h-3 rounded-full bg-green-400/80" />
+                                </div>
+                                <div className="mx-auto px-4 py-1 text-xs font-medium text-muted-foreground bg-background/50 rounded-md border border-border/50 backdrop-blur-md">
+                                    app.lexivocab.com
+                                </div>
+                            </div>
+
+                            {/* Browser Content */}
+                            <div className="relative aspect-[4/3] w-full bg-muted/10">
+                                <Image
+                                    src="/hero-showcase.png"
+                                    alt="LexiVocab Dashboard"
+                                    fill
+                                    className="object-cover object-top"
+                                    priority
+                                />
+                                {/* Overlay gradient to merge bottom edge smoothly */}
+                                <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-background to-transparent" />
+                            </div>
                         </div>
                     </motion.div>
                 </div>

@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import { Geist, Geist_Mono } from "next/font/google";
 import type { Metadata } from 'next';
 import "../globals.css";
-import Header from '@/components/landing/header';
+import { AuthProvider } from "@/lib/auth/auth-context";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -161,8 +161,9 @@ export default async function LocaleLayout({
             </head>
             <body className={`${geistSans.variable} ${geistMono.variable} antialiased font-sans`}>
                 <NextIntlClientProvider messages={messages}>
-                    <Header locale={locale} />
-                    {children}
+                    <AuthProvider>
+                        {children}
+                    </AuthProvider>
                 </NextIntlClientProvider>
             </body>
         </html>

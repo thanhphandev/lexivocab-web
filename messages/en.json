@@ -1,174 +1,393 @@
 {
-    "Metadata": {
-        "title": "LexiVocab - Learn Vocabulary While Browsing",
-        "titleTemplate": "%s | LexiVocab",
-        "description": "Chrome extension that helps you translate, save, and review English vocabulary naturally while browsing the web. Master vocabulary one click at a time.",
-        "keywords": "vocabulary learning, learn english, chrome extension, vocabulary builder, language learning, flashcards, word translator, contextual translation"
+  "Metadata": {
+    "title": "LexiVocab - Learn Vocabulary While Browsing",
+    "titleTemplate": "%s | LexiVocab",
+    "description": "Chrome extension that helps you translate, save, and review English vocabulary naturally while browsing the web. Master vocabulary one click at a time.",
+    "keywords": "vocabulary learning, learn english, chrome extension, vocabulary builder, language learning, flashcards, word translator, contextual translation"
+  },
+  "Header": {
+    "features": "Features",
+    "how_it_works": "How it Works",
+    "language": "Language"
+  },
+  "Auth": {
+    "loginTitle": "Welcome Back",
+    "loginSubtitle": "Sign in to manage your vocabulary and track your progress",
+    "registerTitle": "Create an Account",
+    "registerSubtitle": "Start mastering new vocabulary today",
+    "email": "Email address",
+    "emailPlaceholder": "you@example.com",
+    "password": "Password",
+    "passwordPlaceholder": "••••••••",
+    "fullName": "Full Name",
+    "fullNamePlaceholder": "John Doe",
+    "loginButton": "Sign in",
+    "registerButton": "Create account",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "registerLink": "Sign up",
+    "loginLink": "Sign in"
+  },
+  "Dashboard": {
+    "subtitle": "Smart Vocabulary Builder",
+    "nav": {
+      "home": "Dashboard",
+      "vocabulary": "Vocabulary",
+      "review": "Review",
+      "analytics": "Analytics",
+      "billing": "Billing",
+      "settings": "Settings",
+      "collapse": "Collapse sidebar",
+      "logout": "Log out"
     },
-    "Header": {
-        "features": "Features",
-        "how_it_works": "How it Works",
-        "language": "Language"
+    "billing": {
+      "title": "Billing & Subscription",
+      "subtitle": "Manage your plan and view payment history.",
+      "plan_quota": "Plan Quota",
+      "used_space": "Used Space",
+      "unlimited": "Unlimited",
+      "permissions": "Plan Permissions",
+      "export_data": "Export Data (CSV/JSON)",
+      "ai_features": "AI Meaning & Context",
+      "batch_import": "Batch Import",
+      "history": "Payment History"
     },
-    "Hero": {
-        "badge": "🚀 New Release v1.0",
-        "title": "Learn vocabulary passively while <highlight>browsing the web</highlight>",
-        "subtitle": "Don't let dictionary lookups interrupt your reading flow. LexiVocab helps you translate, save, and review English vocabulary naturally.",
-        "cta_install": "Add to Chrome",
-        "cta_demo": "Watch Demo",
-        "users_count": "1000+ users",
-        "rating": "5.0 rating",
-        "saved_word": "Word saved!"
+    "home": {
+      "title": "Welcome Back",
+      "subtitle": "Here is your learning progress overview",
+      "stats": {
+        "totalWords": "Total Words",
+        "activeWords": "Active Words",
+        "masteredWords": "Mastered Words",
+        "dueToday": "Due Today",
+        "reviewsToday": "Reviews Today",
+        "reviewsThisWeek": "Reviews This Week",
+        "currentStreak": "Current Streak",
+        "totalStudyDays": "Total Study Days"
+      },
+      "heatmap": {
+        "title": "Study History",
+        "less": "Less",
+        "more": "More"
+      }
     },
-    "Features": {
-        "section_badge": "Key Features",
-        "title": "Everything you need to learn vocabulary effectively",
-        "subtitle": "LexiVocab is designed to help you build your vocabulary without changing your browsing habits.",
-        "smart_bubble_title": "Smart Bubble",
-        "smart_bubble_desc": "Highlight any text to translate quickly. Save words with just one click without opening a new tab.",
-        "context_trans_title": "Contextual Translation",
-        "context_trans_desc": "AI automatically analyzes sentences to provide the most accurate meaning and saves with example sentences.",
-        "highlight_title": "Auto Highlight",
-        "highlight_desc": "Encounter a saved word again? We'll highlight it to remind you to review immediately.",
-        "highlight_badge": "HOT",
-        "dashboard_title": "Vocabulary Dashboard",
-        "dashboard_desc": "Manage your personal vocabulary, practice pronunciation, and track learning progress."
+    "vocabulary": {
+      "title": "Vocabulary Manager",
+      "subtitle": "Manage all your saved words, add new ones, or batch import.",
+      "searchPlaceholder": "Search words...",
+      "addWord": "Add Word",
+      "batchImport": "Batch Import",
+      "statusFilter": {
+        "all": "All Status",
+        "active": "Active",
+        "archived": "Archived"
+      },
+      "table": {
+        "word": "Word",
+        "meaning": "Meaning",
+        "context": "Context",
+        "level": "Level",
+        "nextReview": "Next Review",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "badges": {
+        "active": "Active",
+        "archived": "Archived",
+        "new": "New",
+        "learning": "Learning",
+        "mastered": "Mastered"
+      },
+      "actions": {
+        "edit": "Edit",
+        "archive": "Archive",
+        "unarchive": "Restore",
+        "delete": "Delete",
+        "source": "Open Source URL"
+      },
+      "empty": "No vocabulary words found."
     },
-    "Privacy": {
-        "title": "Privacy Policy",
-        "last_updated": "Last updated: January 8, 2026",
-        "back": "Back to Home",
-        "intro_title": "1. Introduction",
-        "intro_desc": "Welcome to LexiVocab. We respect your privacy and are committed to protecting your personal data. This privacy policy will inform you as to how we look after your personal data when you use our Chrome extension and website.",
-        "data_title": "2. Data We Collect",
-        "data_desc": "LexiVocab collects minimal data to provide you with the best vocabulary learning experience:",
-        "data_vocab": "Vocabulary Data: The words you save, translations, and context sentences. This data is stored locally on your device.",
-        "data_settings": "Settings: Your preferences such as highlight colors and language settings.",
-        "data_analytics": "Usage Analytics: Anonymous usage statistics to improve our service (optional).",
-        "usage_title": "3. How We Use Your Data",
-        "usage_provide": "To provide and maintain our service",
-        "usage_improve": "To improve and personalize your experience",
-        "usage_understand": "To understand how users interact with our extension",
-        "storage_title": "4. Data Storage",
-        "storage_desc": "All your vocabulary data is stored locally on your device using Chrome's Storage API. We do not upload your personal vocabulary data to any external servers.",
-        "third_party_title": "5. Third-Party Services",
-        "third_party_desc": "We may use third-party translation APIs to provide contextual translations. These services only receive the text you choose to translate and do not have access to your personal information or saved vocabulary.",
-        "rights_title": "6. Your Rights",
-        "rights_desc": "You have the right to access, correct, or delete your data at any time through the extension settings. You can also export your vocabulary data or clear all saved data.",
-        "contact_title": "7. Contact Us",
-        "contact_desc": "If you have any questions about this Privacy Policy, please contact us at:"
+    "review": {
+      "title": "Daily Review",
+      "subtitle": "Master your vocabulary with spaced repetition",
+      "startSession": "Start Session",
+      "sessionComplete": "Session Complete!",
+      "sessionStats": "You've reviewed {count} words today. Keep up the great work!",
+      "backToDashboard": "Back to Dashboard",
+      "noReviews": "You're all caught up! No words are due for review right now.",
+      "cardFront": "Tap to reveal meaning",
+      "quality": {
+        "0": "Again",
+        "1": "Hard",
+        "2": "Good",
+        "3": "Easy"
+      },
+      "progress": "{current} of {total} words"
     },
-    "Terms": {
-        "title": "Terms of Use",
-        "last_updated": "Last updated: January 8, 2026",
-        "back": "Back to Home",
-        "acceptance_title": "1. Acceptance of Terms",
-        "acceptance_desc": "By installing and using the LexiVocab Chrome Extension, you agree to be bound by these Terms of Use. If you do not agree to these terms, please do not use our service.",
-        "description_title": "2. Service Description",
-        "description_desc": "LexiVocab is a Chrome browser extension designed to help users learn vocabulary while browsing. Features include text translation, vocabulary saving, word highlighting, and vocabulary management.",
-        "responsibilities_title": "3. User Responsibilities",
-        "resp_personal": "Use the extension only for personal, non-commercial purposes",
-        "resp_reverse": "Do not attempt to reverse engineer or modify the extension",
-        "resp_illegal": "Do not use the extension for any illegal activities",
-        "resp_copyright": "Respect copyright when saving content from websites",
-        "ip_title": "4. Intellectual Property",
-        "ip_desc": "LexiVocab and its original content, features, and functionality are owned by Phan Van Thanh and are protected by international copyright, trademark, and other intellectual property laws.",
-        "disclaimer_title": "5. Disclaimer of Warranty",
-        "disclaimer_desc": "The extension is provided \"as is\" without any warranty. We do not guarantee the accuracy of translations or that the service will be uninterrupted or error-free.",
-        "liability_title": "6. Limitation of Liability",
-        "liability_desc": "In no event shall LexiVocab or its developers be liable for any indirect, incidental, special, consequential or punitive damages arising out of your use of the extension.",
-        "changes_title": "7. Changes to Terms",
-        "changes_desc": "We reserve the right to modify these terms at any time. We will notify users of any material changes through the extension or our website.",
-        "contact_title": "8. Contact",
-        "contact_desc": "If you have any questions about these Terms of Use, please contact us at:"
+    "analytics": {
+      "title": "Learning Analytics",
+      "subtitle": "Detailed insights into your vocabulary journey",
+      "heatmaps": "Study Heatmaps",
+      "streaks": "Activity Streaks",
+      "currentStreak": "Current Streak",
+      "longestStreak": "Longest Streak",
+      "activeDays": "Active Days",
+      "distribution": "Word Distribution",
+      "performance": "Review Performance"
     },
-    "HowItWorks": {
-        "title": "Get started in 3 simple steps",
-        "subtitle": "It takes less than 1 minute to install and start learning new vocabulary.",
-        "step1_title": "Add to Chrome",
-        "step1_desc": "Install LexiVocab from the Chrome Web Store for free.",
-        "step2_title": "Browse & Look up",
-        "step2_desc": "Highlight any word you want to lookup while reading articles or news.",
-        "step3_title": "Save & Learn",
-        "step3_desc": "Save vocabulary to your personal collection and get reminded to review at the right time."
-    },
-    "Footer": {
-        "copyright": "© 2026 LexiVocab. Developed by Phan Văn Thành.",
-        "privacy": "Privacy Policy",
-        "terms": "Terms of Service",
-        "changelog": "Changelog",
-        "legal": "Legal",
-        "connect": "Connect",
-        "made_with_love": "Made with ❤️ for language learners worldwide"
-    },
-    "Uninstall": {
-        "title": "We're sorry to see you go",
-        "subtitle": "Your feedback helps us improve LexiVocab for everyone. Could you tell us why you're uninstalling?",
-        "reasons": {
-            "buggy": "It's buggy or not working correctly",
-            "slow": "It slows down my browser",
-            "complicated": "It's too complicated to use",
-            "alternative": "I found a better alternative",
-            "not_useful": "I don't find it useful anymore",
-            "other": "Other reason"
-        },
-        "comment_placeholder": "Please tell us more about how we can improve... (Optional)",
-        "submit": "Send Feedback",
-        "submitting": "Sending...",
-        "thank_you_title": "Thank you for your feedback!",
-        "thank_you_desc": "We really appreciate your input. We'll work hard to improve LexiVocab.",
-        "back_home": "Back to Home",
-        "reinstall": "Reinstall Extension"
-    },
-    "Feedback": {
-        "title": "Feedback & Support",
-        "subtitle": "Have a bug to report or a feature to request? We'd love to hear from you!",
-        "types": {
-            "bug": "Report a Bug",
-            "feature": "Request Feature",
-            "other": "Other"
-        },
-        "message_label": "Your Message",
-        "message_placeholder": "Describe the issue or idea in detail...",
-        "contact_label": "Email (Optional)",
-        "contact_placeholder": "your@email.com",
-        "upload_label": "Attachment (Optional)",
-        "upload_placeholder": "Click or drag image to upload",
-        "remove_image": "Remove image",
-        "rating_label": "Rate your experience",
-        "submit": "Submit Feedback",
-        "submitting": "Submitting...",
-        "success_title": "Feedback Sent!",
-        "success_desc": "Thank you for helping us improve LexiVocab. We've received your feedback.",
-        "error_title": "Something went wrong",
-        "error_desc": "Please try again later.",
-        "back_home": "Back to Home"
-    },
-    "Welcome": {
-        "demo_badge": "Try It Now",
-        "demo_title": "Experience LexiVocab in Action",
-        "demo_description": "Highlight the word \"serendipity\" below to see how LexiVocab helps you save and learn new vocabulary.",
-        "demo_hint": "Highlight the bold word",
-        "demo_text_1": "Language learning often happens through",
-        "demo_text_2": "— those happy accidents when you encounter the perfect word at the right moment.",
-        "demo_text_3": "The best way to expand your vocabulary is through natural exposure. Reading articles, news, and content in your target language helps you understand words in context, making them easier to remember."
-    },
-    "Changelog": {
-        "title": "Changelog",
-        "subtitle": "Track the latest updates and improvements to LexiVocab",
-        "version_title": "Version {version}",
-        "release_date": "Released on {date}",
-        "initial_release": "Initial release of LexiVocab extension",
-        "update_enforcement": "Added version update enforcement mechanism",
-        "mode_toggle_feature": "Mode Toggle: Quickly switch between Standard Mode and Compact Mode",
-        "realtime_input_translation": "Real-time Input Translation: Translate text while typing by pressing Space 3 times",
-        "highlight_performance_optimization": "Improved highlight performance for vocabulary words"
-    },
-    "VideoDemo": {
-        "badge": "Video Demo",
-        "title": "See LexiVocab in Action",
-        "subtitle": "Discover how LexiVocab helps you learn vocabulary naturally and efficiently while browsing the web",
-        "watch_now": "Click to watch video",
-        "watch_youtube": "Watch on YouTube"
+    "settings": {
+      "title": "Settings",
+      "subtitle": "Manage your account and app preferences.",
+      "profile": {
+        "title": "Profile",
+        "desc": "Update your personal details.",
+        "name": "Full Name",
+        "email": "Email Address",
+        "role": "Account Type",
+        "joined": "Joined"
+      },
+      "preferences": {
+        "title": "Preferences",
+        "desc": "Customize your experience.",
+        "theme": "Theme",
+        "language": "Language",
+        "dailyGoal": "Daily Review Goal",
+        "sync": "Sync extension data automatically"
+      },
+      "account": {
+        "title": "Account Actions",
+        "desc": "Manage your security and data.",
+        "changePassword": "Change Password",
+        "exportData": "Export My Data",
+        "deleteAccount": "Delete Account"
+      },
+      "save": "Save Changes"
     }
+  },
+  "Hero": {
+    "badge": "🚀 New Release v1.0",
+    "title": "Learn vocabulary passively while <highlight>browsing the web</highlight>",
+    "subtitle": "Don't let dictionary lookups interrupt your reading flow. LexiVocab helps you translate, save, and review English vocabulary naturally.",
+    "cta_install": "Add to Chrome",
+    "cta_demo": "Watch Demo",
+    "users_count": "1000+ users",
+    "rating": "5.0 rating",
+    "saved_word": "Word saved!"
+  },
+  "Features": {
+    "section_badge": "Key Features",
+    "title": "Everything you need to learn vocabulary effectively",
+    "subtitle": "LexiVocab is designed to help you build your vocabulary without changing your browsing habits.",
+    "smart_bubble_title": "Smart Bubble",
+    "smart_bubble_desc": "Highlight any text to translate quickly. Save words with just one click without opening a new tab.",
+    "context_trans_title": "Contextual Translation",
+    "context_trans_desc": "AI automatically analyzes sentences to provide the most accurate meaning and saves with example sentences.",
+    "highlight_title": "Auto Highlight",
+    "highlight_desc": "Encounter a saved word again? We'll highlight it to remind you to review immediately.",
+    "highlight_badge": "HOT",
+    "dashboard_title": "Vocabulary Dashboard",
+    "dashboard_desc": "Manage your personal vocabulary, practice pronunciation, and track learning progress."
+  },
+  "Pricing": {
+    "title": "Supercharge Your Vocabulary",
+    "subtitle": "Start free, upgrade when you're ready. One payment, lifetime access.",
+    "badge": "Simple, transparent pricing",
+    "free_plan": "Free",
+    "free_desc": "Get started learning",
+    "free_price": "$0",
+    "forever": "forever",
+    "premium_plan": "Premium",
+    "premium_desc": "Unlock everything",
+    "premium_price": "$9.99",
+    "lifetime": "lifetime",
+    "best_value": "BEST VALUE",
+    "go_dashboard": "Go to Dashboard",
+    "get_started": "Get Started Free",
+    "already_premium": "You're Premium ✨",
+    "upgrade": "Upgrade to Premium",
+    "processing": "Processing...",
+    "secure_payment": "Secure payment. One-time purchase.",
+    "select_method": "Select Payment Method",
+    "method_paypal": "Pay with PayPal",
+    "method_sepay": "Bank Transfer (SePay - VietQR)",
+    "payment_notice": "Your account will be upgraded automatically via SePay.",
+    "features": {
+      "save_words": "Save up to 50 vocabulary words",
+      "unlimited_vocab": "Unlimited vocabulary words",
+      "spaced_repetition": "Spaced Repetition (SM-2)",
+      "chrome_extension": "Chrome Extension",
+      "dashboard": "Dashboard & Analytics",
+      "batch_import": "Batch Import / Export",
+      "ai_features": "AI-Powered Features",
+      "priority_support": "Priority Support",
+      "data_export": "CSV & JSON Export"
+    },
+    "trust": {
+      "secure": "Secure Payment",
+      "lifetime": "Lifetime Access",
+      "no_fees": "No Hidden Fees"
+    }
+  },
+  "Privacy": {
+    "title": "Privacy Policy",
+    "last_updated": "Last updated: January 8, 2026",
+    "back": "Back to Home",
+    "intro_title": "1. Introduction",
+    "intro_desc": "Welcome to LexiVocab. We respect your privacy and are committed to protecting your personal data. This privacy policy will inform you as to how we look after your personal data when you use our Chrome extension and website.",
+    "data_title": "2. Data We Collect",
+    "data_desc": "LexiVocab collects minimal data to provide you with the best vocabulary learning experience:",
+    "data_vocab": "Vocabulary Data: The words you save, translations, and context sentences. This data is stored locally on your device.",
+    "data_settings": "Settings: Your preferences such as highlight colors and language settings.",
+    "data_analytics": "Usage Analytics: Anonymous usage statistics to improve our service (optional).",
+    "usage_title": "3. How We Use Your Data",
+    "usage_provide": "To provide and maintain our service",
+    "usage_improve": "To improve and personalize your experience",
+    "usage_understand": "To understand how users interact with our extension",
+    "storage_title": "4. Data Storage",
+    "storage_desc": "All your vocabulary data is stored locally on your device using Chrome's Storage API. We do not upload your personal vocabulary data to any external servers.",
+    "third_party_title": "5. Third-Party Services",
+    "third_party_desc": "We may use third-party translation APIs to provide contextual translations. These services only receive the text you choose to translate and do not have access to your personal information or saved vocabulary.",
+    "rights_title": "6. Your Rights",
+    "rights_desc": "You have the right to access, correct, or delete your data at any time through the extension settings. You can also export your vocabulary data or clear all saved data.",
+    "contact_title": "7. Contact Us",
+    "contact_desc": "If you have any questions about this Privacy Policy, please contact us at:"
+  },
+  "Terms": {
+    "title": "Terms of Use",
+    "last_updated": "Last updated: January 8, 2026",
+    "back": "Back to Home",
+    "acceptance_title": "1. Acceptance of Terms",
+    "acceptance_desc": "By installing and using the LexiVocab Chrome Extension, you agree to be bound by these Terms of Use. If you do not agree to these terms, please do not use our service.",
+    "description_title": "2. Service Description",
+    "description_desc": "LexiVocab is a Chrome browser extension designed to help users learn vocabulary while browsing. Features include text translation, vocabulary saving, word highlighting, and vocabulary management.",
+    "responsibilities_title": "3. User Responsibilities",
+    "resp_personal": "Use the extension only for personal, non-commercial purposes",
+    "resp_reverse": "Do not attempt to reverse engineer or modify the extension",
+    "resp_illegal": "Do not use the extension for any illegal activities",
+    "resp_copyright": "Respect copyright when saving content from websites",
+    "ip_title": "4. Intellectual Property",
+    "ip_desc": "LexiVocab and its original content, features, and functionality are owned by Phan Van Thanh and are protected by international copyright, trademark, and other intellectual property laws.",
+    "disclaimer_title": "5. Disclaimer of Warranty",
+    "disclaimer_desc": "The extension is provided \"as is\" without any warranty. We do not guarantee the accuracy of translations or that the service will be uninterrupted or error-free.",
+    "liability_title": "6. Limitation of Liability",
+    "liability_desc": "In no event shall LexiVocab or its developers be liable for any indirect, incidental, special, consequential or punitive damages arising out of your use of the extension.",
+    "changes_title": "7. Changes to Terms",
+    "changes_desc": "We reserve the right to modify these terms at any time. We will notify users of any material changes through the extension or our website.",
+    "contact_title": "8. Contact",
+    "contact_desc": "If you have any questions about these Terms of Use, please contact us at:"
+  },
+  "HowItWorks": {
+    "title": "Get started in 3 simple steps",
+    "subtitle": "It takes less than 1 minute to install and start learning new vocabulary.",
+    "step1_title": "Add to Chrome",
+    "step1_desc": "Install LexiVocab from the Chrome Web Store for free.",
+    "step2_title": "Browse & Look up",
+    "step2_desc": "Highlight any word you want to lookup while reading articles or news.",
+    "step3_title": "Save & Learn",
+    "step3_desc": "Save vocabulary to your personal collection and get reminded to review at the right time."
+  },
+  "Footer": {
+    "copyright": "© 2026 LexiVocab. Developed by Phan Văn Thành.",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "changelog": "Changelog",
+    "legal": "Legal",
+    "connect": "Connect",
+    "made_with_love": "Made with ❤️ for language learners worldwide"
+  },
+  "Uninstall": {
+    "title": "We're sorry to see you go",
+    "subtitle": "Your feedback helps us improve LexiVocab for everyone. Could you tell us why you're uninstalling?",
+    "reasons": {
+      "buggy": "It's buggy or not working correctly",
+      "slow": "It slows down my browser",
+      "complicated": "It's too complicated to use",
+      "alternative": "I found a better alternative",
+      "not_useful": "I don't find it useful anymore",
+      "other": "Other reason"
+    },
+    "comment_placeholder": "Please tell us more about how we can improve... (Optional)",
+    "submit": "Send Feedback",
+    "submitting": "Sending...",
+    "thank_you_title": "Thank you for your feedback!",
+    "thank_you_desc": "We really appreciate your input. We'll work hard to improve LexiVocab.",
+    "back_home": "Back to Home",
+    "reinstall": "Reinstall Extension"
+  },
+  "Feedback": {
+    "title": "Feedback & Support",
+    "subtitle": "Have a bug to report or a feature to request? We'd love to hear from you!",
+    "types": {
+      "bug": "Report a Bug",
+      "feature": "Request Feature",
+      "other": "Other"
+    },
+    "message_label": "Your Message",
+    "message_placeholder": "Describe the issue or idea in detail...",
+    "contact_label": "Email (Optional)",
+    "contact_placeholder": "your@email.com",
+    "upload_label": "Attachment (Optional)",
+    "upload_placeholder": "Click or drag image to upload",
+    "remove_image": "Remove image",
+    "rating_label": "Rate your experience",
+    "submit": "Submit Feedback",
+    "submitting": "Submitting...",
+    "success_title": "Feedback Sent!",
+    "success_desc": "Thank you for helping us improve LexiVocab. We've received your feedback.",
+    "error_title": "Something went wrong",
+    "error_desc": "Please try again later.",
+    "back_home": "Back to Home"
+  },
+  "Welcome": {
+    "demo_badge": "Try It Now",
+    "demo_title": "Experience LexiVocab in Action",
+    "demo_description": "Highlight the word \"serendipity\" below to see how LexiVocab helps you save and learn new vocabulary.",
+    "demo_hint": "Highlight the bold word",
+    "demo_text_1": "Language learning often happens through",
+    "demo_text_2": "— those happy accidents when you encounter the perfect word at the right moment.",
+    "demo_text_3": "The best way to expand your vocabulary is through natural exposure. Reading articles, news, and content in your target language helps you understand words in context, making them easier to remember."
+  },
+  "Changelog": {
+    "title": "Changelog",
+    "subtitle": "Track the latest updates and improvements to LexiVocab",
+    "version_title": "Version {version}",
+    "release_date": "Released on {date}",
+    "initial_release": "Initial release of LexiVocab extension",
+    "update_enforcement": "Added version update enforcement mechanism",
+    "mode_toggle_feature": "Mode Toggle: Quickly switch between Standard Mode and Compact Mode",
+    "realtime_input_translation": "Real-time Input Translation: Translate text while typing by pressing Space 3 times",
+    "highlight_performance_optimization": "Improved highlight performance for vocabulary words"
+  },
+  "VideoDemo": {
+    "badge": "Video Demo",
+    "title": "See LexiVocab in Action",
+    "subtitle": "Discover how LexiVocab helps you learn vocabulary naturally and efficiently while browsing the web",
+    "watch_now": "Click to watch video",
+    "watch_youtube": "Watch on YouTube"
+  },
+  "Checkout": {
+    "processing_title": "Processing payment...",
+    "processing_subtitle": "Please do not close this window",
+    "success_title": "Payment Successful!",
+    "success_subtitle": "Welcome to the elite! Your account has been permanently upgraded to Premium.",
+    "premium_activated": "PREMIUM ACTIVATED",
+    "receipt_notice": "A confirmation and receipt have been sent to your email.",
+    "error_title": "Payment Failed",
+    "try_again": "Try Again",
+    "go_dashboard": "Go to Dashboard"
+  },
+  "Admin.auditLogs": {
+    "title": "Audit Logs",
+    "subtitle": "Monitor system activities",
+    "searchPlaceholder": "Search by Action or Email...",
+    "table": {
+      "date": "Date",
+      "user": "User",
+      "action": "Action",
+      "entity": "Entity",
+      "details": "Details"
+    },
+    "empty": "No data found",
+    "emptySubtitle": "No audit logs found matching the filters."
+  }
 }
