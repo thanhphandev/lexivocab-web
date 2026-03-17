@@ -39,7 +39,7 @@ export default function VerifyEmailPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (code.length !== 6) {
-            setError("Please enter the complete 6-digit verification code.");
+            setError(t("verifyEmailIncompleteCode"));
             return;
         }
 
@@ -51,10 +51,10 @@ export default function VerifyEmailPage() {
             if (res.success) {
                 router.push(`/auth/login?verified=true`);
             } else {
-                setError(res.error || "Failed to verify email. The code might be invalid or expired.");
+                setError(res.error || t("verifyEmailFailed"));
             }
         } catch {
-            setError("An unexpected error occurred");
+            setError(t("unexpectedError"));
         } finally {
             setIsLoading(false);
         }
@@ -68,12 +68,12 @@ export default function VerifyEmailPage() {
         try {
             const res = await authApi.resendVerificationEmail({ email });
             if (res.success) {
-                setSuccessMessage("A new verification code has been sent to your email.");
+                setSuccessMessage(t("verifyEmailResendSuccess"));
             } else {
-                setError(res.error || "Failed to resend verification email.");
+                setError(res.error || t("verifyEmailResendFailed"));
             }
         } catch {
-            setError("An unexpected error occurred");
+            setError(t("unexpectedError"));
         } finally {
             setIsResending(false);
         }
@@ -90,9 +90,9 @@ export default function VerifyEmailPage() {
             </motion.div>
 
             <div className="flex flex-col space-y-2">
-                <h1 className="text-2xl font-bold tracking-tight">Verify your email</h1>
+                <h1 className="text-2xl font-bold tracking-tight">{t("verifyEmailTitle")}</h1>
                 <p className="text-sm text-muted-foreground">
-                    We've sent a 6-digit code to <span className="font-semibold text-foreground">{email}</span>.
+                    {t("verifyEmailDesc", { email })}
                 </p>
             </div>
 
@@ -118,17 +118,17 @@ export default function VerifyEmailPage() {
 
                 <Button className="w-full" type="submit" disabled={isLoading || code.length !== 6}>
                     {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    Verify Email
+                    {t("verifyEmailSubmit")}
                 </Button>
             </form>
 
             <div className="pt-4 flex flex-col gap-2">
                 <p className="text-sm text-muted-foreground">
-                    Didn't receive the email?
+                    {t("verifyEmailDidntReceive")}
                 </p>
                 <Button variant="outline" className="w-full" onClick={handleResend} disabled={isResending}>
                     {isResending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    Resend Code
+                    {t("verifyEmailResend")}
                 </Button>
             </div>
 
@@ -136,7 +136,7 @@ export default function VerifyEmailPage() {
                 <Button variant="link" asChild className="text-xs text-muted-foreground">
                     <Link href="/auth/login" className="flex items-center gap-2 justify-center">
                         <ArrowLeft className="w-3 h-3" />
-                        Back to log in
+                        {t("backToLogin")}
                     </Link>
                 </Button>
             </div>

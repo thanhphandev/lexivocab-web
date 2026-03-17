@@ -27,10 +27,10 @@ export default function ForgotPasswordPage() {
             if (res.success) {
                 setIsSuccess(true);
             } else {
-                setError(res.error || "Failed to send reset link");
+                setError(res.error || t("unexpectedError"));
             }
         } catch {
-            setError("An unexpected error occurred");
+            setError(t("unexpectedError"));
         } finally {
             setIsLoading(false);
         }
@@ -47,19 +47,19 @@ export default function ForgotPasswordPage() {
                     <MailCheck className="w-8 h-8" />
                 </motion.div>
                 <div className="space-y-2">
-                    <h1 className="text-2xl font-bold tracking-tight">Check your email</h1>
+                    <h1 className="text-2xl font-bold tracking-tight">{t("forgotPasswordCheckTitle")}</h1>
                     <p className="text-muted-foreground text-sm max-w-sm">
-                        If an account exists for <span className="font-semibold text-foreground">{email}</span>, we have sent a 6-digit reset code.
+                        {t("forgotPasswordCheckDesc", { email })}
                     </p>
                 </div>
                 <div className="pt-4 flex flex-col gap-2 w-full">
                     <Button asChild className="w-full">
                         <Link href={`/auth/reset-password?email=${encodeURIComponent(email)}`}>
-                            Enter Reset Code
+                            {t("forgotPasswordEnterCode")}
                         </Link>
                     </Button>
                     <Button variant="ghost" className="w-full" onClick={() => setIsSuccess(false)}>
-                        Didn't receive it? Try again
+                        {t("forgotPasswordTryAgain")}
                     </Button>
                 </div>
             </div>
@@ -69,15 +69,15 @@ export default function ForgotPasswordPage() {
     return (
         <div className="flex flex-col space-y-6">
             <div className="flex flex-col space-y-2 text-center">
-                <h1 className="text-2xl font-bold tracking-tight">Forgot password?</h1>
+                <h1 className="text-2xl font-bold tracking-tight">{t("forgotPasswordTitle")}</h1>
                 <p className="text-sm text-muted-foreground">
-                    No worries, we'll send you reset instructions.
+                    {t("forgotPasswordSubtitle")}
                 </p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
+                    <Label htmlFor="email">{t("forgotPasswordEmailLabel")}</Label>
                     <Input
                         id="email"
                         type="email"
@@ -91,7 +91,7 @@ export default function ForgotPasswordPage() {
                 {error && <p className="text-sm font-medium text-destructive">{error}</p>}
                 <Button className="w-full" type="submit" disabled={isLoading || !email}>
                     {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    Send reset instructions
+                    {t("forgotPasswordSubmit")}
                 </Button>
             </form>
 
@@ -99,7 +99,7 @@ export default function ForgotPasswordPage() {
                 <Button variant="link" asChild className="text-xs text-muted-foreground">
                     <Link href="/auth/login" className="flex items-center gap-2">
                         <ArrowLeft className="w-3 h-3" />
-                        Back to log in
+                        {t("backToLogin")}
                     </Link>
                 </Button>
             </div>

@@ -30,6 +30,8 @@ export default function SettingsPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
     const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+    const [confirmRevokeOpen, setConfirmRevokeOpen] = useState(false);
+    const [isRevoking, setIsRevoking] = useState(false);
 
     // Profile State
     const [profileName, setProfileName] = useState("");
@@ -126,6 +128,23 @@ export default function SettingsPage() {
             toast.error("Failed to delete account: " + res.error);
         }
         setConfirmDeleteOpen(false);
+    };
+
+    const handleRevokeAllSessions = async () => {
+        setIsRevoking(true);
+        try {
+            const res = await authApi.revokeAllSessions();
+            if (res.success) {
+                toast.success("All sessions revoked. Please log in again.");
+                logout();
+                router.push(`/${locale}/auth/login`);
+            } else {
+                toast.error(res.error || "Failed to revoke sessions.");
+            }
+        } finally {
+            setIsRevoking(false);
+            setConfirmRevokeOpen(false);
+        }
     };
 
     const handleSave = async (e: React.FormEvent) => {
@@ -463,6 +482,10 @@ export default function SettingsPage() {
                                 <Button variant="outline" type="button" onClick={logout}>
                                     Log Out
                                 </Button>
+                                <Button variant="outline" type="button" onClick={() => setConfirmRevokeOpen(true)} className="text-orange-600 hover:bg-orange-50 border-orange-200" disabled={isRevoking}>
+                                    {isRevoking && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                    Revoke All Sessions
+                                </Button>
                                 <Button variant="outline" type="button" onClick={() => setConfirmDeleteOpen(true)} className="text-destructive hover:bg-destructive/10">
                                     {t("account.deleteAccount")}
                                 </Button>
@@ -479,6 +502,16 @@ export default function SettingsPage() {
                 description="Are you sure you want to permanently delete your account? This action is irreversible and all your vocabulary progress will be lost forever."
                 onConfirm={handleDeleteAccount}
                 confirmText="Delete Account"
+                variant="destructive"
+            />
+
+            <ConfirmDialog
+                open={confirmRevokeOpen}
+                onOpenChange={setConfirmRevokeOpen}
+                title="Revoke All Sessions"
+                description="This will immediately sign you out from all devices (browser, extension, mobile). You will need to log in again on each device."
+                onConfirm={handleRevokeAllSessions}
+                confirmText={isRevoking ? "Revoking..." : "Revoke All"}
                 variant="destructive"
             />
         </div>

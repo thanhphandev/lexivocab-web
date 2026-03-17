@@ -288,6 +288,8 @@ export interface PaymentHistoryDto {
     status: string;
     createdAt: string;
     paidAt: string | null;
+    expiresAt?: string | null;
+    cancelledAt?: string | null;
     approvalUrl?: string;
 }
 
@@ -326,6 +328,7 @@ export interface CapturePaymentOrderRequest {
 export interface PaymentStatusDto {
     status: string;
     message?: string;
+    expiresAt?: string | null;
 }
 
 

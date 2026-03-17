@@ -94,15 +94,14 @@ export default function LoginPage() {
                     {googleLoading && (
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                             <Loader2 className="h-4 w-4 animate-spin" />
-                            Signing in with Google...
+                            {t("signingInWithGoogle")}
                         </div>
                     )}
                 </div>
 
-                {/* Divider */}
                 <div className="flex items-center gap-4">
                     <div className="h-px flex-1 bg-border" />
-                    <span className="text-xs text-muted-foreground uppercase font-medium">or</span>
+                    <span className="text-xs text-muted-foreground uppercase font-medium">{t("orDivider")}</span>
                     <div className="h-px flex-1 bg-border" />
                 </div>
 
@@ -115,8 +114,8 @@ export default function LoginPage() {
                          >
                              <AlertCircle className="h-4 w-4 shrink-0" />
                              <p>
-                                 {verified === "true" && "Email verified successfully! You can now log in."}
-                                 {reset === "success" && "Password reset successfully! You can now log in."}
+                                 {verified === "true" && t("emailVerifiedSuccess")}
+                                 {reset === "success" && t("passwordResetSuccess")}
                              </p>
                          </motion.div>
                     )}
@@ -180,7 +179,7 @@ export default function LoginPage() {
                     <div className="flex items-center justify-end">
                         <div className="text-sm">
                             <Link href="/auth/forgot-password" className="font-medium text-primary hover:text-primary/90">
-                                Forgot your password?
+                                {t("forgotPassword")}
                             </Link>
                         </div>
                     </div>
@@ -189,7 +188,7 @@ export default function LoginPage() {
                     {error && error.toLowerCase().includes("verif") && (
                          <div className="flex justify-center mt-2">
                              <Link href={`/auth/verify-email?email=${encodeURIComponent(email)}`} className="text-sm font-medium text-primary underline">
-                                Click here to verify your email
+                                {t("verifyEmailLink")}
                              </Link>
                          </div>
                     )}

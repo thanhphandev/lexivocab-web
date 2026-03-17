@@ -31,12 +31,13 @@ export default function PricingPage() {
 
     const [isProcessing, setIsProcessing] = useState(false);
     const [selectedProvider, setSelectedProvider] = useState<number>(1); // 1: PayPal, 3: Sepay
-    const [qrData, setQrData] = useState<{ url: string; ref: string } | null>(null);
+    const [qrData, setQrData] = useState<{ url: string; ref: string; expiresAt?: string | null } | null>(null);
     const [isPolling, setIsPolling] = useState(false);
     const [plans, setPlans] = useState<SubscriptionPlanDto[]>([]);
     const [isLoadingPlans, setIsLoadingPlans] = useState(true);
     const [durationMonths, setDurationMonths] = useState<number>(1); // 1, 3, 6, 12 months for Premium
     const [pendingTransaction, setPendingTransaction] = useState<PaymentHistoryDto | null>(null);
+    const [lastSepayRequest, setLastSepayRequest] = useState<{ planId: string; durationMonths: number } | null>(null);
 
     // Duration options with discount
     const durationOptions = [
@@ -110,9 +111,16 @@ export default function PricingPage() {
                     // Sepay: Show QR Modal
                     const url = new URL(res.data.approvalUrl);
                     const ref = url.searchParams.get("des") || "";
+                    setLastSepayRequest({ planId: plan.id, durationMonths: months });
                     setQrData({ url: res.data.approvalUrl, ref });
                     setIsPolling(true);
                     setPendingTransaction(null);
+
+                    // Fetch expiresAt immediately for better UX
+                    const statusRes = await paymentApi.checkStatus(ref);
+                    if (statusRes.success && statusRes.data.expiresAt) {
+                        setQrData(prev => prev && prev.ref === ref ? { ...prev, expiresAt: statusRes.data.expiresAt } : prev);
+                    }
                 } else {
                     // PayPal: Redirect
                     window.location.href = res.data.approvalUrl;
@@ -132,9 +140,41 @@ export default function PricingPage() {
         
         setQrData({ 
             url: pendingTransaction.approvalUrl, 
-            ref: pendingTransaction.externalOrderId 
+            ref: pendingTransaction.externalOrderId,
+            expiresAt: pendingTransaction.expiresAt ?? null
         });
         setIsPolling(true);
+    };
+
+    const handleCreateNewSepay = async () => {
+        if (!lastSepayRequest) {
+            // fallback: reload to reselect plan
+            window.location.reload();
+            return;
+        }
+
+        setIsProcessing(true);
+        try {
+            const res = await paymentApi.createOrder({
+                planId: lastSepayRequest.planId,
+                provider: 3,
+                durationMonths: lastSepayRequest.durationMonths
+            });
+            if (res.success && res.data.approvalUrl) {
+                const url = new URL(res.data.approvalUrl);
+                const ref = url.searchParams.get("des") || "";
+                setQrData({ url: res.data.approvalUrl, ref });
+                setIsPolling(true);
+                setPendingTransaction(null);
+
+                const statusRes = await paymentApi.checkStatus(ref);
+                if (statusRes.success && statusRes.data.expiresAt) {
+                    setQrData(prev => prev && prev.ref === ref ? { ...prev, expiresAt: statusRes.data.expiresAt } : prev);
+                }
+            }
+        } finally {
+            setIsProcessing(false);
+        }
     };
 
     // Polling for Sepay payment completion
@@ -144,9 +184,18 @@ export default function PricingPage() {
             interval = setInterval(async () => {
                 try {
                     const res = await paymentApi.checkStatus(qrData.ref);
-                    if (res.success && res.data.status === "Completed") {
+                    if (!res.success) return;
+
+                    if (res.data.status === "Completed") {
                         setIsPolling(false);
                         window.location.href = `/${locale}/checkout/success?token=${qrData.ref}&provider=sepay`;
+                        return;
+                    }
+
+                    if (res.data.status === "Expired" || res.data.status === "Cancelled" || res.data.status === "Failed") {
+                        setIsPolling(false);
+                        setQrData(null);
+                        setPendingTransaction(null);
                     }
                 } catch (err) {
                     console.error("Polling error", err);
@@ -525,6 +574,8 @@ export default function PricingPage() {
             <SepayQRDialog 
                 qrData={qrData} 
                 onOpenChange={(open) => !open && setQrData(null)} 
+                onCreateNew={handleCreateNewSepay}
+                onRefresh={() => window.location.reload()}
             />
         </div>
     );

@@ -88,7 +88,7 @@ export default function RegisterPage() {
                 {googleLoading && (
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <Loader2 className="h-4 w-4 animate-spin" />
-                        Signing up with Google...
+                        {t("signingUpWithGoogle")}
                     </div>
                 )}
             </div>
@@ -96,7 +96,7 @@ export default function RegisterPage() {
             {/* Divider */}
             <div className="flex items-center gap-4 py-2">
                 <div className="h-px flex-1 bg-border" />
-                <span className="text-xs text-muted-foreground uppercase font-medium">or</span>
+                <span className="text-xs text-muted-foreground uppercase font-medium">{t("orDivider")}</span>
                 <div className="h-px flex-1 bg-border" />
             </div>
 
@@ -116,7 +116,7 @@ export default function RegisterPage() {
                 {error && error.toLowerCase().includes("verif") && (
                      <div className="flex justify-center mt-2">
                          <Link href={`/auth/verify-email?email=${encodeURIComponent(email)}`} className="text-sm font-medium text-primary underline">
-                            Click here to verify your email
+                            {t("verifyEmailLink")}
                          </Link>
                      </div>
                 )}

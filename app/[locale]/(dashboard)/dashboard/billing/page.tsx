@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
-import { paymentApi } from "@/lib/api/api-client";
-import { useAuth } from "@/lib/auth/auth-context";
+import { paymentApi } from "@/lib/api/api-client";import { useAuth } from "@/lib/auth/auth-context";
 import { usePermissions } from "@/lib/hooks/use-permissions";
 import type { BillingOverviewDto, PaymentHistoryDto } from "@/lib/api/types";
 import { Button } from "@/components/ui/button";
@@ -23,16 +22,22 @@ import {
     XCircle,
     AlertCircle,
     BookOpen,
+    Download,
+    Ban,
 } from "lucide-react";
+import { downloadInvoicePdf } from "@/lib/pdf/generate-invoice";
+import { ConfirmDialog } from "@/components/dashboard/confirm-dialog";
+import { toast } from "sonner";
 import { PendingTransactionBanner } from "@/components/billing/pending-transaction-banner";
 import { SepayQRDialog } from "@/components/billing/sepay-qr-dialog";
-
 function StatusBadge({ status }: { status: string }) {
     const config: Record<string, { icon: React.ReactNode; color: string }> = {
         Completed: { icon: <CheckCircle2 className="h-3 w-3" />, color: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400" },
         Pending: { icon: <Clock className="h-3 w-3" />, color: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400" },
         Failed: { icon: <XCircle className="h-3 w-3" />, color: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400" },
         Refunded: { icon: <AlertCircle className="h-3 w-3" />, color: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400" },
+        Expired: { icon: <XCircle className="h-3 w-3" />, color: "bg-zinc-100 text-zinc-700 dark:bg-zinc-900/30 dark:text-zinc-300" },
+        Cancelled: { icon: <XCircle className="h-3 w-3" />, color: "bg-zinc-100 text-zinc-700 dark:bg-zinc-900/30 dark:text-zinc-300" },
     };
 
     const c = config[status] || config["Pending"];
@@ -54,8 +59,11 @@ export default function BillingPage() {
     const [history, setHistory] = useState<PaymentHistoryDto[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [pendingTransaction, setPendingTransaction] = useState<PaymentHistoryDto | null>(null);
-    const [qrData, setQrData] = useState<{ url: string; ref: string } | null>(null);
+    const [qrData, setQrData] = useState<{ url: string; ref: string; expiresAt?: string | null } | null>(null);
     const [isPolling, setIsPolling] = useState(false);
+    const [confirmCancelOpen, setConfirmCancelOpen] = useState(false);
+    const [isCancelling, setIsCancelling] = useState(false);
+    const [downloadingId, setDownloadingId] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchBilling = async () => {
@@ -98,9 +106,43 @@ export default function BillingPage() {
         
         setQrData({ 
             url: pendingTransaction.approvalUrl, 
-            ref: pendingTransaction.externalOrderId 
+            ref: pendingTransaction.externalOrderId,
+            expiresAt: pendingTransaction.expiresAt ?? null
         });
         setIsPolling(true);
+    };
+
+    const handleCancelSubscription = async () => {
+        setIsCancelling(true);
+        try {
+            const res = await paymentApi.cancelSubscription();
+            if (res.success) {
+                toast.success("Subscription cancelled. Access revoked immediately.");
+                setBilling(prev => prev ? {
+                    ...prev,
+                    activeSubscription: prev.activeSubscription
+                        ? { ...prev.activeSubscription, status: "Cancelled" }
+                        : null
+                } : null);
+            } else {
+                toast.error(res.error || "Failed to cancel subscription.");
+            }
+        } finally {
+            setIsCancelling(false);
+            setConfirmCancelOpen(false);
+        }
+    };
+
+    const handleDownloadInvoice = async (tx: PaymentHistoryDto) => {
+        setDownloadingId(tx.id);
+        try {
+            await downloadInvoicePdf(tx);
+            toast.success("Invoice downloaded successfully.");
+        } catch {
+            toast.error("Failed to generate invoice PDF.");
+        } finally {
+            setDownloadingId(null);
+        }
     };
 
     // Polling for Sepay payment completion
@@ -110,9 +152,18 @@ export default function BillingPage() {
             interval = setInterval(async () => {
                 try {
                     const res = await paymentApi.checkStatus(qrData.ref);
-                    if (res.success && res.data.status === "Completed") {
+                    if (!res.success) return;
+
+                    if (res.data.status === "Completed") {
                         setIsPolling(false);
                         window.location.href = `/${locale}/checkout/success?token=${qrData.ref}&provider=sepay`;
+                        return;
+                    }
+
+                    if (res.data.status === "Expired" || res.data.status === "Cancelled" || res.data.status === "Failed") {
+                        setIsPolling(false);
+                        setQrData(null);
+                        setPendingTransaction(null);
                     }
                 } catch (err) {
                     console.error("Polling error", err);
@@ -234,6 +285,20 @@ export default function BillingPage() {
                                     <StatusBadge status={billing.activeSubscription.status} />
                                 </div>
                             </div>
+                            {billing.activeSubscription.status === "Active" && (
+                                <div className="mt-4 pt-4 border-t flex justify-end">
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        className="text-destructive hover:bg-destructive/10 border-destructive/30"
+                                        onClick={() => setConfirmCancelOpen(true)}
+                                        disabled={isCancelling}
+                                    >
+                                        <Ban className="mr-2 h-4 w-4" />
+                                        Cancel Subscription
+                                    </Button>
+                                </div>
+                            )}
                         </CardContent>
                     )}
                 </Card>
@@ -421,6 +486,23 @@ export default function BillingPage() {
                                             <span className="text-xs text-muted-foreground ml-1">
                                                 {tx.currency}
                                             </span>
+                                            {tx.status === "Completed" && (
+                                                <div className="mt-1">
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        className="h-7 px-2 text-xs text-muted-foreground hover:text-primary"
+                                                        onClick={() => handleDownloadInvoice(tx)}
+                                                        disabled={downloadingId === tx.id}
+                                                    >
+                                                        {downloadingId === tx.id
+                                                            ? <Loader2 className="h-3 w-3 animate-spin" />
+                                                            : <Download className="h-3 w-3 mr-1" />
+                                                        }
+                                                        PDF
+                                                    </Button>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 ))}
@@ -434,6 +516,16 @@ export default function BillingPage() {
             <SepayQRDialog 
                 qrData={qrData} 
                 onOpenChange={(open) => !open && setQrData(null)} 
+            />
+
+            <ConfirmDialog
+                open={confirmCancelOpen}
+                onOpenChange={setConfirmCancelOpen}
+                title="Cancel Subscription"
+                description="Are you sure you want to cancel your subscription? Your Premium access will be revoked immediately and this action cannot be undone."
+                onConfirm={handleCancelSubscription}
+                confirmText={isCancelling ? "Cancelling..." : "Yes, Cancel"}
+                variant="destructive"
             />
         </div>
     );

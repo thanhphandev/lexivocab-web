@@ -207,12 +207,6 @@ import type {
 } from './types';
 
 
-
-
-
-
-
-
 export const authApi = {
     forgotPassword: (data: ForgotPasswordRequest) =>
         clientApi.post<void>('/api/auth/forgot-password', data),
@@ -246,6 +240,8 @@ export const authApi = {
         clientApi.post<AuthUser>('/api/auth/google', data),
     getPermissions: () =>
         clientApi.get<UserPermissionsDto>('/api/proxy/auth/permissions'),
+    revokeAllSessions: () =>
+        clientApi.post<void>('/api/proxy/auth/revoke-all-sessions'),
 };
 
 
@@ -323,6 +319,10 @@ export const paymentApi = {
         clientApi.post<{ message: string }>("/api/proxy/payments/capture-order", data),
     checkStatus: (token: string) =>
         clientApi.get<PaymentStatusDto>(`/api/proxy/payments/status/${token}`),
+    cancelSubscription: () =>
+        clientApi.post<void>('/api/proxy/payments/cancel-subscription'),
+    getInvoiceUrl: (id: string) =>
+        `/api/proxy/payments/invoice/${id}`,
 };
 
 
