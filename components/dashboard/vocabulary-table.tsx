@@ -99,10 +99,10 @@ export function VocabularyTable({ data, tags, isLoading, onRefresh }: Vocabulary
         try {
             const res = await clientApi.delete(`/api/proxy/vocabularies/${id}`);
             if (res.success) {
-                toast.success(`Successfully deleted "${word}"`);
+                toast.success(t("table.deleteSuccess", { word }));
                 onRefresh();
             } else {
-                toast.error(res.error || `Failed to delete "${word}"`);
+                toast.error(res.error || t("table.deleteFailed", { word }));
             }
         } finally {
             setActionLoading(null);
@@ -145,7 +145,7 @@ export function VocabularyTable({ data, tags, isLoading, onRefresh }: Vocabulary
                             <TableHead className="w-[200px]">{t("table.word")}</TableHead>
                             <TableHead className="min-w-[200px]">{t("table.meaning")}</TableHead>
                             <TableHead className="w-[120px]">{t("table.level")}</TableHead>
-                            <TableHead className="w-[120px]">Tag</TableHead>
+                            <TableHead className="w-[120px]">{t("table.tag")}</TableHead>
                             <TableHead className="w-[150px]">{t("table.nextReview")}</TableHead>
                             <TableHead className="w-[100px]">{t("table.status")}</TableHead>
                             <TableHead className="w-[80px] text-right">{t("table.actions")}</TableHead>
@@ -187,7 +187,7 @@ export function VocabularyTable({ data, tags, isLoading, onRefresh }: Vocabulary
                                     </TableCell>
                                     <TableCell>
                                         <div className="line-clamp-2" title={item.customMeaning || ""}>
-                                            {item.customMeaning || <span className="text-muted-foreground italic">No meaning provided</span>}
+                                            {item.customMeaning || <span className="text-muted-foreground italic">{t("table.noMeaning")}</span>}
                                         </div>
                                     </TableCell>
                                     <TableCell>
@@ -225,7 +225,7 @@ export function VocabularyTable({ data, tags, isLoading, onRefresh }: Vocabulary
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent align="start" className="w-[200px] p-2 rounded-xl shadow-xl border-border/40 bg-card/95 backdrop-blur-sm">
                                                     <div className="px-2 py-1.5 text-[10px] font-bold uppercase text-muted-foreground tracking-widest">
-                                                        Assign Tag
+                                                        {t("table.assignTag")}
                                                     </div>
                                                     <DropdownMenuSeparator className="my-1.5" />
                                                     {item.tagId && (
@@ -234,7 +234,7 @@ export function VocabularyTable({ data, tags, isLoading, onRefresh }: Vocabulary
                                                                 onClick={() => handleAssignTag(item.id, null)} 
                                                                 className="text-xs text-destructive focus:bg-destructive/10 cursor-pointer rounded-md h-9"
                                                             >
-                                                                <Trash2 className="mr-2 h-3.5 w-3.5" /> Remove Tag
+                                                                <Trash2 className="mr-2 h-3.5 w-3.5" /> {t("table.removeTag")}
                                                             </DropdownMenuItem>
                                                             <DropdownMenuSeparator className="my-1.5" />
                                                         </>
@@ -242,7 +242,7 @@ export function VocabularyTable({ data, tags, isLoading, onRefresh }: Vocabulary
                                                     <div className="max-h-[300px] overflow-y-auto space-y-0.5 scrollbar-thin">
                                                         {Object.values(tags).length === 0 ? (
                                                             <div className="text-[10px] text-center py-4 text-muted-foreground italic">
-                                                                No tags available
+                                                                {t("table.noTagsAvailable")}
                                                             </div>
                                                         ) : (
                                                             Object.values(tags).map(tag => (
@@ -365,9 +365,9 @@ export function VocabularyTable({ data, tags, isLoading, onRefresh }: Vocabulary
                 open={!!itemToDelete}
                 onOpenChange={(open) => !open && setItemToDelete(null)}
                 onConfirm={handleDelete}
-                title="Delete Word"
-                description={`Are you sure you want to delete "${itemToDelete?.wordText}"? This action cannot be undone.`}
-                confirmText="Delete"
+                title={t("table.deleteTitle")}
+                description={t("table.deleteDesc", { word: itemToDelete?.wordText ?? "" })}
+                confirmText={t("table.deleteConfirm")}
                 variant="destructive"
             />
         </div>

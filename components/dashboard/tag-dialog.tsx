@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { tagsApi } from "@/lib/api/api-client";
 import { TagDto } from "@/lib/api/types";
 import {
@@ -9,7 +10,6 @@ import {
     DialogDescription,
     DialogHeader,
     DialogTitle,
-    DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -41,6 +41,7 @@ export function TagDialog({
     onOpenChange,
     editingTag 
 }: TagDialogProps) {
+    const t = useTranslations("Dashboard.vocabulary.tagDialog");
     const [isLoading, setIsLoading] = useState(false);
     const [name, setName] = useState("");
     const [icon, setIcon] = useState("📁");
@@ -82,11 +83,11 @@ export function TagDialog({
             }
 
             if (res.success) {
-                toast.success(`Successfully ${editingTag ? "updated" : "created"} tag "${name}"`);
+                toast.success(editingTag ? t("updateSuccess", { name }) : t("createSuccess", { name }));
                 onOpenChange(false);
                 onSuccess();
             } else {
-                toast.error(res.error || `Failed to ${editingTag ? "update" : "create"} tag`);
+                toast.error(res.error || (editingTag ? t("updateFailed") : t("createFailed")));
             }
         } finally {
             setIsLoading(false);
@@ -106,12 +107,10 @@ export function TagDialog({
                                 >
                                     {icon}
                                 </span>
-                                {editingTag ? "Edit Tag" : "Create New Tag"}
+                                {editingTag ? t("editTitle") : t("createTitle")}
                             </DialogTitle>
                             <DialogDescription className="text-sm">
-                                {editingTag 
-                                    ? "Update your tag details and appearance." 
-                                    : "Organize your vocabulary with a beautiful tag."}
+                                {editingTag ? t("editDesc") : t("createDesc")}
                             </DialogDescription>
                         </DialogHeader>
                     </div>
@@ -119,11 +118,11 @@ export function TagDialog({
                     <div className="px-6 space-y-6">
                         <div className="space-y-2">
                             <Label htmlFor="tagName" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                                Tag Name
+                                {t("nameLabel")}
                             </Label>
                             <Input
                                 id="tagName"
-                                placeholder="e.g. TOEFL Essential..."
+                                placeholder={t("namePlaceholder")}
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
                                 className="h-11 rounded-xl bg-muted/30 border-muted focus:ring-primary/20 transition-all text-base font-medium"
@@ -134,7 +133,7 @@ export function TagDialog({
 
                         <div className="space-y-3">
                             <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground mr-4">
-                                Select Icon
+                                {t("iconLabel")}
                             </Label>
                             <div className="grid grid-cols-6 gap-2">
                                 {PRESET_ICONS.map((i) => (
@@ -157,7 +156,7 @@ export function TagDialog({
 
                         <div className="space-y-3 pb-6">
                             <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                                Color Theme
+                                {t("colorLabel")}
                             </Label>
                             <div className="grid grid-cols-6 gap-3">
                                 {PRESET_COLORS.map((c) => (
@@ -181,7 +180,6 @@ export function TagDialog({
                                     />
                                     <div 
                                         className="h-9 w-9 rounded-full border-2 border-dashed border-muted-foreground/30 flex items-center justify-center bg-muted/10 group-hover:bg-muted/20 transition-colors"
-                                        title="Pick Custom Color"
                                     >
                                         <Plus className="h-4 w-4 text-muted-foreground/50" />
                                     </div>
@@ -197,7 +195,7 @@ export function TagDialog({
                             onClick={() => onOpenChange(false)}
                             className="rounded-xl h-12 px-6 hover:bg-muted"
                         >
-                            Cancel
+                            {t("cancel")}
                         </Button>
                         <Button 
                             type="submit" 
@@ -205,11 +203,11 @@ export function TagDialog({
                             className="rounded-xl h-12 px-10 font-bold shadow-lg shadow-primary/20"
                         >
                             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                            {editingTag ? "Save Changes" : "Create Tag"}
+                            {editingTag ? t("save") : t("create")}
                         </Button>
                     </div>
                 </form>
             </DialogContent>
         </Dialog>
-);
+    );
 }

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { TagDto } from "@/lib/api/types";
 import { tagsApi } from "@/lib/api/api-client";
 import { 
@@ -47,6 +48,7 @@ export function TagSidebar({
     const [tagToDelete, setTagToDelete] = useState<TagDto | null>(null);
     const [editingTag, setEditingTag] = useState<TagDto | null>(null);
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+    const t = useTranslations("Dashboard.vocabulary.tagSidebar");
 
     const handleDelete = async () => {
         if (!tagToDelete) return;
@@ -79,15 +81,15 @@ export function TagSidebar({
             <ConfirmDialog 
                 open={!!tagToDelete}
                 onOpenChange={(open) => !open && setTagToDelete(null)}
-                title="Delete Tag"
-                description={`Are you sure you want to delete "${tagToDelete?.name}"? Associated words will remain but won't be categorized by this tag.`}
-                confirmText="Delete Tag"
+                title={t("deleteTitle")}
+                description={t("deleteDesc", { name: tagToDelete?.name ?? "" })}
+                confirmText={t("deleteConfirm")}
                 variant="destructive"
                 onConfirm={handleDelete}
             />
             <div className="flex items-center justify-between">
                 <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground ml-2">
-                    Filters & Tags
+                    {t("title")}
                 </h3>
                 <Button 
                     variant="ghost" 
@@ -122,7 +124,7 @@ export function TagSidebar({
                     )}
                 >
                     <Hash className="h-4 w-4" />
-                    <span className="flex-1 text-left">All Words</span>
+                    <span className="flex-1 text-left">{t("allWords")}</span>
                     {selectedTagId === "all" && <ChevronRight className="h-3 w-3" />}
                 </Button>
             </div>
@@ -138,7 +140,7 @@ export function TagSidebar({
                     ) : (
                         <div className="px-4 py-8 text-center border-2 border-dashed rounded-xl opacity-40">
                             <Folder className="h-8 w-8 mx-auto mb-2" />
-                            <p className="text-xs">No tags yet</p>
+                            <p className="text-xs">{t("noTags")}</p>
                         </div>
                     )
                 ) : (
@@ -182,7 +184,7 @@ export function TagSidebar({
                                         {tag.name}
                                     </div>
                                     <div className="text-[10px] text-muted-foreground opacity-60">
-                                        {tag.wordCount} words
+                                        {t("wordCount", { count: tag.wordCount })}
                                     </div>
                                 </div>
 
@@ -202,7 +204,7 @@ export function TagSidebar({
                                             className="text-xs cursor-pointer"
                                             onClick={(e) => handleEditClick(e, tag)}
                                         >
-                                            <Pencil className="mr-2 h-3 w-3" /> Edit
+                                            <Pencil className="mr-2 h-3 w-3" /> {t("edit")}
                                         </DropdownMenuItem>
                                         <DropdownMenuItem 
                                             className="text-xs text-destructive cursor-pointer"
@@ -214,7 +216,7 @@ export function TagSidebar({
                                             ) : (
                                                 <Trash2 className="mr-2 h-3 w-3" />
                                             )}
-                                            Delete
+                                            {t("delete")}
                                         </DropdownMenuItem>
                                     </DropdownMenuContent>
                                 </DropdownMenu>
@@ -232,9 +234,9 @@ export function TagSidebar({
             </div>
 
             <div className="mt-auto p-4 rounded-2xl bg-primary/5 border border-primary/10 hidden lg:block">
-                <p className="text-[10px] uppercase font-bold text-primary tracking-widest mb-1">Tip</p>
+                <p className="text-[10px] uppercase font-bold text-primary tracking-widest mb-1">{t("tipLabel")}</p>
                 <p className="text-[11px] text-muted-foreground leading-relaxed">
-                    Organize words by topics or context to improve recall during active review.
+                    {t("tipDesc")}
                 </p>
             </div>
         </div>

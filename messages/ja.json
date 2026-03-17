@@ -8,7 +8,8 @@
   "Header": {
     "features": "機能",
     "how_it_works": "使い方",
-    "language": "言語"
+    "language": "言語",
+    "pricing": "料金プラン"
   },
   "Auth": {
     "loginTitle": "おかえりなさい",
@@ -75,6 +76,18 @@
       "collapse": "サイドバーを折りたたむ",
       "logout": "ログアウト"
     },
+    "billing": {
+      "title": "請求とサブスクリプション",
+      "subtitle": "プランの管理と支払い履歴の表示。",
+      "plan_quota": "プランのクォータ",
+      "used_space": "使用済み容量",
+      "unlimited": "無制限",
+      "permissions": "プランの権限",
+      "export_data": "データエクスポート (CSV/JSON)",
+      "ai_features": "AI意味・文脈抽出",
+      "batch_import": "一括インポート",
+      "history": "支払い履歴"
+    },
     "home": {
       "title": "おかえりなさい",
       "subtitle": "学習の進捗概要はこちらです",
@@ -99,11 +112,41 @@
       "subtitle": "保存したすべての単語を管理、新規追加、一括インポートします。",
       "searchPlaceholder": "単語を検索...",
       "addWord": "単語を追加",
-      "batchImport": "一括インポート",
+      "batchImportText": "一括インポート",
+      "newTag": "新しいタグ",
+      "export": "エクスポート",
+      "exportCsv": "CSVでエクスポート",
+      "exportJson": "JSONでエクスポート",
+      "exportSuccess": "{format}形式でエクスポートしました",
+      "exportFailed": "エクスポートに失敗しました。後でもう一度お試しください。",
+      "allTags": "すべてのタグ",
       "statusFilter": {
         "all": "すべてのステータス",
         "active": "学習中",
         "archived": "アーカイブ済み"
+      },
+      "quota": {
+        "exceededTitle": "クォータ超過",
+        "nearLimitTitle": "クォータ上限に近づいています",
+        "exceededDesc": "語彙の上限に達しました。単語を追加するにはアップグレードしてください。",
+        "nearLimitDesc": "{max}単語中{used}単語を使用しました。早めのアップグレードをご検討ください。",
+        "upgradeNow": "今すぐアップグレード →"
+      },
+      "empty": {
+        "noMatchTitle": "一致する結果がありません",
+        "noMatchDesc": "「{query}」に一致するものが見つかりませんでした。別のキーワードをお試しください。",
+        "emptyTagTitle": "タグが空です",
+        "emptyTagDesc": "このタグにはまだ単語がありません。語彙を追加してみましょう！",
+        "noWordsTitle": "単語がありません",
+        "noWordsDesc": "語彙ライブラリが空です。単語を追加して学習を始めましょう！",
+        "clearSearch": "検索をクリア",
+        "viewAllWords": "すべての単語を表示",
+        "addFirstWord": "最初の単語を追加"
+      },
+      "pagination": {
+        "previous": "前へ",
+        "next": "次へ",
+        "pageOf": "{total}ページ中{page}ページ目"
       },
       "table": {
         "word": "単語",
@@ -112,7 +155,17 @@
         "level": "レベル",
         "nextReview": "次回の復習",
         "status": "ステータス",
-        "actions": "アクション"
+        "actions": "アクション",
+        "tag": "タグ",
+        "noMeaning": "意味が未設定です",
+        "assignTag": "タグを割り当て",
+        "removeTag": "タグを外す",
+        "noTagsAvailable": "タグがありません",
+        "deleteTitle": "単語を削除",
+        "deleteDesc": "「{word}」を削除してもよろしいですか？この操作は元に戻せません。",
+        "deleteConfirm": "削除",
+        "deleteSuccess": "「{word}」を削除しました",
+        "deleteFailed": "「{word}」の削除に失敗しました"
       },
       "badges": {
         "active": "学習中",
@@ -128,13 +181,108 @@
         "delete": "削除",
         "source": "元のリンクを開く"
       },
-      "empty": "語彙が見つかりません。"
+      "empty_legacy": "語彙が見つかりません。",
+      "tagSidebar": {
+        "title": "フィルターとタグ",
+        "allWords": "すべての単語",
+        "noTags": "タグがありません",
+        "wordCount": "{count}単語",
+        "edit": "編集",
+        "delete": "削除",
+        "tipLabel": "ヒント",
+        "tipDesc": "トピックや文脈ごとに単語を整理すると、復習時の記憶定着が向上します。",
+        "deleteTitle": "タグを削除",
+        "deleteDesc": "「{name}」を削除してもよろしいですか？関連する単語は残りますが、このタグでは分類されなくなります。",
+        "deleteConfirm": "タグを削除"
+      },
+      "tagDialog": {
+        "createTitle": "新しいタグを作成",
+        "editTitle": "タグを編集",
+        "createDesc": "美しいタグで語彙を整理しましょう。",
+        "editDesc": "タグの詳細と外観を更新します。",
+        "nameLabel": "タグ名",
+        "namePlaceholder": "例：TOEFL必須...",
+        "iconLabel": "アイコンを選択",
+        "colorLabel": "カラーテーマ",
+        "cancel": "キャンセル",
+        "create": "タグを作成",
+        "save": "変更を保存",
+        "createSuccess": "タグ「{name}」を作成しました",
+        "updateSuccess": "タグ「{name}」を更新しました",
+        "createFailed": "タグの作成に失敗しました",
+        "updateFailed": "タグの更新に失敗しました"
+      },
+      "editWordDialog": {
+        "title": "単語を編集",
+        "desc": "{word} の意味、文脈、またはソースを更新します。",
+        "meaningLabel": "意味 / 翻訳",
+        "contextLabel": "文脈",
+        "sourceLabel": "ソースURL",
+        "optional": "任意",
+        "meaningPlaceholder": "独自の定義または翻訳を追加",
+        "contextPlaceholder": "この単語はどのように使われますか？",
+        "sourcePlaceholder": "https://...",
+        "cancel": "キャンセル",
+        "save": "変更を保存"
+      },
+      "addWordDialog": {
+        "wordLabel": "単語",
+        "wordPlaceholder": "例：ubiquitous",
+        "desc": "単語を入力して辞書を検索するか、カスタム単語を追加します。",
+        "meaningLabel": "意味 / 翻訳",
+        "contextLabel": "文脈",
+        "sourceLabel": "ソースURL",
+        "tagLabel": "タグ",
+        "optional": "任意",
+        "meaningPlaceholder": "独自の定義または翻訳を追加",
+        "contextPlaceholder": "この単語はどのように使われますか？",
+        "sourcePlaceholder": "https://...",
+        "noTag": "タグなし",
+        "cancel": "キャンセル",
+        "save": "単語を保存"
+      },
+      "batchImport": {
+        "desc": "複数の単語を一度にインポートします。各単語を新しい行に入力してください。形式：単語、意味（任意）、文脈（任意）",
+        "listLabel": "語彙リスト（CSV形式）",
+        "listPlaceholder": "apple, 果物, 私はリンゴを食べた\nbanana, 黄色い果物\nubiquitous",
+        "cancel": "キャンセル",
+        "import": "単語をインポート",
+        "noWords": "インポートする有効な単語がありません。",
+        "success": "{count}個の単語をインポートしました！",
+        "failed": "インポート失敗：{error}"
+      }
+    },
+    "flashcard": {
+      "meaningLabel": "意味",
+      "contextLabel": "文脈",
+      "noMeaning": "意味が未設定です"
+    },
+    "reviewHistory": {
+      "title": "復習履歴",
+      "subtitle": "フラッシュカードの過去のやり取りの詳細ログ。",
+      "colWord": "単語",
+      "colQuality": "品質 / 結果",
+      "colTime": "所要時間",
+      "colDate": "復習日",
+      "empty": "復習履歴がありません。学習を続けましょう！",
+      "showing": "{from}〜{to}件 / 全{total}件",
+      "previous": "前へ",
+      "next": "次へ",
+      "quality": {
+        "5": "完璧",
+        "4": "良い",
+        "3": "難しい",
+        "2": "苦労した",
+        "1": "間違い",
+        "0": "完全に忘れた"
+      }
     },
     "review": {
       "title": "毎日の復習",
       "subtitle": "間隔反復で語彙をマスターする",
       "startSession": "セッションを開始",
-      "sessionComplete": "セッション完了！",
+      "sessionComplete": "学習が完了しました！",
+      "allCaughtUp": "すべて学習済みです",
       "sessionStats": "今日 {count} 個の単語を復習しました。この調子で頑張りましょう！",
       "backToDashboard": "ダッシュボードに戻る",
       "noReviews": "目標達成です！現在、復習が必要な単語はありません。",
@@ -167,24 +315,66 @@
         "name": "フルネーム",
         "email": "メールアドレス",
         "role": "アカウントタイプ",
-        "joined": "参加日"
+        "joined": "参加日",
+        "updateButton": "更新",
+        "languageLabel": "言語インターフェース",
+        "languagePlaceholder": "言語を選択",
+        "languageDesc": "ダッシュボードのデフォルト表示言語を設定します。"
       },
-      "preferences": {
-        "title": "環境設定",
-        "desc": "体験をカスタマイズします。",
-        "theme": "テーマ",
-        "language": "言語",
-        "dailyGoal": "毎日の復習目標",
-        "sync": "拡張機能のデータを自動的に同期する"
+      "password": {
+        "title": "パスワードの変更",
+        "desc": "アカウントを安全に保つためにパスワードを更新してください。",
+        "currentLabel": "現在のパスワード",
+        "newLabel": "新しいパスワード",
+        "submitButton": "パスワードを更新",
+        "successMsg": "パスワードが変更されました。再度ログインしてください。",
+        "failMsg": "パスワードの変更に失敗しました。",
+        "profileUpdated": "プロフィールを更新しました。",
+        "profileFailed": "プロフィールの更新に失敗しました。"
+      },
+      "extension": {
+        "title": "拡張機能の設定",
+        "desc": "ブラウザでのLexiVocabの動作をカスタマイズします。",
+        "highlightToggleLabel": "単語ハイライトを有効にする",
+        "highlightToggleDesc": "ウェブページ上のアクティブな語彙を自動的にハイライトします。",
+        "highlightColorLabel": "ハイライトカラー",
+        "highlightColorDesc": "ハイライトされた単語のカスタム背景色。",
+        "dailyGoalLabel": "毎日の復習目標",
+        "dailyGoalDesc": "1日に何単語復習したいですか？",
+        "excludedDomainsLabel": "除外ドメイン",
+        "excludedDomainsPlaceholder": "example.com\nreddit.com",
+        "excludedDomainsDesc": "これらのウェブサイトではLexiVocabのハイライトを無効にします。1行に1ドメインを入力してください。",
+        "advancedLabel": "高度な設定 (JSON)",
+        "advancedDesc": "ブラウザ拡張機能から同期された生のJSON設定です。慎重に変更してください。",
+        "invalidJson": "高度な設定のJSON形式が無効です。"
       },
       "account": {
         "title": "アカウントアクション",
         "desc": "セキュリティとデータを管理します。",
         "changePassword": "パスワードを変更",
         "exportData": "マイデータをエクスポート",
-        "deleteAccount": "アカウントを削除"
+        "deleteAccount": "アカウントを削除",
+        "logOut": "ログアウト",
+        "revokeAllSessions": "すべてのセッションを無効化",
+        "revokeSuccess": "すべてのセッションが無効化されました。再度ログインしてください。",
+        "revokeFailed": "セッションの無効化に失敗しました。",
+        "deleteSuccess": "アカウントが完全に削除されました。",
+        "deleteFailed": "アカウントの削除に失敗しました: {error}"
       },
-      "save": "変更を保存"
+      "save": "変更を保存",
+      "saveSuccess": "設定を保存しました。",
+      "saveFailed": "設定の保存に失敗しました: {error}",
+      "confirmDelete": {
+        "title": "アカウントを削除",
+        "description": "アカウントを完全に削除してもよろしいですか？この操作は元に戻せず、すべての語彙の進捗が永久に失われます。",
+        "confirmText": "アカウントを削除"
+      },
+      "confirmRevoke": {
+        "title": "すべてのセッションを無効化",
+        "description": "この操作により、すべてのデバイス（ブラウザ、拡張機能、モバイル）から即座にサインアウトされます。各デバイスで再度ログインが必要になります。",
+        "confirmText": "すべて無効化",
+        "confirmingText": "無効化中..."
+      }
     },
     "explore": {
       "title": "ディクショナリを探索",
@@ -226,9 +416,58 @@
     "title": "プレミアムプランで語彙学習を加速",
     "subtitle": "無料で始めて、準備ができたらアップグレード。一度の支払いで永久アクセス。",
     "badge": "シンプルで透明な価格設定",
+    "free_plan": "無料",
+    "free_desc": "学習を始める",
+    "free_price": "$0",
+    "forever": "永久",
+    "premium_plan": "プレミアム",
+    "premium_desc": "すべてを解放",
+    "premium_price": "$9.99",
+    "lifetime": "永久",
+    "best_value": "最高のコスパ",
+    "go_dashboard": "ダッシュボードへ",
+    "get_started": "無料で始める",
+    "already_premium": "プレミアム会員です ✨",
+    "upgrade": "プレミアムにアップグレード",
+    "processing": "処理中...",
+    "secure_payment": "安全な決済。一回限りの購入。",
+    "select_method": "支払い方法を選択",
     "method_paypal": "PayPalで支払う",
     "method_sepay": "銀行振込 (Sepay - VietQR)",
     "payment_notice": "Sepayを通じてアカウントが自動的にアップグレードされます。",
+    "features": {
+      "save_words": "最大50語の語彙を保存",
+      "unlimited_vocab": "語彙を無制限に保存",
+      "spaced_repetition": "間隔反復 (SM-2)",
+      "chrome_extension": "Chrome拡張機能",
+      "dashboard": "ダッシュボード & 分析",
+      "batch_import": "一括インポート / エクスポート",
+      "ai_features": "AI搭載機能",
+      "priority_support": "優先サポート",
+      "data_export": "CSV & JSONエクスポート"
+    },
+    "duration_1m": "1ヶ月",
+    "duration_3m": "3ヶ月",
+    "duration_6m": "6ヶ月",
+    "duration_12m": "12ヶ月",
+    "lifetime_label": "生涯",
+    "for": "の",
+    "month": "ヶ月",
+    "months": "ヶ月",
+    "free": "無料",
+    "plan_free": "無料",
+    "plan_premium": "プレミアム",
+    "business_plan": "ビジネス",
+    "Perfect for beginners": "初心者に最適",
+    "Unlock full potential": "すべての機能を解放",
+    "For advanced learners and teams": "上級学習者とチーム向け",
+    "MAX_WORDS": "最大{count}語の語彙",
+    "AI_ACCESS": "AI意味・文脈抽出",
+    "SUPPORT_LEVEL": "サポート",
+    "EXPORT_PDF": "データエクスポート (PDF/CSV)",
+    "ADVANCED_AI": "高度なAI機能",
+    "QUIZ_GENERATION": "AIクイズ生成",
+    "AI_DAILY_LIMIT": "AI日次制限",
     "trust": {
       "secure": "安全な決済",
       "lifetime": "永久アクセス",
@@ -454,15 +693,16 @@
     "watch_youtube": "YouTubeで見る"
   },
   "Checkout": {
-    "processing_title": "Processing payment...",
-    "processing_subtitle": "Please do not close this window",
-    "success_title": "決済成功！",
+    "processing_title": "決済処理中...",
+    "processing_subtitle": "このウィンドウを閉じないでください",
+    "success_title": "決済が完了しました！", 
     "success_subtitle": "プレミアムプランへのアップグレードありがとうございます。アカウントが更新されました。",
     "premium_activated": "永久アクセス",
     "receipt_notice": "確認メールと領収書をメールでお送りしました。",
-    "error_title": "支払い失敗",
-    "try_again": "Try Again",
-    "go_dashboard": "Go to Dashboard"
+    "error_title": "決済に失敗しました",
+    "try_again": "もう一度試す",
+    "go_dashboard": "ダッシュボードへ",
+    "view_billing": "請求内容を確認"
   },
   "AI": {
     "tabs": {

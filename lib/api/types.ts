@@ -335,6 +335,7 @@ export interface PaymentStatusDto {
 export interface PlanFeatureDto {
     textKey: string;
     included: boolean;
+    params?: Record<string, string | number>;
 }
 
 export interface SubscriptionPlanDto {

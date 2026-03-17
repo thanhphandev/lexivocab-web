@@ -3,7 +3,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { clientApi, tagsApi } from "@/lib/api/api-client";
 import type { VocabularyDto, PagedResult, TagDto } from "@/lib/api/types";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { usePermissions } from "@/lib/hooks/use-permissions";
 import { useAuth } from "@/lib/auth/auth-context";
 import { VocabularyTable } from "@/components/dashboard/vocabulary-table";
@@ -30,9 +30,10 @@ import { motion, AnimatePresence } from "framer-motion";
 
 export default function VocabularyPage() {
     const t = useTranslations("Dashboard.vocabulary");
+    const locale = useLocale();
     const { permissions } = useAuth();
     const { canExport, quotaMax } = usePermissions();
-    
+
     const [data, setData] = useState<PagedResult<VocabularyDto> | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
@@ -44,14 +45,13 @@ export default function VocabularyPage() {
     const [tagMap, setTagMap] = useState<Record<string, TagDto>>({});
     const [isCreateTagOpen, setIsCreateTagOpen] = useState(false);
 
-    // Fetch tags
     const fetchTags = useCallback(async () => {
         try {
             const res = await tagsApi.getList();
             if (res.success && res.data) {
                 setTags(res.data);
                 const map: Record<string, TagDto> = {};
-                res.data.forEach(t => map[t.id] = t);
+                res.data.forEach(tag => map[tag.id] = tag);
                 setTagMap(map);
             }
         } catch (e) {
@@ -59,15 +59,12 @@ export default function VocabularyPage() {
         }
     }, []);
 
-    useEffect(() => {
-        fetchTags();
-    }, [fetchTags]);
+    useEffect(() => { fetchTags(); }, [fetchTags]);
 
-    // Debounce search input
     useEffect(() => {
         const timer = setTimeout(() => {
             setDebouncedSearch(searchQuery);
-            setPage(1); // Reset page on new search
+            setPage(1);
         }, 500);
         return () => clearTimeout(timer);
     }, [searchQuery]);
@@ -75,44 +72,27 @@ export default function VocabularyPage() {
     const fetchVocabulary = useCallback(async () => {
         setIsLoading(true);
         try {
-            const params = new URLSearchParams({
-                page: page.toString(),
-                pageSize: "20"
-            });
-
-            if (debouncedSearch) {
-                params.append("search", debouncedSearch);
-            }
-
-            if (filter !== "all") {
-                params.append("isArchived", filter === "archived" ? "true" : "false");
-            }
-
-            if (tagFilter !== "all" && tagFilter !== "none") {
-                params.append("tagId", tagFilter);
-            }
-
+            const params = new URLSearchParams({ page: page.toString(), pageSize: "20" });
+            if (debouncedSearch) params.append("search", debouncedSearch);
+            if (filter !== "all") params.append("isArchived", filter === "archived" ? "true" : "false");
+            if (tagFilter !== "all" && tagFilter !== "none") params.append("tagId", tagFilter);
             const res = await clientApi.get<PagedResult<VocabularyDto>>(`/api/proxy/vocabularies?${params.toString()}`);
-            if (res.success) {
-                setData(res.data);
-            }
+            if (res.success) setData(res.data);
         } finally {
             setIsLoading(false);
         }
     }, [page, debouncedSearch, filter, tagFilter]);
 
-    useEffect(() => {
-        fetchVocabulary();
-    }, [fetchVocabulary]);
+    useEffect(() => { fetchVocabulary(); }, [fetchVocabulary]);
 
     const handleExport = async (format: "csv" | "json") => {
         try {
             const res = await fetch(`/api/proxy/vocabularies/export?format=${format}`);
             if (!res.ok) {
-                toast.error("Failed to export data. Please try again later.");
+                toast.error(t("exportFailed"));
                 return;
             }
-            toast.success(`Successfully exported as ${format.toUpperCase()}`);
+            toast.success(t("exportSuccess", { format: format.toUpperCase() }));
             const blob = await res.blob();
             const downloadUrl = window.URL.createObjectURL(blob);
             const a = document.createElement("a");
@@ -144,17 +124,17 @@ export default function VocabularyPage() {
                         <Alert variant={isOverLimit ? "destructive" : "default"} className="mb-4 bg-orange-500/10 border-orange-500/20 text-orange-700 dark:text-orange-400">
                             <AlertCircle className="h-4 w-4" />
                             <AlertTitle className="font-bold">
-                                {isOverLimit ? "Quota Exceeded" : "Approaching Quota Limit"}
+                                {isOverLimit ? t("quota.exceededTitle") : t("quota.nearLimitTitle")}
                             </AlertTitle>
                             <AlertDescription className="flex items-center justify-between">
                                 <span>
-                                    {isOverLimit 
-                                        ? "You have reached your vocabulary limit. Please upgrade to add more words." 
-                                        : `You have used ${totalItems} out of ${maxItems} words. Consider upgrading soon.`}
+                                    {isOverLimit
+                                        ? t("quota.exceededDesc")
+                                        : t("quota.nearLimitDesc", { used: totalItems, max: maxItems })}
                                 </span>
                                 {permissions?.plan === "Free" && (
-                                    <Link href={`/${useAuth().user?.id}/pricing`} className="font-bold underline ml-4 whitespace-nowrap">
-                                        Upgrade Now →
+                                    <Link href={`/${locale}/pricing`} className="font-bold underline ml-4 whitespace-nowrap">
+                                        {t("quota.upgradeNow")}
                                     </Link>
                                 )}
                             </AlertDescription>
@@ -166,41 +146,28 @@ export default function VocabularyPage() {
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold tracking-tight text-foreground">
-                        {t("title")}
-                    </h1>
-                    <p className="text-muted-foreground mt-1">
-                        {t("subtitle")}
-                    </p>
+                    <h1 className="text-2xl font-bold tracking-tight text-foreground">{t("title")}</h1>
+                    <p className="text-muted-foreground mt-1">{t("subtitle")}</p>
                 </div>
-
                 <div className="flex gap-2">
                     {canExport && (
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button variant="outline" className="gap-2">
                                     <Download className="h-4 w-4" />
-                                    Export
+                                    {t("export")}
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={() => handleExport("csv")}>
-                                    Export as CSV
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => handleExport("json")}>
-                                    Export as JSON
-                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleExport("csv")}>{t("exportCsv")}</DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleExport("json")}>{t("exportJson")}</DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
                     )}
                     <BatchImportDialog onSuccess={fetchVocabulary} />
-                    <Button 
-                        onClick={() => setIsCreateTagOpen(true)}
-                        variant="outline"
-                        className="gap-2"
-                    >
+                    <Button onClick={() => setIsCreateTagOpen(true)} variant="outline" className="gap-2">
                         <Plus className="h-4 w-4" />
-                        New Tag
+                        {t("newTag")}
                     </Button>
                     <AddWordDialog onSuccess={fetchVocabulary} />
                 </div>
@@ -209,7 +176,7 @@ export default function VocabularyPage() {
             <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8 items-start">
                 {/* Sidebar */}
                 <aside className="hidden lg:block sticky top-6 self-start">
-                    <TagSidebar 
+                    <TagSidebar
                         tags={tags}
                         selectedTagId={tagFilter}
                         onSelectTag={(id) => { setTagFilter(id); setPage(1); }}
@@ -235,7 +202,6 @@ export default function VocabularyPage() {
                                 onChange={(e) => setSearchQuery(e.target.value)}
                             />
                         </div>
-
                         <div className="flex gap-2 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0 items-center justify-end">
                             <div className="flex items-center gap-1 bg-muted/30 p-1 rounded-full border">
                                 <Button
@@ -263,13 +229,12 @@ export default function VocabularyPage() {
                                     {t("statusFilter.all")}
                                 </Button>
                             </div>
-                            
                             <Select value={tagFilter} onValueChange={(val) => { setTagFilter(val); setPage(1); }}>
                                 <SelectTrigger className="w-[140px] h-9 lg:hidden">
-                                    <SelectValue placeholder="All Tags" />
+                                    <SelectValue placeholder={t("allTags")} />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="all">All Tags</SelectItem>
+                                    <SelectItem value="all">{t("allTags")}</SelectItem>
                                     {tags.map(tag => (
                                         <SelectItem key={tag.id} value={tag.id}>
                                             <span className="flex items-center gap-2">
@@ -298,27 +263,27 @@ export default function VocabularyPage() {
                             <EmptyState
                                 icon={debouncedSearch ? SearchX : tagFilter !== "all" ? FilterX : Inbox}
                                 title={
-                                    debouncedSearch 
-                                        ? "No matches found" 
-                                        : tagFilter !== "all" 
-                                            ? "Empty Tag" 
-                                            : "No words yet"
+                                    debouncedSearch
+                                        ? t("empty.noMatchTitle")
+                                        : tagFilter !== "all"
+                                            ? t("empty.emptyTagTitle")
+                                            : t("empty.noWordsTitle")
                                 }
                                 description={
-                                    debouncedSearch 
-                                        ? `We couldn't find anything matching "${debouncedSearch}". Try a different keyword.` 
+                                    debouncedSearch
+                                        ? t("empty.noMatchDesc", { query: debouncedSearch })
                                         : tagFilter !== "all"
-                                            ? "This tag doesn't contain any words yet. Start by adding some vocabulary!"
-                                            : "Your vocabulary library is empty. Start adding words to begin your learning journey!"
+                                            ? t("empty.emptyTagDesc")
+                                            : t("empty.noWordsDesc")
                                 }
                                 action={debouncedSearch ? {
-                                    label: "Clear Search",
+                                    label: t("empty.clearSearch"),
                                     onClick: () => setSearchQuery("")
                                 } : tagFilter !== "all" ? {
-                                    label: "View All Words",
+                                    label: t("empty.viewAllWords"),
                                     onClick: () => setTagFilter("all")
                                 } : {
-                                    label: "Add Your First Word",
+                                    label: t("empty.addFirstWord"),
                                     onClick: () => document.getElementById('add-word-trigger')?.click()
                                 }}
                             />
@@ -338,7 +303,7 @@ export default function VocabularyPage() {
                         )}
                     </div>
 
-                    {/* Pagination Controls */}
+                    {/* Pagination */}
                     {data && data.totalPages > 1 && (
                         <div className="flex justify-center items-center gap-4 pt-4 pb-10">
                             <Button
@@ -348,10 +313,10 @@ export default function VocabularyPage() {
                                 onClick={() => setPage(p => Math.max(1, p - 1))}
                                 className="h-9 px-4"
                             >
-                                Previous
+                                {t("pagination.previous")}
                             </Button>
                             <span className="text-sm font-medium text-muted-foreground bg-muted/50 px-3 py-1.5 rounded-lg border">
-                                Page <span className="text-foreground">{page}</span> of {data.totalPages}
+                                {t("pagination.pageOf", { page, total: data.totalPages })}
                             </span>
                             <Button
                                 variant="outline"
@@ -360,18 +325,17 @@ export default function VocabularyPage() {
                                 onClick={() => setPage(p => Math.min(data.totalPages, p + 1))}
                                 className="h-9 px-4"
                             >
-                                Next
+                                {t("pagination.next")}
                             </Button>
                         </div>
                     )}
                 </div>
             </div>
 
-            {/* Tag Creation Dialog */}
-            <TagDialog 
-                open={isCreateTagOpen} 
-                onOpenChange={setIsCreateTagOpen} 
-                onSuccess={fetchTags} 
+            <TagDialog
+                open={isCreateTagOpen}
+                onOpenChange={setIsCreateTagOpen}
+                onSuccess={fetchTags}
             />
         </div>
     );

@@ -112,20 +112,41 @@
       "subtitle": "Manage all your saved words, add new ones, or batch import.",
       "searchPlaceholder": "Search words...",
       "addWord": "Add Word",
-      "batchImport": "Batch Import",
+      "batchImportText": "Batch Import",
+      "newTag": "New Tag",
+      "export": "Export",
+      "exportCsv": "Export as CSV",
+      "exportJson": "Export as JSON",
+      "exportSuccess": "Successfully exported as {format}",
+      "exportFailed": "Failed to export data. Please try again later.",
+      "allTags": "All Tags",
       "statusFilter": {
         "all": "All Status",
         "active": "Active",
         "archived": "Archived"
       },
-      "table": {
-        "word": "Word",
-        "meaning": "Meaning",
-        "context": "Context",
-        "level": "Level",
-        "nextReview": "Next Review",
-        "status": "Status",
-        "actions": "Actions"
+      "quota": {
+        "exceededTitle": "Quota Exceeded",
+        "nearLimitTitle": "Approaching Quota Limit",
+        "exceededDesc": "You have reached your vocabulary limit. Please upgrade to add more words.",
+        "nearLimitDesc": "You have used {used} out of {max} words. Consider upgrading soon.",
+        "upgradeNow": "Upgrade Now →"
+      },
+      "empty": {
+        "noMatchTitle": "No matches found",
+        "noMatchDesc": "We couldn't find anything matching \"{query}\". Try a different keyword.",
+        "emptyTagTitle": "Empty Tag",
+        "emptyTagDesc": "This tag doesn't contain any words yet. Start by adding some vocabulary!",
+        "noWordsTitle": "No words yet",
+        "noWordsDesc": "Your vocabulary library is empty. Start adding words to begin your learning journey!",
+        "clearSearch": "Clear Search",
+        "viewAllWords": "View All Words",
+        "addFirstWord": "Add Your First Word"
+      },
+      "pagination": {
+        "previous": "Previous",
+        "next": "Next",
+        "pageOf": "Page {page} of {total}"
       },
       "badges": {
         "active": "Active",
@@ -141,13 +162,127 @@
         "delete": "Delete",
         "source": "Open Source URL"
       },
-      "empty": "No vocabulary words found."
+      "empty_legacy": "No vocabulary words found.",
+      "tagSidebar": {
+        "title": "Filters & Tags",
+        "allWords": "All Words",
+        "noTags": "No tags yet",
+        "wordCount": "{count} words",
+        "edit": "Edit",
+        "delete": "Delete",
+        "tipLabel": "Tip",
+        "tipDesc": "Organize words by topics or context to improve recall during active review.",
+        "deleteTitle": "Delete Tag",
+        "deleteDesc": "Are you sure you want to delete \"{name}\"? Associated words will remain but won't be categorized by this tag.",
+        "deleteConfirm": "Delete Tag"
+      },
+      "table": {
+        "word": "Word",
+        "meaning": "Meaning",
+        "context": "Context",
+        "level": "Level",
+        "nextReview": "Next Review",
+        "status": "Status",
+        "actions": "Actions",
+        "tag": "Tag",
+        "noMeaning": "No meaning provided",
+        "assignTag": "Assign Tag",
+        "removeTag": "Remove Tag",
+        "noTagsAvailable": "No tags available",
+        "deleteTitle": "Delete Word",
+        "deleteDesc": "Are you sure you want to delete \"{word}\"? This action cannot be undone.",
+        "deleteConfirm": "Delete",
+        "deleteSuccess": "Successfully deleted \"{word}\"",
+        "deleteFailed": "Failed to delete \"{word}\""
+      },
+      "tagDialog": {
+        "createTitle": "Create New Tag",
+        "editTitle": "Edit Tag",
+        "createDesc": "Organize your vocabulary with a beautiful tag.",
+        "editDesc": "Update your tag details and appearance.",
+        "nameLabel": "Tag Name",
+        "namePlaceholder": "e.g. TOEFL Essential...",
+        "iconLabel": "Select Icon",
+        "colorLabel": "Color Theme",
+        "cancel": "Cancel",
+        "create": "Create Tag",
+        "save": "Save Changes",
+        "createSuccess": "Tag \"{name}\" created successfully",
+        "updateSuccess": "Tag \"{name}\" updated successfully",
+        "createFailed": "Failed to create tag",
+        "updateFailed": "Failed to update tag"
+      },
+      "editWordDialog": {
+        "title": "Edit Word",
+        "desc": "Update the meaning, context, or source for {word}.",
+        "meaningLabel": "Meaning / Translation",
+        "contextLabel": "Context",
+        "sourceLabel": "Source URL",
+        "optional": "Optional",
+        "meaningPlaceholder": "Add your own definition or translation",
+        "contextPlaceholder": "How is this word used in a sentence?",
+        "sourcePlaceholder": "https://...",
+        "cancel": "Cancel",
+        "save": "Save Changes"
+      },
+      "addWordDialog": {
+        "wordLabel": "Word",
+        "wordPlaceholder": "e.g. ubiquitous",
+        "desc": "Type a word to search our dictionary, or add a custom word.",
+        "meaningLabel": "Meaning / Translation",
+        "contextLabel": "Context",
+        "sourceLabel": "Source URL",
+        "tagLabel": "Tag",
+        "optional": "Optional",
+        "meaningPlaceholder": "Add your own definition or translation",
+        "contextPlaceholder": "How is this word used in a sentence?",
+        "sourcePlaceholder": "https://...",
+        "noTag": "No tag",
+        "cancel": "Cancel",
+        "save": "Save Word"
+      },
+      "batchImport": {
+        "desc": "Import multiple vocabulary words at once. Add each word on a new line. Format: Word, Meaning (optional), Context (optional)",
+        "listLabel": "Vocabulary List (CSV Format)",
+        "listPlaceholder": "apple, A fruit, I ate an apple\nbanana, A yellow fruit\nubiquitous",
+        "cancel": "Cancel",
+        "import": "Import Words",
+        "noWords": "No valid words to import.",
+        "success": "Successfully imported {count} words!",
+        "failed": "Import failed: {error}"
+      }
+    },
+    "flashcard": {
+      "meaningLabel": "Meaning",
+      "contextLabel": "Context",
+      "noMeaning": "No meaning provided"
+    },
+    "reviewHistory": {
+      "title": "Review History",
+      "subtitle": "Detailed log of your past flashcard interactions.",
+      "colWord": "Word",
+      "colQuality": "Quality / Outcome",
+      "colTime": "Time Spent",
+      "colDate": "Reviewed On",
+      "empty": "No review history found. Keep studying!",
+      "showing": "Showing {from} to {to} of {total}",
+      "previous": "Previous",
+      "next": "Next",
+      "quality": {
+        "5": "Perfect",
+        "4": "Good",
+        "3": "Hard",
+        "2": "Struggled",
+        "1": "Wrong",
+        "0": "Blackout"
+      }
     },
     "review": {
       "title": "Daily Review",
       "subtitle": "Master your vocabulary with spaced repetition",
       "startSession": "Start Session",
       "sessionComplete": "Session Complete!",
+      "allCaughtUp": "All Caught Up!",
       "sessionStats": "You've reviewed {count} words today. Keep up the great work!",
       "backToDashboard": "Back to Dashboard",
       "noReviews": "You're all caught up! No words are due for review right now.",
@@ -180,24 +315,66 @@
         "name": "Full Name",
         "email": "Email Address",
         "role": "Account Type",
-        "joined": "Joined"
+        "joined": "Joined",
+        "updateButton": "Update",
+        "languageLabel": "Language Interface",
+        "languagePlaceholder": "Select language",
+        "languageDesc": "Sets the default display language for your dashboard."
       },
-      "preferences": {
-        "title": "Preferences",
-        "desc": "Customize your experience.",
-        "theme": "Theme",
-        "language": "Language",
-        "dailyGoal": "Daily Review Goal",
-        "sync": "Sync extension data automatically"
+      "password": {
+        "title": "Change Password",
+        "desc": "Update your password to keep your account secure.",
+        "currentLabel": "Current Password",
+        "newLabel": "New Password",
+        "submitButton": "Update Password",
+        "successMsg": "Password changed successfully. Please log in again.",
+        "failMsg": "Failed to change password.",
+        "profileUpdated": "Profile updated successfully.",
+        "profileFailed": "Failed to update profile."
+      },
+      "extension": {
+        "title": "Extension Preferences",
+        "desc": "Customize how LexiVocab behaves in your browser.",
+        "highlightToggleLabel": "Enable Word Highlighting",
+        "highlightToggleDesc": "Automatically highlight your active vocabulary words on web pages.",
+        "highlightColorLabel": "Highlight Color",
+        "highlightColorDesc": "Custom background color for highlighted words.",
+        "dailyGoalLabel": "Daily Review Goal",
+        "dailyGoalDesc": "How many words do you want to review per day?",
+        "excludedDomainsLabel": "Excluded Domains",
+        "excludedDomainsPlaceholder": "example.com\nreddit.com",
+        "excludedDomainsDesc": "LexiVocab will disable highlighting on these websites. Add one domain per line.",
+        "advancedLabel": "Advanced Configuration (JSON)",
+        "advancedDesc": "Raw JSON settings synchronized from your browser extension. Modify with caution!",
+        "invalidJson": "Invalid JSON format in advanced preferences."
       },
       "account": {
         "title": "Account Actions",
         "desc": "Manage your security and data.",
         "changePassword": "Change Password",
         "exportData": "Export My Data",
-        "deleteAccount": "Delete Account"
+        "deleteAccount": "Delete Account",
+        "logOut": "Log Out",
+        "revokeAllSessions": "Revoke All Sessions",
+        "revokeSuccess": "All sessions revoked. Please log in again.",
+        "revokeFailed": "Failed to revoke sessions.",
+        "deleteSuccess": "Your account has been permanently deleted.",
+        "deleteFailed": "Failed to delete account: {error}"
       },
-      "save": "Save Changes"
+      "save": "Save Changes",
+      "saveSuccess": "Settings saved successfully.",
+      "saveFailed": "Failed to save settings: {error}",
+      "confirmDelete": {
+        "title": "Delete My Account",
+        "description": "Are you sure you want to permanently delete your account? This action is irreversible and all your vocabulary progress will be lost forever.",
+        "confirmText": "Delete Account"
+      },
+      "confirmRevoke": {
+        "title": "Revoke All Sessions",
+        "description": "This will immediately sign you out from all devices (browser, extension, mobile). You will need to log in again on each device.",
+        "confirmText": "Revoke All",
+        "confirmingText": "Revoking..."
+      }
     },
     "explore": {
       "title": "Explore Dictionary",
@@ -269,6 +446,28 @@
       "priority_support": "Priority Support",
       "data_export": "CSV & JSON Export"
     },
+    "duration_1m": "1 month",
+    "duration_3m": "3 months",
+    "duration_6m": "6 months",
+    "duration_12m": "12 months",
+    "lifetime_label": "lifetime",
+    "for": "for",
+    "month": "month",
+    "months": "months",
+    "free": "Free",
+    "plan_free": "Free",
+    "plan_premium": "Premium",
+    "business_plan": "Business",
+    "Perfect for beginners": "Perfect for beginners",
+    "Unlock full potential": "Unlock full potential",
+    "For advanced learners and teams": "For advanced learners and teams",
+    "MAX_WORDS": "Up to {count} vocabulary words",
+    "AI_ACCESS": "AI Meaning & Context",
+    "SUPPORT_LEVEL": "Support",
+    "EXPORT_PDF": "Export Data (PDF/CSV)",
+    "ADVANCED_AI": "Advanced AI Features",
+    "QUIZ_GENERATION": "AI Quiz Generation",
+    "AI_DAILY_LIMIT": "AI Daily Limit",
     "trust": {
       "secure": "Secure Payment",
       "lifetime": "Lifetime Access",

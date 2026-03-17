@@ -157,7 +157,7 @@ export default function ReviewPage() {
                         <PartyPopper className="h-12 w-12" />
                     </div>
                     <h2 className="text-3xl font-bold text-foreground">
-                        {reviewedCount > 0 ? t("sessionComplete") : "All Caught Up!"}
+                        {reviewedCount > 0 ? t("sessionComplete") : t("allCaughtUp")}
                     </h2>
                     <p className="text-muted-foreground text-lg">
                         {reviewedCount > 0

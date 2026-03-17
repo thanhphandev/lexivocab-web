@@ -22,36 +22,31 @@ import { Loader2, Plus, Search, Volume2 } from "lucide-react";
 
 export function AddWordDialog({ onSuccess }: { onSuccess: () => void }) {
     const t = useTranslations("Dashboard.vocabulary");
+    const tDialog = useTranslations("Dashboard.vocabulary.addWordDialog");
     const [open, setOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isSearching, setIsSearching] = useState(false);
 
-    // Form state
     const [wordText, setWordText] = useState("");
     const [customMeaning, setCustomMeaning] = useState("");
     const [contextSentence, setContextSentence] = useState("");
     const [sourceUrl, setSourceUrl] = useState("");
     const [tagId, setTagId] = useState<string>("none");
 
-    // Tags state
     const [tags, setTags] = useState<TagDto[]>([]);
 
     useEffect(() => {
         if (open) {
             tagsApi.getList().then(res => {
-                if (res.success && res.data) {
-                    setTags(res.data);
-                }
+                if (res.success && res.data) setTags(res.data);
             }).catch(console.error);
         }
     }, [open]);
 
-    // Autocomplete state
     const [suggestions, setSuggestions] = useState<any[]>([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [lookupResult, setLookupResult] = useState<any>(null);
 
-    // Debounced search for autocomplete
     useEffect(() => {
         const timer = setTimeout(async () => {
             if (wordText.trim().length > 1) {
@@ -76,14 +71,10 @@ export function AddWordDialog({ onSuccess }: { onSuccess: () => void }) {
     const handleSelectSuggestion = async (suggestion: any) => {
         setWordText(suggestion.word);
         setShowSuggestions(false);
-        setCustomMeaning(""); // Clear existing meaning
-
-        // Fetch full details
+        setCustomMeaning("");
         try {
             const res = await clientApi.get<any>(`/api/proxy/master-vocab/lookup?word=${suggestion.word}`);
-            if (res.success && res.data) {
-                setLookupResult(res.data);
-            }
+            if (res.success && res.data) setLookupResult(res.data);
         } catch (e: any) {
             console.error("Lookup failed", e);
         }
@@ -105,7 +96,6 @@ export function AddWordDialog({ onSuccess }: { onSuccess: () => void }) {
 
             if (res.success) {
                 setOpen(false);
-                // Reset form
                 setWordText("");
                 setCustomMeaning("");
                 setContextSentence("");
@@ -130,7 +120,7 @@ export function AddWordDialog({ onSuccess }: { onSuccess: () => void }) {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button>
+                <Button id="add-word-trigger">
                     <Plus className="mr-2 h-4 w-4" />
                     {t("addWord")}
                 </Button>
@@ -139,19 +129,17 @@ export function AddWordDialog({ onSuccess }: { onSuccess: () => void }) {
                 <form onSubmit={handleSave}>
                     <DialogHeader>
                         <DialogTitle>{t("addWord")}</DialogTitle>
-                        <DialogDescription>
-                            Type a word to search our dictionary, or add a custom word.
-                        </DialogDescription>
+                        <DialogDescription>{tDialog("desc")}</DialogDescription>
                     </DialogHeader>
 
                     <div className="grid gap-4 py-4">
                         <div className="space-y-2 relative">
-                            <Label htmlFor="wordText">Word</Label>
+                            <Label htmlFor="wordText">{tDialog("wordLabel")}</Label>
                             <div className="relative">
                                 <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                                 <Input
                                     id="wordText"
-                                    placeholder="e.g. ubiquitous"
+                                    placeholder={tDialog("wordPlaceholder")}
                                     className="pl-9"
                                     value={wordText}
                                     onChange={(e) => setWordText(e.target.value)}
@@ -160,7 +148,6 @@ export function AddWordDialog({ onSuccess }: { onSuccess: () => void }) {
                                 />
                             </div>
 
-                            {/* Autocomplete Dropdown */}
                             {showSuggestions && suggestions.length > 0 && (
                                 <div className="absolute top-full left-0 z-50 w-full mt-1 bg-popover text-popover-foreground border rounded-md shadow-md max-h-60 overflow-y-auto">
                                     {suggestions.map((s, i) => (
@@ -171,36 +158,13 @@ export function AddWordDialog({ onSuccess }: { onSuccess: () => void }) {
                                         >
                                             <span className="font-medium">{s.word}</span>
                                             {s.partOfSpeech && (
-                                                <span className="text-xs text-muted-foreground italic">
-                                                    {s.partOfSpeech}
-                                                </span>
+                                                <span className="text-xs text-muted-foreground italic">{s.partOfSpeech}</span>
                                             )}
                                         </div>
                                     ))}
                                 </div>
                             )}
 
-                            {/* Dropdown Overlay for Suggestions */}
-                            {showSuggestions && suggestions.length > 0 && (
-                                <div className="absolute top-full left-0 z-50 w-full mt-1 bg-popover text-popover-foreground border rounded-md shadow-md max-h-60 overflow-y-auto">
-                                    {suggestions.map((s, i) => (
-                                        <div
-                                            key={i}
-                                            className="px-4 py-2 hover:bg-muted cursor-pointer flex justify-between items-center"
-                                            onClick={() => handleSelectSuggestion(s)}
-                                        >
-                                            <span className="font-medium">{s.word}</span>
-                                            {s.partOfSpeech && (
-                                                <span className="text-xs text-muted-foreground italic">
-                                                    {s.partOfSpeech}
-                                                </span>
-                                            )}
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-
-                            {/* Dictionary Lookup Result */}
                             {lookupResult && (
                                 <div className="mt-2 p-3 bg-muted/50 rounded-lg border flex flex-col gap-2">
                                     <div className="flex items-center justify-between">
@@ -229,20 +193,24 @@ export function AddWordDialog({ onSuccess }: { onSuccess: () => void }) {
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="customMeaning">Meaning / Translation <span className="text-muted-foreground text-xs font-normal">(Optional)</span></Label>
+                            <Label htmlFor="customMeaning">
+                                {tDialog("meaningLabel")} <span className="text-muted-foreground text-xs font-normal">({tDialog("optional")})</span>
+                            </Label>
                             <Input
                                 id="customMeaning"
-                                placeholder="Add your own definition or translation"
+                                placeholder={tDialog("meaningPlaceholder")}
                                 value={customMeaning}
                                 onChange={(e) => setCustomMeaning(e.target.value)}
                             />
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="contextSentence">Context <span className="text-muted-foreground text-xs font-normal">(Optional)</span></Label>
+                            <Label htmlFor="contextSentence">
+                                {tDialog("contextLabel")} <span className="text-muted-foreground text-xs font-normal">({tDialog("optional")})</span>
+                            </Label>
                             <Textarea
                                 id="contextSentence"
-                                placeholder="How is this word used in a sentence?"
+                                placeholder={tDialog("contextPlaceholder")}
                                 value={contextSentence}
                                 onChange={(e) => setContextSentence(e.target.value)}
                                 rows={2}
@@ -250,24 +218,28 @@ export function AddWordDialog({ onSuccess }: { onSuccess: () => void }) {
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="sourceUrl">Source URL <span className="text-muted-foreground text-xs font-normal">(Optional)</span></Label>
+                            <Label htmlFor="sourceUrl">
+                                {tDialog("sourceLabel")} <span className="text-muted-foreground text-xs font-normal">({tDialog("optional")})</span>
+                            </Label>
                             <Input
                                 id="sourceUrl"
                                 type="url"
-                                placeholder="https://..."
+                                placeholder={tDialog("sourcePlaceholder")}
                                 value={sourceUrl}
                                 onChange={(e) => setSourceUrl(e.target.value)}
                             />
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="tagId">Tag <span className="text-muted-foreground text-xs font-normal">(Optional)</span></Label>
+                            <Label htmlFor="tagId">
+                                {tDialog("tagLabel")} <span className="text-muted-foreground text-xs font-normal">({tDialog("optional")})</span>
+                            </Label>
                             <Select value={tagId} onValueChange={setTagId}>
                                 <SelectTrigger>
-                                    <SelectValue placeholder="Select a tag" />
+                                    <SelectValue placeholder={tDialog("noTag")} />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="none">No tag</SelectItem>
+                                    <SelectItem value="none">{tDialog("noTag")}</SelectItem>
                                     {tags.map((tag) => (
                                         <SelectItem key={tag.id} value={tag.id}>
                                             <span className="flex items-center gap-2">
@@ -282,11 +254,11 @@ export function AddWordDialog({ onSuccess }: { onSuccess: () => void }) {
 
                     <DialogFooter>
                         <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-                            Cancel
+                            {tDialog("cancel")}
                         </Button>
                         <Button type="submit" disabled={isLoading || !wordText.trim()}>
                             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                            Save Word
+                            {tDialog("save")}
                         </Button>
                     </DialogFooter>
                 </form>
@@ -294,4 +266,3 @@ export function AddWordDialog({ onSuccess }: { onSuccess: () => void }) {
         </Dialog>
     );
 }
-

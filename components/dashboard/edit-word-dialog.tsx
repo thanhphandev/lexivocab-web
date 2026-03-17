@@ -26,10 +26,9 @@ interface EditWordDialogProps {
 }
 
 export function EditWordDialog({ item, open, onOpenChange, onSuccess }: EditWordDialogProps) {
-    const t = useTranslations("Dashboard.vocabulary");
+    const t = useTranslations("Dashboard.vocabulary.editWordDialog");
     const [isLoading, setIsLoading] = useState(false);
 
-    // Form state
     const [customMeaning, setCustomMeaning] = useState(item.customMeaning || "");
     const [contextSentence, setContextSentence] = useState(item.contextSentence || "");
     const [sourceUrl, setSourceUrl] = useState(item.sourceUrl || "");
@@ -69,28 +68,32 @@ export function EditWordDialog({ item, open, onOpenChange, onSuccess }: EditWord
             <DialogContent className="sm:max-w-[425px]">
                 <form onSubmit={handleSave}>
                     <DialogHeader>
-                        <DialogTitle>Edit Word</DialogTitle>
+                        <DialogTitle>{t("title")}</DialogTitle>
                         <DialogDescription>
-                            Update the meaning, context, or source for <span className="font-semibold text-foreground">{item.wordText}</span>.
+                            {t("desc", { word: item.wordText })}
                         </DialogDescription>
                     </DialogHeader>
 
                     <div className="grid gap-4 py-4">
                         <div className="space-y-2">
-                            <Label htmlFor="editCustomMeaning">Meaning / Translation <span className="text-muted-foreground text-xs font-normal">(Optional)</span></Label>
+                            <Label htmlFor="editCustomMeaning">
+                                {t("meaningLabel")} <span className="text-muted-foreground text-xs font-normal">({t("optional")})</span>
+                            </Label>
                             <Input
                                 id="editCustomMeaning"
-                                placeholder="Add your own definition or translation"
+                                placeholder={t("meaningPlaceholder")}
                                 value={customMeaning}
                                 onChange={(e) => setCustomMeaning(e.target.value)}
                             />
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="editContextSentence">Context <span className="text-muted-foreground text-xs font-normal">(Optional)</span></Label>
+                            <Label htmlFor="editContextSentence">
+                                {t("contextLabel")} <span className="text-muted-foreground text-xs font-normal">({t("optional")})</span>
+                            </Label>
                             <Textarea
                                 id="editContextSentence"
-                                placeholder="How is this word used in a sentence?"
+                                placeholder={t("contextPlaceholder")}
                                 value={contextSentence}
                                 onChange={(e) => setContextSentence(e.target.value)}
                                 rows={2}
@@ -98,11 +101,13 @@ export function EditWordDialog({ item, open, onOpenChange, onSuccess }: EditWord
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="editSourceUrl">Source URL <span className="text-muted-foreground text-xs font-normal">(Optional)</span></Label>
+                            <Label htmlFor="editSourceUrl">
+                                {t("sourceLabel")} <span className="text-muted-foreground text-xs font-normal">({t("optional")})</span>
+                            </Label>
                             <Input
                                 id="editSourceUrl"
                                 type="url"
-                                placeholder="https://..."
+                                placeholder={t("sourcePlaceholder")}
                                 value={sourceUrl}
                                 onChange={(e) => setSourceUrl(e.target.value)}
                             />
@@ -111,11 +116,11 @@ export function EditWordDialog({ item, open, onOpenChange, onSuccess }: EditWord
 
                     <DialogFooter>
                         <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-                            Cancel
+                            {t("cancel")}
                         </Button>
                         <Button type="submit" disabled={isLoading}>
                             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                            Save Changes
+                            {t("save")}
                         </Button>
                     </DialogFooter>
                 </form>

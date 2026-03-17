@@ -11,7 +11,7 @@ import {
 import { clientApi, authApi } from "@/lib/api/api-client";
 import type { UserProfile, UserPermissionsDto, LoginRequest, RegisterRequest, UpdateProfileRequest } from "@/lib/api/types";
 import { GoogleOAuthProvider } from '@react-oauth/google';
-import { redirect } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 interface AuthUser {
     id: string;
@@ -39,6 +39,8 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+    const router = useRouter();
+    const pathname = usePathname();
     const [user, setUser] = useState<AuthUser | null>(null);
     const [permissions, setPermissions] = useState<UserPermissionsDto | null>(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -160,8 +162,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         await authApi.logout();
         setUser(null);
         setPermissions(null);
-        redirect('/auth/login')
-    }, []);
+        // Extract locale from current pathname (e.g. /en/dashboard -> en)
+        const locale = pathname.split("/")[1] || "en";
+        router.push(`/${locale}/auth/login`);
+    }, [pathname, router]);
 
     const updateProfile = useCallback(async (data: UpdateProfileRequest): Promise<boolean> => {
         setIsLoading(true);

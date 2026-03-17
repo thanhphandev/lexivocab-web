@@ -73,16 +73,12 @@ export default function BillingPage() {
                     paymentApi.getPaymentHistory(),
                 ]);
 
-                console.log("Billing response:", billingRes);
-                console.log("History response:", historyRes);
-
                 if (billingRes.success) setBilling(billingRes.data);
                 else console.error("Failed to load billing:", billingRes.error);
 
                 if (historyRes.success) {
                     // Handle different response structures
                     const items = (historyRes.data as any)?.items || historyRes.data || [];
-                    console.log("History items:", items);
                     setHistory(items);
                     
                     const pending = items.find((tx: any) => tx.status === "Pending" && tx.provider === "Sepay");
@@ -229,7 +225,7 @@ export default function BillingPage() {
                                             ? t("current_plan.title_premium", { 
                                                 plan: billing.plan || "Premium", 
                                                 months: billing.activeSubscription.durationMonths,
-                                                month_label: tPricing(billing.activeSubscription.durationMonths > 1 ? "months" : "month")
+                                                month_label: tPricing(billing.activeSubscription.durationMonths > 1 ? "comparison.months" : "comparison.month")
                                             }) 
                                             : t("current_plan.title_free")}
                                     </CardTitle>
@@ -412,7 +408,7 @@ export default function BillingPage() {
                             </div>
                             <Link href={`/${locale}/pricing`}>
                                 <Button className="shrink-0">
-                                    {tPricing("upgrade")} — $9.99
+                                    {tPricing("upgrade")}
                                     <ExternalLink className="ml-2 h-4 w-4" />
                                 </Button>
                             </Link>

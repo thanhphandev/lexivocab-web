@@ -97,75 +97,6 @@ export function DashboardNav({ locale }: { locale: string }) {
                     className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"
                 />
 
-                <div className="relative flex h-10 w-10 shrink-0 items-center justify-center">
-                    {/* Pulsing expand ring */}
-                    <motion.div
-                        className="absolute inset-0 rounded-2xl border border-primary/40"
-                        animate={{
-                            scale: [1, 1.3, 1],
-                            opacity: [0.5, 0, 0],
-                        }}
-                        transition={{ duration: 2.5, repeat: Infinity, ease: "easeOut" }}
-                    />
-                    
-                    {/* Spinning Gradient Outglow */}
-                    <motion.div
-                        className="absolute -inset-1 rounded-2xl bg-gradient-to-tr from-primary via-purple-500 to-orange-500 opacity-50 shadow-[0_0_15px_rgba(var(--primary))] blur-md"
-                        animate={{
-                            rotate: [0, 360],
-                            scale: [0.95, 1.05, 0.95]
-                        }}
-                        transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                    />
-
-                    {/* Gradient Border Shell */}
-                    <motion.div
-                        className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-primary via-orange-500 to-purple-500"
-                        animate={{ rotate: [360, 0] }}
-                        transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
-                    />
-
-                    {/* Inner Content Area */}
-                    <div className="absolute inset-[1.5px] rounded-[14px] bg-card flex items-center justify-center z-10 overflow-hidden shadow-inner">
-                        <motion.div 
-                            className="relative w-full h-full p-1"
-                            whileHover={{ scale: 1.15, rotate: 5 }}
-                            transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                        >
-                            <Image 
-                                src="/icon.png" 
-                                alt="LexiVocab" 
-                                fill 
-                                className="object-contain p-[3px] filter drop-shadow-[0_0_6px_rgba(255,255,255,0.25)] relative z-10"
-                                priority
-                            />
-                            {/* Inner Shimmer Sweep (Trae style) */}
-                            <motion.div 
-                                className="absolute top-0 bottom-0 w-1/2 bg-gradient-to-r from-transparent via-white/50 to-transparent -skew-x-12 z-20 mix-blend-overlay"
-                                animate={{
-                                    left: ['-100%', '200%']
-                                }}
-                                transition={{
-                                    duration: 2.5,
-                                    repeat: Infinity,
-                                    ease: "easeInOut",
-                                    repeatDelay: 1.5
-                                }}
-                            />
-                        </motion.div>
-                    </div>
-
-                    {/* Magic Sparkle on Hover */}
-                    <motion.div 
-                        className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-white blur-[1.5px] z-20 opacity-0 group-hover:opacity-100"
-                        animate={{ 
-                            scale: [0.8, 1.5, 0.8],
-                            opacity: [0.8, 1, 0.8]
-                        }}
-                        transition={{ duration: 1.2, repeat: Infinity }}
-                    />
-                </div>
-
                 <AnimatePresence>
                     {!collapsed && (
                         <motion.div
@@ -182,7 +113,7 @@ export function DashboardNav({ locale }: { locale: string }) {
                                 }}
                                 transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
                             >
-                                LexiVocab
+                                LexiVocab.
                             </motion.h1>
                             <div className="flex items-center gap-1.5 group/subtitle mt-0.5">
                                 <motion.div 

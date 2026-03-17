@@ -391,7 +391,14 @@ export default function PricingPage() {
                                                             : "text-muted-foreground/60"
                                                     }
                                                 >
-                                                    {t(feature.textKey.replace("Pricing.", ""))}
+                                                    {(() => {
+                                                        const key = feature.textKey.replace("Pricing.", "");
+                                                        try {
+                                                            return t(key, feature.params ?? {});
+                                                        } catch {
+                                                            return t(key, { count: 0 });
+                                                        }
+                                                    })()}
                                                 </span>
                                             </li>
                                         ))}

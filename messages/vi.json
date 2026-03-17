@@ -76,6 +76,18 @@
       "collapse": "Thu gọn thanh bên",
       "logout": "Đăng xuất"
     },
+    "billing": {
+      "title": "Thanh toán & Gói dịch vụ",
+      "subtitle": "Quản lý gói dịch vụ và xem lịch sử thanh toán.",
+      "plan_quota": "Hạn ngạch gói",
+      "used_space": "Không gian đã dùng",
+      "unlimited": "Không giới hạn",
+      "permissions": "Quyền hạn của gói",
+      "export_data": "Xuất dữ liệu (CSV/JSON)",
+      "ai_features": "Dịch AI & Ngữ cảnh",
+      "batch_import": "Nhập hàng loạt",
+      "history": "Lịch sử thanh toán"
+    },
     "home": {
       "title": "Chào mừng trở lại",
       "subtitle": "Đây là tổng quan tiến độ học tập của bạn",
@@ -100,11 +112,41 @@
       "subtitle": "Quản lý tất cả từ vựng bạn đã lưu, thêm từ mới hoặc nhập hàng loạt.",
       "searchPlaceholder": "Tìm kiếm từ...",
       "addWord": "Thêm từ",
-      "batchImport": "Nhập hàng loạt",
+      "batchImportText": "Nhập hàng loạt",
+      "newTag": "Thẻ mới",
+      "export": "Xuất",
+      "exportCsv": "Xuất dạng CSV",
+      "exportJson": "Xuất dạng JSON",
+      "exportSuccess": "Xuất thành công dạng {format}",
+      "exportFailed": "Xuất dữ liệu thất bại. Vui lòng thử lại sau.",
+      "allTags": "Tất cả thẻ",
       "statusFilter": {
         "all": "Tất cả trạng thái",
         "active": "Đang học",
         "archived": "Đã lưu trữ"
+      },
+      "quota": {
+        "exceededTitle": "Đã vượt hạn ngạch",
+        "nearLimitTitle": "Sắp đạt giới hạn",
+        "exceededDesc": "Bạn đã đạt giới hạn từ vựng. Vui lòng nâng cấp để thêm từ mới.",
+        "nearLimitDesc": "Bạn đã dùng {used} trong {max} từ. Hãy cân nhắc nâng cấp sớm.",
+        "upgradeNow": "Nâng cấp ngay →"
+      },
+      "empty": {
+        "noMatchTitle": "Không tìm thấy kết quả",
+        "noMatchDesc": "Không tìm thấy kết quả nào cho \"{query}\". Thử từ khóa khác.",
+        "emptyTagTitle": "Thẻ trống",
+        "emptyTagDesc": "Thẻ này chưa có từ nào. Hãy thêm từ vựng vào!",
+        "noWordsTitle": "Chưa có từ nào",
+        "noWordsDesc": "Kho từ vựng của bạn đang trống. Hãy thêm từ để bắt đầu hành trình học tập!",
+        "clearSearch": "Xóa tìm kiếm",
+        "viewAllWords": "Xem tất cả từ",
+        "addFirstWord": "Thêm từ đầu tiên"
+      },
+      "pagination": {
+        "previous": "Trước",
+        "next": "Sau",
+        "pageOf": "Trang {page} / {total}"
       },
       "table": {
         "word": "Từ vựng",
@@ -113,8 +155,17 @@
         "level": "Cấp độ",
         "nextReview": "Ôn tập kế tiếp",
         "status": "Trạng thái",
-        "tag": "Thư mục",
-        "actions": "Hành động"
+        "tag": "Thẻ",
+        "actions": "Hành động",
+        "noMeaning": "Chưa có nghĩa",
+        "assignTag": "Gán thẻ",
+        "removeTag": "Bỏ thẻ",
+        "noTagsAvailable": "Chưa có thẻ nào",
+        "deleteTitle": "Xóa từ",
+        "deleteDesc": "Bạn có chắc muốn xóa \"{word}\"? Hành động này không thể hoàn tác.",
+        "deleteConfirm": "Xóa",
+        "deleteSuccess": "Đã xóa \"{word}\" thành công",
+        "deleteFailed": "Xóa \"{word}\" thất bại"
       },
       "badges": {
         "active": "Đang học",
@@ -130,13 +181,108 @@
         "delete": "Xóa",
         "source": "Mở liên kết gốc"
       },
-      "empty": "Không tìm thấy từ vựng nào."
+      "empty_legacy": "Không tìm thấy từ vựng nào.",
+      "tagSidebar": {
+        "title": "Bộ lọc & Thẻ",
+        "allWords": "Tất cả từ",
+        "noTags": "Chưa có thẻ nào",
+        "wordCount": "{count} từ",
+        "edit": "Chỉnh sửa",
+        "delete": "Xóa",
+        "tipLabel": "Mẹo",
+        "tipDesc": "Sắp xếp từ theo chủ đề hoặc ngữ cảnh để ghi nhớ tốt hơn khi ôn tập.",
+        "deleteTitle": "Xóa thẻ",
+        "deleteDesc": "Bạn có chắc muốn xóa \"{name}\"? Các từ liên quan vẫn được giữ lại nhưng sẽ không còn thuộc thẻ này.",
+        "deleteConfirm": "Xóa thẻ"
+      },
+      "tagDialog": {
+        "createTitle": "Tạo thẻ mới",
+        "editTitle": "Chỉnh sửa thẻ",
+        "createDesc": "Sắp xếp từ vựng của bạn với một thẻ đẹp mắt.",
+        "editDesc": "Cập nhật thông tin và giao diện thẻ.",
+        "nameLabel": "Tên thẻ",
+        "namePlaceholder": "VD: TOEFL Cơ bản...",
+        "iconLabel": "Chọn biểu tượng",
+        "colorLabel": "Màu sắc",
+        "cancel": "Hủy",
+        "create": "Tạo thẻ",
+        "save": "Lưu thay đổi",
+        "createSuccess": "Đã tạo thẻ \"{name}\" thành công",
+        "updateSuccess": "Đã cập nhật thẻ \"{name}\" thành công",
+        "createFailed": "Tạo thẻ thất bại",
+        "updateFailed": "Cập nhật thẻ thất bại"
+      },
+      "editWordDialog": {
+        "title": "Chỉnh sửa từ",
+        "desc": "Cập nhật nghĩa, ngữ cảnh hoặc nguồn cho {word}.",
+        "meaningLabel": "Nghĩa / Dịch",
+        "contextLabel": "Ngữ cảnh",
+        "sourceLabel": "URL nguồn",
+        "optional": "Tùy chọn",
+        "meaningPlaceholder": "Thêm định nghĩa hoặc bản dịch của bạn",
+        "contextPlaceholder": "Từ này được dùng trong câu như thế nào?",
+        "sourcePlaceholder": "https://...",
+        "cancel": "Hủy",
+        "save": "Lưu thay đổi"
+      },
+      "addWordDialog": {
+        "wordLabel": "Từ",
+        "wordPlaceholder": "VD: ubiquitous",
+        "desc": "Nhập từ để tìm trong từ điển, hoặc thêm từ tùy chỉnh.",
+        "meaningLabel": "Nghĩa / Dịch",
+        "contextLabel": "Ngữ cảnh",
+        "sourceLabel": "URL nguồn",
+        "tagLabel": "Thẻ",
+        "optional": "Tùy chọn",
+        "meaningPlaceholder": "Thêm định nghĩa hoặc bản dịch của bạn",
+        "contextPlaceholder": "Từ này được dùng trong câu như thế nào?",
+        "sourcePlaceholder": "https://...",
+        "noTag": "Không có thẻ",
+        "cancel": "Hủy",
+        "save": "Lưu từ"
+      },
+      "batchImport": {
+        "desc": "Nhập nhiều từ vựng cùng lúc. Mỗi từ trên một dòng. Định dạng: Từ, Nghĩa (tùy chọn), Ngữ cảnh (tùy chọn)",
+        "listLabel": "Danh sách từ vựng (định dạng CSV)",
+        "listPlaceholder": "apple, Một loại trái cây, Tôi ăn một quả táo\nbanana, Trái chuối\nubiquitous",
+        "cancel": "Hủy",
+        "import": "Nhập từ vựng",
+        "noWords": "Không có từ hợp lệ để nhập.",
+        "success": "Đã nhập thành công {count} từ!",
+        "failed": "Nhập thất bại: {error}"
+      }
+    },
+    "flashcard": {
+      "meaningLabel": "Nghĩa",
+      "contextLabel": "Ngữ cảnh",
+      "noMeaning": "Chưa có nghĩa"
+    },
+    "reviewHistory": {
+      "title": "Lịch sử ôn tập",
+      "subtitle": "Nhật ký chi tiết các lần ôn tập flashcard của bạn.",
+      "colWord": "Từ",
+      "colQuality": "Chất lượng / Kết quả",
+      "colTime": "Thời gian",
+      "colDate": "Ngày ôn tập",
+      "empty": "Chưa có lịch sử ôn tập. Hãy tiếp tục học!",
+      "showing": "Hiển thị {from} đến {to} trong {total}",
+      "previous": "Trước",
+      "next": "Tiếp",
+      "quality": {
+        "5": "Hoàn hảo",
+        "4": "Tốt",
+        "3": "Khó",
+        "2": "Vất vả",
+        "1": "Sai",
+        "0": "Quên hoàn toàn"
+      }
     },
     "review": {
       "title": "Ôn tập hàng ngày",
       "subtitle": "Làm chủ từ vựng với khoảng cách lặp lại",
       "startSession": "Bắt đầu ôn tập",
-      "sessionComplete": "Đã hoàn thành ôn tập!",
+      "sessionComplete": "Đã hoàn thành phiên học!",
+      "allCaughtUp": "Bạn đã học hết mục tiêu!",
       "sessionStats": "Bạn đã ôn tập {count} từ hôm nay. Hãy tiếp tục phát huy!",
       "backToDashboard": "Trở về Tổng quan",
       "noReviews": "Bạn đã hoàn thành mục tiêu! Không có từ nào cần ôn tập lúc này.",
@@ -169,24 +315,66 @@
         "name": "Họ và tên",
         "email": "Địa chỉ email",
         "role": "Loại tài khoản",
-        "joined": "Tham gia lúc"
+        "joined": "Tham gia lúc",
+        "updateButton": "Cập nhật",
+        "languageLabel": "Ngôn ngữ giao diện",
+        "languagePlaceholder": "Chọn ngôn ngữ",
+        "languageDesc": "Đặt ngôn ngữ hiển thị mặc định cho bảng điều khiển của bạn."
       },
-      "preferences": {
-        "title": "Tùy chọn",
-        "desc": "Tùy chỉnh trải nghiệm của bạn.",
-        "theme": "Giao diện",
-        "language": "Ngôn ngữ",
-        "dailyGoal": "Mục tiêu ôn tập hàng ngày",
-        "sync": "Đồng bộ dữ liệu tiện ích tự động"
+      "password": {
+        "title": "Đổi mật khẩu",
+        "desc": "Cập nhật mật khẩu để bảo mật tài khoản của bạn.",
+        "currentLabel": "Mật khẩu hiện tại",
+        "newLabel": "Mật khẩu mới",
+        "submitButton": "Cập nhật mật khẩu",
+        "successMsg": "Đổi mật khẩu thành công. Vui lòng đăng nhập lại.",
+        "failMsg": "Đổi mật khẩu thất bại.",
+        "profileUpdated": "Cập nhật hồ sơ thành công.",
+        "profileFailed": "Cập nhật hồ sơ thất bại."
+      },
+      "extension": {
+        "title": "Tùy chọn tiện ích",
+        "desc": "Tùy chỉnh cách LexiVocab hoạt động trên trình duyệt của bạn.",
+        "highlightToggleLabel": "Bật tô màu từ vựng",
+        "highlightToggleDesc": "Tự động tô màu các từ vựng đang học trên trang web.",
+        "highlightColorLabel": "Màu tô sáng",
+        "highlightColorDesc": "Màu nền tùy chỉnh cho các từ được tô sáng.",
+        "dailyGoalLabel": "Mục tiêu ôn tập hàng ngày",
+        "dailyGoalDesc": "Bạn muốn ôn tập bao nhiêu từ mỗi ngày?",
+        "excludedDomainsLabel": "Tên miền loại trừ",
+        "excludedDomainsPlaceholder": "example.com\nreddit.com",
+        "excludedDomainsDesc": "LexiVocab sẽ tắt tô màu trên các trang web này. Thêm mỗi tên miền trên một dòng.",
+        "advancedLabel": "Cấu hình nâng cao (JSON)",
+        "advancedDesc": "Cài đặt JSON thô được đồng bộ từ tiện ích trình duyệt. Chỉnh sửa cẩn thận!",
+        "invalidJson": "Định dạng JSON không hợp lệ trong cài đặt nâng cao."
       },
       "account": {
         "title": "Hành động tài khoản",
         "desc": "Quản lý bảo mật và dữ liệu của bạn.",
         "changePassword": "Đổi mật khẩu",
         "exportData": "Xuất dữ liệu của tôi",
-        "deleteAccount": "Xóa tài khoản"
+        "deleteAccount": "Xóa tài khoản",
+        "logOut": "Đăng xuất",
+        "revokeAllSessions": "Thu hồi tất cả phiên đăng nhập",
+        "revokeSuccess": "Đã thu hồi tất cả phiên. Vui lòng đăng nhập lại.",
+        "revokeFailed": "Thu hồi phiên thất bại.",
+        "deleteSuccess": "Tài khoản của bạn đã bị xóa vĩnh viễn.",
+        "deleteFailed": "Xóa tài khoản thất bại: {error}"
       },
-      "save": "Lưu thay đổi"
+      "save": "Lưu thay đổi",
+      "saveSuccess": "Lưu cài đặt thành công.",
+      "saveFailed": "Lưu cài đặt thất bại: {error}",
+      "confirmDelete": {
+        "title": "Xóa tài khoản của tôi",
+        "description": "Bạn có chắc chắn muốn xóa vĩnh viễn tài khoản? Hành động này không thể hoàn tác và toàn bộ tiến độ học từ vựng sẽ bị mất mãi mãi.",
+        "confirmText": "Xóa tài khoản"
+      },
+      "confirmRevoke": {
+        "title": "Thu hồi tất cả phiên đăng nhập",
+        "description": "Thao tác này sẽ đăng xuất bạn ngay lập tức khỏi tất cả thiết bị (trình duyệt, tiện ích, di động). Bạn sẽ cần đăng nhập lại trên từng thiết bị.",
+        "confirmText": "Thu hồi tất cả",
+        "confirmingText": "Đang thu hồi..."
+      }
     },
     "explore": {
       "title": "Khám phá từ điển",
@@ -203,7 +391,6 @@
   "Hero": {
     "badge": "🚀 Phiên bản mới v1.0",
     "title": "Học từ vựng thụ động ngay khi <highlight>lướt web</highlight>",
-    "highlight": "lướt web",
     "subtitle": "Đừng để việc tra từ làm gián đoạn việc đọc của bạn. LexiVocab giúp bạn dịch, lưu và ôn tập từ vựng tiếng Anh một cách tự nhiên nhất.",
     "cta_install": "Thêm vào Chrome",
     "cta_demo": "Xem Demo",
@@ -259,6 +446,28 @@
       "priority_support": "Hỗ trợ ưu tiên",
       "data_export": "Xuất dữ liệu CSV & JSON"
     },
+    "duration_1m": "1 tháng",
+    "duration_3m": "3 tháng",
+    "duration_6m": "6 tháng",
+    "duration_12m": "12 tháng",
+    "lifetime_label": "trọn đời",
+    "for": "trong",
+    "month": "tháng",
+    "months": "tháng",
+    "free": "Miễn phí",
+    "plan_free": "Miễn phí",
+    "plan_premium": "Cao cấp",
+    "business_plan": "Doanh nghiệp",
+    "Perfect for beginners": "Dành cho người mới bắt đầu",
+    "Unlock full potential": "Mở khóa toàn bộ tính năng",
+    "For advanced learners and teams": "Dành cho người học nâng cao và nhóm",
+    "MAX_WORDS": "Tối đa {count} từ vựng",
+    "AI_ACCESS": "Dịch AI & Ngữ cảnh",
+    "SUPPORT_LEVEL": "Hỗ trợ",
+    "EXPORT_PDF": "Xuất dữ liệu (PDF/CSV)",
+    "ADVANCED_AI": "Tính năng AI nâng cao",
+    "QUIZ_GENERATION": "Tạo câu hỏi bằng AI",
+    "AI_DAILY_LIMIT": "Giới hạn AI hàng ngày",
     "trust": {
       "secure": "Thanh toán an toàn",
       "lifetime": "Truy cập trọn đời",
@@ -598,14 +807,5 @@
       "system": "Hệ thống",
       "ms": "{ms}ms"
     }
-  },
-  "Tags": {
-    "title": "Thư mục của bạn",
-    "createPlaceholder": "Tên thư mục mới...",
-    "empty": "Chưa có thư mục nào. Hãy tạo mới để phân loại từ vựng.",
-    "deleteConfirm": "Bạn có chắc chắn muốn xóa thư mục này?",
-    "add": "Thêm",
-    "placeholder": "Phân loại vào thư mục...",
-    "default": "Mặc định (Không thư mục)"
   }
 }

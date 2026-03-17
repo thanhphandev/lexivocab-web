@@ -19,6 +19,7 @@ import { Loader2, Upload } from "lucide-react";
 
 export function BatchImportDialog({ onSuccess }: { onSuccess: () => void }) {
     const t = useTranslations("Dashboard.vocabulary");
+    const tImport = useTranslations("Dashboard.vocabulary.batchImport");
     const [open, setOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [importText, setImportText] = useState("");
@@ -28,10 +29,7 @@ export function BatchImportDialog({ onSuccess }: { onSuccess: () => void }) {
         if (!importText.trim()) return;
 
         setIsLoading(true);
-
         try {
-            // Parse CSV-like structure: word, meaning, context
-            // or simply lines of words
             const wordsStr = importText.split("\n").filter(l => l.trim());
             const wordsList = wordsStr.map(line => {
                 const parts = line.split(",").map(p => p.trim());
@@ -43,7 +41,7 @@ export function BatchImportDialog({ onSuccess }: { onSuccess: () => void }) {
             }).filter(w => w.wordText);
 
             if (wordsList.length === 0) {
-                alert("No valid words to import.");
+                alert(tImport("noWords"));
                 setIsLoading(false);
                 return;
             }
@@ -52,10 +50,10 @@ export function BatchImportDialog({ onSuccess }: { onSuccess: () => void }) {
             if (res.success) {
                 setOpen(false);
                 setImportText("");
-                alert(`Successfully imported ${res.data || wordsList.length} words!`);
+                alert(tImport("success", { count: (res.data as number) || wordsList.length }));
                 onSuccess();
             } else {
-                alert(`Import failed: ${res.error}`);
+                alert(tImport("failed", { error: res.error }));
             }
         } catch (e) {
             console.error("Batch import error:", e);
@@ -69,25 +67,22 @@ export function BatchImportDialog({ onSuccess }: { onSuccess: () => void }) {
             <DialogTrigger asChild>
                 <Button variant="outline" className="hidden sm:flex">
                     <Upload className="mr-2 h-4 w-4" />
-                    {t("batchImport")}
+                    {t("batchImportText")}
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[500px]">
                 <form onSubmit={handleImport}>
                     <DialogHeader>
-                        <DialogTitle>{t("batchImport")}</DialogTitle>
-                        <DialogDescription>
-                            Import multiple vocabulary words at once. Add each word on a new line.
-                            Format: <code>Word, Meaning (optional), Context (optional)</code>
-                        </DialogDescription>
+                        <DialogTitle>{t("batchImportText")}</DialogTitle>
+                        <DialogDescription>{tImport("desc")}</DialogDescription>
                     </DialogHeader>
 
                     <div className="grid gap-4 py-4">
                         <div className="space-y-2">
-                            <Label htmlFor="importData">Vocabulary List (CSV Format)</Label>
+                            <Label htmlFor="importData">{tImport("listLabel")}</Label>
                             <Textarea
                                 id="importData"
-                                placeholder="apple, A fruit, I ate an apple&#10;banana, A yellow fruit&#10;ubiquitous"
+                                placeholder={tImport("listPlaceholder")}
                                 className="min-h-[200px]"
                                 value={importText}
                                 onChange={(e) => setImportText(e.target.value)}
@@ -98,11 +93,11 @@ export function BatchImportDialog({ onSuccess }: { onSuccess: () => void }) {
 
                     <DialogFooter>
                         <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-                            Cancel
+                            {tImport("cancel")}
                         </Button>
                         <Button type="submit" disabled={isLoading || !importText.trim()}>
                             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                            Import Words
+                            {tImport("import")}
                         </Button>
                     </DialogFooter>
                 </form>

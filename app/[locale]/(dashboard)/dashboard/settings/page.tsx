@@ -14,8 +14,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { Loader2, Palette, ShieldAlert, Target, Code, Globe, Lock, KeyRound } from "lucide-react";
-import { clientApi, authApi, settingsApi } from "@/lib/api/api-client";
-import type { UserSettingsDto } from "@/lib/api/types";
+import { authApi, settingsApi } from "@/lib/api/api-client";
 import { toast } from "sonner";
 import { ConfirmDialog } from "@/components/dashboard/confirm-dialog";
 
@@ -33,18 +32,15 @@ export default function SettingsPage() {
     const [confirmRevokeOpen, setConfirmRevokeOpen] = useState(false);
     const [isRevoking, setIsRevoking] = useState(false);
 
-    // Profile State
     const [profileName, setProfileName] = useState("");
     const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
 
-    // Password State
     const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [isChangingPassword, setIsChangingPassword] = useState(false);
     const [passwordError, setPasswordError] = useState<string | null>(null);
     const [passwordSuccess, setPasswordSuccess] = useState<string | null>(null);
 
-    // Form state
     const [isHighlightEnabled, setIsHighlightEnabled] = useState(true);
     const [highlightColor, setHighlightColor] = useState("#ffb13b");
     const [excludedDomains, setExcludedDomains] = useState("");
@@ -52,9 +48,7 @@ export default function SettingsPage() {
     const [preferencesJson, setPreferencesJson] = useState<string>("{}");
 
     useEffect(() => {
-        if (user?.fullName) {
-             setProfileName(user.fullName);
-        }
+        if (user?.fullName) setProfileName(user.fullName);
 
         const fetchSettings = async () => {
             const res = await settingsApi.get();
@@ -63,7 +57,6 @@ export default function SettingsPage() {
                 setHighlightColor(res.data.highlightColor || "#ffb13b");
                 setExcludedDomains(res.data.excludedDomains?.join("\n") || "");
                 setDailyGoal(res.data.dailyGoal || 10);
-
                 try {
                     const parsed = JSON.parse(res.data.preferencesJson || "{}");
                     setPreferencesJson(JSON.stringify(parsed, null, 2));
@@ -76,15 +69,14 @@ export default function SettingsPage() {
         fetchSettings();
     }, [user?.fullName]);
 
-
     const handleUpdateProfile = async () => {
         if (!profileName.trim()) return;
         setIsUpdatingProfile(true);
         const success = await updateProfile({ fullName: profileName });
         if (success) {
-            toast.success("Profile updated successfully.");
+            toast.success(t("password.profileUpdated"));
         } else {
-            toast.error("Failed to update profile.");
+            toast.error(t("password.profileFailed"));
         }
         setIsUpdatingProfile(false);
     };
@@ -94,38 +86,37 @@ export default function SettingsPage() {
         setPasswordError(null);
         setPasswordSuccess(null);
         setIsChangingPassword(true);
-
         try {
-             const res = await authApi.changePassword({ currentPassword, newPassword });
-             if (res.success) {
-                 toast.success("Password changed successfully. Please log in again.");
-                 setPasswordSuccess("Password changed successfully. Please log in again.");
-                 setTimeout(() => {
-                     logout();
-                     router.push(`/${locale}/auth/login`);
-                 }, 2000);
-             } else {
-                 toast.error(res.error || "Failed to change password.");
-                 setPasswordError(res.error || "Failed to change password.");
-             }
+            const res = await authApi.changePassword({ currentPassword, newPassword });
+            if (res.success) {
+                toast.success(t("password.successMsg"));
+                setPasswordSuccess(t("password.successMsg"));
+                setTimeout(() => {
+                    logout();
+                    router.push(`/${locale}/auth/login`);
+                }, 2000);
+            } else {
+                toast.error(res.error || t("password.failMsg"));
+                setPasswordError(res.error || t("password.failMsg"));
+            }
         } catch {
-             toast.error("An unexpected error occurred.");
-             setPasswordError("An unexpected error occurred.");
+            toast.error(t("unexpectedError"));
+            setPasswordError(t("unexpectedError"));
         } finally {
-             setIsChangingPassword(false);
-             setCurrentPassword("");
-             setNewPassword("");
+            setIsChangingPassword(false);
+            setCurrentPassword("");
+            setNewPassword("");
         }
     };
 
     const handleDeleteAccount = async () => {
         const res = await authApi.deleteAccount();
         if (res.success) {
-            toast.success("Your account has been permanently deleted.");
+            toast.success(t("account.deleteSuccess"));
             logout();
             router.push(`/${locale}/auth/login`);
         } else {
-            toast.error("Failed to delete account: " + res.error);
+            toast.error(t("account.deleteFailed", { error: res.error }));
         }
         setConfirmDeleteOpen(false);
     };
@@ -135,11 +126,11 @@ export default function SettingsPage() {
         try {
             const res = await authApi.revokeAllSessions();
             if (res.success) {
-                toast.success("All sessions revoked. Please log in again.");
+                toast.success(t("account.revokeSuccess"));
                 logout();
                 router.push(`/${locale}/auth/login`);
             } else {
-                toast.error(res.error || "Failed to revoke sessions.");
+                toast.error(res.error || t("account.revokeFailed"));
             }
         } finally {
             setIsRevoking(false);
@@ -150,22 +141,19 @@ export default function SettingsPage() {
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSaving(true);
-
         try {
             let parsedPrefs = {};
             try {
                 parsedPrefs = JSON.parse(preferencesJson);
-            } catch (err) {
-                toast.error("Invalid JSON format in advanced preferences.");
+            } catch {
+                toast.error(t("extension.invalidJson"));
                 setIsSaving(false);
                 return;
             }
-
             const domains = excludedDomains
                 .split("\n")
                 .map(d => d.trim().toLowerCase())
                 .filter(d => d.length > 0);
-
             const res = await settingsApi.update({
                 isHighlightEnabled,
                 highlightColor,
@@ -173,12 +161,10 @@ export default function SettingsPage() {
                 dailyGoal: Number(dailyGoal),
                 preferencesJson: JSON.stringify(parsedPrefs),
             });
-
-
             if (res.success) {
-                toast.success("Settings saved successfully.");
+                toast.success(t("saveSuccess"));
             } else {
-                toast.error(`Failed to save settings: ${res.error}`);
+                toast.error(t("saveFailed", { error: res.error }));
             }
         } finally {
             setIsSaving(false);
@@ -195,12 +181,8 @@ export default function SettingsPage() {
     return (
         <div className="space-y-8 pb-10 max-w-4xl">
             <div>
-                <h1 className="text-2xl font-bold tracking-tight text-foreground">
-                    {t("title")}
-                </h1>
-                <p className="mt-1 text-muted-foreground">
-                    {t("subtitle")}
-                </p>
+                <h1 className="text-2xl font-bold tracking-tight text-foreground">{t("title")}</h1>
+                <p className="mt-1 text-muted-foreground">{t("subtitle")}</p>
             </div>
 
             {isLoading ? (
@@ -209,11 +191,8 @@ export default function SettingsPage() {
                 </div>
             ) : (
                 <div className="space-y-8">
-                    {/* Profile Settings */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                    >
+                    {/* Profile */}
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
                         <Card>
                             <CardHeader>
                                 <CardTitle>{t("profile.title")}</CardTitle>
@@ -231,24 +210,23 @@ export default function SettingsPage() {
                                         <p className="text-sm text-muted-foreground">{user?.role} Account</p>
                                     </div>
                                 </div>
-
                                 <div className="grid gap-4 md:grid-cols-2">
                                     <div className="space-y-2">
                                         <label className="text-sm font-medium">{t("profile.name")}</label>
                                         <div className="flex gap-2">
-                                            <Input 
-                                                value={profileName} 
+                                            <Input
+                                                value={profileName}
                                                 onChange={(e) => setProfileName(e.target.value)}
                                                 disabled={isUpdatingProfile}
                                             />
-                                            <Button 
-                                                type="button" 
+                                            <Button
+                                                type="button"
                                                 variant="secondary"
                                                 onClick={handleUpdateProfile}
                                                 disabled={isUpdatingProfile || profileName === user?.fullName || !profileName.trim()}
                                             >
                                                 {isUpdatingProfile && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                                Update
+                                                {t("profile.updateButton")}
                                             </Button>
                                         </div>
                                     </div>
@@ -256,12 +234,10 @@ export default function SettingsPage() {
                                         <label className="text-sm font-medium">{t("profile.email")}</label>
                                         <Input defaultValue={user?.email || ""} disabled className="bg-muted" />
                                     </div>
-
-                                    {/* Language Selection */}
                                     <div className="space-y-3 md:col-span-2 pt-4 border-t mt-2">
                                         <label className="text-sm font-medium flex items-center gap-2">
                                             <Globe className="w-4 h-4 text-primary" />
-                                            Language Interface
+                                            {t("profile.languageLabel")}
                                         </label>
                                         <Select
                                             value={locale}
@@ -272,17 +248,15 @@ export default function SettingsPage() {
                                             }}
                                         >
                                             <SelectTrigger className="w-full md:w-[250px]">
-                                                <SelectValue placeholder="Select language" />
+                                                <SelectValue placeholder={t("profile.languagePlaceholder")} />
                                             </SelectTrigger>
                                             <SelectContent>
                                                 {locales.map((l) => (
-                                                    <SelectItem key={l} value={l}>
-                                                        {languageNames[l]}
-                                                    </SelectItem>
+                                                    <SelectItem key={l} value={l}>{languageNames[l]}</SelectItem>
                                                 ))}
                                             </SelectContent>
                                         </Select>
-                                        <p className="text-xs text-muted-foreground">Sets the default display language for your dashboard.</p>
+                                        <p className="text-xs text-muted-foreground">{t("profile.languageDesc")}</p>
                                     </div>
                                 </div>
                             </CardContent>
@@ -290,29 +264,25 @@ export default function SettingsPage() {
                     </motion.div>
 
                     {/* Change Password */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.05 }}
-                    >
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
                         <Card>
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
                                     <KeyRound className="w-5 h-5 text-primary" />
-                                    Change Password
+                                    {t("password.title")}
                                 </CardTitle>
-                                <CardDescription>Update your password to keep your account secure.</CardDescription>
+                                <CardDescription>{t("password.desc")}</CardDescription>
                             </CardHeader>
                             <CardContent>
-                                <form onSubmit={(e) => handleChangePassword(e)} className="space-y-4 max-w-md">
+                                <form onSubmit={handleChangePassword} className="space-y-4 max-w-md">
                                     <div className="space-y-2">
                                         <label className="text-sm font-medium flex items-center gap-2">
                                             <Lock className="w-4 h-4 text-muted-foreground" />
-                                            Current Password
+                                            {t("password.currentLabel")}
                                         </label>
-                                        <Input 
-                                            type="password" 
-                                            placeholder="••••••••" 
+                                        <Input
+                                            type="password"
+                                            placeholder="••••••••"
                                             value={currentPassword}
                                             onChange={(e) => setCurrentPassword(e.target.value)}
                                             disabled={isChangingPassword}
@@ -322,11 +292,11 @@ export default function SettingsPage() {
                                     <div className="space-y-2">
                                         <label className="text-sm font-medium flex items-center gap-2">
                                             <Lock className="w-4 h-4 text-muted-foreground" />
-                                            New Password
+                                            {t("password.newLabel")}
                                         </label>
-                                        <Input 
-                                            type="password" 
-                                            placeholder="••••••••" 
+                                        <Input
+                                            type="password"
+                                            placeholder="••••••••"
                                             value={newPassword}
                                             onChange={(e) => setNewPassword(e.target.value)}
                                             disabled={isChangingPassword}
@@ -334,57 +304,44 @@ export default function SettingsPage() {
                                             minLength={6}
                                         />
                                     </div>
-
                                     {passwordError && <p className="text-sm font-medium text-destructive">{passwordError}</p>}
                                     {passwordSuccess && <p className="text-sm font-medium text-green-600">{passwordSuccess}</p>}
-
-                                    <Button 
-                                        type="submit" 
+                                    <Button
+                                        type="submit"
                                         disabled={isChangingPassword || !currentPassword || !newPassword}
                                         className="mt-2"
                                     >
                                         {isChangingPassword && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                        Update Password
+                                        {t("password.submitButton")}
                                     </Button>
                                 </form>
                             </CardContent>
                         </Card>
                     </motion.div>
 
-                    {/* Chrome Extension Preferences */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.1 }}
-                    >
+                    {/* Extension Preferences */}
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
                         <form onSubmit={handleSave}>
                             <Card>
                                 <CardHeader>
-                                    <CardTitle>Extension Preferences</CardTitle>
-                                    <CardDescription>Customize how LexiVocab behaves in your browser.</CardDescription>
+                                    <CardTitle>{t("extension.title")}</CardTitle>
+                                    <CardDescription>{t("extension.desc")}</CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-8">
-                                    {/* Highlight Feature Toggle */}
                                     <div className="flex items-center justify-between border-b pb-6">
                                         <div className="space-y-0.5">
                                             <label className="text-base font-medium flex items-center gap-2">
                                                 <Palette className="w-4 h-4 text-primary" />
-                                                Enable Word Highlighting
+                                                {t("extension.highlightToggleLabel")}
                                             </label>
-                                            <p className="text-sm text-muted-foreground">
-                                                Automatically highlight your active vocabulary words on web pages.
-                                            </p>
+                                            <p className="text-sm text-muted-foreground">{t("extension.highlightToggleDesc")}</p>
                                         </div>
-                                        <Switch
-                                            checked={isHighlightEnabled}
-                                            onCheckedChange={setIsHighlightEnabled}
-                                        />
+                                        <Switch checked={isHighlightEnabled} onCheckedChange={setIsHighlightEnabled} />
                                     </div>
 
                                     <div className="grid gap-6 md:grid-cols-2 border-b pb-6">
-                                        {/* Highlight Color */}
                                         <div className="space-y-3">
-                                            <label className="text-sm font-medium">Highlight Color</label>
+                                            <label className="text-sm font-medium">{t("extension.highlightColorLabel")}</label>
                                             <div className="flex items-center gap-3">
                                                 <Input
                                                     type="color"
@@ -400,14 +357,12 @@ export default function SettingsPage() {
                                                     disabled={!isHighlightEnabled}
                                                 />
                                             </div>
-                                            <p className="text-xs text-muted-foreground">Custom background color for highlighted words.</p>
+                                            <p className="text-xs text-muted-foreground">{t("extension.highlightColorDesc")}</p>
                                         </div>
-
-                                        {/* Daily Goal */}
                                         <div className="space-y-3">
                                             <label className="text-sm font-medium flex items-center gap-2">
                                                 <Target className="w-4 h-4" />
-                                                Daily Review Goal
+                                                {t("extension.dailyGoalLabel")}
                                             </label>
                                             <Input
                                                 type="number"
@@ -416,34 +371,30 @@ export default function SettingsPage() {
                                                 value={dailyGoal}
                                                 onChange={(e) => setDailyGoal(Number(e.target.value))}
                                             />
-                                            <p className="text-xs text-muted-foreground">How many words do you want to review per day?</p>
+                                            <p className="text-xs text-muted-foreground">{t("extension.dailyGoalDesc")}</p>
                                         </div>
                                     </div>
 
-                                    {/* Excluded Domains */}
                                     <div className="space-y-3">
                                         <label className="text-sm font-medium flex items-center gap-2">
                                             <ShieldAlert className="w-4 h-4 text-orange-500" />
-                                            Excluded Domains
+                                            {t("extension.excludedDomainsLabel")}
                                         </label>
                                         <Textarea
-                                            placeholder="example.com&#10;reddit.com"
+                                            placeholder={t("extension.excludedDomainsPlaceholder")}
                                             rows={4}
                                             value={excludedDomains}
                                             onChange={(e) => setExcludedDomains(e.target.value)}
                                             className="font-mono text-sm"
                                             disabled={!isHighlightEnabled}
                                         />
-                                        <p className="text-xs text-muted-foreground">
-                                            LexiVocab will disable highlighting on these websites. Add one domain per line.
-                                        </p>
+                                        <p className="text-xs text-muted-foreground">{t("extension.excludedDomainsDesc")}</p>
                                     </div>
 
-                                    {/* Advanced JSON Preferences */}
                                     <div className="space-y-3 pt-4 border-t">
                                         <label className="text-sm font-medium flex items-center gap-2">
                                             <Code className="w-4 h-4 text-purple-500" />
-                                            Advanced Configuration (JSON)
+                                            {t("extension.advancedLabel")}
                                         </label>
                                         <Textarea
                                             placeholder="{}"
@@ -452,9 +403,7 @@ export default function SettingsPage() {
                                             onChange={(e) => setPreferencesJson(e.target.value)}
                                             className="font-mono text-sm bg-muted/50"
                                         />
-                                        <p className="text-xs text-muted-foreground">
-                                            Raw JSON settings synchronized from your browser extension. Modify with caution!
-                                        </p>
+                                        <p className="text-xs text-muted-foreground">{t("extension.advancedDesc")}</p>
                                     </div>
                                 </CardContent>
                                 <CardFooter className="border-t px-6 py-4 bg-muted/20">
@@ -468,11 +417,7 @@ export default function SettingsPage() {
                     </motion.div>
 
                     {/* Danger Zone */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2 }}
-                    >
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
                         <Card className="border-destructive/20">
                             <CardHeader>
                                 <CardTitle className="text-destructive">{t("account.title")}</CardTitle>
@@ -480,13 +425,24 @@ export default function SettingsPage() {
                             </CardHeader>
                             <CardContent className="flex flex-col sm:flex-row gap-4">
                                 <Button variant="outline" type="button" onClick={logout}>
-                                    Log Out
+                                    {t("account.logOut")}
                                 </Button>
-                                <Button variant="outline" type="button" onClick={() => setConfirmRevokeOpen(true)} className="text-orange-600 hover:bg-orange-50 border-orange-200" disabled={isRevoking}>
+                                <Button
+                                    variant="outline"
+                                    type="button"
+                                    onClick={() => setConfirmRevokeOpen(true)}
+                                    className="text-orange-600 hover:bg-orange-50 border-orange-200"
+                                    disabled={isRevoking}
+                                >
                                     {isRevoking && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                    Revoke All Sessions
+                                    {t("account.revokeAllSessions")}
                                 </Button>
-                                <Button variant="outline" type="button" onClick={() => setConfirmDeleteOpen(true)} className="text-destructive hover:bg-destructive/10">
+                                <Button
+                                    variant="outline"
+                                    type="button"
+                                    onClick={() => setConfirmDeleteOpen(true)}
+                                    className="text-destructive hover:bg-destructive/10"
+                                >
                                     {t("account.deleteAccount")}
                                 </Button>
                             </CardContent>
@@ -498,20 +454,20 @@ export default function SettingsPage() {
             <ConfirmDialog
                 open={confirmDeleteOpen}
                 onOpenChange={setConfirmDeleteOpen}
-                title="Delete My Account"
-                description="Are you sure you want to permanently delete your account? This action is irreversible and all your vocabulary progress will be lost forever."
+                title={t("confirmDelete.title")}
+                description={t("confirmDelete.description")}
                 onConfirm={handleDeleteAccount}
-                confirmText="Delete Account"
+                confirmText={t("confirmDelete.confirmText")}
                 variant="destructive"
             />
 
             <ConfirmDialog
                 open={confirmRevokeOpen}
                 onOpenChange={setConfirmRevokeOpen}
-                title="Revoke All Sessions"
-                description="This will immediately sign you out from all devices (browser, extension, mobile). You will need to log in again on each device."
+                title={t("confirmRevoke.title")}
+                description={t("confirmRevoke.description")}
                 onConfirm={handleRevokeAllSessions}
-                confirmText={isRevoking ? "Revoking..." : "Revoke All"}
+                confirmText={isRevoking ? t("confirmRevoke.confirmingText") : t("confirmRevoke.confirmText")}
                 variant="destructive"
             />
         </div>

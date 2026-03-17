@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuth } from "@/lib/auth/auth-context";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, redirect } from "next/navigation";
 import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
 
@@ -30,7 +30,7 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
     }
 
     if (!isAuthenticated) {
-        return null;
+        return redirect("/auth/login");
     }
 
     return <>{children}</>;
