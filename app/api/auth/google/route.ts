@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { serverFetch } from "@/lib/api/api-client";
-import type { AuthResponse, GoogleLoginRequest } from "@/lib/api/types";
+import type { GoogleLoginRequest } from "@/lib/api/types";
 
 export async function POST(request: Request) {
     const body = (await request.json()) as GoogleLoginRequest;
@@ -15,17 +14,28 @@ export async function POST(request: Request) {
 
     const data = await res.json().catch(() => null);
     if (!res.ok) {
-        return NextResponse.json({ success: false, error: data?.error || "Google login failed" }, { status: 401 });
+        // Pass through the actual status code (403 for deactivated, 401 for invalid token, etc.)
+        const status = res.status === 403 ? 403 : 401;
+        return NextResponse.json(
+            { success: false, error: data?.error || "Google login failed" },
+            { status }
+        );
     }
 
-    const { accessToken, expiresAt, userId, email, fullName, role } = data.data || data;
+    const payload = data.data || data;
+    const { accessToken, expiresAt, userId, email, fullName, role } = payload;
     const expiresDate = new Date(expiresAt);
 
+    // Extract refreshToken and its expiration from the Set-Cookie header returned by .NET
     const setCookieHeader = res.headers.get("Set-Cookie");
     let refreshToken = "";
+    let refreshTokenExpires: Date | undefined;
     if (setCookieHeader) {
-        const match = setCookieHeader.match(/refreshToken=([^;]+)/);
-        if (match) refreshToken = match[1];
+        const tokenMatch = setCookieHeader.match(/refreshToken=([^;]+)/);
+        if (tokenMatch) refreshToken = tokenMatch[1];
+
+        const expiresMatch = setCookieHeader.match(/expires=([^;]+)/i);
+        if (expiresMatch) refreshTokenExpires = new Date(expiresMatch[1]);
     }
 
     const cookieStore = await cookies();
@@ -44,7 +54,7 @@ export async function POST(request: Request) {
             secure: process.env.NODE_ENV === "production",
             sameSite: "lax",
             path: "/",
-            maxAge: 60 * 60 * 24 * 30, // 30 days
+            ...(refreshTokenExpires ? { expires: refreshTokenExpires } : { maxAge: 60 * 60 * 24 * 30 }),
         });
     }
 

@@ -6,9 +6,10 @@ import { UserOverviewDto } from "@/lib/api/types";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ChevronLeft, ChevronRight, Search, Shield, User, Crown } from "lucide-react";
+import { ChevronLeft, ChevronRight, Search, Shield, User, Users, Crown } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function AdminUsersPage() {
     const router = useRouter();
@@ -43,7 +44,6 @@ export default function AdminUsersPage() {
 
     const getRoleIcon = (role: string) => {
         if (role === "Admin") return <Shield className="h-4 w-4 text-red-500" />;
-        if (role === "Premium") return <Crown className="h-4 w-4 text-yellow-500" />;
         return <User className="h-4 w-4 text-blue-500" />;
     };
 
@@ -51,77 +51,97 @@ export default function AdminUsersPage() {
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <h2 className="text-3xl font-bold tracking-tight">Users Management</h2>
-                    <p className="text-muted-foreground mt-1">
-                        Search, filter, and view user details.
-                    </p>
+                    <div className="flex items-center gap-3">
+                        <div className="p-2.5 rounded-xl bg-gradient-to-br from-blue-500/20 to-indigo-500/20 border border-blue-500/20 text-blue-600 dark:text-blue-400">
+                            <Users className="h-6 w-6" />
+                        </div>
+                        <div>
+                            <h2 className="text-2xl font-bold tracking-tight">Users Management</h2>
+                            <p className="text-sm text-muted-foreground mt-0.5">Search, filter, and view user details.</p>
+                        </div>
+                    </div>
                 </div>
                 <div className="relative w-full sm:w-72">
-                    <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                         placeholder="Search by email or name..."
-                        className="pl-9"
+                        className="pl-9 bg-card border-muted-foreground/20"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                     />
                 </div>
             </div>
 
-            <div className="rounded-md border bg-card">
+            <div className="rounded-xl border bg-card overflow-hidden shadow-sm">
                 <Table>
                     <TableHeader>
-                        <TableRow>
-                            <TableHead>User</TableHead>
-                            <TableHead>Role</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead>Provider</TableHead>
-                            <TableHead className="text-right">Joined</TableHead>
+                        <TableRow className="bg-muted/30 hover:bg-muted/30">
+                            <TableHead className="font-semibold">User</TableHead>
+                            <TableHead className="font-semibold">Role</TableHead>
+                            <TableHead className="font-semibold">Status</TableHead>
+                            <TableHead className="font-semibold">Provider</TableHead>
+                            <TableHead className="text-right font-semibold">Joined</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {loading ? (
-                            <TableRow>
-                                <TableCell colSpan={5} className="h-40 text-center">
-                                    <div className="flex justify-center">
-                                        <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-                                    </div>
-                                </TableCell>
-                            </TableRow>
+                            Array.from({ length: 8 }).map((_, i) => (
+                                <TableRow key={i}>
+                                    <TableCell><Skeleton className="h-10 w-48" /></TableCell>
+                                    <TableCell><Skeleton className="h-6 w-24" /></TableCell>
+                                    <TableCell><Skeleton className="h-6 w-16" /></TableCell>
+                                    <TableCell><Skeleton className="h-6 w-20" /></TableCell>
+                                    <TableCell className="text-right"><Skeleton className="h-6 w-24 ml-auto" /></TableCell>
+                                </TableRow>
+                            ))
                         ) : users.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={5} className="h-40 text-center text-muted-foreground">
-                                    No users found.
+                                <TableCell colSpan={5} className="h-72">
+                                    <div className="flex flex-col items-center justify-center text-muted-foreground py-12">
+                                        <div className="p-4 rounded-2xl bg-muted/50 mb-4">
+                                            <Users className="h-10 w-10 opacity-40" />
+                                        </div>
+                                        <p className="font-semibold text-lg text-foreground">No users found</p>
+                                        <p className="text-sm mt-1 max-w-sm text-center">Try adjusting your search query or check back later.</p>
+                                    </div>
                                 </TableCell>
                             </TableRow>
                         ) : (
                             users.map((u) => (
                                 <TableRow
                                     key={u.id}
-                                    className="cursor-pointer hover:bg-muted/50"
+                                    className="cursor-pointer hover:bg-muted/50 transition-colors"
                                     onClick={() => router.push(`/admin/users/${u.id}`)}
                                 >
                                     <TableCell>
-                                        <div className="font-medium">{u.fullName}</div>
-                                        <div className="text-xs text-muted-foreground">{u.email}</div>
+                                        <div className="flex items-center gap-3">
+                                            <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium text-xs">
+                                                {u.fullName?.substring(0, 2).toUpperCase() || "U"}
+                                            </div>
+                                            <div>
+                                                <div className="font-medium">{u.fullName}</div>
+                                                <div className="text-xs text-muted-foreground">{u.email}</div>
+                                            </div>
+                                        </div>
                                     </TableCell>
                                     <TableCell>
                                         <div className="flex items-center gap-2">
                                             {getRoleIcon(u.role)}
-                                            <span>{u.role}</span>
+                                            <span className="font-medium">{u.role}</span>
                                         </div>
                                     </TableCell>
                                     <TableCell>
                                         {u.isActive ? (
-                                            <Badge variant="outline" className="border-green-500 text-green-600">Active</Badge>
+                                            <Badge variant="outline" className="border-green-500/30 bg-green-500/10 text-green-600">Active</Badge>
                                         ) : (
-                                            <Badge variant="outline" className="border-red-500 text-red-600">Banned</Badge>
+                                            <Badge variant="outline" className="border-red-500/30 bg-red-500/10 text-red-600">Banned</Badge>
                                         )}
                                     </TableCell>
                                     <TableCell>
                                         <Badge variant="secondary" className="font-mono text-[10px]">{u.authProvider || "Local"}</Badge>
                                     </TableCell>
-                                    <TableCell className="text-right text-sm">
-                                        {new Date(u.createdAt).toLocaleDateString()}
+                                    <TableCell className="text-right text-sm text-muted-foreground">
+                                        {new Date(u.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
                                     </TableCell>
                                 </TableRow>
                             ))

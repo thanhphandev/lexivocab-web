@@ -10,7 +10,7 @@ export function Heatmap({ data }: HeatmapProps) {
     const { entries, year } = data;
 
     // Create a map of date -> count for O(1) lookups
-    const entryMap = new Map(entries.map((e) => [e.date.split("T")[0], e.count]));
+    const entryMap = new Map((entries || []).map((e) => [e.date.split("T")[0], e.count]));
 
     // Generate dates for the whole year
     const startDate = new Date(year, 0, 1);

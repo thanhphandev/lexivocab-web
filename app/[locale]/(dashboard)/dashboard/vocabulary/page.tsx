@@ -5,16 +5,15 @@ import { clientApi, tagsApi } from "@/lib/api/api-client";
 import type { VocabularyDto, PagedResult, TagDto } from "@/lib/api/types";
 import { useTranslations } from "next-intl";
 import { usePermissions } from "@/lib/hooks/use-permissions";
+import { useAuth } from "@/lib/auth/auth-context";
 import { VocabularyTable } from "@/components/dashboard/vocabulary-table";
 import { AddWordDialog } from "@/components/dashboard/add-word-dialog";
 import { BatchImportDialog } from "@/components/dashboard/batch-import-dialog";
-import { CreateFolderDialog } from "@/components/dashboard/create-folder-dialog";
+import { TagDialog } from "@/components/dashboard/tag-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { AlertCircle, Search, Upload, Filter, Download } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import { useAuth } from "@/lib/auth/auth-context";
 import Link from "next/link";
+import { TagSidebar } from "@/components/dashboard/tag-sidebar";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -23,12 +22,17 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { toast } from "sonner";
+import { EmptyState } from "@/components/dashboard/empty-state";
+import { Skeleton } from "@/components/ui/skeleton";
+import { AlertCircle, Search, Download, Plus, SearchX, Inbox, FilterX } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function VocabularyPage() {
     const t = useTranslations("Dashboard.vocabulary");
     const { permissions } = useAuth();
     const { canExport, quotaMax } = usePermissions();
-    // ... rest of the component state ...
+    
     const [data, setData] = useState<PagedResult<VocabularyDto> | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
@@ -36,16 +40,19 @@ export default function VocabularyPage() {
     const [page, setPage] = useState(1);
     const [filter, setFilter] = useState<"all" | "active" | "archived">("active");
     const [tagFilter, setTagFilter] = useState<string>("all");
-    const [tags, setTags] = useState<Record<string, TagDto>>({});
+    const [tags, setTags] = useState<TagDto[]>([]);
+    const [tagMap, setTagMap] = useState<Record<string, TagDto>>({});
+    const [isCreateTagOpen, setIsCreateTagOpen] = useState(false);
 
     // Fetch tags
     const fetchTags = useCallback(async () => {
         try {
             const res = await tagsApi.getList();
             if (res.success && res.data) {
+                setTags(res.data);
                 const map: Record<string, TagDto> = {};
                 res.data.forEach(t => map[t.id] = t);
-                setTags(map);
+                setTagMap(map);
             }
         } catch (e) {
             console.error(e);
@@ -68,7 +75,6 @@ export default function VocabularyPage() {
     const fetchVocabulary = useCallback(async () => {
         setIsLoading(true);
         try {
-            // Build query params
             const params = new URLSearchParams({
                 page: page.toString(),
                 pageSize: "20"
@@ -82,7 +88,7 @@ export default function VocabularyPage() {
                 params.append("isArchived", filter === "archived" ? "true" : "false");
             }
 
-            if (tagFilter !== "all") {
+            if (tagFilter !== "all" && tagFilter !== "none") {
                 params.append("tagId", tagFilter);
             }
 
@@ -103,9 +109,10 @@ export default function VocabularyPage() {
         try {
             const res = await fetch(`/api/proxy/vocabularies/export?format=${format}`);
             if (!res.ok) {
-                alert("Failed to export data");
+                toast.error("Failed to export data. Please try again later.");
                 return;
             }
+            toast.success(`Successfully exported as ${format.toUpperCase()}`);
             const blob = await res.blob();
             const downloadUrl = window.URL.createObjectURL(blob);
             const a = document.createElement("a");
@@ -187,105 +194,185 @@ export default function VocabularyPage() {
                         </DropdownMenu>
                     )}
                     <BatchImportDialog onSuccess={fetchVocabulary} />
-                    <CreateFolderDialog onSuccess={fetchTags} />
+                    <Button 
+                        onClick={() => setIsCreateTagOpen(true)}
+                        variant="outline"
+                        className="gap-2"
+                    >
+                        <Plus className="h-4 w-4" />
+                        New Tag
+                    </Button>
                     <AddWordDialog onSuccess={fetchVocabulary} />
                 </div>
             </div>
 
-            {/* Toolbar */}
-            <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex flex-col sm:flex-row gap-4 items-center justify-between bg-card p-4 rounded-xl border"
-            >
-                <div className="relative w-full sm:w-96">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input
-                        placeholder={t("searchPlaceholder")}
-                        className="pl-9 w-full bg-background"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
+            <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8 items-start">
+                {/* Sidebar */}
+                <aside className="hidden lg:block sticky top-6 self-start">
+                    <TagSidebar 
+                        tags={tags}
+                        selectedTagId={tagFilter}
+                        onSelectTag={(id) => { setTagFilter(id); setPage(1); }}
+                        onRefresh={fetchTags}
+                        onCreateNew={() => setIsCreateTagOpen(true)}
+                        isLoading={isLoading}
                     />
+                </aside>
+
+                <div className="space-y-6">
+                    {/* Toolbar */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="flex flex-col sm:flex-row gap-4 items-center justify-between bg-card p-4 rounded-xl border shadow-sm"
+                    >
+                        <div className="relative w-full sm:w-96">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                            <Input
+                                placeholder={t("searchPlaceholder")}
+                                className="pl-9 w-full bg-background border-muted"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="flex gap-2 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0 items-center justify-end">
+                            <div className="flex items-center gap-1 bg-muted/30 p-1 rounded-full border">
+                                <Button
+                                    variant={filter === "active" ? "secondary" : "ghost"}
+                                    size="sm"
+                                    onClick={() => { setFilter("active"); setPage(1); }}
+                                    className="rounded-full h-8 px-4 text-xs font-semibold"
+                                >
+                                    {t("statusFilter.active")}
+                                </Button>
+                                <Button
+                                    variant={filter === "archived" ? "secondary" : "ghost"}
+                                    size="sm"
+                                    onClick={() => { setFilter("archived"); setPage(1); }}
+                                    className="rounded-full h-8 px-4 text-xs font-semibold"
+                                >
+                                    {t("statusFilter.archived")}
+                                </Button>
+                                <Button
+                                    variant={filter === "all" ? "secondary" : "ghost"}
+                                    size="sm"
+                                    onClick={() => { setFilter("all"); setPage(1); }}
+                                    className="rounded-full h-8 px-4 text-xs font-semibold"
+                                >
+                                    {t("statusFilter.all")}
+                                </Button>
+                            </div>
+                            
+                            <Select value={tagFilter} onValueChange={(val) => { setTagFilter(val); setPage(1); }}>
+                                <SelectTrigger className="w-[140px] h-9 lg:hidden">
+                                    <SelectValue placeholder="All Tags" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">All Tags</SelectItem>
+                                    {tags.map(tag => (
+                                        <SelectItem key={tag.id} value={tag.id}>
+                                            <span className="flex items-center gap-2">
+                                                <span>{tag.icon}</span> {tag.name}
+                                            </span>
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    </motion.div>
+
+                    {/* Table or Empty States */}
+                    <div className="min-h-[400px]">
+                        {isLoading ? (
+                            <div className="space-y-4">
+                                <div className="p-4 bg-card rounded-xl border shadow-sm">
+                                    <div className="space-y-3">
+                                        {[...Array(6)].map((_, i) => (
+                                            <Skeleton key={i} className="h-12 w-full rounded-lg" />
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        ) : data?.items.length === 0 ? (
+                            <EmptyState
+                                icon={debouncedSearch ? SearchX : tagFilter !== "all" ? FilterX : Inbox}
+                                title={
+                                    debouncedSearch 
+                                        ? "No matches found" 
+                                        : tagFilter !== "all" 
+                                            ? "Empty Tag" 
+                                            : "No words yet"
+                                }
+                                description={
+                                    debouncedSearch 
+                                        ? `We couldn't find anything matching "${debouncedSearch}". Try a different keyword.` 
+                                        : tagFilter !== "all"
+                                            ? "This tag doesn't contain any words yet. Start by adding some vocabulary!"
+                                            : "Your vocabulary library is empty. Start adding words to begin your learning journey!"
+                                }
+                                action={debouncedSearch ? {
+                                    label: "Clear Search",
+                                    onClick: () => setSearchQuery("")
+                                } : tagFilter !== "all" ? {
+                                    label: "View All Words",
+                                    onClick: () => setTagFilter("all")
+                                } : {
+                                    label: "Add Your First Word",
+                                    onClick: () => document.getElementById('add-word-trigger')?.click()
+                                }}
+                            />
+                        ) : (
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.98 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ delay: 0.1 }}
+                            >
+                                <VocabularyTable
+                                    data={data}
+                                    tags={tagMap}
+                                    isLoading={false}
+                                    onRefresh={fetchVocabulary}
+                                />
+                            </motion.div>
+                        )}
+                    </div>
+
+                    {/* Pagination Controls */}
+                    {data && data.totalPages > 1 && (
+                        <div className="flex justify-center items-center gap-4 pt-4 pb-10">
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                disabled={page === 1}
+                                onClick={() => setPage(p => Math.max(1, p - 1))}
+                                className="h-9 px-4"
+                            >
+                                Previous
+                            </Button>
+                            <span className="text-sm font-medium text-muted-foreground bg-muted/50 px-3 py-1.5 rounded-lg border">
+                                Page <span className="text-foreground">{page}</span> of {data.totalPages}
+                            </span>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                disabled={page >= data.totalPages}
+                                onClick={() => setPage(p => Math.min(data.totalPages, p + 1))}
+                                className="h-9 px-4"
+                            >
+                                Next
+                            </Button>
+                        </div>
+                    )}
                 </div>
+            </div>
 
-                <div className="flex gap-2 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0 items-center">
-                    <Select value={tagFilter} onValueChange={(val) => { setTagFilter(val); setPage(1); }}>
-                        <SelectTrigger className="w-[140px] h-9">
-                            <SelectValue placeholder="All Folders" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="all">All Folders</SelectItem>
-                            {Object.values(tags).map(tag => (
-                                <SelectItem key={tag.id} value={tag.id}>
-                                    📁 {tag.name}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-
-                    <Button
-                        variant={filter === "all" ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => { setFilter("all"); setPage(1); }}
-                        className="rounded-full"
-                    >
-                        {t("statusFilter.all")}
-                    </Button>
-                    <Button
-                        variant={filter === "active" ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => { setFilter("active"); setPage(1); }}
-                        className="rounded-full"
-                    >
-                        {t("statusFilter.active")}
-                    </Button>
-                    <Button
-                        variant={filter === "archived" ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => { setFilter("archived"); setPage(1); }}
-                        className="rounded-full"
-                    >
-                        {t("statusFilter.archived")}
-                    </Button>
-                </div>
-            </motion.div>
-
-            {/* Table */}
-            <motion.div
-                initial={{ opacity: 0, scale: 0.98 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.1 }}
-            >
-                <VocabularyTable
-                    data={data}
-                    tags={tags}
-                    isLoading={isLoading}
-                    onRefresh={fetchVocabulary}
-                />
-            </motion.div>
-
-            {/* Pagination Controls */}
-            {data && data.totalPages > 1 && (
-                <div className="flex justify-center items-center gap-4 pt-4">
-                    <Button
-                        variant="outline"
-                        disabled={page === 1}
-                        onClick={() => setPage(p => Math.max(1, p - 1))}
-                    >
-                        Previous
-                    </Button>
-                    <span className="text-sm font-medium text-muted-foreground">
-                        Page {page} of {data.totalPages}
-                    </span>
-                    <Button
-                        variant="outline"
-                        disabled={page >= data.totalPages}
-                        onClick={() => setPage(p => Math.min(data.totalPages, p + 1))}
-                    >
-                        Next
-                    </Button>
-                </div>
-            )}
+            {/* Tag Creation Dialog */}
+            <TagDialog 
+                open={isCreateTagOpen} 
+                onOpenChange={setIsCreateTagOpen} 
+                onSuccess={fetchTags} 
+            />
         </div>
     );
 }

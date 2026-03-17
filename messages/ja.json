@@ -37,6 +37,7 @@
       "analytics": "分析",
       "billing": "請求",
       "settings": "設定",
+      "explore": "探索",
       "collapse": "サイドバーを折りたたむ",
       "logout": "ログアウト"
     },
@@ -150,6 +151,17 @@
         "deleteAccount": "アカウントを削除"
       },
       "save": "変更を保存"
+    },
+    "explore": {
+      "title": "ディクショナリを探索",
+      "subtitle": "LexiVocabマスターデータベースの10万語以上を検索",
+      "searchPlaceholder": "検索する単語を入力...",
+      "noResults": "ディクショナリに単語が見つかりませんでした。",
+      "startTyping": "ディクショナリを探索するために何か入力してください！",
+      "addToVocab": "語彙に追加",
+      "alreadyInVocab": "すでに追加されています",
+      "cefrLevel": "CEFRレベル",
+      "meanings": "意味"
     }
   },
   "Hero": {
@@ -175,6 +187,91 @@
     "highlight_badge": "HOT",
     "dashboard_title": "単語ダッシュボード",
     "dashboard_desc": "個人の語彙を管理し、発音を練習し、学習進捗を追跡します。"
+  },
+  "Pricing": {
+    "title": "プレミアムプランで語彙学習を加速",
+    "subtitle": "無料で始めて、準備ができたらアップグレード。一度の支払いで永久アクセス。",
+    "badge": "シンプルで透明な価格設定",
+    "method_paypal": "PayPalで支払う",
+    "method_sepay": "銀行振込 (Sepay - VietQR)",
+    "payment_notice": "Sepayを通じてアカウントが自動的にアップグレードされます。",
+    "trust": {
+      "secure": "安全な決済",
+      "lifetime": "永久アクセス",
+      "no_fees": "隠し手数料なし"
+    },
+    "comparison": {
+      "title": "プラン比較",
+      "feature": "機能",
+      "free": "無料",
+      "premium": "プレミアム",
+      "storage": "語彙ストレージ",
+      "spaced": "間隔反復 (SM-2)",
+      "extension": "Chrome拡張機能アクセス",
+      "ai": "AI文脈翻訳",
+      "import": "一括インポート (CSV/Text)",
+      "export": "CSV & JSONデータエクスポート",
+      "practice": "AI練習セッション",
+      "support": "優先サポート",
+      "words_limit": "{count} 単語",
+      "unlimited": "無制限",
+      "standard": "標準",
+      "priority": "優先",
+      "duration_1m": "1ヶ月",
+      "duration_3m": "3ヶ月",
+      "duration_6m": "6ヶ月",
+      "duration_12m": "12ヶ月",
+      "lifetime_label": "生涯",
+      "for": "",
+      "month": "ヶ月",
+      "months": "ヶ月"
+    },
+    "pending_transaction": {
+      "title": "未完了の取引",
+      "desc": "{date}の {amount} {currency} の {provider} 決済が保留中です。",
+      "resume": "支払いを続行",
+      "cancel": "新しく取引を開始",
+      "reference": "参照 ID: {ref}"
+    },
+    "qr_modal": {
+      "error": "QRコードを読み込めませんでした。ページを更新するか、サポートにお問い合わせください。",
+      "reference_label": "振込参照ID:",
+      "waiting": "Sepayの確認を待機しています...",
+      "instruction": "QRコードをスキャンするか、上記の参照IDで正確な金額を振り込んでください。1〜2分以内にアカウントが自動的にアップグレードされます。"
+    }
+  },
+  "Billing": {
+    "title": "請求とサブスクリプション",
+    "subtitle": "プランの管理と支払い履歴の表示。",
+    "current_plan": {
+      "title_free": "フリープラン",
+      "title_premium": "{plan} ({months} {month_label})",
+      "expires": "有効期限: {date}",
+      "lifetime": "永久アクセス",
+      "quota_limit": "語彙数制限: {count} 単語",
+      "active": "有効な",
+      "upgrade": "プレミアムにアップグレード"
+    },
+    "permissions": {
+      "title": "プランの権限",
+      "export": "データエクスポート (PDF/CSV)",
+      "ai": "AI意味・文脈抽出",
+      "import": "一括インポート"
+    },
+    "quota": {
+      "title": "語彙のクォータ",
+      "used": "使用済み容量",
+      "unlimited": "無制限",
+      "desc_premium": "LexiVocabのすべての機能を制限なしでプレミアム利用できます。",
+      "desc_free": "{max} 個の使用可能な語彙スロットのうち {used} 個を使用しました。"
+    },
+    "history": {
+      "title": "支払い履歴",
+      "count": "{count} 件の取引",
+      "no_transactions": "取引履歴がありません",
+      "empty_desc": "購入後に取引履歴がここに表示されます。",
+      "payment_label": "{provider} による支払い"
+    }
   },
   "Privacy": {
     "title": "プライバシーポリシー",
@@ -316,24 +413,116 @@
   "Checkout": {
     "processing_title": "Processing payment...",
     "processing_subtitle": "Please do not close this window",
-    "success_title": "Payment Successful!",
-    "success_subtitle": "Thank you for upgrading to Premium. Your account has been updated.",
-    "error_title": "Payment Failed",
+    "success_title": "決済成功！",
+    "success_subtitle": "プレミアムプランへのアップグレードありがとうございます。アカウントが更新されました。",
+    "premium_activated": "永久アクセス",
+    "receipt_notice": "確認メールと領収書をメールでお送りしました。",
+    "error_title": "支払い失敗",
     "try_again": "Try Again",
     "go_dashboard": "Go to Dashboard"
   },
-  "Admin.auditLogs": {
-    "title": "Audit Logs",
-    "subtitle": "Monitor system activities",
-    "searchPlaceholder": "Search by Action or Email...",
-    "table": {
-      "date": "Date",
-      "user": "User",
-      "action": "Action",
-      "entity": "Entity",
-      "details": "Details"
-    },
-    "empty": "No data found",
-    "emptySubtitle": "No audit logs found matching the filters."
+  "AI": {
+    "tabs": {
+      "explain": "説明",
+      "related": "関連語",
+      "quiz": "クイズ"
+    }
+  },
+  "Admin": {
+    "auditLogs": {
+      "title": "監査ログ",
+      "subtitle": "システム活動とユーザーアクションのリアルタイム監視",
+      "searchPlaceholder": "メール、リクエスト、IPアドレスで検索...",
+      "filters": {
+        "action": "アクション種別",
+        "allActions": "すべて",
+        "entityType": "エンティティ種別",
+        "allEntities": "すべて",
+        "status": "ステータス",
+        "allStatus": "すべて",
+        "success": "成功",
+        "failed": "失敗",
+        "dateFrom": "開始日",
+        "dateTo": "終了日",
+        "clearFilters": "フィルターをクリア",
+        "activeFilters": "{count}件適用中"
+      },
+      "actions": {
+        "Login": "ログイン",
+        "LoginFailed": "ログイン失敗",
+        "Register": "登録",
+        "Logout": "ログアウト",
+        "TokenRefresh": "トークン更新",
+        "GoogleLogin": "Googleログイン",
+        "VocabularyCreated": "語彙作成",
+        "VocabularyUpdated": "語彙更新",
+        "VocabularyDeleted": "語彙削除",
+        "VocabularyBulkImported": "一括インポート",
+        "VocabularyExported": "エクスポート",
+        "ReviewCompleted": "復習完了",
+        "SettingsUpdated": "設定更新",
+        "ProfileUpdated": "プロフィール更新",
+        "UserUpdated": "ユーザー更新",
+        "PasswordChanged": "パスワード変更",
+        "UserDeleted": "ユーザー削除",
+        "SubscriptionCreated": "サブスク作成",
+        "SubscriptionCancelled": "サブスク解約",
+        "PaymentCompleted": "支払い完了",
+        "PaymentFailed": "支払い失敗",
+        "AdminUserDeactivated": "ユーザー無効化",
+        "AdminUserActivated": "ユーザー有効化",
+        "AdminRoleChanged": "ロール変更",
+        "SystemSettingUpdated": "システム更新",
+        "RateLimited": "レート制限",
+        "SuspiciousActivity": "不審な活動"
+      },
+      "table": {
+        "timestamp": "タイムスタンプ",
+        "user": "ユーザー",
+        "action": "アクション",
+        "entity": "エンティティ",
+        "status": "ステータス",
+        "duration": "所要時間",
+        "details": "詳細"
+      },
+      "detail": {
+        "title": "ログ詳細",
+        "general": "基本情報",
+        "timestamp": "タイムスタンプ",
+        "action": "アクション",
+        "status": "ステータス",
+        "duration": "所要時間",
+        "technical": "技術情報",
+        "requestName": "リクエスト",
+        "traceId": "トレースID",
+        "ipAddress": "IPアドレス",
+        "userAgent": "ユーザーエージェント",
+        "entity": "エンティティ情報",
+        "entityType": "エンティティ種別",
+        "entityId": "エンティティID",
+        "user": "ユーザー情報",
+        "email": "メール",
+        "userId": "ユーザーID",
+        "additionalInfo": "追加情報",
+        "noData": "追加情報なし",
+        "copyId": "IDをコピー",
+        "copied": "コピーしました！"
+      },
+      "status": {
+        "success": "成功",
+        "failed": "失敗"
+      },
+      "pagination": {
+        "showing": "{from}-{to} / {total}件",
+        "page": "{page} / {totalPages}ページ",
+        "perPage": "件表示",
+        "previous": "前へ",
+        "next": "次へ"
+      },
+      "empty": "監査ログが見つかりません",
+      "emptySubtitle": "現在のフィルターに一致するレコードがありません。検索条件を調整してください。",
+      "system": "システム",
+      "ms": "{ms}ms"
+    }
   }
 }

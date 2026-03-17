@@ -11,6 +11,7 @@ import {
 import { clientApi, authApi } from "@/lib/api/api-client";
 import type { UserProfile, UserPermissionsDto, LoginRequest, RegisterRequest, UpdateProfileRequest } from "@/lib/api/types";
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import { redirect } from "next/navigation";
 
 interface AuthUser {
     id: string;
@@ -54,21 +55,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     /** Try to refresh the session via server-side refresh route */
     const refreshSession = useCallback(async (): Promise<boolean> => {
         try {
-            const refreshRes = await fetch("/api/auth/refresh", {
-                method: "POST",
-                credentials: "include",
-            });
-            if (!refreshRes.ok) return false;
+            const res = await authApi.refresh();
+            if (!res.success) return false;
 
             // Re-fetch user profile
-            const result = await clientApi.get<UserProfile>("/api/auth/me");
+            const result = await authApi.getMe();
             if (result.success) {
-                setUser({
-                    id: result.data.id,
-                    email: result.data.email,
-                    fullName: result.data.fullName,
-                    role: result.data.role,
-                });
+                setUser(result.data);
                 refreshPermissions();
                 return true;
             }
@@ -76,20 +69,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } catch {
             return false;
         }
-    }, []);
+    }, [refreshPermissions]);
 
     // Hydrate user from cookie on mount
     useEffect(() => {
         (async () => {
             try {
-                const result = await clientApi.get<UserProfile>("/api/auth/me");
+                const result = await authApi.getMe();
                 if (result.success) {
-                    setUser({
-                        id: result.data.id,
-                        email: result.data.email,
-                        fullName: result.data.fullName,
-                        role: result.data.role,
-                    });
+                    setUser(result.data);
                     refreshPermissions();
                 } else {
                     // Try to refresh if /me fails (token might be expired)
@@ -102,13 +90,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 setIsLoading(false);
             }
         })();
-    }, [refreshSession]);
+    }, [refreshSession, refreshPermissions]);
 
     const login = useCallback(async (data: LoginRequest): Promise<boolean> => {
         setIsLoading(true);
         setError(null);
         try {
-            const result = await clientApi.post<AuthUser>("/api/auth/login", data);
+            const result = await authApi.login(data);
             if (result.success) {
                 setUser(result.data);
                 refreshPermissions();
@@ -122,13 +110,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } finally {
             setIsLoading(false);
         }
-    }, []);
+    }, [refreshPermissions]);
 
     const register = useCallback(async (data: RegisterRequest): Promise<boolean> => {
         setIsLoading(true);
         setError(null);
         try {
-            const result = await clientApi.post<AuthUser>("/api/auth/register", data);
+            const result = await authApi.register(data);
             if (result.success) {
                 setUser(result.data);
                 return true;
@@ -147,12 +135,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setIsLoading(true);
         setError(null);
         try {
-            const result = await clientApi.post<AuthUser>("/api/auth/google", { idToken });
+            const result = await authApi.googleLogin({ idToken });
             if (result.success) {
                 setUser(result.data);
                 return true;
             }
-            setError("error" in result ? result.error : "Google login failed");
+            // Check for deactivated account (403 status)
+            const errorMsg = "error" in result ? result.error : "Google login failed";
+            if (errorMsg.toLowerCase().includes("deactivated") || errorMsg.toLowerCase().includes("banned")) {
+                setError("Your account has been deactivated. Please contact support for assistance.");
+            } else {
+                setError(errorMsg);
+            }
             return false;
         } catch {
             setError("An unexpected error occurred");
@@ -163,9 +157,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }, []);
 
     const logout = useCallback(async () => {
-        await clientApi.post("/api/auth/logout");
+        await authApi.logout();
         setUser(null);
         setPermissions(null);
+        redirect('/auth/login')
     }, []);
 
     const updateProfile = useCallback(async (data: UpdateProfileRequest): Promise<boolean> => {

@@ -8,6 +8,7 @@
   "Header": {
     "features": "Tính năng",
     "how_it_works": "Cách hoạt động",
+    "pricing": "Bảng giá",
     "language": "Ngôn ngữ"
   },
   "Auth": {
@@ -37,7 +38,8 @@
       "analytics": "Phân tích",
       "billing": "Thanh toán",
       "settings": "Cài đặt",
-      "collapse": "Thu gọn Menu",
+      "explore": "Khám phá",
+      "collapse": "Thu gọn thanh bên",
       "logout": "Đăng xuất"
     },
     "home": {
@@ -151,6 +153,17 @@
         "deleteAccount": "Xóa tài khoản"
       },
       "save": "Lưu thay đổi"
+    },
+    "explore": {
+      "title": "Khám phá từ điển",
+      "subtitle": "Tìm kiếm hơn 100.000 từ trong cơ sở dữ liệu gốc của LexiVocab",
+      "searchPlaceholder": "Nhập từ để tìm kiếm...",
+      "noResults": "Không tìm thấy từ nào trong từ điển.",
+      "startTyping": "Nhập từ gì đó để bắt đầu khám phá!",
+      "addToVocab": "Thêm vào từ vựng",
+      "alreadyInVocab": "Đã có trong danh sách",
+      "cefrLevel": "Cấp độ CEFR",
+      "meanings": "Ý nghĩa"
     }
   },
   "Hero": {
@@ -199,8 +212,8 @@
     "secure_payment": "Thanh toán an toàn. Mua một lần.",
     "select_method": "Chọn hình thức thanh toán",
     "method_paypal": "Thanh toán bằng PayPal",
-    "method_sepay": "Chuyển khoản Ngân hàng (SePay - VietQR)",
-    "payment_notice": "Sau khi thanh toán, tài khoản sẽ được nâng cấp tự động qua SePay.",
+    "method_sepay": "Chuyển khoản Ngân hàng (Sepay - VietQR)",
+    "payment_notice": "Sau khi thanh toán, tài khoản sẽ được nâng cấp tự động qua Sepay.",
     "features": {
       "save_words": "Lưu tối đa 50 từ vựng",
       "unlimited_vocab": "Lưu từ vựng không giới hạn",
@@ -216,6 +229,78 @@
       "secure": "Thanh toán an toàn",
       "lifetime": "Truy cập trọn đời",
       "no_fees": "Không phí ẩn"
+    },
+    "comparison": {
+      "title": "So sánh các Gói",
+      "feature": "Tính năng",
+      "free": "Miễn phí",
+      "premium": "Premium",
+      "storage": "Lưu trữ Từ vựng",
+      "spaced": "Lặp lại ngắt quãng (SM-2)",
+      "extension": "Truy cập Chrome Extension",
+      "ai": "Dịch thuật AI theo ngữ cảnh",
+      "import": "Nhập dữ liệu hàng loạt (CSV/Text)",
+      "export": "Xuất dữ liệu CSV & JSON",
+      "practice": "Luyện tập với AI",
+      "support": "Hỗ trợ Ưu tiên",
+      "words_limit": "{count} Từ",
+      "unlimited": "Không giới hạn",
+      "standard": "Tiêu chuẩn",
+      "priority": "Ưu tiên",
+      "duration_1m": "1 tháng",
+      "duration_3m": "3 tháng",
+      "duration_6m": "6 tháng",
+      "duration_12m": "12 tháng",
+      "lifetime_label": "trọn đời",
+      "for": "trong",
+      "month": "tháng",
+      "months": "tháng"
+    },
+    "pending_transaction": {
+      "title": "Giao dịch chưa hoàn tất",
+      "desc": "Bạn có một giao dịch {provider} đang chờ xử lý trị giá {amount} {currency} từ ngày {date}.",
+      "resume": "Tiếp tục thanh toán",
+      "cancel": "Bắt đầu giao dịch mới",
+      "reference": "Nội dung: {ref}"
+    },
+    "qr_modal": {
+      "error": "Không thể tải mã QR. Vui lòng tải lại trang hoặc liên hệ hỗ trợ.",
+      "reference_label": "Nội dung chuyển khoản:",
+      "waiting": "Đang chờ Sepay xác nhận...",
+      "instruction": "Vui lòng quét mã QR hoặc chuyển khoản chính xác số tiền và nội dung bên trên. Hệ thống sẽ tự động nâng cấp tài khoản sau 1-2 phút."
+    }
+  },
+  "Billing": {
+    "title": "Thanh toán & Gói dịch vụ",
+    "subtitle": "Quản lý gói dịch vụ và xem lịch sử thanh toán.",
+    "current_plan": {
+      "title_free": "Gói Miễn phí",
+      "title_premium": "{plan} ({months} {month_label})",
+      "expires": "Hết hạn: {date}",
+      "lifetime": "Truy cập trọn đời",
+      "quota_limit": "Giới hạn {count} từ vựng",
+      "active": "Đang hoạt động",
+      "upgrade": "Nâng cấp Premium"
+    },
+    "permissions": {
+      "title": "Quyền hạn của Gói",
+      "export": "Xuất dữ liệu (PDF/CSV)",
+      "ai": "Dịch AI & Ngữ cảnh",
+      "import": "Nhập hàng loạt"
+    },
+    "quota": {
+      "title": "Hạn ngạch Từ vựng",
+      "used": "Không gian đã dùng",
+      "unlimited": "Không giới hạn",
+      "desc_premium": "Bạn có quyền truy cập Premium vào tất cả tính năng của LexiVocab mà không bị giới hạn.",
+      "desc_free": "Bạn đã sử dụng {used} trong số {max} ô từ vựng hiện có."
+    },
+    "history": {
+      "title": "Lịch sử Thanh toán",
+      "count": "{count} giao dịch",
+      "no_transactions": "Chưa có giao dịch nào",
+      "empty_desc": "Các giao dịch của bạn sẽ xuất hiện ở đây sau khi bạn mua hàng.",
+      "payment_label": "Thanh toán {provider}"
     }
   },
   "Privacy": {
@@ -359,24 +444,117 @@
     "processing_title": "Đang xử lý thanh toán...",
     "processing_subtitle": "Vui lòng không đóng cửa sổ này",
     "success_title": "Thanh toán thành công!",
-    "success_subtitle": "Cảm ơn bạn đã nâng cấp Premium. Tài khoản của bạn đã được cập nhật.",
+    "success_subtitle": "Cảm ơn bạn đã mua hàng. Các tính năng tài khoản của bạn đã được cập nhật.",
+    "premium_activated": "ĐÃ KÍCH HOẠT GÓI",
+    "receipt_notice": "Biên lai và xác nhận đã được gửi vào email của bạn.",
     "error_title": "Thanh toán thất bại",
     "try_again": "Thử lại",
-    "go_dashboard": "Về Dashboard"
+    "go_dashboard": "Về Dashboard",
+    "view_billing": "Xem chi tiết thanh toán"
   },
-  "Admin.auditLogs": {
-    "title": "Nhật ký hệ thống",
-    "subtitle": "Theo dõi các hoạt động trong hệ thống",
-    "searchPlaceholder": "Tìm kiếm theo Action hoặc Email...",
-    "table": {
-      "date": "Thời gian",
-      "user": "Người dùng",
-      "action": "Hành động",
-      "entity": "Thực thể",
-      "details": "Chi tiết"
-    },
-    "empty": "Không có dữ liệu",
-    "emptySubtitle": "Không tìm thấy nhật ký nào khớp với bộ lọc."
+  "AI": {
+    "tabs": {
+      "explain": "Giải thích",
+      "related": "Từ liên quan",
+      "quiz": "Trắc nghiệm"
+    }
+  },
+  "Admin": {
+    "auditLogs": {
+      "title": "Nhật ký hệ thống",
+      "subtitle": "Giám sát thời gian thực mọi hoạt động hệ thống và hành động người dùng",
+      "searchPlaceholder": "Tìm theo email, request, địa chỉ IP...",
+      "filters": {
+        "action": "Loại hành động",
+        "allActions": "Tất cả",
+        "entityType": "Loại thực thể",
+        "allEntities": "Tất cả",
+        "status": "Trạng thái",
+        "allStatus": "Tất cả",
+        "success": "Thành công",
+        "failed": "Thất bại",
+        "dateFrom": "Từ ngày",
+        "dateTo": "Đến ngày",
+        "clearFilters": "Xóa bộ lọc",
+        "activeFilters": "{count} đang lọc"
+      },
+      "actions": {
+        "Login": "Đăng nhập",
+        "LoginFailed": "Đăng nhập thất bại",
+        "Register": "Đăng ký",
+        "Logout": "Đăng xuất",
+        "TokenRefresh": "Làm mới token",
+        "GoogleLogin": "Google Login",
+        "VocabularyCreated": "Tạo từ vựng",
+        "VocabularyUpdated": "Cập nhật từ vựng",
+        "VocabularyDeleted": "Xóa từ vựng",
+        "VocabularyBulkImported": "Nhập hàng loạt",
+        "VocabularyExported": "Xuất dữ liệu",
+        "ReviewCompleted": "Hoàn thành ôn tập",
+        "SettingsUpdated": "Cập nhật cài đặt",
+        "ProfileUpdated": "Cập nhật hồ sơ",
+        "UserUpdated": "Cập nhật người dùng",
+        "PasswordChanged": "Đổi mật khẩu",
+        "UserDeleted": "Xóa người dùng",
+        "SubscriptionCreated": "Tạo đăng ký",
+        "SubscriptionCancelled": "Hủy đăng ký",
+        "PaymentCompleted": "Thanh toán OK",
+        "PaymentFailed": "Thanh toán thất bại",
+        "AdminUserDeactivated": "Vô hiệu hóa",
+        "AdminUserActivated": "Kích hoạt",
+        "AdminRoleChanged": "Đổi vai trò",
+        "SystemSettingUpdated": "Cập nhật hệ thống",
+        "RateLimited": "Giới hạn tốc độ",
+        "SuspiciousActivity": "Đáng ngờ"
+      },
+      "table": {
+        "timestamp": "Thời gian",
+        "user": "Người dùng",
+        "action": "Hành động",
+        "entity": "Thực thể",
+        "status": "Trạng thái",
+        "duration": "Thời lượng",
+        "details": "Chi tiết"
+      },
+      "detail": {
+        "title": "Chi tiết nhật ký",
+        "general": "Thông tin chung",
+        "timestamp": "Thời gian",
+        "action": "Hành động",
+        "status": "Trạng thái",
+        "duration": "Thời lượng",
+        "technical": "Chi tiết kỹ thuật",
+        "requestName": "Request",
+        "traceId": "Trace ID",
+        "ipAddress": "Địa chỉ IP",
+        "userAgent": "User Agent",
+        "entity": "Thông tin thực thể",
+        "entityType": "Loại thực thể",
+        "entityId": "ID thực thể",
+        "user": "Thông tin người dùng",
+        "email": "Email",
+        "userId": "ID người dùng",
+        "additionalInfo": "Thông tin bổ sung",
+        "noData": "Không có thông tin bổ sung",
+        "copyId": "Sao chép ID",
+        "copied": "Đã sao chép!"
+      },
+      "status": {
+        "success": "Thành công",
+        "failed": "Thất bại"
+      },
+      "pagination": {
+        "showing": "Hiển thị {from}-{to} / {total}",
+        "page": "Trang {page} / {totalPages}",
+        "perPage": "mỗi trang",
+        "previous": "Trước",
+        "next": "Sau"
+      },
+      "empty": "Không có nhật ký nào",
+      "emptySubtitle": "Không có bản ghi nào phù hợp với bộ lọc. Hãy thử điều chỉnh tiêu chí tìm kiếm.",
+      "system": "Hệ thống",
+      "ms": "{ms}ms"
+    }
   },
   "Tags": {
     "title": "Thư mục của bạn",

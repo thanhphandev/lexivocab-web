@@ -2,14 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
-import { clientApi } from "@/lib/api/api-client";
+import { paymentApi } from "@/lib/api/api-client";
 import { useAuth } from "@/lib/auth/auth-context";
 import { usePermissions } from "@/lib/hooks/use-permissions";
-import type { BillingOverviewDto, PaymentHistoryDto, PagedResult } from "@/lib/api/types";
+import type { BillingOverviewDto, PaymentHistoryDto } from "@/lib/api/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import Link from "next/link";
+
 import {
     Crown,
     CreditCard,
@@ -23,6 +24,8 @@ import {
     AlertCircle,
     BookOpen,
 } from "lucide-react";
+import { PendingTransactionBanner } from "@/components/billing/pending-transaction-banner";
+import { SepayQRDialog } from "@/components/billing/sepay-qr-dialog";
 
 function StatusBadge({ status }: { status: string }) {
     const config: Record<string, { icon: React.ReactNode; color: string }> = {
@@ -50,21 +53,79 @@ export default function BillingPage() {
     const [billing, setBilling] = useState<BillingOverviewDto | null>(null);
     const [history, setHistory] = useState<PaymentHistoryDto[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [pendingTransaction, setPendingTransaction] = useState<PaymentHistoryDto | null>(null);
+    const [qrData, setQrData] = useState<{ url: string; ref: string } | null>(null);
+    const [isPolling, setIsPolling] = useState(false);
 
     useEffect(() => {
         const fetchBilling = async () => {
-            const [billingRes, historyRes] = await Promise.all([
-                clientApi.get<BillingOverviewDto>("/api/proxy/payments/billing"),
-                clientApi.get<PagedResult<PaymentHistoryDto>>("/api/proxy/payments/history"),
-            ]);
+            try {
+                const [billingRes, historyRes] = await Promise.all([
+                    paymentApi.getBillingOverview(),
+                    paymentApi.getPaymentHistory(),
+                ]);
 
-            if (billingRes.success) setBilling(billingRes.data);
-            if (historyRes.success) setHistory(historyRes.data.items);
-            setIsLoading(false);
+                console.log("Billing response:", billingRes);
+                console.log("History response:", historyRes);
+
+                if (billingRes.success) setBilling(billingRes.data);
+                else console.error("Failed to load billing:", billingRes.error);
+
+                if (historyRes.success) {
+                    // Handle different response structures
+                    const items = (historyRes.data as any)?.items || historyRes.data || [];
+                    console.log("History items:", items);
+                    setHistory(items);
+                    
+                    const pending = items.find((tx: any) => tx.status === "Pending" && tx.provider === "Sepay");
+                    if (pending) {
+                        setPendingTransaction(pending);
+                    }
+                } else {
+                    console.error("Failed to load history:", historyRes.error);
+                }
+            } catch (err) {
+                console.error("Error fetching billing data:", err);
+            } finally {
+                setIsLoading(false);
+            }
         };
-
         fetchBilling();
     }, []);
+
+    const handleResumePending = () => {
+        if (!pendingTransaction || !pendingTransaction.approvalUrl) return;
+        
+        setQrData({ 
+            url: pendingTransaction.approvalUrl, 
+            ref: pendingTransaction.externalOrderId 
+        });
+        setIsPolling(true);
+    };
+
+    // Polling for Sepay payment completion
+    useEffect(() => {
+        let interval: NodeJS.Timeout;
+        if (isPolling && qrData?.ref) {
+            interval = setInterval(async () => {
+                try {
+                    const res = await paymentApi.checkStatus(qrData.ref);
+                    if (res.success && res.data.status === "Completed") {
+                        setIsPolling(false);
+                        window.location.href = `/${locale}/checkout/success?token=${qrData.ref}&provider=sepay`;
+                    }
+                } catch (err) {
+                    console.error("Polling error", err);
+                }
+            }, 3000);
+        }
+        return () => clearInterval(interval);
+    }, [isPolling, qrData, locale]);
+
+    const t = useTranslations("Billing");
+    const tPricing = useTranslations("Pricing");
+
+
 
     if (isLoading) {
         return (
@@ -78,12 +139,22 @@ export default function BillingPage() {
         <div className="space-y-8 pb-10 max-w-4xl">
             <div>
                 <h1 className="text-2xl font-bold tracking-tight text-foreground">
-                    Billing & Subscription
+                    {t("title")}
                 </h1>
                 <p className="mt-1 text-muted-foreground">
-                    Manage your plan and view payment history.
+                    {t("subtitle")}
                 </p>
             </div>
+
+            {/* Pending Transaction Banner */}
+            {pendingTransaction && (
+                <PendingTransactionBanner 
+                    transaction={pendingTransaction}
+                    onResume={handleResumePending}
+                    onCancel={() => setPendingTransaction(null)}
+                    className="mb-8"
+                />
+            )}
 
             {/* Current Plan Card */}
             <motion.div
@@ -103,27 +174,33 @@ export default function BillingPage() {
                                 </div>
                                 <div>
                                     <CardTitle className="text-xl">
-                                        {billing?.plan || "Free"} Plan
+                                        {billing?.activeSubscription?.durationMonths 
+                                            ? t("current_plan.title_premium", { 
+                                                plan: billing.plan || "Premium", 
+                                                months: billing.activeSubscription.durationMonths,
+                                                month_label: tPricing(billing.activeSubscription.durationMonths > 1 ? "months" : "month")
+                                            }) 
+                                            : t("current_plan.title_free")}
                                     </CardTitle>
                                     <CardDescription>
                                         {perms.isPremium
                                             ? billing?.planExpiresAt
-                                                ? `Expires: ${new Date(billing.planExpiresAt).toLocaleDateString()}`
-                                                : "Lifetime access"
-                                            : `Limited to ${perms.quotaMax} vocabulary words`}
+                                                ? t("current_plan.expires", { date: new Date(billing.planExpiresAt).toLocaleDateString() })
+                                                : t("current_plan.lifetime")
+                                            : t("current_plan.quota_limit", { count: perms.quotaMax })}
                                     </CardDescription>
                                 </div>
                             </div>
                             {perms.isPremium ? (
                                 <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
                                     <CheckCircle2 className="h-4 w-4" />
-                                    Active
+                                    {t("current_plan.active")}
                                 </span>
                             ) : (
                                 <Link href={`/${locale}/pricing`}>
                                     <Button size="sm">
                                         <Crown className="mr-2 h-4 w-4" />
-                                        Upgrade to Premium
+                                        {tPricing("upgrade")}
                                     </Button>
                                 </Link>
                             )}
@@ -149,7 +226,7 @@ export default function BillingPage() {
                                 <div className="p-3 rounded-lg bg-background border shadow-sm">
                                     <span className="block text-muted-foreground mb-1">Renewal Date</span>
                                     <span className="font-medium font-mono text-xs">
-                                        {billing.planExpiresAt ? new Date(billing.planExpiresAt).toLocaleDateString() : "Lifetime"}
+                                        {billing.planExpiresAt ? new Date(billing.planExpiresAt).toLocaleDateString() : t("current_plan.lifetime")}
                                     </span>
                                 </div>
                                 <div className="p-3 rounded-lg bg-background border shadow-sm">
@@ -173,13 +250,13 @@ export default function BillingPage() {
                     <CardHeader className="pb-2">
                         <CardTitle className="text-lg flex items-center gap-2">
                             <Shield className="h-5 w-5 text-primary" />
-                            Plan Permissions
+                            {t("permissions.title")}
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
                         <ul className="space-y-3">
                             <li className="flex items-center justify-between py-2 border-b border-border/50">
-                                <span className="text-sm text-muted-foreground">Export Data (PDF/CSV)</span>
+                                <span className="text-sm text-muted-foreground">{t("permissions.export")}</span>
                                 {perms.canExport ? (
                                     <CheckCircle2 className="h-5 w-5 text-emerald-500" />
                                 ) : (
@@ -187,7 +264,7 @@ export default function BillingPage() {
                                 )}
                             </li>
                             <li className="flex items-center justify-between py-2 border-b border-border/50">
-                                <span className="text-sm text-muted-foreground">AI Meaning & Context</span>
+                                <span className="text-sm text-muted-foreground">{t("permissions.ai")}</span>
                                 {perms.canUseAi ? (
                                     <CheckCircle2 className="h-5 w-5 text-emerald-500" />
                                 ) : (
@@ -195,7 +272,7 @@ export default function BillingPage() {
                                 )}
                             </li>
                             <li className="flex items-center justify-between py-2">
-                                <span className="text-sm text-muted-foreground">Batch Import</span>
+                                <span className="text-sm text-muted-foreground">{t("permissions.import")}</span>
                                 {perms.canBatchImport ? (
                                     <CheckCircle2 className="h-5 w-5 text-emerald-500" />
                                 ) : (
@@ -210,15 +287,15 @@ export default function BillingPage() {
                     <CardHeader className="pb-2">
                         <CardTitle className="text-lg flex items-center gap-2">
                             <BookOpen className="h-5 w-5 text-primary" />
-                            Vocabulary Quota
+                            {t("quota.title")}
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div className="flex items-center justify-between mb-2">
-                            <span className="text-sm font-medium">Used Space</span>
+                            <span className="text-sm font-medium">{t("quota.used")}</span>
                             <span className="text-sm font-bold">
                                 {perms.quotaMax >= 2147483647 
-                                    ? `${perms.quotaUsed} / Unlimited` 
+                                    ? `${perms.quotaUsed} / ${t("quota.unlimited")}` 
                                     : `${perms.quotaUsed} / ${perms.quotaMax}`}
                             </span>
                         </div>
@@ -239,8 +316,8 @@ export default function BillingPage() {
                         </div>
                         <p className="text-xs text-muted-foreground">
                             {perms.isPremium 
-                                ? "You have premium access to all LexiVocab features without heavy restrictions."
-                                : `You have used ${perms.quotaUsed} of your ${perms.quotaMax} available vocabulary slots.`}
+                                ? t("quota.desc_premium")
+                                : t("quota.desc_free", { used: perms.quotaUsed, max: perms.quotaMax })}
                         </p>
                     </CardContent>
                 </Card>
@@ -261,16 +338,16 @@ export default function BillingPage() {
                                 </div>
                                 <div>
                                     <h3 className="font-semibold text-foreground text-lg">
-                                        Unlock Premium Features
+                                        {tPricing("premium_plan")}
                                     </h3>
                                     <p className="text-sm text-muted-foreground">
-                                        Unlimited vocabulary, AI features, batch import/export, and more.
+                                        {tPricing("premium_desc")}
                                     </p>
                                 </div>
                             </div>
                             <Link href={`/${locale}/pricing`}>
                                 <Button className="shrink-0">
-                                    View Plans — $9.99
+                                    {tPricing("upgrade")} — $9.99
                                     <ExternalLink className="ml-2 h-4 w-4" />
                                 </Button>
                             </Link>
@@ -289,21 +366,21 @@ export default function BillingPage() {
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                             <CreditCard className="h-5 w-5" />
-                            Payment History
+                            {t("history.title")}
                         </CardTitle>
                         <CardDescription>
                             {billing?.totalTransactions
-                                ? `${billing.totalTransactions} transaction(s)`
-                                : "No transactions yet"}
+                                ? t("history.count", { count: billing.totalTransactions })
+                                : t("history.no_transactions")}
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
-                        {history.length === 0 ? (
+                        {(history?.length ?? 0) === 0 ? (
                             <div className="text-center py-12 text-muted-foreground">
                                 <CreditCard className="h-12 w-12 mx-auto mb-4 opacity-30" />
-                                <p className="text-lg font-medium">No payment history</p>
+                                <p className="text-lg font-medium">{t("history.no_transactions")}</p>
                                 <p className="text-sm mt-1">
-                                    Your transactions will appear here after you make a purchase.
+                                    {t("history.empty_desc")}
                                 </p>
                             </div>
                         ) : (
@@ -320,7 +397,7 @@ export default function BillingPage() {
                                             <div>
                                                 <div className="flex items-center gap-2">
                                                     <span className="font-medium text-sm text-foreground">
-                                                        {tx.provider} Payment
+                                                        {t("history.payment_label", { provider: tx.provider })}
                                                     </span>
                                                     <StatusBadge status={tx.status} />
                                                 </div>
@@ -352,6 +429,12 @@ export default function BillingPage() {
                     </CardContent>
                 </Card>
             </motion.div>
+
+            {/* Sepay QR Modal */}
+            <SepayQRDialog 
+                qrData={qrData} 
+                onOpenChange={(open) => !open && setQrData(null)} 
+            />
         </div>
     );
 }

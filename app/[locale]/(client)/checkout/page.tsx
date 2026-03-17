@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
-import { clientApi } from "@/lib/api/api-client";
+import { paymentApi } from "@/lib/api/api-client";
 import { useAuth } from "@/lib/auth/auth-context";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -21,6 +21,9 @@ export default function CheckoutPage() {
 
     useEffect(() => {
         const token = searchParams.get("token");
+        const payerId = searchParams.get("PayerID");
+        const provider = searchParams.get("provider") || "paypal";
+
         if (!token) {
             setStatus("error");
             setErrorMessage("Missing payment token. Please try again from the pricing page.");
@@ -29,8 +32,11 @@ export default function CheckoutPage() {
 
         const captureOrder = async () => {
             try {
-                const res = await clientApi.post<string>("/api/proxy/payments/capture-order", {
+                // If sepay, just check status or we might already have token
+                // For PayPal we need to capture
+                const res = await paymentApi.captureOrder({
                     orderId: token,
+                    payerId: payerId || undefined
                 });
 
                 if (res.success) {
@@ -41,7 +47,7 @@ export default function CheckoutPage() {
                     setStatus("error");
                     setErrorMessage("error" in res ? res.error : "Payment capture failed. Please contact support.");
                 }
-            } catch {
+            } catch (err) {
                 setStatus("error");
                 setErrorMessage("An unexpected error occurred. Please contact support.");
             }
@@ -49,6 +55,7 @@ export default function CheckoutPage() {
 
         captureOrder();
     }, [searchParams, refreshPermissions]);
+
 
     return (
         <div className="min-h-screen bg-background flex items-center justify-center px-4">

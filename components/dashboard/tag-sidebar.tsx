@@ -1,0 +1,242 @@
+import { useState } from "react";
+import { TagDto } from "@/lib/api/types";
+import { tagsApi } from "@/lib/api/api-client";
+import { 
+    Tag, 
+    MoreVertical, 
+    Plus, 
+    Hash, 
+    Trash2, 
+    Pencil, 
+    Loader2,
+    ChevronRight,
+    Folder
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { 
+    DropdownMenu, 
+    DropdownMenuContent, 
+    DropdownMenuItem, 
+    DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
+import { TagDialog } from "./tag-dialog";
+import { toast } from "sonner";
+import { ConfirmDialog } from "./confirm-dialog";
+import { Skeleton } from "@/components/ui/skeleton";
+
+interface TagSidebarProps {
+    tags: TagDto[];
+    selectedTagId: string;
+    onSelectTag: (id: string) => void;
+    onRefresh: () => void;
+    onCreateNew: () => void;
+    isLoading?: boolean;
+}
+
+export function TagSidebar({ 
+    tags, 
+    selectedTagId, 
+    onSelectTag, 
+    onRefresh,
+    onCreateNew,
+    isLoading = false
+}: TagSidebarProps) {
+    const [isDeleting, setIsDeleting] = useState<string | null>(null);
+    const [tagToDelete, setTagToDelete] = useState<TagDto | null>(null);
+    const [editingTag, setEditingTag] = useState<TagDto | null>(null);
+    const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+
+    const handleDelete = async () => {
+        if (!tagToDelete) return;
+        
+        const id = tagToDelete.id;
+        setIsDeleting(id);
+        try {
+            const res = await tagsApi.delete(id);
+            if (res.success) {
+                toast.success(`Tag "${tagToDelete.name}" deleted successfully`);
+                if (selectedTagId === id) onSelectTag("all");
+                onRefresh();
+            } else {
+                toast.error(res.error || "Failed to delete tag");
+            }
+        } finally {
+            setIsDeleting(null);
+            setTagToDelete(null);
+        }
+    };
+
+    const handleEditClick = (e: React.MouseEvent, tag: TagDto) => {
+        e.stopPropagation();
+        setEditingTag(tag);
+        setIsEditDialogOpen(true);
+    };
+
+    return (
+        <div className="w-full h-full flex flex-col gap-6 pr-4">
+            <ConfirmDialog 
+                open={!!tagToDelete}
+                onOpenChange={(open) => !open && setTagToDelete(null)}
+                title="Delete Tag"
+                description={`Are you sure you want to delete "${tagToDelete?.name}"? Associated words will remain but won't be categorized by this tag.`}
+                confirmText="Delete Tag"
+                variant="destructive"
+                onConfirm={handleDelete}
+            />
+            <div className="flex items-center justify-between">
+                <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground ml-2">
+                    Filters & Tags
+                </h3>
+                <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="h-8 w-8 text-primary hover:bg-primary/10 rounded-full"
+                    onClick={onCreateNew}
+                >
+                    <Plus className="h-4 w-4" />
+                </Button>
+            </div>
+            
+            {/* Tag Dialog for Editing */}
+            <TagDialog 
+                open={isEditDialogOpen} 
+                onOpenChange={setIsEditDialogOpen} 
+                onSuccess={() => {
+                    onRefresh();
+                    setEditingTag(null);
+                }}
+                editingTag={editingTag}
+            />
+
+            <div className="space-y-1">
+                <Button
+                    variant="ghost"
+                    onClick={() => onSelectTag("all")}
+                    className={cn(
+                        "w-full justify-start gap-3 h-10 px-3 rounded-lg transition-all border border-transparent",
+                        selectedTagId === "all" 
+                            ? "bg-primary/10 text-primary font-semibold border-primary/20 shadow-sm" 
+                            : "text-muted-foreground hover:bg-accent/50"
+                    )}
+                >
+                    <Hash className="h-4 w-4" />
+                    <span className="flex-1 text-left">All Words</span>
+                    {selectedTagId === "all" && <ChevronRight className="h-3 w-3" />}
+                </Button>
+            </div>
+
+            <div className="space-y-1.5 overflow-y-auto max-h-[60vh] scrollbar-thin">
+                {tags.length === 0 ? (
+                    isLoading ? (
+                        <div className="space-y-2">
+                            {[...Array(5)].map((_, i) => (
+                                <Skeleton key={i} className="h-11 w-full rounded-xl" />
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="px-4 py-8 text-center border-2 border-dashed rounded-xl opacity-40">
+                            <Folder className="h-8 w-8 mx-auto mb-2" />
+                            <p className="text-xs">No tags yet</p>
+                        </div>
+                    )
+                ) : (
+                    tags.map((tag) => (
+                        <motion.div
+                            key={tag.id}
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            layout
+                        >
+                            <div
+                                role="button"
+                                tabIndex={0}
+                                onClick={() => onSelectTag(tag.id)}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter" || e.key === " ") {
+                                        onSelectTag(tag.id);
+                                    }
+                                }}
+                                className={cn(
+                                    "flex items-center w-full justify-start gap-3 h-11 px-3 rounded-xl transition-all border group relative overflow-hidden cursor-pointer",
+                                    selectedTagId === tag.id
+                                        ? "bg-card border-border/50 shadow-md ring-1 ring-primary/20"
+                                        : "hover:bg-accent/50 border-transparent"
+                                )}
+                            >
+                                <div 
+                                    className="w-8 h-8 rounded-lg flex items-center justify-center text-lg shadow-sm shrink-0"
+                                    style={{ 
+                                        backgroundColor: `${tag.color || '#6366f1'}15`,
+                                        color: tag.color || '#6366f1'
+                                    }}
+                                >
+                                    {tag.icon || "📁"}
+                                </div>
+                                <div className="flex-1 text-left truncate">
+                                    <div className={cn(
+                                        "text-sm font-medium leading-none mb-1",
+                                        selectedTagId === tag.id ? "text-foreground" : "text-muted-foreground"
+                                    )}>
+                                        {tag.name}
+                                    </div>
+                                    <div className="text-[10px] text-muted-foreground opacity-60">
+                                        {tag.wordCount} words
+                                    </div>
+                                </div>
+
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button 
+                                            variant="ghost" 
+                                            size="icon" 
+                                            className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity shrink-0 focus:opacity-100"
+                                            onClick={(e) => e.stopPropagation()}
+                                        >
+                                            <MoreVertical className="h-3 w-3" />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end" className="w-32">
+                                        <DropdownMenuItem 
+                                            className="text-xs cursor-pointer"
+                                            onClick={(e) => handleEditClick(e, tag)}
+                                        >
+                                            <Pencil className="mr-2 h-3 w-3" /> Edit
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem 
+                                            className="text-xs text-destructive cursor-pointer"
+                                            onClick={(e) => { e.stopPropagation(); setTagToDelete(tag); }}
+                                            disabled={isDeleting === tag.id}
+                                        >
+                                            {isDeleting === tag.id ? (
+                                                <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+                                            ) : (
+                                                <Trash2 className="mr-2 h-3 w-3" />
+                                            )}
+                                            Delete
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+
+                                {selectedTagId === tag.id && (
+                                    <motion.div 
+                                        layoutId="activeTag"
+                                        className="absolute left-0 w-1 h-6 bg-primary rounded-full ml-1" 
+                                    />
+                                )}
+                            </div>
+                        </motion.div>
+                    ))
+                )}
+            </div>
+
+            <div className="mt-auto p-4 rounded-2xl bg-primary/5 border border-primary/10 hidden lg:block">
+                <p className="text-[10px] uppercase font-bold text-primary tracking-widest mb-1">Tip</p>
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                    Organize words by topics or context to improve recall during active review.
+                </p>
+            </div>
+        </div>
+    );
+}

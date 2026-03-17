@@ -71,9 +71,10 @@ export async function POST() {
             secure: process.env.NODE_ENV === "production",
             sameSite: "lax",
             path: "/",
-            ...(refreshTokenExpires ? { expires: refreshTokenExpires } : { maxAge: 60 * 60 * 24 * 7 }),
+            ...(refreshTokenExpires ? { expires: refreshTokenExpires } : { maxAge: 60 * 60 * 24 * 30 }),
         });
     }
+
 
     return NextResponse.json({ success: true, data: { accessToken: newAccessToken } });
 }

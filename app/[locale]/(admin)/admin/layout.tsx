@@ -2,6 +2,7 @@
 
 import { AuthGuard } from "@/components/dashboard/auth-guard";
 import { AdminSidebar } from "@/components/admin/admin-sidebar";
+import { AdminHeader } from "@/components/admin/admin-header";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth/auth-context";
@@ -36,11 +37,22 @@ export default function AdminLayout({
 
     return (
         <AuthGuard>
-            <div className="flex h-screen overflow-hidden bg-background">
-                <AdminSidebar />
-                <main className="flex-1 overflow-y-auto px-8 py-8 w-full">
-                    <div className="mx-auto max-w-6xl">{children}</div>
-                </main>
+            <div className="flex h-screen overflow-hidden bg-background text-foreground transition-colors">
+                {/* Desktop Sidebar */}
+                <div className="hidden md:block w-64 flex-shrink-0">
+                    <AdminSidebar />
+                </div>
+                
+                {/* Main Content Pane */}
+                <div className="flex flex-col flex-1 overflow-hidden relative bg-muted/10">
+                    <AdminHeader />
+                    
+                    <main className="flex-1 overflow-y-auto w-full p-4 sm:p-6 lg:p-8">
+                        <div className="mx-auto max-w-7xl animate-in fade-in duration-500">
+                            {children}
+                        </div>
+                    </main>
+                </div>
             </div>
         </AuthGuard>
     );

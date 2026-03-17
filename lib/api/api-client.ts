@@ -150,27 +150,105 @@ import type {
     ForgotPasswordRequest,
     ResetPasswordRequest,
     VerifyEmailRequest,
+    LoginRequest,
+    RegisterRequest,
+
     UpdateProfileRequest,
     ChangePasswordRequest,
-    UserProfile
+    UserProfile,
+    MasterVocabularyDto,
+    CreateMasterVocabularyRequest,
+    UpdateMasterVocabularyRequest,
+    SystemDiagnosticsDto,
+    FeatureDefinitionDto,
+    CreateFeatureDefinitionRequest,
+    UpdateFeatureDefinitionRequest,
+    PlanDefinitionDto,
+    CreatePlanDefinitionRequest,
+    UpdatePlanDefinitionRequest,
+    BillingOverviewDto,
+    PaymentHistoryDto,
+    CreatePaymentOrderRequest,
+    CreatePaymentOrderResponse,
+    CapturePaymentOrderRequest,
+    PaymentStatusDto,
+    SubscriptionPlanDto,
+    StreakDetailsDto,
+    VocabularyInDepthStatsDto,
+    ReviewSessionDto,
+    SubmitReviewRequest,
+    ReviewResultDto,
+    ReviewHistoryDto,
+    UpdateSettingsRequest,
+    UserSettingsDto,
+    MasterVocabularyLookupDto,
+
+    VocabularyDto,
+    CreateVocabularyRequest,
+    UpdateVocabularyRequest,
+    BatchImportRequest,
+    ExportResult,
+
+    // NEW DTOs for 100% parity
+    GoogleLoginRequest,
+    AuthResponse,
+    AuthUser,
+    UserPermissionsDto,
+    DashboardDto,
+    HeatmapDataDto,
+
+
+    // AI DTOs
+
+    WordExplanationDto,
+    AiExplainRequest,
+    RelatedWordsDto,
+    QuizDto
 } from './types';
+
+
+
+
+
+
+
 
 export const authApi = {
     forgotPassword: (data: ForgotPasswordRequest) =>
-        clientApi.post<void>('/api/proxy/auth/forgot-password', data),
+        clientApi.post<void>('/api/auth/forgot-password', data),
     resetPassword: (data: ResetPasswordRequest) =>
-        clientApi.post<void>('/api/proxy/auth/reset-password', data),
+        clientApi.post<void>('/api/auth/reset-password', data),
     verifyEmail: (email: string, data: VerifyEmailRequest) =>
-        clientApi.post<void>(`/api/proxy/auth/verify-email?email=${encodeURIComponent(email)}`, data),
-    resendVerificationEmail: (data: ForgotPasswordRequest) => // Shares the same DTO signature
-        clientApi.post<void>('/api/proxy/auth/resend-verification-email', data),
+        clientApi.post<void>(`/api/auth/verify-email?email=${encodeURIComponent(email)}`, data),
+    resendVerificationEmail: (data: ForgotPasswordRequest) =>
+        clientApi.post<void>('/api/auth/resend-verification', data),
+
+
+    // Auth-Management (Requires specialized routes for cookie setting/clearing)
+    login: (data: LoginRequest) =>
+        clientApi.post<AuthUser>('/api/auth/login', data),
+    register: (data: RegisterRequest) =>
+        clientApi.post<AuthUser>('/api/auth/register', data),
+    logout: () =>
+        clientApi.post<void>('/api/auth/logout'),
+    getMe: () =>
+        clientApi.get<UserProfile>('/api/auth/me'),
+    refresh: () =>
+        clientApi.post<void>('/api/auth/refresh'),
+
     updateProfile: (data: UpdateProfileRequest) =>
         clientApi.put<UserProfile>('/api/proxy/auth/me', data),
     changePassword: (data: ChangePasswordRequest) =>
         clientApi.put<void>('/api/proxy/auth/me/password', data),
     deleteAccount: () =>
         clientApi.delete<void>('/api/proxy/auth/me'),
+    googleLogin: (data: GoogleLoginRequest) =>
+        clientApi.post<AuthUser>('/api/auth/google', data),
+    getPermissions: () =>
+        clientApi.get<UserPermissionsDto>('/api/proxy/auth/permissions'),
 };
+
+
 
 export const adminApi = {
     getUsers: (page = 1, pageSize = 20, search?: string) => {
@@ -190,21 +268,135 @@ export const adminApi = {
         clientApi.delete<string>(`/api/proxy/admin/users/${id}/subscriptions`),
     getMetrics: () =>
         clientApi.get<SystemStatsDto>(`/api/proxy/admin/metrics`),
-    getAuditLogs: (page = 1, pageSize = 20, search?: string) => {
+    getAuditLogs: (page = 1, pageSize = 20, filters?: { userId?: string, action?: string, entityType?: string, search?: string, fromDate?: string, toDate?: string }) => {
         const query = new URLSearchParams({ page: page.toString(), pageSize: pageSize.toString() });
-        if (search) query.append('search', search);
+        if (filters?.userId) query.append('userId', filters.userId);
+        if (filters?.action) query.append('action', filters.action);
+        if (filters?.entityType) query.append('entityType', filters.entityType);
+        if (filters?.search) query.append('search', filters.search);
+        if (filters?.fromDate) query.append('fromDate', filters.fromDate);
+        if (filters?.toDate) query.append('toDate', filters.toDate);
         return clientApi.get<PagedResult<AuditLogDto>>(`/api/proxy/admin/audit-logs?${query.toString()}`);
     },
+
+    // SaaS Features
+    getFeatures: () => clientApi.get<FeatureDefinitionDto[]>(`/api/proxy/admin/features/definitions`),
+    createFeature: (data: CreateFeatureDefinitionRequest) => clientApi.post<FeatureDefinitionDto>(`/api/proxy/admin/features/definitions`, data),
+    updateFeature: (id: string, data: UpdateFeatureDefinitionRequest) => clientApi.put<FeatureDefinitionDto>(`/api/proxy/admin/features/definitions/${id}`, data),
+    deleteFeature: (id: string) => clientApi.delete<void>(`/api/proxy/admin/features/definitions/${id}`),
+    getFeatureDetail: (id: string) => clientApi.get<FeatureDefinitionDto>(`/api/proxy/admin/features/definitions/${id}`),
+
+
+    // SaaS Plans
+    getPlans: () => clientApi.get<PlanDefinitionDto[]>(`/api/proxy/admin/plans/definitions`),
+    createPlan: (data: CreatePlanDefinitionRequest) => clientApi.post<PlanDefinitionDto>(`/api/proxy/admin/plans/definitions`, data),
+    updatePlan: (id: string, data: UpdatePlanDefinitionRequest) => clientApi.put<PlanDefinitionDto>(`/api/proxy/admin/plans/definitions/${id}`, data),
+    deletePlan: (id: string) => clientApi.delete<void>(`/api/proxy/admin/plans/definitions/${id}`),
+    getPlanDetail: (id: string) => clientApi.get<PlanDefinitionDto>(`/api/proxy/admin/plans/definitions/${id}`),
+
+
+    // Master Vocabularies
+    getMasterVocabularies: (page = 1, pageSize = 20, search?: string) => {
+        const query = new URLSearchParams({ page: page.toString(), pageSize: pageSize.toString() });
+        if (search) query.append('search', search);
+        return clientApi.get<PagedResult<MasterVocabularyDto>>(`/api/proxy/admin/vocabularies/master?${query.toString()}`);
+    },
+    createMasterVocabulary: (data: CreateMasterVocabularyRequest) => clientApi.post<MasterVocabularyDto>(`/api/proxy/admin/vocabularies/master`, data),
+    updateMasterVocabulary: (id: string, data: UpdateMasterVocabularyRequest) => clientApi.put<MasterVocabularyDto>(`/api/proxy/admin/vocabularies/master/${id}`, data),
+    deleteMasterVocabulary: (id: string) => clientApi.delete<void>(`/api/proxy/admin/vocabularies/master/${id}`),
+    getMasterVocabularyDetail: (id: string) => clientApi.get<MasterVocabularyDto>(`/api/proxy/admin/vocabularies/master/${id}`),
 };
+
+
+export const diagnosticsApi = {
+    getSystemInfo: () => clientApi.get<SystemDiagnosticsDto>(`/api/proxy/diagnostics/system-info`)
+};
+
+export const paymentApi = {
+    getPlans: () => clientApi.get<SubscriptionPlanDto[]>("/api/proxy/payments/plans"),
+    getBillingOverview: () => clientApi.get<BillingOverviewDto>("/api/proxy/payments/billing"),
+    getPaymentHistory: (page = 1, pageSize = 20) =>
+        clientApi.get<PagedResult<PaymentHistoryDto>>(`/api/proxy/payments/history?page=${page}&pageSize=${pageSize}`),
+    createOrder: (data: CreatePaymentOrderRequest) =>
+        clientApi.post<CreatePaymentOrderResponse>("/api/proxy/payments/create-order", data),
+    captureOrder: (data: CapturePaymentOrderRequest) =>
+        clientApi.post<{ message: string }>("/api/proxy/payments/capture-order", data),
+    checkStatus: (token: string) =>
+        clientApi.get<PaymentStatusDto>(`/api/proxy/payments/status/${token}`),
+};
+
 
 export const tagsApi = {
     getList: () => clientApi.get<TagDto[]>('/api/proxy/tags'),
     create: (data: CreateTagRequest) => clientApi.post<TagDto>('/api/proxy/tags', data),
     update: (id: string, data: UpdateTagRequest) => clientApi.put<TagDto>(`/api/proxy/tags/${id}`, data),
     delete: (id: string) => clientApi.delete<void>(`/api/proxy/tags/${id}`),
+    getVocabularies: (id: string, page = 1, pageSize = 20) =>
+        clientApi.get<PagedResult<VocabularyDto>>(`/api/proxy/tags/${id}/vocabularies?page=${page}&pageSize=${pageSize}`),
+    assign: (id: string, vocabularyId: string) =>
+        clientApi.patch<void>(`/api/proxy/tags/${id}/assign`, vocabularyId),
+};
+
+export const reviewsApi = {
+    getSession: (limit = 50) =>
+        clientApi.get<ReviewSessionDto>(`/api/proxy/reviews/session?limit=${limit}`),
+    submitReview: (data: SubmitReviewRequest) =>
+        clientApi.post<ReviewResultDto>('/api/proxy/reviews', data),
+    getHistory: (page = 1, pageSize = 20) =>
+        clientApi.get<PagedResult<ReviewHistoryDto>>(`/api/proxy/reviews/history?page=${page}&pageSize=${pageSize}`),
+};
+
+export const settingsApi = {
+    get: () => clientApi.get<UserSettingsDto>('/api/proxy/settings'),
+    update: (data: UpdateSettingsRequest) => clientApi.put<UserSettingsDto>('/api/proxy/settings', data),
+};
+
+export const masterVocabApi = {
+    lookup: (word: string) =>
+        clientApi.get<MasterVocabularyLookupDto>(`/api/proxy/master-vocab/lookup?word=${encodeURIComponent(word)}`),
+    search: (q: string, limit = 10) =>
+        clientApi.get<MasterVocabularyLookupDto[]>(`/api/proxy/master-vocab/search?q=${encodeURIComponent(q)}&limit=${limit}`),
 };
 
 export const vocabularyApi = {
+    getList: (page = 1, pageSize = 20, isArchived?: boolean, search?: string, tagId?: string) => {
+        const query = new URLSearchParams({ page: page.toString(), pageSize: pageSize.toString() });
+        if (isArchived !== undefined) query.append('isArchived', isArchived.toString());
+        if (search) query.append('search', search);
+        if (tagId) query.append('tagId', tagId);
+        return clientApi.get<PagedResult<VocabularyDto>>(`/api/proxy/vocabularies?${query.toString()}`);
+    },
+    getById: (id: string) => clientApi.get<VocabularyDto>(`/api/proxy/vocabularies/${id}`),
+    create: (data: CreateVocabularyRequest) => clientApi.post<VocabularyDto>('/api/proxy/vocabularies', data),
+    update: (id: string, data: UpdateVocabularyRequest) => clientApi.put<VocabularyDto>(`/api/proxy/vocabularies/${id}`, data),
     updateTag: (id: string, tagId: string | null) =>
         clientApi.patch<void>(`/api/proxy/vocabularies/${id}/tag`, { tagId }),
+    archive: (id: string) => clientApi.patch<void>(`/api/proxy/vocabularies/${id}/archive`, {}),
+    delete: (id: string) => clientApi.delete<void>(`/api/proxy/vocabularies/${id}`),
+    batchImport: (data: BatchImportRequest) => clientApi.post<number>('/api/proxy/vocabularies/batch', data),
+    export: (format = 'json') => `/api/proxy/vocabularies/export?format=${format}`,
 };
+
+export const analyticsApi = {
+    getStreak: () =>
+        clientApi.get<StreakDetailsDto>("/api/proxy/analytics/streak"),
+    getStats: () =>
+        clientApi.get<VocabularyInDepthStatsDto>("/api/proxy/vocabularies/stats"),
+    getDashboard: () =>
+        clientApi.get<DashboardDto>("/api/proxy/analytics/dashboard"),
+    getHeatmap: (year?: number) =>
+        clientApi.get<HeatmapDataDto>(`/api/proxy/analytics/heatmap${year ? `?year=${year}` : ''}`),
+};
+
+export const aiApi = {
+    explain: (data: AiExplainRequest) =>
+        clientApi.post<WordExplanationDto>('/api/proxy/ai/explain', data),
+    getRelated: (word: string) =>
+
+        clientApi.get<RelatedWordsDto>(`/api/proxy/ai/related/${encodeURIComponent(word)}`),
+    getQuiz: (word: string) =>
+        clientApi.get<QuizDto>(`/api/proxy/ai/quiz/${encodeURIComponent(word)}`),
+};
+
+
+

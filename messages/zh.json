@@ -37,7 +37,8 @@
       "analytics": "分析",
       "billing": "账单",
       "settings": "设置",
-      "collapse": "折叠侧边栏",
+      "explore": "探索",
+      "collapse": "折叠边栏",
       "logout": "退出登录"
     },
     "home": {
@@ -150,6 +151,17 @@
         "deleteAccount": "删除账户"
       },
       "save": "保存更改"
+    },
+    "explore": {
+      "title": "探索词典",
+      "subtitle": "搜索 LexiVocab 主数据库中的 100,000+ 个单词",
+      "searchPlaceholder": "输入单词进行搜索...",
+      "noResults": "词典中未找到该单词。",
+      "startTyping": "输入单词以开始探索我们的词典！",
+      "addToVocab": "添加到词汇表",
+      "alreadyInVocab": "已在列表中",
+      "cefrLevel": "CEFR等级",
+      "meanings": "含义"
     }
   },
   "Hero": {
@@ -175,6 +187,91 @@
     "highlight_badge": "热门",
     "dashboard_title": "词汇仪表板",
     "dashboard_desc": "管理您的个人词汇库，练习发音，跟踪学习进度。"
+  },
+  "Pricing": {
+    "title": "升级您的词汇量",
+    "subtitle": "免费开始，准备好后升级。一次支付，终身访问。",
+    "badge": "简单透明的价格",
+    "method_paypal": "使用 PayPal 支付",
+    "method_sepay": "银行转账 (Sepay - VietQR)",
+    "payment_notice": "您的账号将通过 Sepay 自动升级。",
+    "trust": {
+      "secure": "安全支付",
+      "lifetime": "终身访问",
+      "no_fees": "无隐藏费用"
+    },
+    "comparison": {
+      "title": "方案对比",
+      "feature": "功能",
+      "free": "免费版",
+      "premium": "高级版",
+      "storage": "词汇存储",
+      "spaced": "间隔复习 (SM-2)",
+      "extension": "Chrome 扩展访问",
+      "ai": "AI 上下文翻译",
+      "import": "批量导入 (CSV/Text)",
+      "export": "CSV & JSON 数据导出",
+      "practice": "AI 练习课",
+      "support": "优先支持",
+      "words_limit": "{count} 个单词",
+      "unlimited": "无限制",
+      "standard": "标准",
+      "priority": "优先",
+      "duration_1m": "1个月",
+      "duration_3m": "3个月",
+      "duration_6m": "6个月",
+      "duration_12m": "12个月",
+      "lifetime_label": "终身",
+      "for": "",
+      "month": "个月",
+      "months": "个月"
+    },
+    "pending_transaction": {
+      "title": "待处理交易",
+      "desc": "您有一笔待通过 {provider} 处理的交易，金额为 {amount} {currency}，创建于 {date}。",
+      "reference": "参考号：{ref}",
+      "resume": "继续支付",
+      "cancel": "开始新交易"
+    },
+    "qr_modal": {
+      "reference_label": "转账备注 (Reference):",
+      "waiting": "正在等待 Sepay 确认...",
+      "error": "无法加载二维码。<br/>请刷新或联系支持。",
+      "instruction": "请扫描二维码或转账以上述备注准确支付。Sepay 将在 1-2 分钟内自动通知并升级您的账户。"
+    }
+  },
+  "Billing": {
+    "title": "账单与订阅",
+    "subtitle": "管理您的方案并查看支付历史。",
+    "current_plan": {
+      "title_free": "免费版",
+      "title_premium": "{plan} ({months} {month_label})",
+      "expires": "到期时间：{date}",
+      "lifetime": "终身访问",
+      "quota_limit": "限制为 {count} 个词汇",
+      "active": "已激活",
+      "upgrade": "升级到高级版"
+    },
+    "permissions": {
+      "title": "方案权限",
+      "export": "导出数据 (PDF/CSV)",
+      "ai": "AI 释义与语境",
+      "import": "批量导入"
+    },
+    "quota": {
+      "title": "词汇配额",
+      "used": "已用空间",
+      "unlimited": "无限制",
+      "desc_premium": "您可以不受限制地使用 LexiVocab 的所有高级功能。",
+      "desc_free": "您已使用 {max} 个可用词汇槽中的 {used} 个。"
+    },
+    "history": {
+      "title": "支付历史",
+      "count": "{count} 笔交易",
+      "no_transactions": "暂无交易记录",
+      "empty_desc": "您的交易记录将在购买后显示在这里。",
+      "payment_label": "{provider} 支付"
+    }
   },
   "Privacy": {
     "title": "隐私政策",
@@ -316,24 +413,116 @@
   "Checkout": {
     "processing_title": "Processing payment...",
     "processing_subtitle": "Please do not close this window",
-    "success_title": "Payment Successful!",
-    "success_subtitle": "Thank you for upgrading to Premium. Your account has been updated.",
-    "error_title": "Payment Failed",
+    "success_title": "支付成功！",
+    "success_subtitle": "感谢您升级到高级版。您的账号已更新。",
+    "premium_activated": "终身访问",
+    "receipt_notice": "确认信和收据已发送至您的邮箱。",
+    "error_title": "支付失败",
     "try_again": "Try Again",
     "go_dashboard": "Go to Dashboard"
   },
-  "Admin.auditLogs": {
-    "title": "Audit Logs",
-    "subtitle": "Monitor system activities",
-    "searchPlaceholder": "Search by Action or Email...",
-    "table": {
-      "date": "Date",
-      "user": "User",
-      "action": "Action",
-      "entity": "Entity",
-      "details": "Details"
-    },
-    "empty": "No data found",
-    "emptySubtitle": "No audit logs found matching the filters."
+  "AI": {
+    "tabs": {
+      "explain": "解释",
+      "related": "相关词",
+      "quiz": "测试"
+    }
+  },
+  "Admin": {
+    "auditLogs": {
+      "title": "审计日志",
+      "subtitle": "实时监控所有系统活动和用户操作",
+      "searchPlaceholder": "按邮箱、请求、IP地址搜索...",
+      "filters": {
+        "action": "操作类型",
+        "allActions": "全部",
+        "entityType": "实体类型",
+        "allEntities": "全部",
+        "status": "状态",
+        "allStatus": "全部",
+        "success": "成功",
+        "failed": "失败",
+        "dateFrom": "开始日期",
+        "dateTo": "结束日期",
+        "clearFilters": "清除筛选",
+        "activeFilters": "{count}个筛选"
+      },
+      "actions": {
+        "Login": "登录",
+        "LoginFailed": "登录失败",
+        "Register": "注册",
+        "Logout": "登出",
+        "TokenRefresh": "刷新令牌",
+        "GoogleLogin": "Google登录",
+        "VocabularyCreated": "创建词汇",
+        "VocabularyUpdated": "更新词汇",
+        "VocabularyDeleted": "删除词汇",
+        "VocabularyBulkImported": "批量导入",
+        "VocabularyExported": "导出",
+        "ReviewCompleted": "完成复习",
+        "SettingsUpdated": "更新设置",
+        "ProfileUpdated": "更新资料",
+        "UserUpdated": "更新用户",
+        "PasswordChanged": "修改密码",
+        "UserDeleted": "删除用户",
+        "SubscriptionCreated": "创建订阅",
+        "SubscriptionCancelled": "取消订阅",
+        "PaymentCompleted": "支付成功",
+        "PaymentFailed": "支付失败",
+        "AdminUserDeactivated": "禁用用户",
+        "AdminUserActivated": "启用用户",
+        "AdminRoleChanged": "角色变更",
+        "SystemSettingUpdated": "系统更新",
+        "RateLimited": "速率限制",
+        "SuspiciousActivity": "可疑活动"
+      },
+      "table": {
+        "timestamp": "时间戳",
+        "user": "用户",
+        "action": "操作",
+        "entity": "实体",
+        "status": "状态",
+        "duration": "耗时",
+        "details": "详情"
+      },
+      "detail": {
+        "title": "日志详情",
+        "general": "基本信息",
+        "timestamp": "时间戳",
+        "action": "操作",
+        "status": "状态",
+        "duration": "耗时",
+        "technical": "技术详情",
+        "requestName": "请求",
+        "traceId": "跟踪ID",
+        "ipAddress": "IP地址",
+        "userAgent": "用户代理",
+        "entity": "实体信息",
+        "entityType": "实体类型",
+        "entityId": "实体ID",
+        "user": "用户信息",
+        "email": "邮箱",
+        "userId": "用户ID",
+        "additionalInfo": "附加信息",
+        "noData": "无附加信息",
+        "copyId": "复制ID",
+        "copied": "已复制！"
+      },
+      "status": {
+        "success": "成功",
+        "failed": "失败"
+      },
+      "pagination": {
+        "showing": "显示第{from}-{to}条，共{total}条",
+        "page": "第{page}页 / 共{totalPages}页",
+        "perPage": "每页",
+        "previous": "上一页",
+        "next": "下一页"
+      },
+      "empty": "未找到审计日志",
+      "emptySubtitle": "没有记录匹配当前筛选条件，请尝试调整搜索条件。",
+      "system": "系统",
+      "ms": "{ms}ms"
+    }
   }
 }

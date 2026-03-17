@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { serverFetch } from "@/lib/api/api-client";
-import type { AuthResponse, LoginRequest } from "@/lib/api/types";
+import type { LoginRequest } from "@/lib/api/types";
 
 export async function POST(request: Request) {
     const body = (await request.json()) as LoginRequest;
@@ -19,7 +18,8 @@ export async function POST(request: Request) {
         return NextResponse.json({ success: false, error: data?.error || "Login failed" }, { status: 401 });
     }
 
-    const { accessToken, expiresAt, userId, email, fullName, role } = data.data || data;
+    const payload = data.data || data;
+    const { accessToken, expiresAt, userId, email, fullName, role } = payload;
     const expiresDate = new Date(expiresAt);
 
     // Extract refreshToken and its expiration from the Set-Cookie header returned by .NET
@@ -50,7 +50,7 @@ export async function POST(request: Request) {
             secure: process.env.NODE_ENV === "production",
             sameSite: "lax",
             path: "/",
-            ...(refreshTokenExpires ? { expires: refreshTokenExpires } : { maxAge: 60 * 60 * 24 * 7 }),
+            ...(refreshTokenExpires ? { expires: refreshTokenExpires } : { maxAge: 60 * 60 * 24 * 30 }),
         });
     }
 

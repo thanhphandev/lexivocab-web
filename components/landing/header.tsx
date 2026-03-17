@@ -65,6 +65,12 @@ export default function Header({ locale }: { locale: string }) {
                         >
                             {t('how_it_works')}
                         </Link>
+                        <Link
+                            href={`/${locale}/pricing`}
+                            className="transition-colors hover:text-primary text-muted-foreground"
+                        >
+                            {t('pricing')}
+                        </Link>
                     </nav>
                     <div className="flex items-center gap-3">
                         <DropdownMenu>
@@ -139,6 +145,9 @@ export default function Header({ locale }: { locale: string }) {
                             </Link>
                             <Link href="#how-it-works" className="font-medium py-2 hover:text-primary transition-colors">
                                 {t('how_it_works')}
+                            </Link>
+                            <Link href={`/${locale}/pricing`} className="font-medium py-2 hover:text-primary transition-colors">
+                                {t('pricing')}
                             </Link>
                             <hr className="my-2" />
                             <div className="space-y-2">

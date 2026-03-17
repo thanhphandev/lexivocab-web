@@ -23,18 +23,23 @@ import {
     ExternalLink,
     AlertCircle,
     Loader2,
-    Volume2
+    Volume2,
+    Brain,
+    Sparkles,
+    Plus
 } from "lucide-react";
+import { AIWordAssistant } from "../ai/ai-word-assistant";
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
     DropdownMenuSeparator,
-    DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { EditWordDialog } from "./edit-word-dialog";
+import { toast } from "sonner";
+import { ConfirmDialog } from "./confirm-dialog";
 
 interface VocabularyTableProps {
     data: PagedResult<VocabularyDto> | null;
@@ -47,6 +52,10 @@ export function VocabularyTable({ data, tags, isLoading, onRefresh }: Vocabulary
     const t = useTranslations("Dashboard.vocabulary");
     const [actionLoading, setActionLoading] = useState<string | null>(null);
     const [editingItem, setEditingItem] = useState<VocabularyDto | null>(null);
+    const [itemToDelete, setItemToDelete] = useState<VocabularyDto | null>(null);
+    const [aiAssistantData, setAiAssistantData] = useState<{ word: string, context?: string } | null>(null);
+
+
 
     const getLevelBadge = (level: number) => {
         if (level === 0) return { label: t("badges.new"), className: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300" };
@@ -79,16 +88,25 @@ export function VocabularyTable({ data, tags, isLoading, onRefresh }: Vocabulary
         }
     };
 
-    const handleDelete = async (id: string) => {
-        if (!window.confirm("Are you sure you want to delete this word?")) return;
+    const handleDelete = async () => {
+        if (!itemToDelete) return;
         if (actionLoading) return;
 
+        const id = itemToDelete.id;
+        const word = itemToDelete.wordText;
+        
         setActionLoading(id);
         try {
-            await clientApi.delete(`/api/proxy/vocabularies/${id}`);
-            onRefresh();
+            const res = await clientApi.delete(`/api/proxy/vocabularies/${id}`);
+            if (res.success) {
+                toast.success(`Successfully deleted "${word}"`);
+                onRefresh();
+            } else {
+                toast.error(res.error || `Failed to delete "${word}"`);
+            }
         } finally {
             setActionLoading(null);
+            setItemToDelete(null);
         }
     };
 
@@ -106,7 +124,7 @@ export function VocabularyTable({ data, tags, isLoading, onRefresh }: Vocabulary
         );
     }
 
-    if (!data || data.items.length === 0) {
+    if (!data || (data.items?.length ?? 0) === 0) {
         return (
             <div className="flex flex-col items-center justify-center py-20 border rounded-xl bg-card text-center px-4">
                 <AlertCircle className="h-10 w-10 text-muted-foreground mb-4 opacity-50" />
@@ -127,7 +145,7 @@ export function VocabularyTable({ data, tags, isLoading, onRefresh }: Vocabulary
                             <TableHead className="w-[200px]">{t("table.word")}</TableHead>
                             <TableHead className="min-w-[200px]">{t("table.meaning")}</TableHead>
                             <TableHead className="w-[120px]">{t("table.level")}</TableHead>
-                            <TableHead className="w-[120px]">Folder</TableHead>
+                            <TableHead className="w-[120px]">Tag</TableHead>
                             <TableHead className="w-[150px]">{t("table.nextReview")}</TableHead>
                             <TableHead className="w-[100px]">{t("table.status")}</TableHead>
                             <TableHead className="w-[80px] text-right">{t("table.actions")}</TableHead>
@@ -152,7 +170,15 @@ export function VocabularyTable({ data, tags, isLoading, onRefresh }: Vocabulary
                                                     <Volume2 className="h-4 w-4" />
                                                 </button>
                                             )}
+                                            <button
+                                                onClick={() => setAiAssistantData({ word: item.wordText, context: item.contextSentence || undefined })}
+                                                className="text-primary/40 hover:text-primary transition-all focus:outline-none hover:scale-110 active:scale-95"
+                                                title="AI Assistant"
+                                            >
+                                                <Brain className="h-4 w-4" />
+                                            </button>
                                         </div>
+
                                         {(item.phoneticUs || item.phoneticUk) && (
                                             <div className="text-xs text-muted-foreground font-mono mt-0.5">
                                                 {item.phoneticUs || item.phoneticUk}
@@ -178,47 +204,74 @@ export function VocabularyTable({ data, tags, isLoading, onRefresh }: Vocabulary
                                                 <DropdownMenuTrigger asChild>
                                                     <button
                                                         disabled={actionLoading === item.id}
-                                                        className="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-medium hover:ring-1 hover:ring-ring transition-all focus:outline-none disabled:opacity-50"
+                                                        className="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider hover:ring-2 hover:ring-primary/20 transition-all focus:outline-none disabled:opacity-50 shadow-sm border"
                                                         style={{
-                                                            backgroundColor: item.tagId && tags[item.tagId] ? `${tags[item.tagId].color || '#6366f1'}15` : 'transparent',
+                                                            backgroundColor: item.tagId && tags[item.tagId] ? `${tags[item.tagId].color || '#6366f1'}10` : 'transparent',
                                                             color: item.tagId && tags[item.tagId] ? (tags[item.tagId].color || undefined) : undefined,
-                                                            border: item.tagId && tags[item.tagId] ? `1px solid ${tags[item.tagId].color || '#6366f1'}30` : '1px dashed hsl(var(--muted-foreground) / 0.5)',
+                                                            borderColor: item.tagId && tags[item.tagId] ? `${tags[item.tagId].color || '#6366f1'}30` : 'hsl(var(--muted-foreground) / 0.2)',
                                                         }}
                                                     >
                                                         {item.tagId && tags[item.tagId] ? (
-                                                            <span className="truncate max-w-[120px] flex items-center gap-1">
-                                                                <span>{tags[item.tagId].icon}</span>
+                                                            <span className="truncate max-w-[100px] flex items-center gap-1.5">
+                                                                <span className="text-sm opacity-80">{tags[item.tagId].icon}</span>
                                                                 {tags[item.tagId].name}
                                                             </span>
                                                         ) : (
-                                                            <span className="text-muted-foreground opacity-70">+ Tag</span>
+                                                            <span className="text-muted-foreground/60 flex items-center gap-1 px-1">
+                                                                <Plus className="h-3 w-3" /> Tag
+                                                            </span>
                                                         )}
                                                     </button>
                                                 </DropdownMenuTrigger>
-                                                <DropdownMenuContent align="start" className="w-[180px]">
-                                                    <DropdownMenuLabel className="text-xs text-muted-foreground">Select Folder</DropdownMenuLabel>
-                                                    <DropdownMenuSeparator />
+                                                <DropdownMenuContent align="start" className="w-[200px] p-2 rounded-xl shadow-xl border-border/40 bg-card/95 backdrop-blur-sm">
+                                                    <div className="px-2 py-1.5 text-[10px] font-bold uppercase text-muted-foreground tracking-widest">
+                                                        Assign Tag
+                                                    </div>
+                                                    <DropdownMenuSeparator className="my-1.5" />
                                                     {item.tagId && (
                                                         <>
-                                                            <DropdownMenuItem onClick={() => handleAssignTag(item.id, null)} className="text-destructive focus:bg-destructive/10 cursor-pointer">
-                                                                <Trash2 className="mr-2 h-3 w-3" /> Remove Tag
+                                                            <DropdownMenuItem 
+                                                                onClick={() => handleAssignTag(item.id, null)} 
+                                                                className="text-xs text-destructive focus:bg-destructive/10 cursor-pointer rounded-md h-9"
+                                                            >
+                                                                <Trash2 className="mr-2 h-3.5 w-3.5" /> Remove Tag
                                                             </DropdownMenuItem>
-                                                            <DropdownMenuSeparator />
+                                                            <DropdownMenuSeparator className="my-1.5" />
                                                         </>
                                                     )}
-                                                    <div className="max-h-[250px] overflow-y-auto">
-                                                        {Object.values(tags).map(tag => (
-                                                            <DropdownMenuItem
-                                                                key={tag.id}
-                                                                onClick={() => handleAssignTag(item.id, tag.id)}
-                                                                className="cursor-pointer"
-                                                            >
-                                                                <div className="flex items-center gap-2 " style={{ color: item.tagId === tag.id ? (tag.color || undefined) : undefined }}>
-                                                                    <span>{tag.icon}</span>
-                                                                    <span className={item.tagId === tag.id ? "font-semibold" : ""}>{tag.name}</span>
-                                                                </div>
-                                                            </DropdownMenuItem>
-                                                        ))}
+                                                    <div className="max-h-[300px] overflow-y-auto space-y-0.5 scrollbar-thin">
+                                                        {Object.values(tags).length === 0 ? (
+                                                            <div className="text-[10px] text-center py-4 text-muted-foreground italic">
+                                                                No tags available
+                                                            </div>
+                                                        ) : (
+                                                            Object.values(tags).map(tag => (
+                                                                <DropdownMenuItem
+                                                                    key={tag.id}
+                                                                    onClick={() => handleAssignTag(item.id, tag.id)}
+                                                                    className="cursor-pointer rounded-md h-10 px-3"
+                                                                >
+                                                                    <div className="flex items-center justify-between w-full">
+                                                                        <div className="flex items-center gap-3">
+                                                                            <span className="text-base">{tag.icon}</span>
+                                                                            <span className={cn(
+                                                                                "text-sm",
+                                                                                item.tagId === tag.id ? "font-bold" : "font-medium"
+                                                                            )}
+                                                                            style={{ color: item.tagId === tag.id ? (tag.color || undefined) : undefined }}>
+                                                                                {tag.name}
+                                                                            </span>
+                                                                        </div>
+                                                                        {item.tagId === tag.id && (
+                                                                            <div 
+                                                                                className="w-1.5 h-1.5 rounded-full" 
+                                                                                style={{ backgroundColor: tag.color || '#6366f1' }}
+                                                                            />
+                                                                        )}
+                                                                    </div>
+                                                                </DropdownMenuItem>
+                                                            ))
+                                                        )}
                                                     </div>
                                                 </DropdownMenuContent>
                                             </DropdownMenu>
@@ -272,8 +325,8 @@ export function VocabularyTable({ data, tags, isLoading, onRefresh }: Vocabulary
                                                     )}
                                                 </DropdownMenuItem>
                                                 <DropdownMenuItem
-                                                    className="text-destructive focus:text-destructive"
-                                                    onClick={() => handleDelete(item.id)}
+                                                    className="text-destructive focus:text-destructive cursor-pointer"
+                                                    onClick={() => setItemToDelete(item)}
                                                 >
                                                     <Trash2 className="mr-2 h-4 w-4" />
                                                     {t("actions.delete")}
@@ -299,6 +352,25 @@ export function VocabularyTable({ data, tags, isLoading, onRefresh }: Vocabulary
                     }}
                 />
             )}
+            {aiAssistantData && (
+                <AIWordAssistant
+                    word={aiAssistantData.word}
+                    context={aiAssistantData.context}
+                    isOpen={!!aiAssistantData}
+                    onClose={() => setAiAssistantData(null)}
+                />
+            )}
+
+            <ConfirmDialog
+                open={!!itemToDelete}
+                onOpenChange={(open) => !open && setItemToDelete(null)}
+                onConfirm={handleDelete}
+                title="Delete Word"
+                description={`Are you sure you want to delete "${itemToDelete?.wordText}"? This action cannot be undone.`}
+                confirmText="Delete"
+                variant="destructive"
+            />
         </div>
+
     );
 }

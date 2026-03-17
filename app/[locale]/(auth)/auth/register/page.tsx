@@ -111,6 +111,15 @@ export default function RegisterPage() {
                         <p>{error}</p>
                     </motion.div>
                 )}
+                
+                {/* Show a "Verify Email" button if the error suggests the email needs verification */}
+                {error && error.toLowerCase().includes("verif") && (
+                     <div className="flex justify-center mt-2">
+                         <Link href={`/auth/verify-email?email=${encodeURIComponent(email)}`} className="text-sm font-medium text-primary underline">
+                            Click here to verify your email
+                         </Link>
+                     </div>
+                )}
 
                 <div className="space-y-4 rounded-md shadow-sm">
                     <div>

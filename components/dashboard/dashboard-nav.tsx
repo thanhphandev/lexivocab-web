@@ -6,6 +6,7 @@ import { useAuth } from "@/lib/auth/auth-context";
 import { useTranslations } from "next-intl";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
+import Image from "next/image";
 import {
     LayoutDashboard,
     BookOpen,
@@ -17,7 +18,9 @@ import {
     Menu,
     X,
     ChevronLeft,
+    Search,
 } from "lucide-react";
+
 
 interface NavItem {
     key: string;
@@ -49,7 +52,13 @@ export function DashboardNav({ locale }: { locale: string }) {
             icon: <Brain className="h-5 w-5" />,
         },
         {
+            key: "explore",
+            href: `/${locale}/dashboard/explore`,
+            icon: <Search className="h-5 w-5" />,
+        },
+        {
             key: "analytics",
+
             href: `/${locale}/dashboard/analytics`,
             icon: <BarChart3 className="h-5 w-5" />,
         },
@@ -82,24 +91,111 @@ export function DashboardNav({ locale }: { locale: string }) {
     const sidebarContent = (
         <div className="flex h-full flex-col">
             {/* Logo */}
-            <div className="flex items-center gap-3 px-4 py-5 border-b border-border/50">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-orange-500 text-white font-bold text-sm shrink-0">
-                    L
+            <Link href={`/${locale}/dashboard`} className="flex items-center gap-3 px-4 py-5 border-b border-border/50 group relative overflow-hidden flex-shrink-0 hover:bg-gradient-to-r hover:from-primary/5 hover:to-transparent transition-all duration-500">
+                {/* Subtle background glow */}
+                <motion.div 
+                    className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"
+                />
+
+                <div className="relative flex h-10 w-10 shrink-0 items-center justify-center">
+                    {/* Pulsing expand ring */}
+                    <motion.div
+                        className="absolute inset-0 rounded-2xl border border-primary/40"
+                        animate={{
+                            scale: [1, 1.3, 1],
+                            opacity: [0.5, 0, 0],
+                        }}
+                        transition={{ duration: 2.5, repeat: Infinity, ease: "easeOut" }}
+                    />
+                    
+                    {/* Spinning Gradient Outglow */}
+                    <motion.div
+                        className="absolute -inset-1 rounded-2xl bg-gradient-to-tr from-primary via-purple-500 to-orange-500 opacity-50 shadow-[0_0_15px_rgba(var(--primary))] blur-md"
+                        animate={{
+                            rotate: [0, 360],
+                            scale: [0.95, 1.05, 0.95]
+                        }}
+                        transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                    />
+
+                    {/* Gradient Border Shell */}
+                    <motion.div
+                        className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-primary via-orange-500 to-purple-500"
+                        animate={{ rotate: [360, 0] }}
+                        transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+                    />
+
+                    {/* Inner Content Area */}
+                    <div className="absolute inset-[1.5px] rounded-[14px] bg-card flex items-center justify-center z-10 overflow-hidden shadow-inner">
+                        <motion.div 
+                            className="relative w-full h-full p-1"
+                            whileHover={{ scale: 1.15, rotate: 5 }}
+                            transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                        >
+                            <Image 
+                                src="/icon.png" 
+                                alt="LexiVocab" 
+                                fill 
+                                className="object-contain p-[3px] filter drop-shadow-[0_0_6px_rgba(255,255,255,0.25)] relative z-10"
+                                priority
+                            />
+                            {/* Inner Shimmer Sweep (Trae style) */}
+                            <motion.div 
+                                className="absolute top-0 bottom-0 w-1/2 bg-gradient-to-r from-transparent via-white/50 to-transparent -skew-x-12 z-20 mix-blend-overlay"
+                                animate={{
+                                    left: ['-100%', '200%']
+                                }}
+                                transition={{
+                                    duration: 2.5,
+                                    repeat: Infinity,
+                                    ease: "easeInOut",
+                                    repeatDelay: 1.5
+                                }}
+                            />
+                        </motion.div>
+                    </div>
+
+                    {/* Magic Sparkle on Hover */}
+                    <motion.div 
+                        className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-white blur-[1.5px] z-20 opacity-0 group-hover:opacity-100"
+                        animate={{ 
+                            scale: [0.8, 1.5, 0.8],
+                            opacity: [0.8, 1, 0.8]
+                        }}
+                        transition={{ duration: 1.2, repeat: Infinity }}
+                    />
                 </div>
+
                 <AnimatePresence>
                     {!collapsed && (
                         <motion.div
-                            initial={{ opacity: 0, width: 0 }}
-                            animate={{ opacity: 1, width: "auto" }}
-                            exit={{ opacity: 0, width: 0 }}
-                            className="overflow-hidden"
+                            initial={{ opacity: 0, width: 0, x: -10 }}
+                            animate={{ opacity: 1, width: "auto", x: 0 }}
+                            exit={{ opacity: 0, width: 0, x: -10 }}
+                            transition={{ type: "spring", stiffness: 350, damping: 28 }}
+                            className="overflow-hidden flex flex-col justify-center"
                         >
-                            <h1 className="text-lg font-bold whitespace-nowrap text-foreground">LexiVocab</h1>
-                            <p className="text-[10px] text-muted-foreground whitespace-nowrap -mt-0.5">{t("subtitle")}</p>
+                            <motion.h1 
+                                className="text-[22px] font-black tracking-tight leading-none bg-clip-text text-transparent bg-gradient-to-r from-foreground via-primary to-foreground bg-[length:200%_auto] pb-0.5"
+                                animate={{
+                                    backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+                                }}
+                                transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                            >
+                                LexiVocab
+                            </motion.h1>
+                            <div className="flex items-center gap-1.5 group/subtitle mt-0.5">
+                                <motion.div 
+                                    className="h-[2px] w-2 bg-gradient-to-r from-primary to-orange-500 rounded-full group-hover/subtitle:w-5 transition-all duration-300"
+                                />
+                                <p className="text-[10px] font-bold text-muted-foreground/70 tracking-[0.2em] uppercase transition-colors group-hover:text-primary/90">
+                                    {t("subtitle")}
+                                </p>
+                            </div>
                         </motion.div>
                     )}
                 </AnimatePresence>
-            </div>
+            </Link>
 
             {/* Navigation */}
             <nav className="flex-1 py-4 px-3 space-y-1">

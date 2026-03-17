@@ -4,8 +4,8 @@ import { useTranslations, useLocale } from "next-intl";
 import { useAuth } from "@/lib/auth/auth-context";
 import { usePermissions } from "@/lib/hooks/use-permissions";
 import { useState, useEffect } from "react";
-import { clientApi } from "@/lib/api/api-client";
-import type { CreatePaymentOrderResponse, SubscriptionPlanDto } from "@/lib/api/types";
+import { clientApi, paymentApi } from "@/lib/api/api-client";
+import type { CreatePaymentOrderResponse, SubscriptionPlanDto, PaymentHistoryDto } from "@/lib/api/types";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import {
@@ -16,22 +16,11 @@ import {
     Crown,
     Zap,
     Shield,
-    Plus,
-    Minus,
     ArrowRight,
-    ChevronRight,
-    Search,
-    Brain,
-    Rocket,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogDescription,
-} from "@/components/ui/dialog";
+import { PendingTransactionBanner } from "@/components/billing/pending-transaction-banner";
+import { SepayQRDialog } from "@/components/billing/sepay-qr-dialog";
 import { useRouter } from "next/navigation";
 
 export default function PricingPage() {
@@ -41,54 +30,89 @@ export default function PricingPage() {
     const { isPremium } = usePermissions();
 
     const [isProcessing, setIsProcessing] = useState(false);
-    const [selectedProvider, setSelectedProvider] = useState<number>(1); // 1: PayPal, 3: Seapay
+    const [selectedProvider, setSelectedProvider] = useState<number>(1); // 1: PayPal, 3: Sepay
     const [qrData, setQrData] = useState<{ url: string; ref: string } | null>(null);
     const [isPolling, setIsPolling] = useState(false);
     const [plans, setPlans] = useState<SubscriptionPlanDto[]>([]);
     const [isLoadingPlans, setIsLoadingPlans] = useState(true);
+    const [durationMonths, setDurationMonths] = useState<number>(1); // 1, 3, 6, 12 months for Premium
+    const [pendingTransaction, setPendingTransaction] = useState<PaymentHistoryDto | null>(null);
+
+    // Duration options with discount
+    const durationOptions = [
+        { months: 1, discount: 0, labelKey: "duration_1m" },
+        { months: 3, discount: 5, labelKey: "duration_3m" },
+        { months: 6, discount: 10, labelKey: "duration_6m" },
+        { months: 12, discount: 20, labelKey: "duration_12m" },
+    ];
 
     useEffect(() => {
-        const fetchPlans = async () => {
+        const fetchPlansAndHistory = async () => {
             try {
-                const res = await clientApi.get<SubscriptionPlanDto[]>("/api/proxy/payments/plans");
-                if (res.success) {
-                    setPlans(res.data);
+                const [plansRes, historyRes] = await Promise.all([
+                    paymentApi.getPlans(),
+                    isAuthenticated ? paymentApi.getPaymentHistory(1, 10) : Promise.resolve({ success: true, data: { items: [] } })
+                ]);
+                
+                if (plansRes.success) {
+                    setPlans(plansRes.data);
+                }
+
+                if (historyRes.success) {
+                    const items = (historyRes.data as any)?.items || historyRes.data || [];
+                    const pending = items.find((tx: any) => tx.status === "Pending" && tx.provider === "Sepay");
+                    if (pending) {
+                        setPendingTransaction(pending);
+                    }
                 }
             } catch (error) {
-                console.error("Failed to fetch plans", error);
+                console.error("Failed to fetch data", error);
             } finally {
                 setIsLoadingPlans(false);
             }
         };
 
-        fetchPlans();
-    }, []);
+        fetchPlansAndHistory();
+    }, [isAuthenticated]);
 
-    const handleUpgrade = async (plan: SubscriptionPlanDto) => {
+    const calculatePrice = (basePrice: number, months: number) => {
+        const option = durationOptions.find(o => o.months === months);
+        const discount = option?.discount || 0;
+        const total = basePrice * months;
+        const discounted = total * (1 - discount / 100);
+        return {
+            total,
+            discounted,
+            discount,
+            monthly: discounted / months
+        };
+    };
+
+    const handleUpgrade = async (plan: SubscriptionPlanDto, months: number = 1) => {
         if (!isAuthenticated) {
             window.location.href = `/${locale}/auth/login?redirect=/${locale}/pricing`;
             return;
         }
 
-        if (plan.id === "free") return;
-
+        const isFree = plan.nameKey.toLowerCase().includes("free");
+        if (isFree) return;
+        
         setIsProcessing(true);
         try {
-            const res = await clientApi.post<CreatePaymentOrderResponse>(
-                "/api/proxy/payments/create-order",
-                { 
-                    planId: plan.id,
-                    provider: selectedProvider
-                }
-            );
+            const res = await paymentApi.createOrder({ 
+                planId: plan.id,
+                provider: selectedProvider,
+                durationMonths: months
+            });
 
             if (res.success && res.data.approvalUrl) {
                 if (selectedProvider === 3) {
-                    // SePay: Show QR Modal
+                    // Sepay: Show QR Modal
                     const url = new URL(res.data.approvalUrl);
                     const ref = url.searchParams.get("des") || "";
                     setQrData({ url: res.data.approvalUrl, ref });
                     setIsPolling(true);
+                    setPendingTransaction(null);
                 } else {
                     // PayPal: Redirect
                     window.location.href = res.data.approvalUrl;
@@ -103,13 +127,23 @@ export default function PricingPage() {
         }
     };
 
-    // Polling for SePay payment completion
+    const handleResumePending = () => {
+        if (!pendingTransaction || !pendingTransaction.approvalUrl) return;
+        
+        setQrData({ 
+            url: pendingTransaction.approvalUrl, 
+            ref: pendingTransaction.externalOrderId 
+        });
+        setIsPolling(true);
+    };
+
+    // Polling for Sepay payment completion
     useEffect(() => {
         let interval: NodeJS.Timeout;
         if (isPolling && qrData?.ref) {
             interval = setInterval(async () => {
                 try {
-                    const res = await clientApi.get<{ status: string }>(`/api/proxy/payments/status/${qrData.ref}`);
+                    const res = await paymentApi.checkStatus(qrData.ref);
                     if (res.success && res.data.status === "Completed") {
                         setIsPolling(false);
                         window.location.href = `/${locale}/checkout/success?token=${qrData.ref}&provider=sepay`;
@@ -122,8 +156,30 @@ export default function PricingPage() {
         return () => clearInterval(interval);
     }, [isPolling, qrData, locale]);
 
+    const comparisonRows = [
+        { key: "storage", free: t("comparison.words_limit", { count: 50 }), premium: t("comparison.unlimited") },
+        { key: "spaced", free: true, premium: true },
+        { key: "extension", free: true, premium: true },
+        { key: "ai", free: "10/day", premium: "50+/day" },
+        { key: "import", free: false, premium: true },
+        { key: "export", free: false, premium: true },
+        { key: "practice", free: "5/day", premium: "20+/day" },
+        { key: "support", free: t("comparison.standard"), premium: t("comparison.priority") },
+    ];
+
     return (
-        <div className="min-h-screen bg-background">
+        <div className="min-h-screen bg-background pb-20">
+            {/* Pending Transaction Banner */}
+            {pendingTransaction && (
+                <div className="mx-auto max-w-5xl px-4 pt-8">
+                    <PendingTransactionBanner 
+                        transaction={pendingTransaction}
+                        onResume={handleResumePending}
+                        onCancel={() => setPendingTransaction(null)}
+                    />
+                </div>
+            )}
+
             {/* Hero */}
             <div className="relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent" />
@@ -150,7 +206,7 @@ export default function PricingPage() {
             </div>
 
             {/* Pricing Cards */}
-            <div className="mx-auto max-w-5xl px-4 pb-20">
+            <div className="mx-auto max-w-5xl px-4">
                 {isLoadingPlans ? (
                     <div className="flex justify-center items-center py-20">
                         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -158,7 +214,8 @@ export default function PricingPage() {
                 ) : (
                     <div className="grid md:grid-cols-3 gap-8">
                         {plans.map((plan, index) => {
-                            const isFree = plan.id === "free";
+                            const isFree = plan.nameKey.toLowerCase().includes("free");
+                            const isPremiumPlan = plan.nameKey.toLowerCase().includes("premium");
                             const delay = 0.2 + index * 0.1;
 
                             return (
@@ -167,7 +224,7 @@ export default function PricingPage() {
                                     initial={{ opacity: 0, y: 30 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay, duration: 0.4 }}
-                                    className={`rounded-2xl bg-card p-8 relative ${isFree
+                                    className={`rounded-2xl bg-card p-8 relative flex flex-col ${isFree
                                             ? "border border-border shadow-sm"
                                             : "border-2 border-primary shadow-lg overflow-hidden"
                                         }`}
@@ -187,25 +244,87 @@ export default function PricingPage() {
                                             )}
                                         </div>
                                         <div>
-                                            <h3 className="text-xl font-bold text-foreground">
+                                            <h3 className="text-xl font-bold text-foreground text-left">
                                                 {t(plan.nameKey.replace("Pricing.", ""))}
                                             </h3>
-                                            <p className="text-sm text-muted-foreground">
+                                            <p className="text-sm text-muted-foreground text-left">
                                                 {t(plan.descriptionKey.replace("Pricing.", ""))}
                                             </p>
                                         </div>
                                     </div>
 
-                                    <div className="mb-8">
-                                        <span className="text-5xl font-bold text-foreground">
-                                            {t(plan.price.replace("Pricing.", ""))}
-                                        </span>
-                                        <span className="text-muted-foreground ml-2">
-                                            {t(plan.intervalKey.replace("Pricing.", ""))}
-                                        </span>
+                                    <div className="mb-8 text-left">
+                                        {isFree ? (
+                                            <span className="text-5xl font-bold text-foreground">
+                                                {t("free")}
+                                            </span>
+                                        ) : plan.intervalKey === "lifetime" ? (
+                                            <>
+                                                <span className="text-5xl font-bold text-foreground">
+                                                    {locale === "vi" 
+                                                        ? `${parseInt(plan.price).toLocaleString("vi-VN")}đ`
+                                                        : `$${(parseInt(plan.price) / 1000).toFixed(2)}`}
+                                                </span>
+                                                <span className="text-muted-foreground ml-2">{t("lifetime_label")}</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                {isPremiumPlan && (
+                                                    <div className="mb-6">
+                                                        <div className="flex flex-wrap gap-2">
+                                                            {durationOptions.map((opt) => (
+                                                                <button
+                                                                    key={opt.months}
+                                                                    onClick={() => setDurationMonths(opt.months)}
+                                                                    className={`flex-1 min-w-[80px] px-3 py-2 rounded-xl text-xs font-bold transition-all border-2 ${
+                                                                        durationMonths === opt.months
+                                                                            ? "border-primary bg-primary/10 text-primary shadow-sm"
+                                                                            : "border-border bg-muted/30 text-muted-foreground hover:border-primary/30"
+                                                                    }`}
+                                                                >
+                                                                    {t(opt.labelKey)}
+                                                                    {opt.discount > 0 && (
+                                                                        <span className="block text-[10px] mt-0.5 text-emerald-600 dark:text-emerald-400">
+                                                                            -{opt.discount}%
+                                                                        </span>
+                                                                    )}
+                                                                </button>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                {(() => {
+                                                    const calc = calculatePrice(parseInt(plan.price), durationMonths);
+                                                    return (
+                                                        <>
+                                                            <span className="text-5xl font-bold text-foreground">
+                                                                {locale === "vi"
+                                                                    ? `${Math.round(calc.discounted).toLocaleString("vi-VN")}đ`
+                                                                    : `$${(calc.discounted / 1000).toFixed(2)}`}
+                                                            </span>
+                                                            <div className="text-sm text-muted-foreground mt-1">
+                                                                {calc.discount > 0 && (
+                                                                    <>
+                                                                        <span className="line-through mr-2">
+                                                                            {locale === "vi"
+                                                                                ? `${Math.round(calc.total).toLocaleString("vi-VN")}đ`
+                                                                                : `$${(calc.total / 1000).toFixed(2)}`}
+                                                                        </span>
+                                                                        <span className="text-emerald-500 font-medium">
+                                                                            -{calc.discount}%
+                                                                        </span>
+                                                                    </>
+                                                                )}
+                                                                <span className="ml-2">{t("for")} {durationMonths} {durationMonths === 1 ? t("month") : t("months")}</span>
+                                                            </div>
+                                                        </>
+                                                    );
+                                                })()}
+                                            </>
+                                        )}
                                     </div>
 
-                                    <ul className="space-y-3 mb-8">
+                                    <ul className="space-y-3 mb-8 flex-1">
                                         {plan.features.map((feature, fIndex) => (
                                             <li
                                                 key={fIndex}
@@ -229,58 +348,60 @@ export default function PricingPage() {
                                         ))}
                                     </ul>
 
-                                    {isFree ? (
-                                        isAuthenticated ? (
-                                            <Link href={`/${locale}/dashboard`}>
-                                                <Button
-                                                    variant="outline"
-                                                    className="w-full h-12 text-base"
-                                                >
-                                                    {t("go_dashboard")}
-                                                    <ArrowRight className="ml-2 h-4 w-4" />
-                                                </Button>
-                                            </Link>
+                                    <div className="mt-auto">
+                                        {isFree ? (
+                                            isAuthenticated ? (
+                                                <Link href={`/${locale}/dashboard`}>
+                                                    <Button
+                                                        variant="outline"
+                                                        className="w-full h-12 text-base"
+                                                    >
+                                                        {t("go_dashboard")}
+                                                        <ArrowRight className="ml-2 h-4 w-4" />
+                                                    </Button>
+                                                </Link>
+                                            ) : (
+                                                <Link href={`/${locale}/auth/register`}>
+                                                    <Button
+                                                        variant="outline"
+                                                        className="w-full h-12 text-base"
+                                                    >
+                                                        {t("get_started")}
+                                                        <ArrowRight className="ml-2 h-4 w-4" />
+                                                    </Button>
+                                                </Link>
+                                            )
                                         ) : (
-                                            <Link href={`/${locale}/auth/register`}>
-                                                <Button
-                                                    variant="outline"
-                                                    className="w-full h-12 text-base"
-                                                >
-                                                    {t("get_started")}
-                                                    <ArrowRight className="ml-2 h-4 w-4" />
+                                            isPremium ? (
+                                                <Button disabled className="w-full h-12 text-base">
+                                                    <Shield className="mr-2 h-5 w-5" />
+                                                    {t("already_premium")}
                                                 </Button>
-                                            </Link>
-                                        )
-                                    ) : (
-                                        isPremium ? (
-                                            <Button disabled className="w-full h-12 text-base">
-                                                <Shield className="mr-2 h-5 w-5" />
-                                                {t("already_premium")}
-                                            </Button>
-                                        ) : (
-                                            <Button
-                                                onClick={() => handleUpgrade(plan)}
-                                                disabled={isProcessing}
-                                                className="w-full h-12 text-base bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg"
-                                            >
-                                                {isProcessing ? (
-                                                    <>
-                                                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                                                        {t("processing")}
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <Crown className="mr-2 h-5 w-5" />
-                                                        {t("upgrade")}
-                                                    </>
-                                                )}
-                                            </Button>
-                                        )
-                                    )}
+                                            ) : (
+                                                <Button
+                                                    onClick={() => handleUpgrade(plan, isPremiumPlan ? durationMonths : 1)}
+                                                    disabled={isProcessing}
+                                                    className="w-full h-12 text-base bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg"
+                                                >
+                                                    {isProcessing ? (
+                                                        <>
+                                                            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                                                            {t("processing")}
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <Crown className="mr-2 h-5 w-5" />
+                                                            {t("upgrade")}
+                                                        </>
+                                                    )}
+                                                </Button>
+                                            )
+                                        )}
+                                    </div>
 
                                     {!isFree && !isPremium && (
                                         <div className="mt-8 pt-6 border-t border-border">
-                                            <p className="text-sm font-medium text-foreground mb-4">
+                                            <p className="text-sm font-medium text-foreground mb-4 text-left">
                                                 {t("select_method")}
                                             </p>
                                             <div className="grid grid-cols-1 gap-3 mb-6">
@@ -317,11 +438,6 @@ export default function PricingPage() {
                                             {t("secure_payment")}
                                         </p>
                                     )}
-                                    {!isFree && selectedProvider === 3 && (
-                                        <p className="text-[10px] text-center text-primary mt-2">
-                                            {t("payment_notice")}
-                                        </p>
-                                    )}
                                 </motion.div>
                             );
                         })}
@@ -352,18 +468,9 @@ export default function PricingPage() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {[
-                                        { name: "Vocabulary Storage", free: "50 Words", premium: "Unlimited" },
-                                        { name: "Spaced Repetition (SM-2)", free: true, premium: true },
-                                        { name: "Chrome Extension Access", free: true, premium: true },
-                                        { name: "Contextual AI Translation", free: false, premium: true },
-                                        { name: "Batch Import (CSV/Text)", free: false, premium: true },
-                                        { name: "CSV & JSON Data Export", free: false, premium: true },
-                                        { name: "AI Practice Sessions", free: false, premium: true },
-                                        { name: "Support Priority", free: "Standard", premium: "Priority" },
-                                    ].map((row, i) => (
+                                    {comparisonRows.map((row, i) => (
                                         <tr key={i} className="border-b border-border/50 hover:bg-muted/10 transition-colors">
-                                            <td className="py-5 px-8 font-medium">{row.name}</td>
+                                            <td className="py-5 px-8 font-medium">{t(`comparison.${row.key}`)}</td>
                                             <td className="py-5 px-8 text-center text-muted-foreground">
                                                 {typeof row.free === "boolean" ? (
                                                     row.free ? <Check className="h-5 w-5 text-emerald-500 mx-auto" /> : <X className="h-5 w-5 text-muted-foreground/30 mx-auto" />
@@ -414,43 +521,11 @@ export default function PricingPage() {
                 )}
             </div>
 
-            {/* SePay QR Modal */}
-            <Dialog open={!!qrData} onOpenChange={(open) => !open && setQrData(null)}>
-                <DialogContent className="sm:max-w-md">
-                    <DialogHeader>
-                        <DialogTitle className="text-center">{t("method_sepay")}</DialogTitle>
-                        <DialogDescription className="text-center">
-                            {t("payment_notice")}
-                        </DialogDescription>
-                    </DialogHeader>
-                    <div className="flex flex-col items-center justify-center p-4 space-y-6">
-                        {qrData && (
-                            <div className="bg-white p-4 rounded-2xl shadow-inner border">
-                                <img 
-                                    src={qrData.url} 
-                                    alt="VietQR" 
-                                    className="w-64 h-64 object-contain"
-                                />
-                            </div>
-                        )}
-                        <div className="text-center space-y-2">
-                            <p className="text-sm text-muted-foreground">
-                                Nội dung chuyển khoản (Reference):
-                            </p>
-                            <p className="text-xl font-mono font-bold tracking-wider text-primary">
-                                {qrData?.ref}
-                            </p>
-                        </div>
-                        <div className="flex items-center gap-2 text-primary font-medium">
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                            <span className="text-sm">Đang đợi SePay xác nhận...</span>
-                        </div>
-                        <p className="text-xs text-muted-foreground text-center">
-                            Vui lòng quét mã QR hoặc chuyển khoản chính xác số tiền và nội dung bên trên. SePay sẽ tự động thông báo và nâng cấp tài khoản sau 1-2 phút.
-                        </p>
-                    </div>
-                </DialogContent>
-            </Dialog>
+            {/* Sepay QR Modal */}
+            <SepayQRDialog 
+                qrData={qrData} 
+                onOpenChange={(open) => !open && setQrData(null)} 
+            />
         </div>
     );
 }

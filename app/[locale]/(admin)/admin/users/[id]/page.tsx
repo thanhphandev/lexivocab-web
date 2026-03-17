@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, use } from "react";
+import { useEffect, useState, use, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { adminApi } from "@/lib/api/api-client";
 import { UserDetailDto } from "@/lib/api/types";
@@ -10,6 +10,8 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Separator } from "@/components/ui/separator";
 import { ArrowLeft, User, Mail, ShieldAlert, Star, Shield, Ban, Activity, RefreshCw, XCircle } from "lucide-react";
+import { toast } from "sonner";
+import { ConfirmDialog } from "@/components/dashboard/confirm-dialog";
 
 export default function UserDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);
@@ -18,52 +20,118 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
     const [loading, setLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState(false);
 
-    const fetchUser = async () => {
+    // Confirmation States
+    const [confirmConfig, setConfirmConfig] = useState<{
+        open: boolean;
+        title: string;
+        description: string;
+        onConfirm: () => Promise<void> | void;
+        variant?: "destructive" | "default";
+        confirmText?: string;
+    }>({
+        open: false,
+        title: "",
+        description: "",
+        onConfirm: () => {},
+    });
+
+    const openConfirm = (config: Omit<typeof confirmConfig, "open">) => {
+        setConfirmConfig({ ...config, open: true });
+    };
+
+    const fetchUser = useCallback(async () => {
         setLoading(true);
         const res = await adminApi.getUserDetail(id);
         if (res.success && res.data) {
             setUser(res.data);
+        } else if (!res.success) {
+            toast.error(res.error || "Failed to fetch user");
         }
         setLoading(false);
-    };
+    }, [id]);
 
     useEffect(() => {
         fetchUser();
-    }, [id]);
+    }, [fetchUser]);
 
-    const handleUpdateRole = async (newRole: string) => {
-        if (!confirm(`Are you sure you want to change role to ${newRole}?`)) return;
-        setActionLoading(true);
-        await adminApi.updateRoles(id, { role: newRole });
-        await fetchUser();
-        setActionLoading(false);
+    const handleUpdateRole = (newRole: string) => {
+        openConfirm({
+            title: "Change User Role",
+            description: `Are you sure you want to change this user's role to ${newRole}?`,
+            confirmText: "Change Role",
+            onConfirm: async () => {
+                setActionLoading(true);
+                const res = await adminApi.updateRoles(id, { role: newRole });
+                if (res.success) {
+                    toast.success(`Role updated to ${newRole}`);
+                    await fetchUser();
+                } else {
+                    toast.error(res.error || "Failed to update role");
+                }
+                setActionLoading(false);
+            }
+        });
     };
 
-    const handleToggleStatus = async () => {
+    const handleToggleStatus = () => {
         if (!user) return;
         const newStatus = !user.isActive;
-        if (!confirm(`Are you sure you want to ${newStatus ? 'activate' : 'ban'} this user?`)) return;
-        setActionLoading(true);
-        await adminApi.updateStatus(id, { isActive: newStatus });
-        await fetchUser();
-        setActionLoading(false);
+        openConfirm({
+            title: newStatus ? "Activate Account" : "Ban Account",
+            description: `Are you sure you want to ${newStatus ? 'activate' : 'ban'} this user?`,
+            confirmText: newStatus ? "Activate" : "Ban",
+            variant: newStatus ? "default" : "destructive",
+            onConfirm: async () => {
+                setActionLoading(true);
+                const res = await adminApi.updateStatus(id, { isActive: newStatus });
+                if (res.success) {
+                    toast.success(newStatus ? "Account activated" : "Account banned");
+                    await fetchUser();
+                } else {
+                    toast.error(res.error || "Failed to update status");
+                }
+                setActionLoading(false);
+            }
+        });
     };
 
-    const handleAddSubscription = async () => {
-        if (!confirm(`Are you sure you want to manually gift 30 days of Premium?`)) return;
-        setActionLoading(true);
-        await adminApi.addSubscription(id, { plan: "Premium", durationDays: 30 });
-        await fetchUser();
-        setActionLoading(false);
+    const handleAddSubscription = () => {
+        openConfirm({
+            title: "Gift Subscription",
+            description: "Are you sure you want to manually gift 30 days of Premium to this user?",
+            confirmText: "Gift 30 Days",
+            onConfirm: async () => {
+                setActionLoading(true);
+                const res = await adminApi.addSubscription(id, { plan: "Premium", durationDays: 30 });
+                if (res.success) {
+                    toast.success("Subscription gifted successfully");
+                    await fetchUser();
+                } else {
+                    toast.error(res.error || "Failed to add subscription");
+                }
+                setActionLoading(false);
+            }
+        });
     };
 
-    const handleCancelSubscription = async () => {
-        if (!confirm(`Are you sure you want to cancel the user's active subscription and revoke premium?`)) return;
-        setActionLoading(true);
-        const res = await adminApi.cancelSubscription(id);
-        if (!res.success) alert(res.error);
-        await fetchUser();
-        setActionLoading(false);
+    const handleCancelSubscription = () => {
+        openConfirm({
+            title: "Revoke Subscription",
+            description: "Are you sure you want to cancel the user's active subscription and revoke premium privileges?",
+            confirmText: "Revoke Premium",
+            variant: "destructive",
+            onConfirm: async () => {
+                setActionLoading(true);
+                const res = await adminApi.cancelSubscription(id);
+                if (res.success) {
+                    toast.success("Subscription revoked");
+                    await fetchUser();
+                } else {
+                    toast.error(res.error || "Failed to revoke subscription");
+                }
+                setActionLoading(false);
+            }
+        });
     };
 
     if (loading || !user) {
@@ -200,7 +268,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
                     </div>
                 </CardHeader>
                 <CardContent>
-                    {user.subscriptions.length === 0 ? (
+                    {(!user.subscriptions || user.subscriptions.length === 0) ? (
                         <div className="text-center py-6 text-muted-foreground border rounded-lg bg-muted/10">
                             No subscriptions found on record.
                         </div>
@@ -216,7 +284,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {user.subscriptions.map((sub) => (
+                                {user.subscriptions?.map((sub) => (
                                     <TableRow key={sub.id}>
                                         <TableCell className="font-medium">{sub.plan}</TableCell>
                                         <TableCell>
@@ -226,6 +294,9 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
                                         </TableCell>
                                         <TableCell>{sub.provider}</TableCell>
                                         <TableCell className="text-xs">
+                                            {sub.durationMonths 
+                                                ? <span className="font-semibold">{sub.durationMonths} Months<br/></span> 
+                                                : null}
                                             {new Date(sub.startDate).toLocaleDateString()} - <br />
                                             {sub.endDate ? new Date(sub.endDate).toLocaleDateString() : 'Forever'}
                                         </TableCell>
@@ -239,6 +310,16 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
                     )}
                 </CardContent>
             </Card>
+
+            <ConfirmDialog
+                open={confirmConfig.open}
+                onOpenChange={(open) => setConfirmConfig(prev => ({ ...prev, open }))}
+                title={confirmConfig.title}
+                description={confirmConfig.description}
+                onConfirm={confirmConfig.onConfirm}
+                confirmText={confirmConfig.confirmText}
+                variant={confirmConfig.variant}
+            />
         </div>
     );
 }

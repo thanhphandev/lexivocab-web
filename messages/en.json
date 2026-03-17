@@ -8,6 +8,7 @@
   "Header": {
     "features": "Features",
     "how_it_works": "How it Works",
+    "pricing": "Pricing",
     "language": "Language"
   },
   "Auth": {
@@ -37,6 +38,7 @@
       "analytics": "Analytics",
       "billing": "Billing",
       "settings": "Settings",
+      "explore": "Explore",
       "collapse": "Collapse sidebar",
       "logout": "Log out"
     },
@@ -162,6 +164,17 @@
         "deleteAccount": "Delete Account"
       },
       "save": "Save Changes"
+    },
+    "explore": {
+      "title": "Explore Dictionary",
+      "subtitle": "Search 100,000+ words in the LexiVocab master database",
+      "searchPlaceholder": "Type a word to search...",
+      "noResults": "No words found in the dictionary.",
+      "startTyping": "Type something to explore our dictionary!",
+      "addToVocab": "Add to Vocabulary",
+      "alreadyInVocab": "Already in your list",
+      "cefrLevel": "CEFR Level",
+      "meanings": "Meanings"
     }
   },
   "Hero": {
@@ -209,8 +222,8 @@
     "secure_payment": "Secure payment. One-time purchase.",
     "select_method": "Select Payment Method",
     "method_paypal": "Pay with PayPal",
-    "method_sepay": "Bank Transfer (SePay - VietQR)",
-    "payment_notice": "Your account will be upgraded automatically via SePay.",
+    "method_sepay": "Bank Transfer (Sepay - VietQR)",
+    "payment_notice": "Your account will be upgraded automatically via Sepay.",
     "features": {
       "save_words": "Save up to 50 vocabulary words",
       "unlimited_vocab": "Unlimited vocabulary words",
@@ -226,6 +239,78 @@
       "secure": "Secure Payment",
       "lifetime": "Lifetime Access",
       "no_fees": "No Hidden Fees"
+    },
+    "comparison": {
+      "title": "Compare Plans",
+      "feature": "Feature",
+      "free": "Free",
+      "premium": "Premium",
+      "storage": "Vocabulary Storage",
+      "spaced": "Spaced Repetition (SM-2)",
+      "extension": "Chrome Extension Access",
+      "ai": "Contextual AI Translation",
+      "import": "Batch Import (CSV/Text)",
+      "export": "CSV & JSON Data Export",
+      "practice": "AI Practice Sessions",
+      "support": "Support Priority",
+      "words_limit": "{count} Words",
+      "unlimited": "Unlimited",
+      "standard": "Standard",
+      "priority": "Priority",
+      "duration_1m": "1 month",
+      "duration_3m": "3 months",
+      "duration_6m": "6 months",
+      "duration_12m": "12 months",
+      "lifetime_label": "lifetime",
+      "for": "for",
+      "month": "month",
+      "months": "months"
+    },
+    "pending_transaction": {
+      "title": "Unfinished Transaction",
+      "desc": "You have a pending {provider} payment of {amount} {currency} from {date}.",
+      "resume": "Continue Payment",
+      "cancel": "Start New Transaction",
+      "reference": "Reference: {ref}"
+    },
+    "qr_modal": {
+      "error": "Could not load QR code. Please refresh or contact support.",
+      "reference_label": "Transfer Reference:",
+      "waiting": "Waiting for Sepay confirmation...",
+      "instruction": "Please scan the QR code or transfer the exact amount with the reference above. Your account will be upgraded automatically in 1-2 minutes."
+    }
+  },
+  "Billing": {
+    "title": "Billing & Subscription",
+    "subtitle": "Manage your plan and view payment history.",
+    "current_plan": {
+      "title_free": "Free Plan",
+      "title_premium": "{plan} ({months} {month_label})",
+      "expires": "Expires: {date}",
+      "lifetime": "Lifetime access",
+      "quota_limit": "Limited to {count} vocabulary words",
+      "active": "Active",
+      "upgrade": "Upgrade to Premium"
+    },
+    "permissions": {
+      "title": "Plan Permissions",
+      "export": "Export Data (PDF/CSV)",
+      "ai": "AI Meaning & Context",
+      "import": "Batch Import"
+    },
+    "quota": {
+      "title": "Vocabulary Quota",
+      "used": "Used Space",
+      "unlimited": "Unlimited",
+      "desc_premium": "You have premium access to all LexiVocab features without heavy restrictions.",
+      "desc_free": "You have used {used} of your {max} available vocabulary slots."
+    },
+    "history": {
+      "title": "Payment History",
+      "count": "{count} transaction(s)",
+      "no_transactions": "No transactions yet",
+      "empty_desc": "Your transactions will appear here after you make a purchase.",
+      "payment_label": "{provider} Payment"
     }
   },
   "Privacy": {
@@ -369,25 +454,116 @@
     "processing_title": "Processing payment...",
     "processing_subtitle": "Please do not close this window",
     "success_title": "Payment Successful!",
-    "success_subtitle": "Welcome to the elite! Your account has been permanently upgraded to Premium.",
-    "premium_activated": "PREMIUM ACTIVATED",
+    "success_subtitle": "Thank you for your purchase. Your account features have been updated.",
+    "premium_activated": "PLAN ACTIVATED",
+    "view_billing": "View Billing Details",
     "receipt_notice": "A confirmation and receipt have been sent to your email.",
     "error_title": "Payment Failed",
     "try_again": "Try Again",
     "go_dashboard": "Go to Dashboard"
   },
-  "Admin.auditLogs": {
-    "title": "Audit Logs",
-    "subtitle": "Monitor system activities",
-    "searchPlaceholder": "Search by Action or Email...",
-    "table": {
-      "date": "Date",
-      "user": "User",
-      "action": "Action",
-      "entity": "Entity",
-      "details": "Details"
-    },
-    "empty": "No data found",
-    "emptySubtitle": "No audit logs found matching the filters."
+  "AI": {
+    "tabs": {
+      "explain": "Explain",
+      "related": "Related",
+      "quiz": "Quiz"
+    }
+  },
+  "Admin": {
+    "auditLogs": {
+      "title": "Audit Logs",
+      "subtitle": "Real-time monitoring of all system activities and user actions",
+      "searchPlaceholder": "Search by email, request, IP address...",
+      "filters": {
+        "action": "Action Type",
+        "allActions": "All Actions",
+        "entityType": "Entity Type",
+        "allEntities": "All Entities",
+        "status": "Status",
+        "allStatus": "All Status",
+        "success": "Success",
+        "failed": "Failed",
+        "dateFrom": "From",
+        "dateTo": "To",
+        "clearFilters": "Clear Filters",
+        "activeFilters": "{count} active"
+      },
+      "actions": {
+        "Login": "Login",
+        "LoginFailed": "Login Failed",
+        "Register": "Register",
+        "Logout": "Logout",
+        "TokenRefresh": "Token Refresh",
+        "GoogleLogin": "Google Login",
+        "VocabularyCreated": "Vocab Created",
+        "VocabularyUpdated": "Vocab Updated",
+        "VocabularyDeleted": "Vocab Deleted",
+        "VocabularyBulkImported": "Bulk Import",
+        "VocabularyExported": "Export",
+        "ReviewCompleted": "Review Done",
+        "SettingsUpdated": "Settings Updated",
+        "ProfileUpdated": "Profile Updated",
+        "UserUpdated": "User Updated",
+        "PasswordChanged": "Password Changed",
+        "UserDeleted": "User Deleted",
+        "SubscriptionCreated": "Sub Created",
+        "SubscriptionCancelled": "Sub Cancelled",
+        "PaymentCompleted": "Payment OK",
+        "PaymentFailed": "Payment Failed",
+        "AdminUserDeactivated": "User Deactivated",
+        "AdminUserActivated": "User Activated",
+        "AdminRoleChanged": "Role Changed",
+        "SystemSettingUpdated": "System Updated",
+        "RateLimited": "Rate Limited",
+        "SuspiciousActivity": "Suspicious"
+      },
+      "table": {
+        "timestamp": "Timestamp",
+        "user": "User",
+        "action": "Action",
+        "entity": "Entity",
+        "status": "Status",
+        "duration": "Duration",
+        "details": "Details"
+      },
+      "detail": {
+        "title": "Log Details",
+        "general": "General Information",
+        "timestamp": "Timestamp",
+        "action": "Action",
+        "status": "Status",
+        "duration": "Duration",
+        "technical": "Technical Details",
+        "requestName": "Request",
+        "traceId": "Trace ID",
+        "ipAddress": "IP Address",
+        "userAgent": "User Agent",
+        "entity": "Entity Information",
+        "entityType": "Entity Type",
+        "entityId": "Entity ID",
+        "user": "User Information",
+        "email": "Email",
+        "userId": "User ID",
+        "additionalInfo": "Additional Info",
+        "noData": "No additional information",
+        "copyId": "Copy ID",
+        "copied": "Copied!"
+      },
+      "status": {
+        "success": "Success",
+        "failed": "Failed"
+      },
+      "pagination": {
+        "showing": "Showing {from}-{to} of {total}",
+        "page": "Page {page} of {totalPages}",
+        "perPage": "per page",
+        "previous": "Previous",
+        "next": "Next"
+      },
+      "empty": "No audit logs found",
+      "emptySubtitle": "No records match the current filters. Try adjusting your search criteria.",
+      "system": "System",
+      "ms": "{ms}ms"
+    }
   }
 }

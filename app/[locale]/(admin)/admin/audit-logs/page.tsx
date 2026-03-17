@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { adminApi } from "@/lib/api/api-client";
 import { AuditLogDto, PagedResult } from "@/lib/api/types";
@@ -14,9 +14,36 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import { Search, Loader2, AlertCircle } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+import {
+    Search,
+    AlertCircle,
+    ChevronLeft,
+    ChevronRight,
+    Eye,
+    CheckCircle2,
+    XCircle,
+    Shield,
+    Clock,
+    Activity,
+    Filter,
+    X,
+    RefreshCw,
+} from "lucide-react";
 
+import { AUDIT_ACTIONS, ACTION_CONFIG, PAGE_SIZE_OPTIONS } from "./_components/constants";
+import { formatDuration, getDurationColor } from "./_components/helpers";
+import { ActionBadge, StatusIndicator, SkeletonRow, DetailDialog } from "./_components/audit-log-components";
+
+// ─── Main Page ──────────────────────────────────────────
 export default function AuditLogsPage() {
     const t = useTranslations("Admin.auditLogs");
     const [data, setData] = useState<PagedResult<AuditLogDto> | null>(null);
@@ -24,105 +51,360 @@ export default function AuditLogsPage() {
     const [searchQuery, setSearchQuery] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState("");
     const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(20);
+    const [actionFilter, setActionFilter] = useState<string>("");
+    const [entityFilter, setEntityFilter] = useState<string>("");
+    const [statusFilter, setStatusFilter] = useState<string>("");
+    const [fromDate, setFromDate] = useState<string>("");
+    const [toDate, setToDate] = useState<string>("");
+    const [selectedLog, setSelectedLog] = useState<AuditLogDto | null>(null);
+    const [showFilters, setShowFilters] = useState(false);
 
     // Debounce search
     useEffect(() => {
         const timer = setTimeout(() => {
             setDebouncedSearch(searchQuery);
             setPage(1);
-        }, 500);
+        }, 400);
         return () => clearTimeout(timer);
     }, [searchQuery]);
+
+    // Count active filters
+    const activeFilterCount = useMemo(() => {
+        let count = 0;
+        if (actionFilter) count++;
+        if (entityFilter) count++;
+        if (statusFilter) count++;
+        if (fromDate) count++;
+        if (toDate) count++;
+        return count;
+    }, [actionFilter, entityFilter, statusFilter, fromDate, toDate]);
+
+    // Unique entity types from current data
+    const entityTypes = useMemo(() => {
+        if (!data?.items) return [];
+        const types = new Set(data.items.map((l) => l.entityType).filter(Boolean));
+        return Array.from(types).sort();
+    }, [data]);
 
     const fetchLogs = useCallback(async () => {
         setIsLoading(true);
         try {
-            const res = await adminApi.getAuditLogs(page, 20, debouncedSearch);
+            const filters: Record<string, string> = {};
+            if (debouncedSearch) filters.search = debouncedSearch;
+            if (actionFilter) filters.action = actionFilter;
+            if (entityFilter) filters.entityType = entityFilter;
+            if (fromDate) filters.fromDate = fromDate;
+            if (toDate) filters.toDate = toDate;
+
+            const res = await adminApi.getAuditLogs(page, pageSize, filters);
             if (res.success) {
-                setData(res.data);
+                let items = (res.data as PagedResult<AuditLogDto>).items;
+                // Client-side status filter (API doesn't have isSuccess filter param)
+                if (statusFilter === "success") {
+                    items = items.filter((i) => i.isSuccess);
+                } else if (statusFilter === "failed") {
+                    items = items.filter((i) => !i.isSuccess);
+                }
+                setData({ ...res.data as PagedResult<AuditLogDto>, items });
             }
         } finally {
             setIsLoading(false);
         }
-    }, [page, debouncedSearch]);
+    }, [page, pageSize, debouncedSearch, actionFilter, entityFilter, statusFilter, fromDate, toDate]);
 
     useEffect(() => {
         fetchLogs();
     }, [fetchLogs]);
 
+    const clearAllFilters = () => {
+        setSearchQuery("");
+        setDebouncedSearch("");
+        setActionFilter("");
+        setEntityFilter("");
+        setStatusFilter("");
+        setFromDate("");
+        setToDate("");
+        setPage(1);
+    };
+
+    // Pagination helpers
+    const from = data ? (page - 1) * pageSize + 1 : 0;
+    const to = data ? Math.min(page * pageSize, data.totalCount) : 0;
+
     return (
-        <div className="space-y-6">
-            <div>
-                <h2 className="text-3xl font-bold tracking-tight">{t("title")}</h2>
-                <p className="text-muted-foreground mt-2">
-                    {t("subtitle")}
-                </p>
+        <div className="space-y-5">
+            {/* ─── Header ─────────────────────────────────────── */}
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+                <div>
+                    <div className="flex items-center gap-3">
+                        <div className="p-2.5 rounded-xl bg-gradient-to-br from-violet-500/20 to-purple-500/20 border border-violet-500/20">
+                            <Shield className="h-6 w-6 text-violet-600 dark:text-violet-400" />
+                        </div>
+                        <div>
+                            <h2 className="text-2xl font-bold tracking-tight">{t("title")}</h2>
+                            <p className="text-sm text-muted-foreground mt-0.5">{t("subtitle")}</p>
+                        </div>
+                    </div>
+                </div>
+                {data && (
+                    <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-muted/50 border">
+                            <Activity className="h-4 w-4 text-muted-foreground" />
+                            <span className="text-sm font-medium">{data.totalCount.toLocaleString()}</span>
+                            <span className="text-xs text-muted-foreground">total</span>
+                        </div>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={fetchLogs}
+                            disabled={isLoading}
+                            className="gap-1.5"
+                        >
+                            <RefreshCw className={`h-3.5 w-3.5 ${isLoading ? "animate-spin" : ""}`} />
+                        </Button>
+                    </div>
+                )}
             </div>
 
-            <div className="flex bg-card p-4 rounded-xl border items-center">
-                <div className="relative w-full max-w-md">
+            {/* ─── Search + Filter Toggle ─────────────────────── */}
+            <div className="flex flex-col sm:flex-row gap-3">
+                <div className="relative flex-1 max-w-lg">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                         placeholder={t("searchPlaceholder")}
-                        className="pl-9 bg-background"
+                        className="pl-9 bg-card border-muted-foreground/20"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />
+                    {searchQuery && (
+                        <button
+                            onClick={() => setSearchQuery("")}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 rounded-sm hover:bg-muted transition-colors"
+                        >
+                            <X className="h-3.5 w-3.5 text-muted-foreground" />
+                        </button>
+                    )}
                 </div>
+                <Button
+                    variant={showFilters ? "default" : "outline"}
+                    size="default"
+                    onClick={() => setShowFilters(!showFilters)}
+                    className="gap-2 shrink-0"
+                >
+                    <Filter className="h-4 w-4" />
+                    <span className="hidden sm:inline">{t("filters.action")}</span>
+                    {activeFilterCount > 0 && (
+                        <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-[10px]">
+                            {activeFilterCount}
+                        </Badge>
+                    )}
+                </Button>
+                {activeFilterCount > 0 && (
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={clearAllFilters}
+                        className="gap-1.5 text-muted-foreground hover:text-destructive shrink-0"
+                    >
+                        <X className="h-3.5 w-3.5" />
+                        {t("filters.clearFilters")}
+                    </Button>
+                )}
             </div>
 
-            <div className="rounded-xl border bg-card overflow-hidden">
+            {/* ─── Filters Panel ──────────────────────────────── */}
+            {showFilters && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 p-4 rounded-xl border bg-card/50 backdrop-blur-sm animate-in fade-in slide-in-from-top-2 duration-200">
+                    {/* Action Filter */}
+                    <div className="space-y-1.5">
+                        <label className="text-xs font-medium text-muted-foreground">{t("filters.action")}</label>
+                        <Select value={actionFilter} onValueChange={(v) => { setActionFilter(v === "__all__" ? "" : v); setPage(1); }}>
+                            <SelectTrigger size="sm" className="w-full bg-background">
+                                <SelectValue placeholder={t("filters.allActions")} />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="__all__">{t("filters.allActions")}</SelectItem>
+                                {AUDIT_ACTIONS.map((a) => (
+                                    <SelectItem key={a} value={a}>
+                                        <span className="flex items-center gap-2">
+                                            {(() => { const Ic = ACTION_CONFIG[a]?.icon || Activity; return <Ic className="h-3 w-3" />; })()}
+                                            {t(`actions.${a}`)}
+                                        </span>
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    {/* Entity Filter */}
+                    <div className="space-y-1.5">
+                        <label className="text-xs font-medium text-muted-foreground">{t("filters.entityType")}</label>
+                        <Select value={entityFilter} onValueChange={(v) => { setEntityFilter(v === "__all__" ? "" : v); setPage(1); }}>
+                            <SelectTrigger size="sm" className="w-full bg-background">
+                                <SelectValue placeholder={t("filters.allEntities")} />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="__all__">{t("filters.allEntities")}</SelectItem>
+                                {entityTypes.map((e) => (
+                                    <SelectItem key={e} value={e}>{e}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    {/* Status Filter */}
+                    <div className="space-y-1.5">
+                        <label className="text-xs font-medium text-muted-foreground">{t("filters.status")}</label>
+                        <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v === "__all__" ? "" : v); setPage(1); }}>
+                            <SelectTrigger size="sm" className="w-full bg-background">
+                                <SelectValue placeholder={t("filters.allStatus")} />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="__all__">{t("filters.allStatus")}</SelectItem>
+                                <SelectItem value="success">
+                                    <span className="flex items-center gap-2">
+                                        <CheckCircle2 className="h-3 w-3 text-emerald-500" />{t("filters.success")}
+                                    </span>
+                                </SelectItem>
+                                <SelectItem value="failed">
+                                    <span className="flex items-center gap-2">
+                                        <XCircle className="h-3 w-3 text-red-500" />{t("filters.failed")}
+                                    </span>
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    {/* Date From */}
+                    <div className="space-y-1.5">
+                        <label className="text-xs font-medium text-muted-foreground">{t("filters.dateFrom")}</label>
+                        <Input
+                            type="date"
+                            value={fromDate}
+                            onChange={(e) => { setFromDate(e.target.value); setPage(1); }}
+                            className="bg-background h-8 text-sm"
+                        />
+                    </div>
+
+                    {/* Date To */}
+                    <div className="space-y-1.5">
+                        <label className="text-xs font-medium text-muted-foreground">{t("filters.dateTo")}</label>
+                        <Input
+                            type="date"
+                            value={toDate}
+                            onChange={(e) => { setToDate(e.target.value); setPage(1); }}
+                            className="bg-background h-8 text-sm"
+                        />
+                    </div>
+                </div>
+            )}
+
+            {/* ─── Table ──────────────────────────────────────── */}
+            <div className="rounded-xl border bg-card overflow-hidden shadow-sm">
                 <div className="overflow-x-auto">
                     <Table>
                         <TableHeader>
-                            <TableRow>
-                                <TableHead className="w-[180px]">{t("table.date")}</TableHead>
-                                <TableHead className="w-[200px]">{t("table.user")}</TableHead>
-                                <TableHead className="w-[150px]">{t("table.action")}</TableHead>
-                                <TableHead className="w-[150px]">{t("table.entity")}</TableHead>
-                                <TableHead className="min-w-[200px]">{t("table.details")}</TableHead>
+                            <TableRow className="bg-muted/30 hover:bg-muted/30">
+                                <TableHead className="w-[170px] font-semibold">{t("table.timestamp")}</TableHead>
+                                <TableHead className="w-[200px] font-semibold">{t("table.user")}</TableHead>
+                                <TableHead className="w-[160px] font-semibold">{t("table.action")}</TableHead>
+                                <TableHead className="w-[140px] font-semibold">{t("table.entity")}</TableHead>
+                                <TableHead className="w-[85px] text-center font-semibold">{t("table.status")}</TableHead>
+                                <TableHead className="w-[90px] text-right font-semibold">{t("table.duration")}</TableHead>
+                                <TableHead className="w-[60px] text-center font-semibold">{t("table.details")}</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {isLoading ? (
-                                <TableRow>
-                                    <TableCell colSpan={5} className="h-40 text-center">
-                                        <Loader2 className="h-6 w-6 animate-spin mx-auto text-muted-foreground" />
-                                    </TableCell>
-                                </TableRow>
+                                Array.from({ length: 8 }).map((_, i) => <SkeletonRow key={i} />)
                             ) : !data || data.items.length === 0 ? (
                                 <TableRow>
-                                    <TableCell colSpan={5} className="h-40 text-center">
-                                        <div className="flex flex-col items-center justify-center text-muted-foreground">
-                                            <AlertCircle className="h-8 w-8 mb-2 opacity-50" />
-                                            <p className="font-medium">{t("empty")}</p>
-                                            <p className="text-sm">{t("emptySubtitle")}</p>
+                                    <TableCell colSpan={7} className="h-60">
+                                        <div className="flex flex-col items-center justify-center text-muted-foreground py-8">
+                                            <div className="p-4 rounded-2xl bg-muted/50 mb-4">
+                                                <AlertCircle className="h-10 w-10 opacity-40" />
+                                            </div>
+                                            <p className="font-semibold text-base">{t("empty")}</p>
+                                            <p className="text-sm mt-1 max-w-sm text-center">{t("emptySubtitle")}</p>
+                                            {activeFilterCount > 0 && (
+                                                <Button variant="outline" size="sm" className="mt-4 gap-1.5" onClick={clearAllFilters}>
+                                                    <X className="h-3.5 w-3.5" />
+                                                    {t("filters.clearFilters")}
+                                                </Button>
+                                            )}
                                         </div>
                                     </TableCell>
                                 </TableRow>
                             ) : (
                                 data.items.map((log) => (
-                                    <TableRow key={log.id}>
+                                    <TableRow
+                                        key={log.id}
+                                        className="group cursor-pointer transition-colors hover:bg-muted/40"
+                                        onClick={() => setSelectedLog(log)}
+                                    >
+                                        {/* Timestamp */}
                                         <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
-                                            {format(new Date(log.timestamp), "MMM d, yyyy HH:mm:ss")}
+                                            <div className="flex items-center gap-1.5">
+                                                <Clock className="h-3.5 w-3.5 opacity-50 shrink-0" />
+                                                <span>{format(new Date(log.timestamp), "MMM d, HH:mm:ss")}</span>
+                                            </div>
                                         </TableCell>
+
+                                        {/* User */}
                                         <TableCell>
-                                            <div className="font-medium">{log.userEmail || "System"}</div>
-                                            {log.userId && <div className="text-xs text-muted-foreground">{log.userId}</div>}
+                                            <div className="flex items-center gap-2.5">
+                                                <div className="h-8 w-8 rounded-full bg-gradient-to-br from-violet-500/20 to-purple-500/20 border border-violet-500/15 flex items-center justify-center shrink-0">
+                                                    <span className="text-xs font-bold text-violet-600 dark:text-violet-400 uppercase">
+                                                        {(log.userEmail || "S")[0]}
+                                                    </span>
+                                                </div>
+                                                <div className="min-w-0">
+                                                    <div className="text-sm font-medium truncate">{log.userEmail || t("system")}</div>
+                                                    {log.ipAddress && (
+                                                        <div className="text-[11px] text-muted-foreground font-mono truncate">{log.ipAddress}</div>
+                                                    )}
+                                                </div>
+                                            </div>
                                         </TableCell>
+
+                                        {/* Action */}
                                         <TableCell>
-                                            <span className="inline-flex px-2 py-1 rounded text-xs font-semibold bg-primary/10 text-primary">
-                                                {log.action}
+                                            <ActionBadge action={log.action} t={t} />
+                                        </TableCell>
+
+                                        {/* Entity */}
+                                        <TableCell>
+                                            <div className="text-sm font-medium">{log.entityType || "-"}</div>
+                                            {log.entityId && (
+                                                <div className="text-[11px] text-muted-foreground font-mono truncate max-w-[120px]" title={log.entityId}>
+                                                    {log.entityId.substring(0, 8)}...
+                                                </div>
+                                            )}
+                                        </TableCell>
+
+                                        {/* Status */}
+                                        <TableCell className="text-center">
+                                            <StatusIndicator isSuccess={log.isSuccess} t={t} />
+                                        </TableCell>
+
+                                        {/* Duration */}
+                                        <TableCell className="text-right">
+                                            <span className={`font-mono text-xs font-semibold ${getDurationColor(log.durationMs)}`}>
+                                                {formatDuration(log.durationMs)}
                                             </span>
                                         </TableCell>
-                                        <TableCell>
-                                            <div className="text-sm">{log.entityType}</div>
-                                            {log.entityId && <div className="text-xs text-muted-foreground font-mono">{log.entityId}</div>}
-                                        </TableCell>
-                                        <TableCell>
-                                            <p className="text-sm text-muted-foreground line-clamp-2" title={log.additionalInfo || ""}>
-                                                {log.additionalInfo || "-"}
-                                            </p>
+
+                                        {/* Details */}
+                                        <TableCell className="text-center">
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="h-7 w-7 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                                                onClick={(e) => { e.stopPropagation(); setSelectedLog(log); }}
+                                            >
+                                                <Eye className="h-4 w-4" />
+                                            </Button>
                                         </TableCell>
                                     </TableRow>
                                 ))
@@ -130,29 +412,61 @@ export default function AuditLogsPage() {
                         </TableBody>
                     </Table>
                 </div>
+
+                {/* ─── Pagination Footer ──────────────────────── */}
+                {data && data.totalPages > 0 && (
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-3 border-t bg-muted/20">
+                        <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                            <span>
+                                {t("pagination.showing", { from: from.toString(), to: to.toString(), total: data.totalCount.toString() })}
+                            </span>
+                            <Select value={pageSize.toString()} onValueChange={(v) => { setPageSize(Number(v)); setPage(1); }}>
+                                <SelectTrigger size="sm" className="w-auto h-7 text-xs">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {PAGE_SIZE_OPTIONS.map((s) => (
+                                        <SelectItem key={s} value={s.toString()}>{s} {t("pagination.perPage")}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                disabled={page === 1}
+                                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                                className="h-8 gap-1"
+                            >
+                                <ChevronLeft className="h-4 w-4" />
+                                <span className="hidden sm:inline">{t("pagination.previous")}</span>
+                            </Button>
+                            <span className="text-sm font-medium px-2 min-w-[100px] text-center">
+                                {t("pagination.page", { page: page.toString(), totalPages: data.totalPages.toString() })}
+                            </span>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                disabled={page >= data.totalPages}
+                                onClick={() => setPage((p) => Math.min(data.totalPages, p + 1))}
+                                className="h-8 gap-1"
+                            >
+                                <span className="hidden sm:inline">{t("pagination.next")}</span>
+                                <ChevronRight className="h-4 w-4" />
+                            </Button>
+                        </div>
+                    </div>
+                )}
             </div>
 
-            {data && data.totalPages > 1 && (
-                <div className="flex justify-center items-center gap-4 pt-4">
-                    <Button
-                        variant="outline"
-                        disabled={page === 1}
-                        onClick={() => setPage(p => Math.max(1, p - 1))}
-                    >
-                        Previous
-                    </Button>
-                    <span className="text-sm font-medium text-muted-foreground">
-                        Page {page} of {data.totalPages}
-                    </span>
-                    <Button
-                        variant="outline"
-                        disabled={page >= data.totalPages}
-                        onClick={() => setPage(p => Math.min(data.totalPages, p + 1))}
-                    >
-                        Next
-                    </Button>
-                </div>
-            )}
+            {/* ─── Detail Modal ───────────────────────────────── */}
+            <DetailDialog
+                log={selectedLog}
+                open={!!selectedLog}
+                onOpenChange={(open) => { if (!open) setSelectedLog(null); }}
+                t={t}
+            />
         </div>
     );
 }

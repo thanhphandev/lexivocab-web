@@ -26,8 +26,11 @@ const ALLOWED_PREFIXES = [
     "payments",
     "auth",
     "admin",
-    "tags"
+    "tags",
+    "ai",
+    "diagnostics"
 ];
+
 
 const MAX_BODY_SIZE = 1 * 1024 * 1024; // 1MB
 
@@ -135,6 +138,14 @@ async function proxyRequest(request: NextRequest, params: Promise<{ path: string
     const cookieStore = await cookies();
     let token = cookieStore.get("access_token")?.value;
 
+    // ─── Auto refresh if no access token ────────────────────
+    if (!token) {
+        const refreshedToken = await tryRefreshToken();
+        if (refreshedToken) {
+            token = refreshedToken;
+        }
+    }
+
     const url = new URL(request.url);
     const queryString = url.search;
     const targetUrl = `${API_URL}/api/v1/${apiPath}${queryString}`;
@@ -165,8 +176,21 @@ async function proxyRequest(request: NextRequest, params: Promise<{ path: string
             }
         }
 
-        // ─── Handle file exports (binary responses) ────────────
         const responseContentType = res.headers.get("content-type") || "";
+
+        // ─── Handle Streaming Responses (SSE) ─────────────────
+        if (responseContentType.includes("text/event-stream")) {
+            return new NextResponse(res.body, {
+                status: res.status,
+                headers: {
+                    "Content-Type": "text/event-stream",
+                    "Cache-Control": "no-cache",
+                    "Connection": "keep-alive",
+                },
+            });
+        }
+
+        // ─── Handle file exports (binary responses) ────────────
         if (
             responseContentType.includes("application/octet-stream") ||
             responseContentType.includes("text/csv") ||

@@ -1,13 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTranslations, useLocale } from "next-intl";
-import { clientApi } from "@/lib/api/api-client";
-import type { ReviewSessionDto, ReviewCardDto, SubmitReviewRequest } from "@/lib/api/types";
+import { clientApi, reviewsApi } from "@/lib/api/api-client";
+import type { ReviewSessionDto, SubmitReviewRequest } from "@/lib/api/types";
+
 import { Flashcard } from "@/components/dashboard/flashcard";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Loader2, BrainCircuit, PartyPopper, ArrowRight } from "lucide-react";
+import { Loader2, BrainCircuit, PartyPopper, ArrowRight, Timer } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import confetti from "canvas-confetti";
@@ -24,7 +25,7 @@ export default function ReviewPage() {
 
     useEffect(() => {
         const fetchSession = async () => {
-            const res = await clientApi.get<ReviewSessionDto>("/api/proxy/reviews/session");
+            const res = await reviewsApi.getSession();
             if (res.success) {
                 setSession(res.data);
             }
@@ -33,9 +34,55 @@ export default function ReviewPage() {
         fetchSession();
     }, []);
 
+    // Production-grade time tracking
+    const startTimeRef = useRef<number>(Date.now());
+    const accumulatedTimeRef = useRef<number>(0);
+    const lastPauseTimeRef = useRef<number>(0);
+    const [pauseNotice, setPauseNotice] = useState(false);
+    const MAX_REVIEW_TIME_MS = 60000; // Cap at 60s to avoid idle pollution
+
+    // Reset timer when moving to next card or starting session
+    useEffect(() => {
+        if (isSessionActive) {
+            startTimeRef.current = Date.now();
+            accumulatedTimeRef.current = 0;
+            setPauseNotice(false);
+        }
+    }, [currentIndex, isSessionActive]);
+
+    // Handle tab switching / visibility changes
+    useEffect(() => {
+        let hideTimeout: NodeJS.Timeout;
+        
+        const handleVisibilityChange = () => {
+            if (document.hidden) {
+                // Pausing: save progress
+                accumulatedTimeRef.current += Date.now() - startTimeRef.current;
+                lastPauseTimeRef.current = Date.now();
+            } else {
+                // Resuming: reset start mark
+                startTimeRef.current = Date.now();
+                
+                // Show notification if paused for > 5 seconds
+                if (lastPauseTimeRef.current > 0 && Date.now() - lastPauseTimeRef.current > 5000) {
+                    setPauseNotice(true);
+                    clearTimeout(hideTimeout);
+                    hideTimeout = setTimeout(() => setPauseNotice(false), 3000);
+                }
+            }
+        };
+
+        document.addEventListener("visibilitychange", handleVisibilityChange);
+        return () => {
+            document.removeEventListener("visibilitychange", handleVisibilityChange);
+            clearTimeout(hideTimeout);
+        };
+    }, []);
+
     const handleStart = () => {
         if (session && session.cards.length > 0) {
             setIsSessionActive(true);
+            startTimeRef.current = Date.now();
         }
     };
 
@@ -43,16 +90,21 @@ export default function ReviewPage() {
         if (!session) return;
         const currentCard = session.cards[currentIndex];
 
+        // Calculate actual time spent
+        const now = Date.now();
+        const duration = (now - startTimeRef.current) + accumulatedTimeRef.current;
+        const timeSpentMs = Math.min(duration, MAX_REVIEW_TIME_MS);
+
         // Optimistic UI update
         const nextIndex = currentIndex + 1;
         setReviewedCount(prev => prev + 1);
 
         // Background API call
-        clientApi.post("/api/proxy/reviews", {
+        reviewsApi.submitReview({
             userVocabularyId: currentCard.vocabularyId,
             qualityScore: quality,
-            timeSpentMs: 5000 // In a real app we'd track actual time
-        } as SubmitReviewRequest).catch(console.error);
+            timeSpentMs: timeSpentMs
+        }).catch(console.error);
 
         // Move to next card or finish
         if (nextIndex < session.cards.length) {
@@ -157,7 +209,22 @@ export default function ReviewPage() {
     const progress = ((currentIndex) / session.cards.length) * 100;
 
     return (
-        <div className="max-w-3xl mx-auto flex flex-col min-h-[70vh] pt-6">
+        <div className="max-w-3xl mx-auto flex flex-col min-h-[70vh] pt-6 relative">
+            {/* Pause Notification Overlay */}
+            <AnimatePresence>
+                {pauseNotice && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-2 bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-200 border border-amber-200 dark:border-amber-800 rounded-full shadow-md flex items-center gap-2 text-sm font-medium z-50 whitespace-nowrap"
+                    >
+                        <Timer className="h-4 w-4" />
+                        <span>Timer paused to ensure accurate tracking</span>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
             {/* Top Bar */}
             <div className="flex items-center justify-between mb-10">
                 <h1 className="text-xl font-semibold text-foreground">{t("title")}</h1>

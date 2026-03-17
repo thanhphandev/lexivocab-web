@@ -261,16 +261,18 @@ export function AddWordDialog({ onSuccess }: { onSuccess: () => void }) {
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="tagId">Folder <span className="text-muted-foreground text-xs font-normal">(Optional)</span></Label>
+                            <Label htmlFor="tagId">Tag <span className="text-muted-foreground text-xs font-normal">(Optional)</span></Label>
                             <Select value={tagId} onValueChange={setTagId}>
                                 <SelectTrigger>
-                                    <SelectValue placeholder="Select a folder" />
+                                    <SelectValue placeholder="Select a tag" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="none">No folder</SelectItem>
+                                    <SelectItem value="none">No tag</SelectItem>
                                     {tags.map((tag) => (
                                         <SelectItem key={tag.id} value={tag.id}>
-                                            📁 {tag.name}
+                                            <span className="flex items-center gap-2">
+                                                <span>{tag.icon || "📁"}</span> {tag.name}
+                                            </span>
                                         </SelectItem>
                                     ))}
                                 </SelectContent>

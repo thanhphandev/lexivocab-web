@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/lib/auth/auth-context";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useTranslations, useLocale } from "next-intl";
@@ -18,6 +18,10 @@ export default function LoginPage() {
     const locale = useLocale();
     const t = useTranslations("Auth");
     const [googleLoading, setGoogleLoading] = useState(false);
+
+    const searchParams = useSearchParams();
+    const verified = searchParams.get("verified");
+    const reset = searchParams.get("reset");
 
     // Redirect if already authenticated
     useEffect(() => {
@@ -103,6 +107,20 @@ export default function LoginPage() {
                 </div>
 
                 <form className="space-y-6" onSubmit={handleSubmit}>
+                    {(verified || reset) && !error && (
+                         <motion.div
+                             initial={{ opacity: 0, y: -10 }}
+                             animate={{ opacity: 1, y: 0 }}
+                             className="flex items-center gap-2 rounded-lg bg-green-500/10 p-3 text-sm text-green-600"
+                         >
+                             <AlertCircle className="h-4 w-4 shrink-0" />
+                             <p>
+                                 {verified === "true" && "Email verified successfully! You can now log in."}
+                                 {reset === "success" && "Password reset successfully! You can now log in."}
+                             </p>
+                         </motion.div>
+                    )}
+
                     {error && (
                         <motion.div
                             initial={{ opacity: 0, y: -10 }}
@@ -136,9 +154,11 @@ export default function LoginPage() {
                             />
                         </div>
                         <div>
-                            <label className="sr-only" htmlFor="password">
-                                {t("password")}
-                            </label>
+                            <div className="flex items-center justify-between mb-1">
+                                <label className="sr-only" htmlFor="password">
+                                    {t("password")}
+                                </label>
+                            </div>
                             <input
                                 id="password"
                                 name="password"
@@ -156,6 +176,23 @@ export default function LoginPage() {
                             />
                         </div>
                     </div>
+
+                    <div className="flex items-center justify-end">
+                        <div className="text-sm">
+                            <Link href="/auth/forgot-password" className="font-medium text-primary hover:text-primary/90">
+                                Forgot your password?
+                            </Link>
+                        </div>
+                    </div>
+
+                    {/* Show a "Verify Email" button if the error suggests the email needs verification */}
+                    {error && error.toLowerCase().includes("verif") && (
+                         <div className="flex justify-center mt-2">
+                             <Link href={`/auth/verify-email?email=${encodeURIComponent(email)}`} className="text-sm font-medium text-primary underline">
+                                Click here to verify your email
+                             </Link>
+                         </div>
+                    )}
 
                     <div>
                         <button
