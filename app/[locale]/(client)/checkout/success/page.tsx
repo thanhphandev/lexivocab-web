@@ -143,18 +143,18 @@ export default function CheckoutSuccessPage() {
                             className="bg-muted/30 border rounded-2xl p-5 mx-2 text-left space-y-3"
                         >
                             <div className="flex justify-between items-center text-sm">
-                                <span className="text-muted-foreground">Account Status</span>
+                                <span className="text-muted-foreground">{t("account_status")}</span>
                                 <span className="font-bold text-primary flex items-center gap-1.5">
                                     <Sparkles className="h-4 w-4" />
                                     Premium
                                 </span>
                             </div>
                             <div className="flex justify-between items-center text-sm">
-                                <span className="text-muted-foreground">Validity</span>
+                                <span className="text-muted-foreground">{t("validity")}</span>
                                 <span className="font-semibold text-foreground">
                                     {permissions?.planExpiresAt 
                                         ? new Date(permissions.planExpiresAt).toLocaleDateString(locale, { dateStyle: 'long' })
-                                        : "Lifetime Access"}
+                                        : t("validity_lifetime")}
                                 </span>
                             </div>
                         </motion.div>

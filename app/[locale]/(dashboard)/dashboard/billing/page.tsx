@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
-import { paymentApi } from "@/lib/api/api-client";import { useAuth } from "@/lib/auth/auth-context";
+import { paymentApi } from "@/lib/api/api-client";
 import { usePermissions } from "@/lib/hooks/use-permissions";
 import type { BillingOverviewDto, PaymentHistoryDto } from "@/lib/api/types";
 import { Button } from "@/components/ui/button";
@@ -52,8 +52,9 @@ function StatusBadge({ status }: { status: string }) {
 
 export default function BillingPage() {
     const locale = useLocale();
-    const { user } = useAuth();
     const perms = usePermissions();
+    const t = useTranslations("Billing");
+    const tPricing = useTranslations("Pricing");
 
     const [billing, setBilling] = useState<BillingOverviewDto | null>(null);
     const [history, setHistory] = useState<PaymentHistoryDto[]>([]);
@@ -63,6 +64,7 @@ export default function BillingPage() {
     const [isPolling, setIsPolling] = useState(false);
     const [confirmCancelOpen, setConfirmCancelOpen] = useState(false);
     const [isCancelling, setIsCancelling] = useState(false);
+    const [confirmCancelPendingOpen, setConfirmCancelPendingOpen] = useState(false);
     const [downloadingId, setDownloadingId] = useState<string | null>(null);
 
     useEffect(() => {
@@ -108,12 +110,36 @@ export default function BillingPage() {
         setIsPolling(true);
     };
 
+    const handleCancelPending = async () => {
+        if (!pendingTransaction) return;
+        
+        setIsCancelling(true);
+        const reference = pendingTransaction.externalOrderId;
+        try {
+            const res = await paymentApi.cancelPayment(reference);
+            if (res.success) {
+                toast.success(tPricing("pending_transaction.cancel_success"));
+                setPendingTransaction(null);
+                setQrData(null);
+                setIsPolling(false);
+            } else {
+                toast.error(res.error || tPricing("pending_transaction.cancel_error"));
+            }
+        } catch (err) {
+            console.error("Cancel error", err);
+            toast.error(t("subscription_details.cancel_pending_error"));
+        } finally {
+            setIsCancelling(false);
+            setConfirmCancelPendingOpen(false);
+        }
+    };
+
     const handleCancelSubscription = async () => {
         setIsCancelling(true);
         try {
             const res = await paymentApi.cancelSubscription();
             if (res.success) {
-                toast.success("Subscription cancelled. Access revoked immediately.");
+                toast.success(t("subscription_details.cancel_success"));
                 setBilling(prev => prev ? {
                     ...prev,
                     activeSubscription: prev.activeSubscription
@@ -121,7 +147,7 @@ export default function BillingPage() {
                         : null
                 } : null);
             } else {
-                toast.error(res.error || "Failed to cancel subscription.");
+                toast.error(res.error || t("subscription_details.cancel_error"));
             }
         } finally {
             setIsCancelling(false);
@@ -133,9 +159,9 @@ export default function BillingPage() {
         setDownloadingId(tx.id);
         try {
             await downloadInvoicePdf(tx);
-            toast.success("Invoice downloaded successfully.");
+            toast.success(t("invoice.download_success"));
         } catch {
-            toast.error("Failed to generate invoice PDF.");
+            toast.error(t("invoice.download_error"));
         } finally {
             setDownloadingId(null);
         }
@@ -169,10 +195,6 @@ export default function BillingPage() {
         return () => clearInterval(interval);
     }, [isPolling, qrData, locale]);
 
-    const t = useTranslations("Billing");
-    const tPricing = useTranslations("Pricing");
-
-
 
     if (isLoading) {
         return (
@@ -198,7 +220,7 @@ export default function BillingPage() {
                 <PendingTransactionBanner 
                     transaction={pendingTransaction}
                     onResume={handleResumePending}
-                    onCancel={() => setPendingTransaction(null)}
+                    onCancel={() => setConfirmCancelPendingOpen(true)}
                     className="mb-8"
                 />
             )}
@@ -221,12 +243,14 @@ export default function BillingPage() {
                                 </div>
                                 <div>
                                     <CardTitle className="text-xl">
-                                        {billing?.activeSubscription?.durationMonths 
-                                            ? t("current_plan.title_premium", { 
-                                                plan: billing.plan || "Premium", 
-                                                months: billing.activeSubscription.durationMonths,
-                                                month_label: tPricing(billing.activeSubscription.durationMonths > 1 ? "comparison.months" : "comparison.month")
-                                            }) 
+                                        {billing?.activeSubscription
+                                            ? billing.activeSubscription.durationMonths
+                                                ? t("current_plan.title_premium", {
+                                                    plan: billing.plan || "Premium",
+                                                    months: billing.activeSubscription.durationMonths,
+                                                    month_label: tPricing(billing.activeSubscription.durationMonths > 1 ? "comparison.months" : "comparison.month")
+                                                })
+                                                : t("current_plan.title_lifetime", { plan: billing.plan || "Premium" })
                                             : t("current_plan.title_free")}
                                     </CardTitle>
                                     <CardDescription>
@@ -258,26 +282,26 @@ export default function BillingPage() {
                         <CardContent>
                             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 text-sm mt-4">
                                 <div className="p-3 rounded-lg bg-background border shadow-sm">
-                                    <span className="block text-muted-foreground mb-1">Provider</span>
+                                    <span className="block text-muted-foreground mb-1">{t("subscription_details.provider")}</span>
                                     <span className="font-medium flex items-center gap-2">
                                         <CreditCard className="h-4 w-4 text-primary" />
                                         {billing.activeSubscription.provider}
                                     </span>
                                 </div>
                                 <div className="p-3 rounded-lg bg-background border shadow-sm">
-                                    <span className="block text-muted-foreground mb-1">Start Date</span>
+                                    <span className="block text-muted-foreground mb-1">{t("subscription_details.start_date")}</span>
                                     <span className="font-medium font-mono text-xs">
                                         {new Date(billing.activeSubscription.startDate).toLocaleDateString()}
                                     </span>
                                 </div>
                                 <div className="p-3 rounded-lg bg-background border shadow-sm">
-                                    <span className="block text-muted-foreground mb-1">Renewal Date</span>
+                                    <span className="block text-muted-foreground mb-1">{t("subscription_details.renewal_date")}</span>
                                     <span className="font-medium font-mono text-xs">
                                         {billing.planExpiresAt ? new Date(billing.planExpiresAt).toLocaleDateString() : t("current_plan.lifetime")}
                                     </span>
                                 </div>
                                 <div className="p-3 rounded-lg bg-background border shadow-sm">
-                                    <span className="block text-muted-foreground mb-1">Status</span>
+                                    <span className="block text-muted-foreground mb-1">{t("subscription_details.status")}</span>
                                     <StatusBadge status={billing.activeSubscription.status} />
                                 </div>
                             </div>
@@ -291,7 +315,7 @@ export default function BillingPage() {
                                         disabled={isCancelling}
                                     >
                                         <Ban className="mr-2 h-4 w-4" />
-                                        Cancel Subscription
+                                        {t("subscription_details.cancel")}
                                     </Button>
                                 </div>
                             )}
@@ -517,10 +541,20 @@ export default function BillingPage() {
             <ConfirmDialog
                 open={confirmCancelOpen}
                 onOpenChange={setConfirmCancelOpen}
-                title="Cancel Subscription"
-                description="Are you sure you want to cancel your subscription? Your Premium access will be revoked immediately and this action cannot be undone."
+                title={t("subscription_details.cancel_title")}
+                description={t("subscription_details.cancel_desc")}
                 onConfirm={handleCancelSubscription}
-                confirmText={isCancelling ? "Cancelling..." : "Yes, Cancel"}
+                confirmText={isCancelling ? t("subscription_details.cancelling") : t("subscription_details.cancel_confirm")}
+                variant="destructive"
+            />
+
+            <ConfirmDialog
+                open={confirmCancelPendingOpen}
+                onOpenChange={setConfirmCancelPendingOpen}
+                title={tPricing("pending_transaction.cancel_confirm_title")}
+                description={tPricing("pending_transaction.cancel_confirm_desc")}
+                onConfirm={handleCancelPending}
+                confirmText={isCancelling ? tPricing("processing") : tPricing("pending_transaction.cancel_confirm_btn")}
                 variant="destructive"
             />
         </div>

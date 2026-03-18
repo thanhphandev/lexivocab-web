@@ -193,7 +193,9 @@
         "tipDesc": "トピックや文脈ごとに単語を整理すると、復習時の記憶定着が向上します。",
         "deleteTitle": "タグを削除",
         "deleteDesc": "「{name}」を削除してもよろしいですか？関連する単語は残りますが、このタグでは分類されなくなります。",
-        "deleteConfirm": "タグを削除"
+        "deleteConfirm": "タグを削除",
+        "deleteSuccess": "タグ「{name}」を削除しました",
+        "deleteFailed": "タグの削除に失敗しました"
       },
       "tagDialog": {
         "createTitle": "新しいタグを作成",
@@ -503,12 +505,17 @@
       "title": "未完了の取引",
       "desc": "{date}の {amount} {currency} の {provider} 決済が保留中です。",
       "resume": "支払いを続行",
-      "cancel": "新しく取引を開始",
-      "reference": "参照 ID: {ref}",
+      "cancel": "取引をキャンセル",
+      "reference": "参照: {ref}",
       "expires_label": "有効期限:",
-      "time_left": "残り:",
+      "time_left": "残り時間:",
       "refresh": "更新",
-      "expired": "この取引は期限切れです。"
+      "expired": "取引は期限切れです。",
+      "cancel_confirm_title": "保留中の取引をキャンセル",
+      "cancel_confirm_desc": "この保留中の取引をキャンセルしてもよろしいですか？キャンセル後に新しい取引を開始できます。",
+      "cancel_confirm_btn": "はい、キャンセル",
+      "cancel_success": "取引が正常にキャンセルされました。",
+      "cancel_error": "取引のキャンセルに失敗しました。"
     },
     "qr_modal": {
       "error": "QRコードを読み込めませんでした。ページを更新するか、サポートにお問い合わせください。",
@@ -528,6 +535,7 @@
     "current_plan": {
       "title_free": "フリープラン",
       "title_premium": "{plan} ({months} {month_label})",
+      "title_lifetime": "{plan} (永久)",
       "expires": "有効期限: {date}",
       "lifetime": "永久アクセス",
       "quota_limit": "語彙数制限: {count} 単語",
@@ -553,6 +561,24 @@
       "no_transactions": "取引履歴がありません",
       "empty_desc": "購入後に取引履歴がここに表示されます。",
       "payment_label": "{provider} による支払い"
+    },
+    "subscription_details": {
+      "provider": "プロバイダー",
+      "start_date": "開始日",
+      "renewal_date": "更新日",
+      "status": "ステータス",
+      "cancel": "サブスクリプションをキャンセル",
+      "cancel_title": "サブスクリプションをキャンセル",
+      "cancel_desc": "サブスクリプションをキャンセルしてもよろしいですか？プレミアムアクセスは即座に取り消され、この操作は元に戻せません。",
+      "cancel_confirm": "はい、キャンセル",
+      "cancelling": "キャンセル中...",
+      "cancel_success": "サブスクリプションがキャンセルされました。アクセスが取り消されました。",
+      "cancel_error": "サブスクリプションのキャンセルに失敗しました。",
+      "cancel_pending_error": "キャンセル中にエラーが発生しました。"
+    },
+    "invoice": {
+      "download_success": "請求書をダウンロードしました。",
+      "download_error": "請求書PDFの生成に失敗しました。"
     }
   },
   "Privacy": {
@@ -697,7 +723,10 @@
     "processing_subtitle": "このウィンドウを閉じないでください",
     "success_title": "決済が完了しました！", 
     "success_subtitle": "プレミアムプランへのアップグレードありがとうございます。アカウントが更新されました。",
-    "premium_activated": "永久アクセス",
+    "premium_activated": "プランが有効化されました",
+    "account_status": "アカウントステータス",
+    "validity": "有効期間",
+    "validity_lifetime": "永久アクセス",
     "receipt_notice": "確認メールと領収書をメールでお送りしました。",
     "error_title": "決済に失敗しました",
     "try_again": "もう一度試す",

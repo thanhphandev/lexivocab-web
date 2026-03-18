@@ -58,11 +58,11 @@ export function TagSidebar({
         try {
             const res = await tagsApi.delete(id);
             if (res.success) {
-                toast.success(`Tag "${tagToDelete.name}" deleted successfully`);
+                toast.success(t("deleteSuccess", { name: tagToDelete.name }));
                 if (selectedTagId === id) onSelectTag("all");
                 onRefresh();
             } else {
-                toast.error(res.error || "Failed to delete tag");
+                toast.error(res.error || t("deleteFailed"));
             }
         } finally {
             setIsDeleting(null);

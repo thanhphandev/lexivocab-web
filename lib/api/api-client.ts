@@ -319,6 +319,8 @@ export const paymentApi = {
         clientApi.post<{ message: string }>("/api/proxy/payments/capture-order", data),
     checkStatus: (token: string) =>
         clientApi.get<PaymentStatusDto>(`/api/proxy/payments/status/${token}`),
+    cancelPayment: (reference: string) =>
+        clientApi.post<void>(`/api/proxy/payments/cancel/${reference}`),
     cancelSubscription: () =>
         clientApi.post<void>('/api/proxy/payments/cancel-subscription'),
     getInvoiceUrl: (id: string) =>

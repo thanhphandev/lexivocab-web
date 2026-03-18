@@ -193,7 +193,9 @@
         "tipDesc": "按主题或语境整理单词，有助于在复习时提高记忆效果。",
         "deleteTitle": "删除标签",
         "deleteDesc": "确定要删除「{name}」吗？相关单词将保留，但不再归属于此标签。",
-        "deleteConfirm": "删除标签"
+        "deleteConfirm": "删除标签",
+        "deleteSuccess": "标签「{name}」已成功删除",
+        "deleteFailed": "删除标签失败"
       },
       "tagDialog": {
         "createTitle": "创建新标签",
@@ -504,11 +506,16 @@
       "desc": "您有一笔待通过 {provider} 处理的交易，金额为 {amount} {currency}，创建于 {date}。",
       "reference": "参考号：{ref}",
       "resume": "继续支付",
-      "cancel": "开始新交易",
+      "cancel": "取消交易",
       "expires_label": "到期时间：",
       "time_left": "剩余时间：",
       "refresh": "刷新",
-      "expired": "该交易已过期。"
+      "expired": "该交易已过期。",
+      "cancel_confirm_title": "取消待处理交易",
+      "cancel_confirm_desc": "您确定要取消此待处理交易吗？取消后您可以开始新的交易。",
+      "cancel_confirm_btn": "是的，取消",
+      "cancel_success": "交易已成功取消。",
+      "cancel_error": "取消交易失败。"
     },
     "qr_modal": {
       "reference_label": "转账备注 (Reference):",
@@ -528,6 +535,7 @@
     "current_plan": {
       "title_free": "免费版",
       "title_premium": "{plan} ({months} {month_label})",
+      "title_lifetime": "{plan} (终身)",
       "expires": "到期时间：{date}",
       "lifetime": "终身访问",
       "quota_limit": "限制为 {count} 个词汇",
@@ -553,6 +561,24 @@
       "no_transactions": "暂无交易记录",
       "empty_desc": "您的交易记录将在购买后显示在这里。",
       "payment_label": "{provider} 支付"
+    },
+    "subscription_details": {
+      "provider": "支付方式",
+      "start_date": "开始日期",
+      "renewal_date": "续费日期",
+      "status": "状态",
+      "cancel": "取消订阅",
+      "cancel_title": "取消订阅",
+      "cancel_desc": "您确定要取消订阅吗？您的高级访问权限将立即被撤销，此操作无法撤销。",
+      "cancel_confirm": "是的，取消",
+      "cancelling": "取消中...",
+      "cancel_success": "订阅已取消，访问权限已撤销。",
+      "cancel_error": "取消订阅失败。",
+      "cancel_pending_error": "取消时发生错误。"
+    },
+    "invoice": {
+      "download_success": "发票下载成功。",
+      "download_error": "生成发票PDF失败。"
     }
   },
   "Privacy": {
@@ -697,7 +723,10 @@
     "processing_subtitle": "请勿关闭此窗口",
     "success_title": "支付成功！",
     "success_subtitle": "感谢您升级到高级版。您的账号已更新。",
-    "premium_activated": "终身访问",
+    "premium_activated": "方案已激活",
+    "account_status": "账号状态",
+    "validity": "有效期",
+    "validity_lifetime": "终身访问",
     "receipt_notice": "确认信和收据已发送至您的邮箱。",
     "error_title": "支付失败",
     "try_again": "重试",

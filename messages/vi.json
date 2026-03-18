@@ -193,7 +193,9 @@
         "tipDesc": "Sắp xếp từ theo chủ đề hoặc ngữ cảnh để ghi nhớ tốt hơn khi ôn tập.",
         "deleteTitle": "Xóa thẻ",
         "deleteDesc": "Bạn có chắc muốn xóa \"{name}\"? Các từ liên quan vẫn được giữ lại nhưng sẽ không còn thuộc thẻ này.",
-        "deleteConfirm": "Xóa thẻ"
+        "deleteConfirm": "Xóa thẻ",
+        "deleteSuccess": "Đã xóa thẻ \"{name}\" thành công",
+        "deleteFailed": "Không thể xóa thẻ"
       },
       "tagDialog": {
         "createTitle": "Tạo thẻ mới",
@@ -503,12 +505,17 @@
       "title": "Giao dịch chưa hoàn tất",
       "desc": "Bạn có một giao dịch {provider} đang chờ xử lý trị giá {amount} {currency} từ ngày {date}.",
       "resume": "Tiếp tục thanh toán",
-      "cancel": "Bắt đầu giao dịch mới",
+      "cancel": "Hủy giao dịch",
       "reference": "Nội dung: {ref}",
       "expires_label": "Hết hạn lúc:",
       "time_left": "Còn lại:",
       "refresh": "Tải lại",
-      "expired": "Giao dịch đã hết hạn."
+      "expired": "Giao dịch đã hết hạn.",
+      "cancel_confirm_title": "Hủy giao dịch đang chờ",
+      "cancel_confirm_desc": "Bạn có chắc chắn muốn hủy giao dịch này không? Bạn có thể bắt đầu một giao dịch mới sau khi hủy.",
+      "cancel_confirm_btn": "Có, Hủy giao dịch",
+      "cancel_success": "Đã hủy giao dịch thành công.",
+      "cancel_error": "Không thể hủy giao dịch."
     },
     "qr_modal": {
       "error": "Không thể tải mã QR. Vui lòng tải lại trang hoặc liên hệ hỗ trợ.",
@@ -528,6 +535,7 @@
     "current_plan": {
       "title_free": "Gói Miễn phí",
       "title_premium": "{plan} ({months} {month_label})",
+      "title_lifetime": "{plan} (Trọn đời)",
       "expires": "Hết hạn: {date}",
       "lifetime": "Truy cập trọn đời",
       "quota_limit": "Giới hạn {count} từ vựng",
@@ -553,6 +561,24 @@
       "no_transactions": "Chưa có giao dịch nào",
       "empty_desc": "Các giao dịch của bạn sẽ xuất hiện ở đây sau khi bạn mua hàng.",
       "payment_label": "Thanh toán {provider}"
+    },
+    "subscription_details": {
+      "provider": "Nhà cung cấp",
+      "start_date": "Ngày bắt đầu",
+      "renewal_date": "Ngày gia hạn",
+      "status": "Trạng thái",
+      "cancel": "Hủy đăng ký",
+      "cancel_title": "Hủy đăng ký",
+      "cancel_desc": "Bạn có chắc muốn hủy đăng ký? Quyền truy cập Premium sẽ bị thu hồi ngay lập tức và không thể hoàn tác.",
+      "cancel_confirm": "Có, Hủy",
+      "cancelling": "Đang hủy...",
+      "cancel_success": "Đã hủy đăng ký. Quyền truy cập đã bị thu hồi.",
+      "cancel_error": "Không thể hủy đăng ký.",
+      "cancel_pending_error": "Đã xảy ra lỗi khi hủy."
+    },
+    "invoice": {
+      "download_success": "Đã tải hóa đơn thành công.",
+      "download_error": "Không thể tạo file PDF hóa đơn."
     }
   },
   "Privacy": {
@@ -698,6 +724,9 @@
     "success_title": "Thanh toán thành công!",
     "success_subtitle": "Cảm ơn bạn đã mua hàng. Các tính năng tài khoản của bạn đã được cập nhật.",
     "premium_activated": "ĐÃ KÍCH HOẠT GÓI",
+    "account_status": "Trạng thái tài khoản",
+    "validity": "Hiệu lực",
+    "validity_lifetime": "Truy cập trọn đời",
     "receipt_notice": "Biên lai và xác nhận đã được gửi vào email của bạn.",
     "error_title": "Thanh toán thất bại",
     "try_again": "Thử lại",

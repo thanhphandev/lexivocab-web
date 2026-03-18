@@ -174,7 +174,9 @@
         "tipDesc": "Organize words by topics or context to improve recall during active review.",
         "deleteTitle": "Delete Tag",
         "deleteDesc": "Are you sure you want to delete \"{name}\"? Associated words will remain but won't be categorized by this tag.",
-        "deleteConfirm": "Delete Tag"
+        "deleteConfirm": "Delete Tag",
+        "deleteSuccess": "Tag \"{name}\" deleted successfully",
+        "deleteFailed": "Failed to delete tag"
       },
       "table": {
         "word": "Word",
@@ -503,12 +505,17 @@
       "title": "Unfinished Transaction",
       "desc": "You have a pending {provider} payment of {amount} {currency} from {date}.",
       "resume": "Continue Payment",
-      "cancel": "Start New Transaction",
+      "cancel": "Cancel Transaction",
       "reference": "Reference: {ref}",
       "expires_label": "Expires at:",
       "time_left": "Time left:",
       "refresh": "Refresh",
-      "expired": "This transaction has expired."
+      "expired": "Transaction has expired.",
+      "cancel_confirm_title": "Cancel Pending Transaction",
+      "cancel_confirm_desc": "Are you sure you want to cancel this pending transaction? You can start a new transaction after cancelling.",
+      "cancel_confirm_btn": "Yes, Cancel",
+      "cancel_success": "Transaction cancelled successfully.",
+      "cancel_error": "Failed to cancel transaction."
     },
     "qr_modal": {
       "error": "Could not load QR code. Please refresh or contact support.",
@@ -528,6 +535,7 @@
     "current_plan": {
       "title_free": "Free Plan",
       "title_premium": "{plan} ({months} {month_label})",
+      "title_lifetime": "{plan} (Lifetime)",
       "expires": "Expires: {date}",
       "lifetime": "Lifetime access",
       "quota_limit": "Limited to {count} vocabulary words",
@@ -553,6 +561,24 @@
       "no_transactions": "No transactions yet",
       "empty_desc": "Your transactions will appear here after you make a purchase.",
       "payment_label": "{provider} Payment"
+    },
+    "subscription_details": {
+      "provider": "Provider",
+      "start_date": "Start Date",
+      "renewal_date": "Renewal Date",
+      "status": "Status",
+      "cancel": "Cancel Subscription",
+      "cancel_title": "Cancel Subscription",
+      "cancel_desc": "Are you sure you want to cancel your subscription? Your Premium access will be revoked immediately and this action cannot be undone.",
+      "cancel_confirm": "Yes, Cancel",
+      "cancelling": "Cancelling...",
+      "cancel_success": "Subscription cancelled. Access revoked immediately.",
+      "cancel_error": "Failed to cancel subscription.",
+      "cancel_pending_error": "An error occurred while cancelling."
+    },
+    "invoice": {
+      "download_success": "Invoice downloaded successfully.",
+      "download_error": "Failed to generate invoice PDF."
     }
   },
   "Privacy": {
@@ -698,6 +724,9 @@
     "success_title": "Payment Successful!",
     "success_subtitle": "Thank you for your purchase. Your account features have been updated.",
     "premium_activated": "PLAN ACTIVATED",
+    "account_status": "Account Status",
+    "validity": "Validity",
+    "validity_lifetime": "Lifetime Access",
     "view_billing": "View Billing Details",
     "receipt_notice": "A confirmation and receipt have been sent to your email.",
     "error_title": "Payment Failed",
