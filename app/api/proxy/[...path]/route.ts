@@ -81,18 +81,27 @@ async function tryRefreshToken(): Promise<string | null> {
             expires: expiresDate,
         });
 
-        cookieStore.set("refresh_token", newRefreshToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
-            path: "/",
-            maxAge: 60 * 60 * 24 * 30,
-        });
+        // Only update refresh_token cookie if backend issued a new one
+        if (newRefreshToken) {
+            cookieStore.set("refresh_token", newRefreshToken, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                sameSite: "lax",
+                path: "/",
+                maxAge: 60 * 60 * 24 * 30,
+            });
+        }
 
         return newAccessToken;
     } catch {
         return null;
     }
+}
+
+async function clearAuthCookies() {
+    const cookieStore = await cookies();
+    cookieStore.delete("access_token");
+    cookieStore.delete("refresh_token");
 }
 
 async function makeApiRequest(
@@ -168,11 +177,18 @@ async function proxyRequest(request: NextRequest, params: Promise<{ path: string
         let res = await makeApiRequest(targetUrl, request.method, headers, body);
 
         // ─── Auto token refresh on 401 ─────────────────────────
-        if (res.status === 401 && token) {
+        if (res.status === 401) {
             const newToken = await tryRefreshToken();
             if (newToken) {
                 headers["Authorization"] = `Bearer ${newToken}`;
                 res = await makeApiRequest(targetUrl, request.method, headers, body);
+            } else {
+                // Refresh failed — clear stale cookies so client is forced to re-login
+                await clearAuthCookies();
+                return NextResponse.json(
+                    { success: false, error: "Session expired. Please log in again." },
+                    { status: 401 }
+                );
             }
         }
 

@@ -19,6 +19,15 @@ export async function POST(request: Request) {
 
     const payload = data.data || data;
     const { accessToken, expiresAt, userId, email, fullName, role } = payload;
+
+    // If backend requires email verification, no tokens are returned yet
+    if (!accessToken) {
+        return NextResponse.json({
+            success: true,
+            data: { id: userId, email, fullName, role },
+        });
+    }
+
     const expiresDate = new Date(expiresAt);
 
     // Extract refreshToken and its expiration from the Set-Cookie header returned by .NET

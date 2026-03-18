@@ -60,10 +60,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             const res = await authApi.refresh();
             if (!res.success) return false;
 
-            // Re-fetch user profile
+            // Re-fetch user profile after successful token refresh
             const result = await authApi.getMe();
-            if (result.success) {
-                setUser(result.data);
+            if (result.success && result.data) {
+                setUser({
+                    id: result.data.id,
+                    email: result.data.email,
+                    fullName: result.data.fullName,
+                    role: result.data.role,
+                });
                 refreshPermissions();
                 return true;
             }
@@ -78,8 +83,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         (async () => {
             try {
                 const result = await authApi.getMe();
-                if (result.success) {
-                    setUser(result.data);
+                if (result.success && result.data) {
+                    setUser({
+                        id: result.data.id,
+                        email: result.data.email,
+                        fullName: result.data.fullName,
+                        role: result.data.role,
+                    });
                     refreshPermissions();
                 } else {
                     // Try to refresh if /me fails (token might be expired)
@@ -121,6 +131,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             const result = await authApi.register(data);
             if (result.success) {
                 setUser(result.data);
+                refreshPermissions();
                 return true;
             }
             setError("error" in result ? result.error : "Registration failed");
@@ -131,7 +142,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } finally {
             setIsLoading(false);
         }
-    }, []);
+    }, [refreshPermissions]);
 
     const googleLogin = useCallback(async (idToken: string): Promise<boolean> => {
         setIsLoading(true);

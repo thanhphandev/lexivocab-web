@@ -205,16 +205,33 @@ export default function PricingPage() {
         return () => clearInterval(interval);
     }, [isPolling, qrData, locale]);
 
-    const comparisonRows = [
-        { key: "storage", free: t("comparison.words_limit", { count: 50 }), premium: t("comparison.unlimited") },
-        { key: "spaced", free: true, premium: true },
-        { key: "extension", free: true, premium: true },
-        { key: "ai", free: "10/day", premium: "50+/day" },
-        { key: "import", free: false, premium: true },
-        { key: "export", free: false, premium: true },
-        { key: "practice", free: "5/day", premium: "20+/day" },
-        { key: "support", free: t("comparison.standard"), premium: t("comparison.priority") },
-    ];
+    // Build comparison rows dynamically from API data — no hard coding
+    const freePlan = plans.find(p => p.nameKey.toLowerCase().includes("free"));
+    const premiumPlan2 = plans.find(p => p.nameKey.toLowerCase().includes("premium"));
+
+    const comparisonRows = freePlan && premiumPlan2
+        ? freePlan.features.map(freeFeature => {
+            const premiumFeature = premiumPlan2.features.find(f => f.textKey === freeFeature.textKey);
+
+            const renderValue = (feature: typeof freeFeature | undefined) => {
+                if (!feature) return false;
+                if (feature.params?.count !== undefined) {
+                    const count = feature.params.count;
+                    return count === 0 || String(count).toLowerCase() === "unlimited"
+                        ? t("comparison.unlimited")
+                        : t("comparison.words_limit", { count: Number(count) });
+                }
+                if (feature.params?.value !== undefined) return String(feature.params.value);
+                return feature.included;
+            };
+
+            return {
+                key: freeFeature.textKey,
+                free: renderValue(freeFeature),
+                premium: renderValue(premiumFeature),
+            };
+        })
+        : [];
 
     return (
         <div className="min-h-screen bg-background pb-20">
