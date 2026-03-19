@@ -72,7 +72,11 @@ export function SepayQRDialog({ qrData, onOpenChange, onCreateNew, onRefresh }: 
             if (!open) setImageError(false);
             onOpenChange(open);
         }}>
-            <DialogContent className="sm:max-w-md">
+            <DialogContent 
+                className="sm:max-w-md"
+                onPointerDownOutside={(e) => e.preventDefault()}
+                onEscapeKeyDown={(e) => e.preventDefault()}
+            >
                 <DialogHeader>
                     <DialogTitle className="text-center">{t("method_sepay")}</DialogTitle>
                     <DialogDescription className="text-center">

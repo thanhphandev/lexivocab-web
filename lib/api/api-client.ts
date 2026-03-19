@@ -222,7 +222,7 @@ export const authApi = {
     login: (data: LoginRequest) =>
         clientApi.post<AuthUser>('/api/auth/login', data),
     register: (data: RegisterRequest) =>
-        clientApi.post<AuthUser>('/api/auth/register', data),
+        clientApi.post<AuthUser & { requiresVerification?: boolean }>('/api/auth/register', data),
     logout: () =>
         clientApi.post<void>('/api/auth/logout'),
     getMe: () =>

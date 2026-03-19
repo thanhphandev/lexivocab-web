@@ -25,6 +25,15 @@ export default function RegisterPage() {
         }
     }, [isAuthenticated, router, locale]);
 
+    const handleGoogleResponse = useCallback(async (credential: string) => {
+        setGoogleLoading(true);
+        const success = await googleLogin(credential);
+        setGoogleLoading(false);
+        if (success) {
+            router.push(`/${locale}/dashboard`);
+        }
+    }, [googleLogin, router, locale]);
+
     if (isAuthenticated) {
         return null;
     }
@@ -36,15 +45,6 @@ export default function RegisterPage() {
             router.push(`/${locale}/dashboard`);
         }
     };
-
-    const handleGoogleResponse = useCallback(async (credential: string) => {
-        setGoogleLoading(true);
-        const success = await googleLogin(credential);
-        setGoogleLoading(false);
-        if (success) {
-            router.push(`/${locale}/dashboard`);
-        }
-    }, [googleLogin, router, locale]);
 
 
     return (

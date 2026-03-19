@@ -17,6 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 import { locales } from '@/lib/i18n';
+import { Toaster } from 'sonner';
 
 // Locale to OpenGraph locale mapping
 const localeToOg: Record<string, string> = {
@@ -44,8 +45,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         },
         description: t('description'),
         keywords: t('keywords'),
-        authors: [{ name: 'Thanh Phan' }],
-        creator: 'Thanh Phan',
+        authors: [{ name: 'Phan Văn Thành' }],
+        creator: 'Phan Văn Thành',
         publisher: 'LexiVocab',
         applicationName: 'LexiVocab',
 
@@ -164,6 +165,7 @@ export default async function LocaleLayout({
                     <AuthProvider>
                         {children}
                     </AuthProvider>
+                    <Toaster richColors position="top-right" closeButton />
                 </NextIntlClientProvider>
             </body>
         </html>

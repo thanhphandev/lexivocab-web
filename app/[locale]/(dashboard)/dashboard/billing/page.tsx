@@ -243,15 +243,22 @@ export default function BillingPage() {
                                 </div>
                                 <div>
                                     <CardTitle className="text-xl">
-                                        {billing?.activeSubscription
-                                            ? billing.activeSubscription.durationMonths
-                                                ? t("current_plan.title_premium", {
-                                                    plan: billing.plan || "Premium",
-                                                    months: billing.activeSubscription.durationMonths,
-                                                    month_label: tPricing(billing.activeSubscription.durationMonths > 1 ? "comparison.months" : "comparison.month")
-                                                })
-                                                : t("current_plan.title_lifetime", { plan: billing.plan || "Premium" })
-                                            : t("current_plan.title_free")}
+                                        {(() => {
+                                            if (!billing?.activeSubscription) return t("current_plan.title_free");
+                                            if (!billing.activeSubscription.endDate) return t("current_plan.title_lifetime", { plan: billing.plan || "Premium" });
+                                            
+                                            // Calculate months based on start and end dates
+                                            const start = new Date(billing.activeSubscription.startDate);
+                                            const end = new Date(billing.activeSubscription.endDate);
+                                            const msPerMonth = 1000 * 60 * 60 * 24 * 30.436875;
+                                            const months = Math.max(1, Math.round((end.getTime() - start.getTime()) / msPerMonth));
+                                            
+                                            return t("current_plan.title_premium", {
+                                                plan: billing.plan || "Premium",
+                                                months: months,
+                                                month_label: tPricing(months > 1 ? "comparison.months" : "comparison.month")
+                                            });
+                                        })()}
                                     </CardTitle>
                                     <CardDescription>
                                         {perms.isPremium

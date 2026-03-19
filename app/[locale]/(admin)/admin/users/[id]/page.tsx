@@ -294,9 +294,6 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
                                         </TableCell>
                                         <TableCell>{sub.provider}</TableCell>
                                         <TableCell className="text-xs">
-                                            {sub.durationMonths 
-                                                ? <span className="font-semibold">{sub.durationMonths} Months<br/></span> 
-                                                : null}
                                             {new Date(sub.startDate).toLocaleDateString()} - <br />
                                             {sub.endDate ? new Date(sub.endDate).toLocaleDateString() : 'Forever'}
                                         </TableCell>

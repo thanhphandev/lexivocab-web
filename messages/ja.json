@@ -133,6 +133,7 @@
         "upgradeNow": "今すぐアップグレード →"
       },
       "empty": {
+        "noVocabulary": "まだ単語がありません。",
         "noMatchTitle": "一致する結果がありません",
         "noMatchDesc": "「{query}」に一致するものが見つかりませんでした。別のキーワードをお試しください。",
         "emptyTagTitle": "タグが空です",
@@ -290,10 +291,14 @@
       "noReviews": "目標達成です！現在、復習が必要な単語はありません。",
       "cardFront": "タップして意味を表示",
       "quality": {
-        "0": "もう一度",
-        "1": "難しい",
-        "2": "普通",
-        "3": "簡単"
+        "score_0": "もう一度",
+        "score_0_hint": "完全に忘れた",
+        "score_1": "難しい",
+        "score_1_hint": "うっすら覚えている",
+        "score_3": "普通",
+        "score_3_hint": "思い出せた",
+        "score_5": "簡単",
+        "score_5_hint": "完璧に覚えている"
       },
       "progress": "{total}単語中{current}個目"
     },
@@ -492,6 +497,13 @@
       "unlimited": "無制限",
       "standard": "標準",
       "priority": "優先",
+      "MAX_WORDS": "最大 {count} 語彙",
+      "AI_ACCESS": "AI 意味・文脈",
+      "SUPPORT_LEVEL": "サポート",
+      "EXPORT_PDF": "データエクスポート (PDF/CSV)",
+      "ADVANCED_AI": "高度なAI機能",
+      "QUIZ_GENERATION": "AIクイズ生成",
+      "AI_DAILY_LIMIT": "AI 1日の制限",
       "duration_1m": "1ヶ月",
       "duration_3m": "3ヶ月",
       "duration_6m": "6ヶ月",
@@ -721,7 +733,7 @@
   "Checkout": {
     "processing_title": "決済処理中...",
     "processing_subtitle": "このウィンドウを閉じないでください",
-    "success_title": "決済が完了しました！", 
+    "success_title": "決済が完了しました！",
     "success_subtitle": "プレミアムプランへのアップグレードありがとうございます。アカウントが更新されました。",
     "premium_activated": "プランが有効化されました",
     "account_status": "アカウントステータス",

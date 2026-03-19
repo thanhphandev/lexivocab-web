@@ -133,6 +133,7 @@
         "upgradeNow": "Upgrade Now →"
       },
       "empty": {
+        "noVocabulary": "There are no vocabulary words yet.",
         "noMatchTitle": "No matches found",
         "noMatchDesc": "We couldn't find anything matching \"{query}\". Try a different keyword.",
         "emptyTagTitle": "Empty Tag",
@@ -290,10 +291,14 @@
       "noReviews": "You're all caught up! No words are due for review right now.",
       "cardFront": "Tap to reveal meaning",
       "quality": {
-        "0": "Again",
-        "1": "Hard",
-        "2": "Good",
-        "3": "Easy"
+        "score_0": "Again",
+        "score_0_hint": "Forgot",
+        "score_1": "Hard",
+        "score_1_hint": "Barely recalled",
+        "score_3": "Good",
+        "score_3_hint": "Recalled",
+        "score_5": "Easy",
+        "score_5_hint": "Perfect recall"
       },
       "progress": "{current} of {total} words"
     },
@@ -492,6 +497,13 @@
       "unlimited": "Unlimited",
       "standard": "Standard",
       "priority": "Priority",
+      "MAX_WORDS": "Up to {count} vocabulary words",
+      "AI_ACCESS": "AI Meaning & Context",
+      "SUPPORT_LEVEL": "Support",
+      "EXPORT_PDF": "Export Data (PDF/CSV)",
+      "ADVANCED_AI": "Advanced AI Features",
+      "QUIZ_GENERATION": "AI Quiz Generation",
+      "AI_DAILY_LIMIT": "AI Daily Limit",
       "duration_1m": "1 month",
       "duration_3m": "3 months",
       "duration_6m": "6 months",

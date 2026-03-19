@@ -133,6 +133,7 @@
         "upgradeNow": "立即升级 →"
       },
       "empty": {
+        "noVocabulary": "您还没有词汇。",
         "noMatchTitle": "未找到匹配结果",
         "noMatchDesc": "未找到与\"{query}\"匹配的内容，请尝试其他关键词。",
         "emptyTagTitle": "标签为空",
@@ -290,10 +291,14 @@
       "noReviews": "您已跟上进度！目前没有待复习的单词。",
       "cardFront": "点击查看释义",
       "quality": {
-        "0": "重来",
-        "1": "困难",
-        "2": "良好",
-        "3": "简单"
+        "score_0": "重来",
+        "score_0_hint": "完全忘记",
+        "score_1": "困难",
+        "score_1_hint": "模糊记得",
+        "score_3": "良好",
+        "score_3_hint": "记得",
+        "score_5": "简单",
+        "score_5_hint": "清晰记得"
       },
       "progress": "第 {current} / {total} 个单词"
     },
@@ -492,6 +497,13 @@
       "unlimited": "无限制",
       "standard": "标准",
       "priority": "优先",
+      "MAX_WORDS": "最多 {count} 个词汇",
+      "AI_ACCESS": "AI 释义与语境",
+      "SUPPORT_LEVEL": "支持",
+      "EXPORT_PDF": "导出数据 (PDF/CSV)",
+      "ADVANCED_AI": "高级 AI 功能",
+      "QUIZ_GENERATION": "AI 测验生成",
+      "AI_DAILY_LIMIT": "AI 每日限额",
       "duration_1m": "1个月",
       "duration_3m": "3个月",
       "duration_6m": "6个月",

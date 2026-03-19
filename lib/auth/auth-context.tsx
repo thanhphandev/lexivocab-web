@@ -130,6 +130,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         try {
             const result = await authApi.register(data);
             if (result.success) {
+                // If verification is required, backend returns success but no accessToken
+                if (result.data.requiresVerification) {
+                    setError("Your email is not verified. Please check your inbox for the verification code.");
+                    return false;
+                }
                 setUser(result.data);
                 refreshPermissions();
                 return true;

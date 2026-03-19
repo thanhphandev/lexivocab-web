@@ -24,7 +24,7 @@ export async function POST(request: Request) {
     if (!accessToken) {
         return NextResponse.json({
             success: true,
-            data: { id: userId, email, fullName, role },
+            data: { id: userId, email, fullName, role, requiresVerification: true },
         });
     }
 

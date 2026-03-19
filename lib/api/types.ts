@@ -276,7 +276,6 @@ export interface SubscriptionDto {
     endDate: string | null;
     provider: string;
     externalSubscriptionId: string | null;
-    durationMonths: number | null;
 }
 
 export interface PaymentHistoryDto {
@@ -309,9 +308,8 @@ export interface UserPermissionsDto {
 }
 
 export interface CreatePaymentOrderRequest {
-    planId: string;
+    pricingId: string;
     provider: number; // 1: PayPal, 3: Sepay
-    durationMonths?: number; // For Premium plan: 1, 3, 6, 12 (default: 1)
 }
 
 export interface CreatePaymentOrderResponse {
@@ -338,14 +336,23 @@ export interface PlanFeatureDto {
     params?: Record<string, string | number>;
 }
 
+export interface PlanPricingDto {
+    id: string;
+    billingCycle: string;
+    price: string;
+    currency: string;
+    durationDays: number | null;
+    labelKey: string;
+}
+
 export interface SubscriptionPlanDto {
     id: string;
     nameKey: string;
-    price: string;
-    intervalKey: string;
     descriptionKey: string;
     isRecommended: boolean;
+    displayOrder: number;
     features: PlanFeatureDto[];
+    pricings: PlanPricingDto[];
 }
 
 // ─── Admin DTOs ──────────────────────────────────────────────
@@ -383,7 +390,6 @@ export interface AdminSubscriptionDto {
     endDate: string | null;
     provider: string;
     externalSubscriptionId: string | null;
-    durationMonths: number | null;
 }
 
 export interface UpdateUserRoleRequest {
@@ -444,38 +450,33 @@ export interface CreateFeatureDefinitionRequest {
 }
 
 export interface UpdateFeatureDefinitionRequest {
-    description?: string;
-    valueType?: string;
-    defaultValue?: string;
+    description: string;
+    valueType: string;
+    defaultValue: string;
 }
 
 export interface PlanDefinitionDto {
     id: string;
     name: string;
-    price: number;
-    currency: string;
-    intervalType: string;
     isActive: boolean;
     features: Record<string, string>;
+    pricings: PlanPricingDto[];
     createdAt?: string;
+    updatedAt?: string;
 }
 
 export interface CreatePlanDefinitionRequest {
     name: string;
-    price: number;
-    currency: string;
-    intervalType: string;
     isActive: boolean;
     features: Record<string, string>;
+    pricings: PlanPricingDto[];
 }
 
 export interface UpdatePlanDefinitionRequest {
-    name?: string;
-    price?: number;
-    currency?: string;
-    intervalType?: string;
-    isActive?: boolean;
-    features?: Record<string, string>;
+    name: string;
+    isActive: boolean;
+    features: Record<string, string>;
+    pricings: PlanPricingDto[];
 }
 
 // ─── Master Vocabulary DTOs ─────────────────────────────────

@@ -35,17 +35,32 @@ export default function PricingPage() {
     const [isPolling, setIsPolling] = useState(false);
     const [plans, setPlans] = useState<SubscriptionPlanDto[]>([]);
     const [isLoadingPlans, setIsLoadingPlans] = useState(true);
-    const [durationMonths, setDurationMonths] = useState<number>(1); // 1, 3, 6, 12 months for Premium
+    const Object_values = Object.values;
+    const [selectedPricingIds, setSelectedPricingIds] = useState<Record<string, string>>({});
     const [pendingTransaction, setPendingTransaction] = useState<PaymentHistoryDto | null>(null);
-    const [lastSepayRequest, setLastSepayRequest] = useState<{ planId: string; durationMonths: number } | null>(null);
+    const [lastSepayRequest, setLastSepayRequest] = useState<{ pricingId: string } | null>(null);
 
-    // Duration options with discount
-    const durationOptions = [
-        { months: 1, discount: 0, labelKey: "duration_1m" },
-        { months: 3, discount: 5, labelKey: "duration_3m" },
-        { months: 6, discount: 10, labelKey: "duration_6m" },
-        { months: 12, discount: 20, labelKey: "duration_12m" },
-    ];
+    // Force PayPal if not in Vietnamese locale
+    useEffect(() => {
+        if (locale !== "vi" && selectedProvider === 3) {
+            setSelectedProvider(1);
+        }
+    }, [locale, selectedProvider]);
+
+    // Default selection initializer when plans load
+    useEffect(() => {
+        if (plans.length > 0) {
+            const initialSelection: Record<string, string> = {};
+            const targetCurrency = locale === "vi" ? "VND" : "USD";
+            plans.forEach((plan) => {
+                const available = plan.pricings?.filter((p: any) => p.currency === targetCurrency);
+                if (available && available.length > 0) {
+                    initialSelection[plan.id] = available[0].id;
+                }
+            });
+            setSelectedPricingIds(initialSelection);
+        }
+    }, [plans, locale]);
 
     useEffect(() => {
         const fetchPlansAndHistory = async () => {
@@ -76,34 +91,20 @@ export default function PricingPage() {
         fetchPlansAndHistory();
     }, [isAuthenticated]);
 
-    const calculatePrice = (basePrice: number, months: number) => {
-        const option = durationOptions.find(o => o.months === months);
-        const discount = option?.discount || 0;
-        const total = basePrice * months;
-        const discounted = total * (1 - discount / 100);
-        return {
-            total,
-            discounted,
-            discount,
-            monthly: discounted / months
-        };
-    };
-
-    const handleUpgrade = async (plan: SubscriptionPlanDto, months: number = 1) => {
+    const handleUpgrade = async (plan: SubscriptionPlanDto, pricingId: string) => {
         if (!isAuthenticated) {
             window.location.href = `/${locale}/auth/login?redirect=/${locale}/pricing`;
             return;
         }
 
         const isFree = plan.nameKey.toLowerCase().includes("free");
-        if (isFree) return;
+        if (isFree || !pricingId) return;
         
         setIsProcessing(true);
         try {
             const res = await paymentApi.createOrder({ 
-                planId: plan.id,
-                provider: selectedProvider,
-                durationMonths: months
+                pricingId: pricingId,
+                provider: selectedProvider
             });
 
             if (res.success && res.data.approvalUrl) {
@@ -111,7 +112,7 @@ export default function PricingPage() {
                     // Sepay: Show QR Modal
                     const url = new URL(res.data.approvalUrl);
                     const ref = url.searchParams.get("des") || "";
-                    setLastSepayRequest({ planId: plan.id, durationMonths: months });
+                    setLastSepayRequest({ pricingId });
                     setQrData({ url: res.data.approvalUrl, ref });
                     setIsPolling(true);
                     setPendingTransaction(null);
@@ -156,9 +157,8 @@ export default function PricingPage() {
         setIsProcessing(true);
         try {
             const res = await paymentApi.createOrder({
-                planId: lastSepayRequest.planId,
-                provider: 3,
-                durationMonths: lastSepayRequest.durationMonths
+                pricingId: lastSepayRequest.pricingId,
+                provider: 3
             });
             if (res.success && res.data.approvalUrl) {
                 const url = new URL(res.data.approvalUrl);
@@ -210,10 +210,10 @@ export default function PricingPage() {
     const premiumPlan2 = plans.find(p => p.nameKey.toLowerCase().includes("premium"));
 
     const comparisonRows = freePlan && premiumPlan2
-        ? freePlan.features.map(freeFeature => {
-            const premiumFeature = premiumPlan2.features.find(f => f.textKey === freeFeature.textKey);
+        ? freePlan.features.map((freeFeature: any) => {
+            const premiumFeature = premiumPlan2.features.find((f: any) => f.textKey === freeFeature.textKey);
 
-            const renderValue = (feature: typeof freeFeature | undefined) => {
+            const renderValue = (feature: any) => {
                 if (!feature) return false;
                 if (feature.params?.count !== undefined) {
                     const count = feature.params.count;
@@ -284,6 +284,9 @@ export default function PricingPage() {
                             const isPremiumPlan = plan.nameKey.toLowerCase().includes("premium");
                             const delay = 0.2 + index * 0.1;
 
+                            const targetCurrency = locale === "vi" ? "VND" : "USD";
+                            const availablePricings = plan.pricings?.filter((p: any) => p.currency === targetCurrency) || [];
+
                             return (
                                 <motion.div
                                     key={plan.id}
@@ -324,64 +327,45 @@ export default function PricingPage() {
                                             <span className="text-5xl font-bold text-foreground">
                                                 {t("free")}
                                             </span>
-                                        ) : plan.intervalKey === "lifetime" ? (
-                                            <>
-                                                <span className="text-5xl font-bold text-foreground">
-                                                    {locale === "vi" 
-                                                        ? `${parseInt(plan.price).toLocaleString("vi-VN")}đ`
-                                                        : `$${(parseInt(plan.price) / 1000).toFixed(2)}`}
-                                                </span>
-                                                <span className="text-muted-foreground ml-2">{t("lifetime_label")}</span>
-                                            </>
                                         ) : (
                                             <>
-                                                {isPremiumPlan && (
+                                                {isPremiumPlan && availablePricings.length > 0 ? (
+                                                    // Dropdown / Tabs for multiple duration options
                                                     <div className="mb-6">
                                                         <div className="flex flex-wrap gap-2">
-                                                            {durationOptions.map((opt) => (
+                                                            {availablePricings.map((pricing: any) => (
                                                                 <button
-                                                                    key={opt.months}
-                                                                    onClick={() => setDurationMonths(opt.months)}
+                                                                    key={pricing.id}
+                                                                    onClick={() => setSelectedPricingIds(prev => ({ ...prev, [plan.id]: pricing.id }))}
                                                                     className={`flex-1 min-w-[80px] px-3 py-2 rounded-xl text-xs font-bold transition-all border-2 ${
-                                                                        durationMonths === opt.months
+                                                                        selectedPricingIds[plan.id] === pricing.id
                                                                             ? "border-primary bg-primary/10 text-primary shadow-sm"
                                                                             : "border-border bg-muted/30 text-muted-foreground hover:border-primary/30"
                                                                     }`}
                                                                 >
-                                                                    {t(opt.labelKey)}
-                                                                    {opt.discount > 0 && (
-                                                                        <span className="block text-[10px] mt-0.5 text-emerald-600 dark:text-emerald-400">
-                                                                            -{opt.discount}%
-                                                                        </span>
-                                                                    )}
+                                                                    {t(pricing.labelKey)}
                                                                 </button>
                                                             ))}
                                                         </div>
                                                     </div>
-                                                )}
+                                                ) : null}
                                                 {(() => {
-                                                    const calc = calculatePrice(parseInt(plan.price), durationMonths);
+                                                    const selectedPricingId = selectedPricingIds[plan.id];
+                                                    const pricing = availablePricings.find((p: any) => p.id === selectedPricingId) || availablePricings[0];
+                                                    
+                                                    if (!pricing) return null;
+
+                                                    const priceVal = parseFloat(pricing.price);
+
                                                     return (
                                                         <>
                                                             <span className="text-5xl font-bold text-foreground">
                                                                 {locale === "vi"
-                                                                    ? `${Math.round(calc.discounted).toLocaleString("vi-VN")}đ`
-                                                                    : `$${(calc.discounted / 1000).toFixed(2)}`}
+                                                                    ? `${Math.round(priceVal).toLocaleString("vi-VN")}đ`
+                                                                    : `$${priceVal.toFixed(2)}`}
                                                             </span>
                                                             <div className="text-sm text-muted-foreground mt-1">
-                                                                {calc.discount > 0 && (
-                                                                    <>
-                                                                        <span className="line-through mr-2">
-                                                                            {locale === "vi"
-                                                                                ? `${Math.round(calc.total).toLocaleString("vi-VN")}đ`
-                                                                                : `$${(calc.total / 1000).toFixed(2)}`}
-                                                                        </span>
-                                                                        <span className="text-emerald-500 font-medium">
-                                                                            -{calc.discount}%
-                                                                        </span>
-                                                                    </>
-                                                                )}
-                                                                <span className="ml-2">{t("for")} {durationMonths} {durationMonths === 1 ? t("month") : t("months")}</span>
+                                                                <span className="ml-2 block mt-1">{t(pricing.labelKey)}</span>
                                                             </div>
                                                         </>
                                                     );
@@ -391,7 +375,7 @@ export default function PricingPage() {
                                     </div>
 
                                     <ul className="space-y-3 mb-8 flex-1">
-                                        {plan.features.map((feature, fIndex) => (
+                                        {plan.features.map((feature: any, fIndex: number) => (
                                             <li
                                                 key={fIndex}
                                                 className="flex items-center gap-3 text-sm"
@@ -410,10 +394,26 @@ export default function PricingPage() {
                                                 >
                                                     {(() => {
                                                         const key = feature.textKey.replace("Pricing.", "");
+                                                        const p = feature.params as Record<string, any> | null | undefined;
+                                                        // count-based feature (integer from backend)
+                                                        if (p != null && "count" in p) {
+                                                            const c = p.count;
+                                                            if (c === 0 || String(c).toLowerCase() === "unlimited") {
+                                                                return t("comparison.unlimited");
+                                                            }
+                                                            return t("comparison.words_limit", { count: Number(c) });
+                                                        }
+                                                        // string value "Unlimited" from backend
+                                                        if (p != null && "value" in p) {
+                                                            const v = String(p.value);
+                                                            if (v.toLowerCase() === "unlimited") return t("comparison.unlimited");
+                                                            return v;
+                                                        }
+                                                        // boolean / no params — use key without interpolation
                                                         try {
-                                                            return t(key, feature.params ?? {});
+                                                            return t(key);
                                                         } catch {
-                                                            return t(key, { count: 0 });
+                                                            return key;
                                                         }
                                                     })()}
                                                 </span>
@@ -452,7 +452,7 @@ export default function PricingPage() {
                                                 </Button>
                                             ) : (
                                                 <Button
-                                                    onClick={() => handleUpgrade(plan, isPremiumPlan ? durationMonths : 1)}
+                                                    onClick={() => handleUpgrade(plan, selectedPricingIds[plan.id])}
                                                     disabled={isProcessing}
                                                     className="w-full h-12 text-base bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg"
                                                 >
@@ -490,6 +490,7 @@ export default function PricingPage() {
                                                     </div>
                                                     <span className="text-sm font-medium">{t("method_paypal")}</span>
                                                 </button>
+                                                {locale === "vi" && (
                                                 <button
                                                     onClick={() => setSelectedProvider(3)}
                                                     className={`flex items-center gap-3 p-3 rounded-xl border-2 transition-all ${selectedProvider === 3
@@ -502,6 +503,7 @@ export default function PricingPage() {
                                                     </div>
                                                     <span className="text-sm font-medium">{t("method_sepay")}</span>
                                                 </button>
+                                                )}
                                             </div>
                                         </div>
                                     )}
@@ -541,7 +543,7 @@ export default function PricingPage() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {comparisonRows.map((row, i) => (
+                                    {comparisonRows.map((row: any, i: number) => (
                                         <tr key={i} className="border-b border-border/50 hover:bg-muted/10 transition-colors">
                                             <td className="py-5 px-8 font-medium">{t(`comparison.${row.key}`)}</td>
                                             <td className="py-5 px-8 text-center text-muted-foreground">

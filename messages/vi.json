@@ -133,6 +133,7 @@
         "upgradeNow": "Nâng cấp ngay →"
       },
       "empty": {
+        "noVocabulary": "Bạn chưa có từ vựng nào.",
         "noMatchTitle": "Không tìm thấy kết quả",
         "noMatchDesc": "Không tìm thấy kết quả nào cho \"{query}\". Thử từ khóa khác.",
         "emptyTagTitle": "Thẻ trống",
@@ -290,10 +291,14 @@
       "noReviews": "Bạn đã hoàn thành mục tiêu! Không có từ nào cần ôn tập lúc này.",
       "cardFront": "Chạm để xem nghĩa",
       "quality": {
-        "0": "Lại",
-        "1": "Khó",
-        "2": "Tốt",
-        "3": "Dễ"
+        "score_0": "Lại",
+        "score_0_hint": "Quên hoàn toàn",
+        "score_1": "Khó",
+        "score_1_hint": "Nhớ mờ",
+        "score_3": "Tốt",
+        "score_3_hint": "Nhớ được",
+        "score_5": "Dễ",
+        "score_5_hint": "Nhớ rõ"
       },
       "progress": "{current} / {total} từ"
     },
@@ -492,6 +497,13 @@
       "unlimited": "Không giới hạn",
       "standard": "Tiêu chuẩn",
       "priority": "Ưu tiên",
+      "MAX_WORDS": "Tối đa {count} từ vựng",
+      "AI_ACCESS": "AI Dịch nghĩa & Ngữ cảnh",
+      "SUPPORT_LEVEL": "Hỗ trợ",
+      "EXPORT_PDF": "Xuất dữ liệu (PDF/CSV)",
+      "ADVANCED_AI": "Tính năng AI nâng cao",
+      "QUIZ_GENERATION": "Tạo bài kiểm tra AI",
+      "AI_DAILY_LIMIT": "Giới hạn AI mỗi ngày",
       "duration_1m": "1 tháng",
       "duration_3m": "3 tháng",
       "duration_6m": "6 tháng",

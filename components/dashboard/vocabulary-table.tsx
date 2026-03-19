@@ -94,7 +94,7 @@ export function VocabularyTable({ data, tags, isLoading, onRefresh }: Vocabulary
 
         const id = itemToDelete.id;
         const word = itemToDelete.wordText;
-        
+
         setActionLoading(id);
         try {
             const res = await clientApi.delete(`/api/proxy/vocabularies/${id}`);
@@ -128,7 +128,7 @@ export function VocabularyTable({ data, tags, isLoading, onRefresh }: Vocabulary
         return (
             <div className="flex flex-col items-center justify-center py-20 border rounded-xl bg-card text-center px-4">
                 <AlertCircle className="h-10 w-10 text-muted-foreground mb-4 opacity-50" />
-                <h3 className="text-lg font-medium text-foreground">{t("empty")}</h3>
+                <h3 className="text-lg font-medium text-foreground">{t("empty.noVocabulary")}</h3>
                 <p className="text-sm text-muted-foreground mt-1 max-w-sm">
                     {t("subtitle")}
                 </p>
@@ -230,8 +230,8 @@ export function VocabularyTable({ data, tags, isLoading, onRefresh }: Vocabulary
                                                     <DropdownMenuSeparator className="my-1.5" />
                                                     {item.tagId && (
                                                         <>
-                                                            <DropdownMenuItem 
-                                                                onClick={() => handleAssignTag(item.id, null)} 
+                                                            <DropdownMenuItem
+                                                                onClick={() => handleAssignTag(item.id, null)}
                                                                 className="text-xs text-destructive focus:bg-destructive/10 cursor-pointer rounded-md h-9"
                                                             >
                                                                 <Trash2 className="mr-2 h-3.5 w-3.5" /> {t("table.removeTag")}
@@ -258,13 +258,13 @@ export function VocabularyTable({ data, tags, isLoading, onRefresh }: Vocabulary
                                                                                 "text-sm",
                                                                                 item.tagId === tag.id ? "font-bold" : "font-medium"
                                                                             )}
-                                                                            style={{ color: item.tagId === tag.id ? (tag.color || undefined) : undefined }}>
+                                                                                style={{ color: item.tagId === tag.id ? (tag.color || undefined) : undefined }}>
                                                                                 {tag.name}
                                                                             </span>
                                                                         </div>
                                                                         {item.tagId === tag.id && (
-                                                                            <div 
-                                                                                className="w-1.5 h-1.5 rounded-full" 
+                                                                            <div
+                                                                                className="w-1.5 h-1.5 rounded-full"
                                                                                 style={{ backgroundColor: tag.color || '#6366f1' }}
                                                                             />
                                                                         )}
