@@ -123,8 +123,10 @@
       "statusFilter": {
         "all": "Tất cả trạng thái",
         "active": "Đang học",
-        "archived": "Đã lưu trữ"
+        "archived": "Đã lưu trữ",
+        "unarchive": "Bỏ lưu trữ"
       },
+      "contribute": "Đóng góp Cộng đồng",
       "quota": {
         "exceededTitle": "Đã vượt hạn ngạch",
         "nearLimitTitle": "Sắp đạt giới hạn",
@@ -166,21 +168,27 @@
         "deleteDesc": "Bạn có chắc muốn xóa \"{word}\"? Hành động này không thể hoàn tác.",
         "deleteConfirm": "Xóa",
         "deleteSuccess": "Đã xóa \"{word}\" thành công",
-        "deleteFailed": "Xóa \"{word}\" thất bại"
+        "deleteFailed": "Xóa \"{word}\" thất bại",
+        "contributeSuccess": "Đã góp từ '{word}' cho cộng đồng thành công.",
+        "contributeFailed": "Lỗi khi đóng góp từ '{word}'."
       },
       "badges": {
         "active": "Đang học",
         "archived": "Lưu trữ",
         "new": "Mới",
         "learning": "Đang học",
-        "mastered": "Thành thạo"
+        "mastered": "Thành thạo",
+        "toReview": "Cần Ôn",
+        "communityApproved": "Cộng Đồng Duyệt",
+        "communityPending": "Chờ Duyệt"
       },
       "actions": {
         "edit": "Chỉnh sửa",
         "archive": "Lưu trữ",
         "unarchive": "Khôi phục",
         "delete": "Xóa",
-        "source": "Mở liên kết gốc"
+        "source": "Mở liên kết gốc",
+        "contribute": "Đóng góp Cộng đồng"
       },
       "empty_legacy": "Không tìm thấy từ vựng nào.",
       "tagSidebar": {
@@ -539,6 +547,13 @@
       "expired": "Mã thanh toán đã hết hạn. Vui lòng tạo giao dịch mới.",
       "waiting": "Đang chờ Sepay xác nhận...",
       "instruction": "Vui lòng quét mã QR hoặc chuyển khoản chính xác số tiền và nội dung bên trên. Hệ thống sẽ tự động nâng cấp tài khoản sau 1-2 phút."
+    },
+    "coupon_placeholder": "Bạn có mã giảm giá không?",
+    "apply_coupon": "Áp dụng",
+    "remove_coupon": "Bỏ mã",
+    "coupon_applied": "Đã áp dụng mã giảm giá thành công!",
+    "pricing_errors": {
+      "invalid_coupon": "Mã giảm giá không hợp lệ hoặc đã hết hạn"
     }
   },
   "Billing": {

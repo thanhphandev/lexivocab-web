@@ -9,66 +9,69 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { masterVocabApi, vocabularyApi } from "@/lib/api/api-client";
-import type { MasterVocabularyLookupDto } from "@/lib/api/types";
+import type { MasterVocabularyDto } from "@/lib/api/types";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
 
 export default function ExplorePage() {
     const t = useTranslations("Dashboard.explore");
     const [searchQuery, setSearchQuery] = useState("");
-    const [suggestions, setSuggestions] = useState<MasterVocabularyLookupDto[]>([]);
-    const [selectedWord, setSelectedWord] = useState<MasterVocabularyLookupDto | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
-    const [isSearching, setIsSearching] = useState(false);
-    const [isAdding, setIsAdding] = useState(false);
+    const [debouncedSearch, setDebouncedSearch] = useState("");
+    const [words, setWords] = useState<MasterVocabularyDto[]>([]);
+    const [selectedWord, setSelectedWord] = useState<MasterVocabularyDto | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isSaving, setIsSaving] = useState(false);
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
 
     // Debounced search for suggestions
     useEffect(() => {
         if (!searchQuery.trim()) {
-            setSuggestions([]);
+            setDebouncedSearch("");
+            setPage(1);
             return;
         }
-
-        const timer = setTimeout(async () => {
-            setIsSearching(true);
-            const res = await masterVocabApi.search(searchQuery);
-            if (res.success) {
-                setSuggestions(res.data);
-            }
-            setIsSearching(false);
-        }, 300);
+        const timer = setTimeout(() => {
+            setDebouncedSearch(searchQuery);
+            setPage(1);
+        }, 500);
 
         return () => clearTimeout(timer);
     }, [searchQuery]);
 
-    const handleSelect = async (word: MasterVocabularyLookupDto) => {
-        setIsLoading(true);
+    useEffect(() => {
+        const fetchExploreList = async () => {
+            setIsLoading(true);
+            const res = await vocabularyApi.getExploreList(page, 20, debouncedSearch);
+            if (res.success && res.data) {
+                setWords(res.data.items);
+                setTotalPages(res.data.totalPages);
+            }
+            setIsLoading(false);
+        };
+        fetchExploreList();
+    }, [page, debouncedSearch]);
+
+    const handleSelect = (word: MasterVocabularyDto) => {
         setSelectedWord(word);
-        setSearchQuery("");
-        setSuggestions([]);
-        
-        // Fetch full details if needed (our lookup currently returns the same as search for consistency)
-        const res = await masterVocabApi.lookup(word.wordText);
-        if (res.success) {
-            setSelectedWord(res.data);
-        }
-        setIsLoading(false);
     };
 
-    const handleAddToVocab = async () => {
-        if (!selectedWord) return;
-        setIsAdding(true);
+    const handleAddToVocab = async (word: MasterVocabularyDto) => {
+        setIsSaving(true);
         const res = await vocabularyApi.create({
-            wordText: selectedWord.wordText,
-            customMeaning: selectedWord.meaning,
+            wordText: word.word,
+            customMeaning: word.meaning || undefined,
         });
         if (res.success) {
-            // Show success toast or update state
-            alert(`Added "${selectedWord.wordText}" to your vocabulary!`);
+            toast.success(`Added "${word.word}" to your vocabulary!`);
+        } else {
+            toast.error(res.error || "Failed to add word.");
         }
-        setIsAdding(false);
+        setIsSaving(false);
     };
 
     const playAudio = (url: string) => {
+        if (!url) return;
         const audio = new Audio(url);
         audio.play().catch(e => console.error("Audio play failed", e));
     };
@@ -89,29 +92,24 @@ export default function ExplorePage() {
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />
-                    {isSearching && (
-                        <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
-                        </div>
-                    )}
                 </div>
 
                 <AnimatePresence>
-                    {suggestions.length > 0 && (
+                    {searchQuery.trim() !== "" && words.length > 0 && !selectedWord && (
                         <motion.div
                             initial={{ opacity: 0, y: -10 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -10 }}
                             className="absolute z-10 w-full mt-2 bg-popover border rounded-lg shadow-xl overflow-hidden"
                         >
-                            {suggestions.map((item) => (
+                            {words.slice(0, 5).map((item) => (
                                 <button
                                     key={item.id}
                                     className="w-full px-4 py-3 text-left hover:bg-accent flex justify-between items-center transition-colors"
                                     onClick={() => handleSelect(item)}
                                 >
                                     <div>
-                                        <span className="font-semibold text-foreground">{item.wordText}</span>
+                                        <span className="font-semibold text-foreground">{item.word}</span>
                                         <span className="ml-3 text-sm text-muted-foreground line-clamp-1 italic">
                                             {item.meaning}
                                         </span>
@@ -129,7 +127,7 @@ export default function ExplorePage() {
             </div>
 
             <main className="min-h-[400px]">
-                {isLoading ? (
+                {isLoading && !selectedWord ? (
                     <div className="space-y-4">
                         <Skeleton className="h-12 w-1/3" />
                         <Skeleton className="h-40 w-full" />
@@ -143,8 +141,11 @@ export default function ExplorePage() {
                             <CardHeader className="pb-2">
                                 <div className="flex justify-between items-start">
                                     <div className="space-y-1">
+                                        <Button variant="ghost" size="sm" className="mb-2 -ml-2 text-muted-foreground" onClick={() => setSelectedWord(null)}>
+                                            ← Back to Explore
+                                        </Button>
                                         <div className="flex items-center gap-3">
-                                            <CardTitle className="text-4xl font-extrabold">{selectedWord.wordText}</CardTitle>
+                                            <CardTitle className="text-4xl font-extrabold">{selectedWord.word}</CardTitle>
                                             {selectedWord.cefrLevel && (
                                                 <Badge className="bg-primary/10 text-primary border-primary/20 hover:bg-primary/20">
                                                     {selectedWord.cefrLevel}
@@ -166,8 +167,8 @@ export default function ExplorePage() {
                                             )}
                                         </div>
                                     </div>
-                                    <Button size="lg" onClick={handleAddToVocab} disabled={isAdding} className="gap-2 shadow-sm">
-                                        {isAdding ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
+                                    <Button size="lg" onClick={() => handleAddToVocab(selectedWord)} disabled={isSaving} className="gap-2 shadow-sm">
+                                        {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
                                         {t("addToVocab")}
                                     </Button>
                                 </div>
@@ -185,13 +186,13 @@ export default function ExplorePage() {
 
                                 <div className="pt-4 border-t flex flex-wrap gap-4">
                                     <Button variant="outline" size="sm" className="gap-2" asChild>
-                                        <a href={`https://dictionary.cambridge.org/dictionary/english/${selectedWord.wordText}`} target="_blank" rel="noopener noreferrer">
+                                        <a href={`https://dictionary.cambridge.org/dictionary/english/${selectedWord.word}`} target="_blank" rel="noopener noreferrer">
                                             <ExternalLink className="h-4 w-4" />
                                             Cambridge
                                         </a>
                                     </Button>
                                     <Button variant="outline" size="sm" className="gap-2" asChild>
-                                        <a href={`https://www.oxfordlearnersdictionaries.com/definition/english/${selectedWord.wordText}`} target="_blank" rel="noopener noreferrer">
+                                        <a href={`https://www.oxfordlearnersdictionaries.com/definition/english/${selectedWord.word}`} target="_blank" rel="noopener noreferrer">
                                             <ExternalLink className="h-4 w-4" />
                                             Oxford
                                         </a>
@@ -201,16 +202,41 @@ export default function ExplorePage() {
                         </Card>
                     </motion.div>
                 ) : (
-                    <div className="flex flex-col items-center justify-center py-20 text-center opacity-50 space-y-4">
-                        <div className="p-4 rounded-full bg-accent/30">
-                            <BookOpen className="h-12 w-12 text-muted-foreground" />
-                        </div>
-                        <div className="space-y-1">
-                            <h3 className="text-xl font-semibold">{t("startTyping")}</h3>
-                        </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {words.map((word) => (
+                            <Card key={word.id} className="hover:shadow-md transition-shadow cursor-pointer border hover:border-primary/50" onClick={() => handleSelect(word)}>
+                                <CardHeader className="p-4 pb-2">
+                                    <div className="flex justify-between items-start">
+                                        <CardTitle className="text-lg font-bold text-primary">{word.word}</CardTitle>
+                                        {word.cefrLevel && (
+                                            <Badge variant="outline" className="text-[10px]">{word.cefrLevel}</Badge>
+                                        )}
+                                    </div>
+                                    <CardDescription className="line-clamp-2 text-sm italic">{word.meaning}</CardDescription>
+                                </CardHeader>
+                                <CardContent className="p-4 pt-2">
+                                    <div className="flex justify-between items-center mt-2">
+                                        <span className="text-xs text-muted-foreground tracking-wider font-mono">
+                                            {word.phoneticUs ? `/${word.phoneticUs}/` : ''}
+                                        </span>
+                                        <Button size="sm" variant="secondary" onClick={(e) => { e.stopPropagation(); handleAddToVocab(word); }} disabled={isSaving}>
+                                            <Plus className="h-3 w-3 mr-1" /> Add
+                                        </Button>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        ))}
                     </div>
                 )}
             </main>
+            
+            {!selectedWord && totalPages > 1 && (
+                <div className="flex items-center justify-center space-x-2 pt-6">
+                    <Button variant="outline" size="sm" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1 || isLoading}>Previous</Button>
+                    <span className="text-sm font-medium">Page {page} of {totalPages}</span>
+                    <Button variant="outline" size="sm" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages || isLoading}>Next</Button>
+                </div>
+            )}
         </div>
     );
 }

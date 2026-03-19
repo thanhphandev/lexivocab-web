@@ -40,6 +40,11 @@ export default function PricingPage() {
     const [pendingTransaction, setPendingTransaction] = useState<PaymentHistoryDto | null>(null);
     const [lastSepayRequest, setLastSepayRequest] = useState<{ pricingId: string } | null>(null);
 
+    const [couponCode, setCouponCode] = useState("");
+    const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; type: number; value: number } | null>(null);
+    const [isValidatingCoupon, setIsValidatingCoupon] = useState(false);
+    const [couponError, setCouponError] = useState("");
+
     // Force PayPal if not in Vietnamese locale
     useEffect(() => {
         if (locale !== "vi" && selectedProvider === 3) {
@@ -104,7 +109,8 @@ export default function PricingPage() {
         try {
             const res = await paymentApi.createOrder({ 
                 pricingId: pricingId,
-                provider: selectedProvider
+                provider: selectedProvider,
+                couponCode: appliedCoupon?.code
             });
 
             if (res.success && res.data.approvalUrl) {
@@ -134,6 +140,38 @@ export default function PricingPage() {
         } finally {
             setIsProcessing(false);
         }
+    };
+
+    const handleApplyCoupon = async () => {
+        if (!couponCode.trim()) return;
+        setIsValidatingCoupon(true);
+        setCouponError("");
+        try {
+            const res = await paymentApi.validateCoupon(couponCode.trim());
+            if (res.success) {
+                setAppliedCoupon({
+                    code: res.data.code,
+                    type: res.data.discountType,
+                    value: res.data.discountValue
+                });
+                setCouponError("");
+            } else {
+                const errorMsg = 'error' in res ? (res as any).error : null;
+                setCouponError(errorMsg || t("pricing_errors.invalid_coupon" as any));
+                setAppliedCoupon(null);
+            }
+        } catch (err) {
+            setCouponError(t("pricing_errors.invalid_coupon" as any));
+            setAppliedCoupon(null);
+        } finally {
+            setIsValidatingCoupon(false);
+        }
+    };
+
+    const handleRemoveCoupon = () => {
+        setAppliedCoupon(null);
+        setCouponCode("");
+        setCouponError("");
     };
 
     const handleResumePending = () => {
@@ -271,6 +309,33 @@ export default function PricingPage() {
                 </div>
             </div>
 
+            {/* Coupon Section */}
+            {!isLoadingPlans && (
+                <div className="mx-auto max-w-xl px-4 mb-10 text-center">
+                    <div className="flex flex-col sm:flex-row items-center gap-3 justify-center">
+                        <input
+                            type="text"
+                            placeholder={t("coupon_placeholder" as any)}
+                            value={couponCode}
+                            onChange={(e) => setCouponCode(e.target.value)}
+                            disabled={appliedCoupon !== null || isValidatingCoupon}
+                            className="flex-1 w-full max-w-sm rounded-lg border border-border bg-background px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                        />
+                        {appliedCoupon ? (
+                            <Button variant="outline" onClick={handleRemoveCoupon}>
+                                {t("remove_coupon" as any)}
+                            </Button>
+                        ) : (
+                            <Button onClick={handleApplyCoupon} disabled={isValidatingCoupon || !couponCode.trim() || appliedCoupon !== null}>
+                                {isValidatingCoupon ? <Loader2 className="h-4 w-4 animate-spin" /> : t("apply_coupon" as any)}
+                            </Button>
+                        )}
+                    </div>
+                    {couponError && <p className="text-sm text-destructive mt-2">{couponError}</p>}
+                    {appliedCoupon && <p className="text-sm text-emerald-500 mt-2">{t("coupon_applied" as any)}</p>}
+                </div>
+            )}
+
             {/* Pricing Cards */}
             <div className="mx-auto max-w-5xl px-4">
                 {isLoadingPlans ? (
@@ -356,13 +421,29 @@ export default function PricingPage() {
                                                     if (!pricing) return null;
 
                                                     const priceVal = parseFloat(pricing.price);
+                                                    let discountedPrice = priceVal;
+                                                    if (appliedCoupon) {
+                                                        if (appliedCoupon.type === 1) { // Percentage
+                                                            discountedPrice = priceVal - (priceVal * (appliedCoupon.value / 100));
+                                                        } else { // Fixed
+                                                            discountedPrice = priceVal - appliedCoupon.value;
+                                                        }
+                                                        if (discountedPrice < 0) discountedPrice = 0;
+                                                    }
 
                                                     return (
                                                         <>
+                                                            {appliedCoupon && (
+                                                                <span className="text-2xl font-bold text-muted-foreground line-through block mb-1">
+                                                                    {locale === "vi"
+                                                                        ? `${Math.round(priceVal).toLocaleString("vi-VN")}đ`
+                                                                        : `$${priceVal.toFixed(2)}`}
+                                                                </span>
+                                                            )}
                                                             <span className="text-5xl font-bold text-foreground">
                                                                 {locale === "vi"
-                                                                    ? `${Math.round(priceVal).toLocaleString("vi-VN")}đ`
-                                                                    : `$${priceVal.toFixed(2)}`}
+                                                                    ? `${Math.round(discountedPrice).toLocaleString("vi-VN")}đ`
+                                                                    : `$${discountedPrice.toFixed(2)}`}
                                                             </span>
                                                             <div className="text-sm text-muted-foreground mt-1">
                                                                 <span className="ml-2 block mt-1">{t(pricing.labelKey)}</span>

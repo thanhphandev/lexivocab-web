@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { BarChart3, Users, LogOut, ShieldAlert, ClipboardList, BookOpen, Key, Box, Activity } from "lucide-react";
+import { BarChart3, Users, LogOut, ShieldAlert, ClipboardList, BookOpen, Key, Box, Activity, Ticket } from "lucide-react";
 import { useAuth } from "@/lib/auth/auth-context";
 import { useLocale } from "next-intl";
 
@@ -32,6 +32,11 @@ const routes = [
         label: "Features",
         icon: Key,
         href: "/admin/features",
+    },
+    {
+        label: "Coupons",
+        icon: Ticket,
+        href: "/admin/coupons",
     },
     {
         label: "SaaS Plans",

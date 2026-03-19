@@ -158,6 +158,7 @@ import type {
     UserProfile,
     MasterVocabularyDto,
     CreateMasterVocabularyRequest,
+    CreateMasterVocabularyBatchCommand,
     UpdateMasterVocabularyRequest,
     SystemDiagnosticsDto,
     FeatureDefinitionDto,
@@ -181,7 +182,7 @@ import type {
     ReviewHistoryDto,
     UpdateSettingsRequest,
     UserSettingsDto,
-    MasterVocabularyLookupDto,
+
 
     VocabularyDto,
     CreateVocabularyRequest,
@@ -203,7 +204,14 @@ import type {
     WordExplanationDto,
     AiExplainRequest,
     RelatedWordsDto,
-    QuizDto
+    QuizDto,
+
+    // Admin & Coupons
+    AdminCouponDto,
+    CreateCouponRequest,
+    UpdateCouponRequest,
+    AdvancedSystemStatsDto,
+    ChartDataPoint
 } from './types';
 
 
@@ -264,6 +272,21 @@ export const adminApi = {
         clientApi.delete<string>(`/api/proxy/admin/users/${id}/subscriptions`),
     getMetrics: () =>
         clientApi.get<SystemStatsDto>(`/api/proxy/admin/metrics`),
+    getAdvancedMetrics: () =>
+        clientApi.get<AdvancedSystemStatsDto>(`/api/proxy/admin/metrics/advanced`),
+    coupons: {
+        getList: (page = 1, pageSize = 20, search?: string) => {
+            const query = new URLSearchParams({ page: page.toString(), pageSize: pageSize.toString() });
+            if (search) query.append('search', search);
+            return clientApi.get<PagedResult<AdminCouponDto>>(`/api/proxy/admin/coupons?${query.toString()}`);
+        },
+        create: (data: CreateCouponRequest) =>
+            clientApi.post<AdminCouponDto>(`/api/proxy/admin/coupons`, data),
+        update: (id: string, data: UpdateCouponRequest) =>
+            clientApi.put<AdminCouponDto>(`/api/proxy/admin/coupons/${id}`, data),
+        delete: (id: string) =>
+            clientApi.delete<void>(`/api/proxy/admin/coupons/${id}`),
+    },
     getAuditLogs: (page = 1, pageSize = 20, filters?: { userId?: string, action?: string, entityType?: string, search?: string, fromDate?: string, toDate?: string }) => {
         const query = new URLSearchParams({ page: page.toString(), pageSize: pageSize.toString() });
         if (filters?.userId) query.append('userId', filters.userId);
@@ -292,13 +315,17 @@ export const adminApi = {
 
 
     // Master Vocabularies
-    getMasterVocabularies: (page = 1, pageSize = 20, search?: string) => {
+    getMasterVocabularies: (page = 1, pageSize = 20, search?: string, isApproved?: boolean) => {
         const query = new URLSearchParams({ page: page.toString(), pageSize: pageSize.toString() });
         if (search) query.append('search', search);
+        if (isApproved !== undefined) query.append('isApproved', isApproved.toString());
         return clientApi.get<PagedResult<MasterVocabularyDto>>(`/api/proxy/admin/vocabularies/master?${query.toString()}`);
     },
     createMasterVocabulary: (data: CreateMasterVocabularyRequest) => clientApi.post<MasterVocabularyDto>(`/api/proxy/admin/vocabularies/master`, data),
+    createMasterVocabularyBatch: (data: CreateMasterVocabularyBatchCommand) => clientApi.post<{ success: boolean; createdCount: number }>(`/api/proxy/admin/vocabularies/master/batch`, data),
+    lookupMasterVocabulary: (word: string) => clientApi.get<MasterVocabularyDto>(`/api/proxy/admin/vocabularies/master/lookup?word=${encodeURIComponent(word)}`),
     updateMasterVocabulary: (id: string, data: UpdateMasterVocabularyRequest) => clientApi.put<MasterVocabularyDto>(`/api/proxy/admin/vocabularies/master/${id}`, data),
+    approveMasterVocabulary: (id: string, data?: UpdateMasterVocabularyRequest) => clientApi.patch<void>(`/api/proxy/admin/vocabularies/master/${id}/approve`, { id, ...data }),
     deleteMasterVocabulary: (id: string) => clientApi.delete<void>(`/api/proxy/admin/vocabularies/master/${id}`),
     getMasterVocabularyDetail: (id: string) => clientApi.get<MasterVocabularyDto>(`/api/proxy/admin/vocabularies/master/${id}`),
 };
@@ -325,6 +352,8 @@ export const paymentApi = {
         clientApi.post<void>('/api/proxy/payments/cancel-subscription'),
     getInvoiceUrl: (id: string) =>
         `/api/proxy/payments/invoice/${id}`,
+    validateCoupon: (code: string) =>
+        clientApi.get<{ code: string; discountType: number; discountValue: number }>(`/api/proxy/coupons/validate?code=${encodeURIComponent(code)}`),
 };
 
 
@@ -355,9 +384,9 @@ export const settingsApi = {
 
 export const masterVocabApi = {
     lookup: (word: string) =>
-        clientApi.get<MasterVocabularyLookupDto>(`/api/proxy/master-vocab/lookup?word=${encodeURIComponent(word)}`),
+        clientApi.get<MasterVocabularyDto>(`/api/proxy/master-vocab/lookup?word=${encodeURIComponent(word)}`),
     search: (q: string, limit = 10) =>
-        clientApi.get<MasterVocabularyLookupDto[]>(`/api/proxy/master-vocab/search?q=${encodeURIComponent(q)}&limit=${limit}`),
+        clientApi.get<MasterVocabularyDto[]>(`/api/proxy/master-vocab/search?q=${encodeURIComponent(q)}&limit=${limit}`),
 };
 
 export const vocabularyApi = {
@@ -368,12 +397,19 @@ export const vocabularyApi = {
         if (tagId) query.append('tagId', tagId);
         return clientApi.get<PagedResult<VocabularyDto>>(`/api/proxy/vocabularies?${query.toString()}`);
     },
+    getExploreList: (page = 1, pageSize = 20, search?: string) => {
+        const query = new URLSearchParams({ page: page.toString(), pageSize: pageSize.toString() });
+        if (search) query.append('search', search);
+        return clientApi.get<PagedResult<MasterVocabularyDto>>(`/api/proxy/vocabularies/explore?${query.toString()}`);
+    },
     getById: (id: string) => clientApi.get<VocabularyDto>(`/api/proxy/vocabularies/${id}`),
     create: (data: CreateVocabularyRequest) => clientApi.post<VocabularyDto>('/api/proxy/vocabularies', data),
     update: (id: string, data: UpdateVocabularyRequest) => clientApi.put<VocabularyDto>(`/api/proxy/vocabularies/${id}`, data),
     updateTag: (id: string, tagId: string | null) =>
         clientApi.patch<void>(`/api/proxy/vocabularies/${id}/tag`, { tagId }),
     archive: (id: string) => clientApi.patch<void>(`/api/proxy/vocabularies/${id}/archive`, {}),
+    contributeToMasterVocabulary: (id: string) =>
+        clientApi.post<void>(`/api/proxy/vocabularies/${id}/contribute`, {}),
     delete: (id: string) => clientApi.delete<void>(`/api/proxy/vocabularies/${id}`),
     batchImport: (data: BatchImportRequest) => clientApi.post<number>('/api/proxy/vocabularies/batch', data),
     export: (format = 'json') => `/api/proxy/vocabularies/export?format=${format}`,

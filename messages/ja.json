@@ -173,14 +173,18 @@
         "archived": "アーカイブ",
         "new": "新規",
         "learning": "学習中",
-        "mastered": "マスター"
+        "mastered": "マスター",
+        "toReview": "確認待ち",
+        "communityApproved": "コミュニティ承認済み",
+        "communityPending": "コミュニティ保留中"
       },
       "actions": {
         "edit": "編集",
         "archive": "アーカイブ",
         "unarchive": "復元",
         "delete": "削除",
-        "source": "元のリンクを開く"
+        "source": "元のリンクを開く",
+        "contribute": "コミュニティに貢献する"
       },
       "empty_legacy": "語彙が見つかりません。",
       "tagSidebar": {
@@ -539,6 +543,13 @@
       "expired": "この支払いリクエストは期限切れです。新しい取引を作成してください。",
       "waiting": "Sepayの確認を待機しています...",
       "instruction": "QRコードをスキャンするか、上記の参照IDで正確な金額を振り込んでください。1〜2分以内にアカウントが自動的にアップグレードされます。"
+    },
+    "coupon_placeholder": "クーポンコードをお持ちですか？",
+    "apply_coupon": "適用する",
+    "remove_coupon": "削除する",
+    "coupon_applied": "クーポンが適用されました！",
+    "pricing_errors": {
+      "invalid_coupon": "クーポンが無効か、期限が切れています"
     }
   },
   "Billing": {

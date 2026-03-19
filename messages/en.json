@@ -154,14 +154,18 @@
         "archived": "Archived",
         "new": "New",
         "learning": "Learning",
-        "mastered": "Mastered"
+        "mastered": "Mastered",
+        "toReview": "To Review",
+        "communityApproved": "Community Approved",
+        "communityPending": "Pending Community"
       },
       "actions": {
         "edit": "Edit",
         "archive": "Archive",
         "unarchive": "Restore",
         "delete": "Delete",
-        "source": "Open Source URL"
+        "source": "Open Source URL",
+        "contribute": "Contribute to Community"
       },
       "empty_legacy": "No vocabulary words found.",
       "tagSidebar": {
@@ -539,6 +543,13 @@
       "expired": "This payment request has expired. Please create a new one.",
       "waiting": "Waiting for Sepay confirmation...",
       "instruction": "Please scan the QR code or transfer the exact amount with the reference above. Your account will be upgraded automatically in 1-2 minutes."
+    },
+    "coupon_placeholder": "Do you have a coupon code?",
+    "apply_coupon": "Apply",
+    "remove_coupon": "Remove",
+    "coupon_applied": "Coupon applied successfully!",
+    "pricing_errors": {
+      "invalid_coupon": "Invalid or expired coupon"
     }
   },
   "Billing": {

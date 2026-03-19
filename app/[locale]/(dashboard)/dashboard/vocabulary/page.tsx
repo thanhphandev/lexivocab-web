@@ -25,7 +25,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { toast } from "sonner";
 import { EmptyState } from "@/components/dashboard/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AlertCircle, Search, Download, Plus, SearchX, Inbox, FilterX } from "lucide-react";
+import { AlertCircle, Search, Download, Plus, SearchX, Inbox, FilterX, Compass } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function VocabularyPage() {
@@ -168,6 +168,12 @@ export default function VocabularyPage() {
                     <Button onClick={() => setIsCreateTagOpen(true)} variant="outline" className="gap-2">
                         <Plus className="h-4 w-4" />
                         {t("newTag")}
+                    </Button>
+                    <Button variant="outline" className="gap-2 bg-primary/5 hover:bg-primary/10 border-primary/20 text-primary font-medium" asChild>
+                        <Link href={`/${locale}/dashboard/explore`}>
+                            <Compass className="h-4 w-4" />
+                            {t("explore")}
+                        </Link>
                     </Button>
                     <AddWordDialog onSuccess={fetchVocabulary} />
                 </div>

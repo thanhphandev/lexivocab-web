@@ -111,34 +111,20 @@ export function Flashcard({ card, onRate }: FlashcardProps) {
                             exit={{ opacity: 0, y: 10 }}
                             className="grid grid-cols-4 gap-2 md:gap-4 w-full"
                         >
-                            <Button size="lg" variant="outline"
-                                className="h-16 flex flex-col gap-1 border-rose-200 hover:bg-rose-50 hover:text-rose-600 dark:border-rose-900/50 dark:hover:bg-rose-950/50"
-                                onClick={(e) => { e.stopPropagation(); handleRate(0); }}
-                            >
-                                <span className="font-bold">{t("quality.0")}</span>
-                                <span className="text-[10px] opacity-70">&lt; 1m</span>
-                            </Button>
-                            <Button size="lg" variant="outline"
-                                className="h-16 flex flex-col gap-1 border-orange-200 hover:bg-orange-50 hover:text-orange-600 dark:border-orange-900/50 dark:hover:bg-orange-950/50"
-                                onClick={(e) => { e.stopPropagation(); handleRate(3); }}
-                            >
-                                <span className="font-bold">{t("quality.1")}</span>
-                                <span className="text-[10px] opacity-70">Hard</span>
-                            </Button>
-                            <Button size="lg" variant="outline"
-                                className="h-16 flex flex-col gap-1 border-emerald-200 hover:bg-emerald-50 hover:text-emerald-600 dark:border-emerald-900/50 dark:hover:bg-emerald-950/50"
-                                onClick={(e) => { e.stopPropagation(); handleRate(4); }}
-                            >
-                                <span className="font-bold">{t("quality.2")}</span>
-                                <span className="text-[10px] opacity-70">Good</span>
-                            </Button>
-                            <Button size="lg" variant="outline"
-                                className="h-16 flex flex-col gap-1 border-blue-200 hover:bg-blue-50 hover:text-blue-600 dark:border-blue-900/50 dark:hover:bg-blue-950/50"
-                                onClick={(e) => { e.stopPropagation(); handleRate(5); }}
-                            >
-                                <span className="font-bold">{t("quality.3")}</span>
-                                <span className="text-[10px] opacity-70">Easy</span>
-                            </Button>
+                            {([
+                                { score: 0,  cls: "border-rose-200 hover:bg-rose-50 hover:text-rose-600 dark:border-rose-900/50 dark:hover:bg-rose-950/50" },
+                                { score: 1,  cls: "border-orange-200 hover:bg-orange-50 hover:text-orange-600 dark:border-orange-900/50 dark:hover:bg-orange-950/50" },
+                                { score: 3,  cls: "border-emerald-200 hover:bg-emerald-50 hover:text-emerald-600 dark:border-emerald-900/50 dark:hover:bg-emerald-950/50" },
+                                { score: 5,  cls: "border-blue-200 hover:bg-blue-50 hover:text-blue-600 dark:border-blue-900/50 dark:hover:bg-blue-950/50" },
+                            ] as const).map(({ score, cls }) => (
+                                <Button key={score} size="lg" variant="outline"
+                                    className={`h-16 flex flex-col gap-1 ${cls}`}
+                                    onClick={(e) => { e.stopPropagation(); handleRate(score); }}
+                                >
+                                    <span className="font-bold">{t(`quality.score_${score}`)}</span>
+                                    <span className="text-[10px] opacity-70">{t(`quality.score_${score}_hint`)}</span>
+                                </Button>
+                            ))}
                         </motion.div>
                     )}
                 </AnimatePresence>

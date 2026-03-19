@@ -173,14 +173,18 @@
         "archived": "已归档",
         "new": "新单词",
         "learning": "学习中",
-        "mastered": "已掌握"
+        "mastered": "已掌握",
+        "toReview": "待审核",
+        "communityApproved": "社区已通过",
+        "communityPending": "社区审核中"
       },
       "actions": {
         "edit": "编辑",
         "archive": "归档",
         "unarchive": "恢复",
         "delete": "删除",
-        "source": "打开来源链接"
+        "source": "打开来源链接",
+        "contribute": "贡献社区"
       },
       "empty_legacy": "未找到相关词汇。",
       "tagSidebar": {
@@ -539,6 +543,13 @@
       "waiting": "正在等待 Sepay 确认...",
       "error": "无法加载二维码。<br/>请刷新或联系支持。",
       "instruction": "请扫描二维码或转账以上述备注准确支付。Sepay 将在 1-2 分钟内自动通知并升级您的账户。"
+    },
+    "coupon_placeholder": "你有优惠券代码吗？",
+    "apply_coupon": "应用",
+    "remove_coupon": "移除",
+    "coupon_applied": "优惠券已成功应用！",
+    "pricing_errors": {
+      "invalid_coupon": "优惠券无效或已过期"
     }
   },
   "Billing": {

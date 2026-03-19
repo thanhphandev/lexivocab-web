@@ -26,7 +26,8 @@ import {
     Volume2,
     Brain,
     Sparkles,
-    Plus
+    Plus,
+    Globe
 } from "lucide-react";
 import { AIWordAssistant } from "../ai/ai-word-assistant";
 import {
@@ -57,7 +58,11 @@ export function VocabularyTable({ data, tags, isLoading, onRefresh }: Vocabulary
 
 
 
-    const getLevelBadge = (level: number) => {
+    const getLevelBadge = (level: number, nextReviewDate: string | null) => {
+        if (nextReviewDate) {
+            const isDue = new Date(nextReviewDate) <= new Date();
+            if (isDue && level > 0) return { label: t("badges.toReview"), className: "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300" };
+        }
         if (level === 0) return { label: t("badges.new"), className: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300" };
         if (level < 5) return { label: t("badges.learning"), className: "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300" };
         return { label: t("badges.mastered"), className: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300" };
@@ -110,6 +115,22 @@ export function VocabularyTable({ data, tags, isLoading, onRefresh }: Vocabulary
         }
     };
 
+    const handleContribute = async (id: string, word: string) => {
+        if (actionLoading) return;
+        setActionLoading(id);
+        try {
+            const res = await vocabularyApi.contributeToMasterVocabulary(id);
+            if (res.success) {
+                toast.success(t("table.contributeSuccess", { word }));
+                onRefresh();
+            } else {
+                toast.error(res.error || t("table.contributeFailed", { word }));
+            }
+        } finally {
+            setActionLoading(null);
+        }
+    };
+
     const playAudio = (url: string | null) => {
         if (!url) return;
         const audio = new Audio(url);
@@ -153,7 +174,7 @@ export function VocabularyTable({ data, tags, isLoading, onRefresh }: Vocabulary
                     </TableHeader>
                     <TableBody>
                         {data.items.map((item) => {
-                            const badge = getLevelBadge(item.repetitionCount);
+                            const badge = getLevelBadge(item.repetitionCount, item.nextReviewDate);
                             const isArchived = item.isArchived;
 
                             return (
@@ -182,6 +203,19 @@ export function VocabularyTable({ data, tags, isLoading, onRefresh }: Vocabulary
                                         {(item.phoneticUs || item.phoneticUk) && (
                                             <div className="text-xs text-muted-foreground font-mono mt-0.5">
                                                 {item.phoneticUs || item.phoneticUk}
+                                            </div>
+                                        )}
+                                        {item.isMasterApproved !== undefined && item.isMasterApproved !== null && (
+                                            <div className="mt-1 flex items-center gap-1 text-[10px]">
+                                                {item.isMasterApproved ? (
+                                                    <span className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 px-1.5 py-0.5 rounded flex items-center gap-1">
+                                                        <Sparkles className="w-3 h-3" /> {t("badges.communityApproved")}
+                                                    </span>
+                                                ) : (
+                                                    <span className="bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 px-1.5 py-0.5 rounded flex items-center gap-1">
+                                                        <Loader2 className="w-3 h-3" /> {t("badges.communityPending")}
+                                                    </span>
+                                                )}
                                             </div>
                                         )}
                                     </TableCell>
@@ -315,6 +349,12 @@ export function VocabularyTable({ data, tags, isLoading, onRefresh }: Vocabulary
                                                     <Pencil className="mr-2 h-4 w-4" />
                                                     {t("actions.edit")}
                                                 </DropdownMenuItem>
+                                                {(item.isMasterApproved === undefined || item.isMasterApproved === null) && (
+                                                    <DropdownMenuItem onClick={() => handleContribute(item.id, item.wordText)}>
+                                                        <Globe className="mr-2 h-4 w-4 text-blue-500" />
+                                                        <span className="text-blue-500">{t("actions.contribute")}</span>
+                                                    </DropdownMenuItem>
+                                                )}
                                                 <DropdownMenuItem
                                                     onClick={() => handleArchiveToggle(item.id, isArchived)}
                                                 >

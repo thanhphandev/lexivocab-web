@@ -110,6 +110,7 @@ export interface VocabularyDto {
     phoneticUs: string | null;
     audioUrl: string | null;
     partOfSpeech: string | null;
+    isMasterApproved?: boolean;
 }
 
 export interface CreateVocabularyRequest {
@@ -141,6 +142,55 @@ export interface VocabularyStatsDto {
     active: number;
     archived: number;
     dueToday: number;
+}
+
+// ─── Master Vocabulary DTOs ─────────────────────────────────────────
+
+export interface MasterVocabularyDto {
+    id: string;
+    word: string;
+    partOfSpeech: string | null;
+    phoneticUk: string | null;
+    phoneticUs: string | null;
+    audioUrl: string | null;
+    popularityRank: number | null;
+    meaning: string | null;
+    cefrLevel: string | null;
+    createdAt: string;
+}
+
+export interface CreateMasterVocabularyRequest {
+    word: string;
+    partOfSpeech?: string;
+    phoneticUk?: string;
+    phoneticUs?: string;
+    audioUrl?: string;
+    popularityRank?: number;
+    meaning?: string;
+    cefrLevel?: string;
+}
+
+export interface UpdateMasterVocabularyRequest {
+    partOfSpeech?: string;
+    phoneticUk?: string;
+    phoneticUs?: string;
+    audioUrl?: string;
+    popularityRank?: number;
+    meaning?: string;
+    cefrLevel?: string;
+}
+
+export interface CreateMasterVocabularyBatchItemDto {
+    word: string;
+    partOfSpeech?: string | null;
+    phoneticUk?: string | null;
+    phoneticUs?: string | null;
+    meaning?: string | null;
+    cefrLevel?: string | null;
+}
+
+export interface CreateMasterVocabularyBatchCommand {
+    items: CreateMasterVocabularyBatchItemDto[];
 }
 
 // ─── Tag DTOs ───────────────────────────────────────────────
@@ -310,6 +360,7 @@ export interface UserPermissionsDto {
 export interface CreatePaymentOrderRequest {
     pricingId: string;
     provider: number; // 1: PayPal, 3: Sepay
+    couponCode?: string | null;
 }
 
 export interface CreatePaymentOrderResponse {
@@ -356,6 +407,69 @@ export interface SubscriptionPlanDto {
 }
 
 // ─── Admin DTOs ──────────────────────────────────────────────
+export interface ChartDataPoint {
+    label: string;
+    value: number;
+}
+
+export interface UserGrowthMetrics {
+    dailyActiveUsers: number;
+    monthlyActiveUsers: number;
+    newUsersByDay: ChartDataPoint[];
+}
+
+export interface FinancialMetrics {
+    monthlyRecurringRevenue: number;
+    churnRatePercentage: number;
+    revenueByDay: ChartDataPoint[];
+}
+
+export interface LearningEngagementMetrics {
+    totalReviewsToday: number;
+    averageTimeSpentPerReviewMs: number;
+    totalReviewsAllTime: number;
+    reviewsByDay: ChartDataPoint[];
+}
+
+export interface AdvancedSystemStatsDto {
+    userGrowth: UserGrowthMetrics;
+    financial: FinancialMetrics;
+    engagement: LearningEngagementMetrics;
+}
+
+export interface AdminCouponDto {
+    id: string;
+    code: string;
+    discountType: number; // 0=Percentage, 1=FixedAmount
+    discountValue: number;
+    maxUses: number | null;
+    currentUses: number;
+    startsAt: string;
+    expiresAt: string | null;
+    isActive: boolean;
+    createdAt: string;
+}
+
+export interface CreateCouponRequest {
+    code: string;
+    discountType: number;
+    discountValue: number;
+    maxUses?: number | null;
+    startsAt: string;
+    expiresAt?: string | null;
+    isActive: boolean;
+}
+
+export interface UpdateCouponRequest {
+    code: string;
+    discountType: number;
+    discountValue: number;
+    maxUses?: number | null;
+    startsAt: string;
+    expiresAt?: string | null;
+    isActive: boolean;
+}
+
 export interface UserOverviewDto {
     id: string;
     email: string;
@@ -477,46 +591,6 @@ export interface UpdatePlanDefinitionRequest {
     isActive: boolean;
     features: Record<string, string>;
     pricings: PlanPricingDto[];
-}
-
-// ─── Master Vocabulary DTOs ─────────────────────────────────
-export interface MasterVocabularyDto {
-    id: string;
-    wordText: string;
-    meaning: string;
-    phoneticUk?: string | null;
-    phoneticUs?: string | null;
-    audioUrl?: string | null;
-    cefrLevel?: string | null;
-    createdAt?: string;
-}
-
-export interface CreateMasterVocabularyRequest {
-    wordText: string;
-    meaning: string;
-    phoneticUk?: string;
-    phoneticUs?: string;
-    audioUrl?: string;
-    cefrLevel?: string;
-}
-
-export interface UpdateMasterVocabularyRequest {
-    wordText?: string;
-    meaning?: string;
-    phoneticUk?: string;
-    phoneticUs?: string;
-    audioUrl?: string;
-    cefrLevel?: string;
-}
-
-export interface MasterVocabularyLookupDto {
-    id: string;
-    wordText: string;
-    meaning: string;
-    phoneticUk?: string | null;
-    phoneticUs?: string | null;
-    audioUrl?: string | null;
-    cefrLevel?: string | null;
 }
 
 

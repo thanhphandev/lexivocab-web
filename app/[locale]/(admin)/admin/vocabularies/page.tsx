@@ -9,16 +9,20 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Plus, Pencil, Trash2, BookOpen, Loader2, Volume2, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { Plus, Pencil, Trash2, BookOpen, Loader2, Volume2, Search, ChevronLeft, ChevronRight, CheckCircle2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { ConfirmDialog } from "@/components/dashboard/confirm-dialog";
+import Papa from "papaparse";
 
 export default function AdminVocabulariesPage() {
     const [vocabularies, setVocabularies] = useState<MasterVocabularyDto[]>([]);
     const [loading, setLoading] = useState(true);
     const [deleteConfig, setDeleteConfig] = useState<{ id: string, word: string } | null>(null);
+    
+    const [activeTab, setActiveTab] = useState<"approved" | "pending">("approved");
     
     // Pagination & Search
     const [page, setPage] = useState(1);
@@ -38,6 +42,8 @@ export default function AdminVocabulariesPage() {
     const [phoneticUs, setPhoneticUs] = useState("");
     const [audioUrl, setAudioUrl] = useState("");
     const [cefrLevel, setCefrLevel] = useState("");
+    const [isAutoFilling, setIsAutoFilling] = useState(false);
+    const [isImporting, setIsImporting] = useState(false);
 
     useEffect(() => {
         const handler = setTimeout(() => {
@@ -45,17 +51,18 @@ export default function AdminVocabulariesPage() {
             setPage(1);
         }, 500);
         return () => clearTimeout(handler);
-    }, [search]);
+    }, [search, activeTab]);
 
     const loadVocabularies = useCallback(async () => {
         setLoading(true);
-        const res = await adminApi.getMasterVocabularies(page, 20, debouncedSearch);
+        const isApproved = activeTab === "approved";
+        const res = await adminApi.getMasterVocabularies(page, 20, debouncedSearch, isApproved);
         if (res.success && res.data) {
             setVocabularies(res.data.items);
             setTotalPages(res.data.totalPages || 1);
         }
         setLoading(false);
-    }, [page, debouncedSearch]);
+    }, [page, debouncedSearch, activeTab]);
 
     useEffect(() => {
         loadVocabularies();
@@ -64,8 +71,8 @@ export default function AdminVocabulariesPage() {
     const handleOpenDialog = (vocab?: MasterVocabularyDto) => {
         if (vocab) {
             setEditingVocab(vocab);
-            setWordText(vocab.wordText);
-            setMeaning(vocab.meaning);
+            setWordText(vocab.word);
+            setMeaning(vocab.meaning || "");
             setPhoneticUk(vocab.phoneticUk || "");
             setPhoneticUs(vocab.phoneticUs || "");
             setAudioUrl(vocab.audioUrl || "");
@@ -92,14 +99,18 @@ export default function AdminVocabulariesPage() {
         try {
             if (editingVocab) {
                 const req: UpdateMasterVocabularyRequest = {
-                    wordText, meaning, phoneticUk, phoneticUs, audioUrl, cefrLevel
+                    meaning: meaning || undefined, 
+                    phoneticUk: phoneticUk || undefined, 
+                    phoneticUs: phoneticUs || undefined, 
+                    audioUrl: audioUrl || undefined, 
+                    cefrLevel: cefrLevel || undefined 
                 };
                 const res = await adminApi.updateMasterVocabulary(editingVocab.id, req);
                 if (res.success) toast.success("Word updated successfully");
                 else toast.error(res.error || "Failed to update word");
             } else {
                 const req: CreateMasterVocabularyRequest = {
-                    wordText, meaning, phoneticUk, phoneticUs, audioUrl, cefrLevel
+                    word: wordText, meaning, phoneticUk, phoneticUs, audioUrl, cefrLevel
                 };
                 const res = await adminApi.createMasterVocabulary(req);
                 if (res.success) toast.success("New word added to master dictionary");
@@ -112,6 +123,80 @@ export default function AdminVocabulariesPage() {
         } finally {
             setIsSaving(false);
         }
+    };
+
+    const handleAutoFill = async () => {
+        if (!wordText) {
+            toast.error("Please enter a word first.");
+            return;
+        }
+        setIsAutoFilling(true);
+        try {
+            const res = await adminApi.lookupMasterVocabulary(wordText);
+            if (!res.success) {
+                toast.error(res.error || "Word not found in dictionary.");
+                return;
+            }
+            if (res.data) {
+                setMeaning(res.data.meaning || meaning);
+                setPhoneticUk(res.data.phoneticUk || phoneticUk);
+                setPhoneticUs(res.data.phoneticUs || phoneticUs);
+                toast.success("Definition auto-filled from internet!");
+            }
+        } catch(e) {
+            toast.error("Failed to fetch word definition.");
+        } finally {
+            setIsAutoFilling(false);
+        }
+    };
+
+    const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setIsImporting(true);
+        Papa.parse(file, {
+            header: true,
+            skipEmptyLines: true,
+            complete: async (results) => {
+                try {
+                    const items = results.data.map((row: any) => ({
+                        word: row.Word || row.word,
+                        meaning: row.Meaning || row.meaning,
+                        phoneticUk: row.PhoneticUk || row.phoneticUk || null,
+                        phoneticUs: row.PhoneticUs || row.phoneticUs || null,
+                        cefrLevel: row.CefrLevel || row.cefrLevel || null,
+                        partOfSpeech: row.PartOfSpeech || row.partOfSpeech || null,
+                    })).filter(item => !!item.word);
+
+                    if (items.length === 0) {
+                        toast.error("No valid headers found. Please use CSV with headers: word, meaning");
+                        return;
+                    }
+
+                    toast.loading(`Importing ${items.length} words...`);
+                    const res = await adminApi.createMasterVocabularyBatch({ items });
+                    toast.dismiss();
+                    
+                    if (res.success) {
+                        toast.success(`Successfully imported ${res.data?.createdCount || 0} words.`);
+                        loadVocabularies();
+                    } else {
+                        toast.error(res.error || "Failed to import vocabulary.");
+                    }
+                } catch (err) {
+                    toast.error("An error occurred during import.");
+                } finally {
+                    setIsImporting(false);
+                    e.target.value = ""; // reset input
+                }
+            },
+            error: (error) => {
+                toast.error("Failed to parse CSV file: " + error.message);
+                setIsImporting(false);
+                e.target.value = "";
+            }
+        });
     };
 
     const handleDelete = async () => {
@@ -127,6 +212,20 @@ export default function AdminVocabulariesPage() {
             }
         } finally {
             setDeleteConfig(null);
+        }
+    };
+
+    const handleApprove = async (id: string, currentVocab: MasterVocabularyDto) => {
+        try {
+            const res = await adminApi.approveMasterVocabulary(id);
+            if (res.success) {
+                toast.success(`Word approved successfully`);
+                loadVocabularies();
+            } else {
+                toast.error(res.error || "Failed to approve word");
+            }
+        } catch (error) {
+            toast.error("Failed to approve word");
         }
     };
 
@@ -154,12 +253,30 @@ export default function AdminVocabulariesPage() {
                             onChange={(e) => setSearch(e.target.value)}
                         />
                     </div>
+                    <div className="relative">
+                        <input
+                            type="file"
+                            accept=".csv"
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                            onChange={handleFileUpload}
+                            disabled={isImporting}
+                        />
+                        <Button variant="secondary" className="shrink-0 group-hover/btn:bg-accent" disabled={isImporting}>
+                            {isImporting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <BookOpen className="mr-2 h-4 w-4" />}
+                            Import CSV
+                        </Button>
+                    </div>
                     <Button onClick={() => handleOpenDialog()} className="shrink-0">
                         <Plus className="mr-2 h-4 w-4" /> Add Word
                     </Button>
                 </div>
             </div>
 
+            <Tabs defaultValue="approved" value={activeTab} onValueChange={(val) => setActiveTab(val as any)}>
+                <TabsList className="mb-4">
+                    <TabsTrigger value="approved">Approved List</TabsTrigger>
+                    <TabsTrigger value="pending">Community Pending</TabsTrigger>
+                </TabsList>
             <Card>
                 <CardContent className="p-0">
                     <Table>
@@ -190,13 +307,15 @@ export default function AdminVocabulariesPage() {
                                         <div className="p-4 rounded-full bg-muted/50 mb-4">
                                             <BookOpen className="h-10 w-10 text-muted-foreground/50" />
                                         </div>
-                                        <h3 className="text-lg font-medium">No vocabulary words found</h3>
+                                        <h3 className="text-lg font-medium">{activeTab === "pending" ? "No community suggestions pending" : "No vocabulary words found"}</h3>
                                         <p className="text-sm text-muted-foreground mt-1 mb-6 max-w-xs">
-                                            The global dictionary is currently empty. Start by adding some verified terms.
+                                            {activeTab === "pending" ? "Community contributions will appear here for review." : "The global dictionary is currently empty. Start by adding some verified terms."}
                                         </p>
-                                        <Button variant="outline" onClick={() => handleOpenDialog()}>
-                                            <Plus className="mr-2 h-4 w-4" /> Add First Word
-                                        </Button>
+                                        {activeTab !== "pending" && (
+                                            <Button variant="outline" onClick={() => handleOpenDialog()}>
+                                                <Plus className="mr-2 h-4 w-4" /> Add First Word
+                                            </Button>
+                                        )}
                                     </div>
                                 </TableCell>
                             </TableRow>
@@ -208,7 +327,7 @@ export default function AdminVocabulariesPage() {
                                             <div className="p-1.5 rounded-md bg-primary/10 text-primary">
                                                 <BookOpen className="h-4 w-4" />
                                             </div>
-                                            <span className="text-primary font-bold">{v.wordText}</span>
+                                            <span className="text-primary font-bold">{v.word}</span>
                                         </div>
                                     </TableCell>
                                     <TableCell className="max-w-xs truncate text-muted-foreground italic">
@@ -231,6 +350,11 @@ export default function AdminVocabulariesPage() {
                                     </TableCell>
                                     <TableCell className="text-right pr-6">
                                         <div className="flex items-center justify-end opacity-0 group-hover:opacity-100 transition-opacity">
+                                            {activeTab === "pending" && (
+                                                <Button variant="ghost" size="icon" className="h-8 w-8 text-green-500 mr-2" onClick={() => handleApprove(v.id, v)} title="Approve Word">
+                                                    <CheckCircle2 className="h-4 w-4" />
+                                                </Button>
+                                            )}
                                             {v.audioUrl && (
                                                 <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500" title="Has audio">
                                                     <Volume2 className="h-4 w-4" />
@@ -239,7 +363,7 @@ export default function AdminVocabulariesPage() {
                                             <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleOpenDialog(v)}>
                                                 <Pencil className="h-4 w-4 text-blue-500" />
                                             </Button>
-                                            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setDeleteConfig({ id: v.id, word: v.wordText })}>
+                                            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setDeleteConfig({ id: v.id, word: v.word })}>
                                                 <Trash2 className="h-4 w-4 text-red-500" />
                                             </Button>
                                         </div>
@@ -251,6 +375,7 @@ export default function AdminVocabulariesPage() {
                     </Table>
                 </CardContent>
             </Card>
+            </Tabs>
 
             <div className="flex items-center justify-end space-x-2">
                 <Button
@@ -284,7 +409,14 @@ export default function AdminVocabulariesPage() {
                         <div className="grid grid-cols-2 gap-4">
                             <div className="grid gap-2">
                                 <Label htmlFor="word">Word</Label>
-                                <Input id="word" value={wordText} onChange={(e) => setWordText(e.target.value)} />
+                                <div className="flex gap-2">
+                                    <Input id="word" value={wordText} onChange={(e) => setWordText(e.target.value)} disabled={!!editingVocab} />
+                                    {!editingVocab && (
+                                        <Button variant="outline" size="icon" title="Auto-fill from Dictionary" onClick={handleAutoFill} disabled={isAutoFilling}>
+                                            {isAutoFilling ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
+                                        </Button>
+                                    )}
+                                </div>
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="cefr">CEFR Level (e.g. A1, B2)</Label>
