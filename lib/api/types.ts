@@ -313,6 +313,13 @@ export interface UserSettingsDto {
     nativeLanguage?: string;
     customLlmsJson?: string;
     defaultTranslator?: string;
+    isEmailReminderEnabled?: boolean;
+    isTelegramReminderEnabled?: boolean;
+    telegramBotToken?: string;
+    telegramChatId?: string;
+    isZaloReminderEnabled?: boolean;
+    zaloBotToken?: string;
+    zaloUserId?: string;
 }
 
 export interface UpdateSettingsRequest {
@@ -327,6 +334,13 @@ export interface UpdateSettingsRequest {
     nativeLanguage?: string;
     customLlmsJson?: string;
     defaultTranslator?: string;
+    isEmailReminderEnabled?: boolean;
+    isTelegramReminderEnabled?: boolean;
+    telegramBotToken?: string;
+    telegramChatId?: string;
+    isZaloReminderEnabled?: boolean;
+    zaloBotToken?: string;
+    zaloUserId?: string;
 }
 
 // ─── Payment & Billing DTOs ─────────────────────────────────────

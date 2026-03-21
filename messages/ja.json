@@ -414,6 +414,24 @@
         "description": "この操作により、すべてのデバイス（ブラウザ、拡張機能、モバイル）から即座にサインアウトされます。各デバイスで再度ログインが必要になります。",
         "confirmText": "すべて無効化",
         "confirmingText": "無効化中..."
+      },
+      "notifications": {
+        "title": "通知設定",
+        "desc": "復習リマインダーの受信方法を管理します。",
+        "emailTitle": "Eメールリマインダー",
+        "emailDesc": "復習が必要な単語カードがある場合にEメールでリマインダーを受け取ります。",
+        "telegramTitle": "Telegramリマインダー",
+        "telegramDesc": "個人のTelegramボット経由でリマインダーを受け取ります。",
+        "zaloTitle": "Zaloリマインダー",
+        "zaloDesc": "Zalo OAボット経由でリマインダーを受け取ります。",
+        "botToken": "ボットトークン",
+        "chatId": "チャットID",
+        "userId": "ユーザーID",
+        "botTokenPlaceholder": "ボットトークンを入力",
+        "chatIdPlaceholder": "チャットIDを入力",
+        "userIdPlaceholder": "ユーザーIDを入力",
+        "zaloHint": "お困りですか？<a>Zalo Botの使い方</a>を見てボットトークンとユーザーIDを取得してください。",
+        "telegramHint": "<a>@BotFather</a>経由でボットを作成し、トークンを取得します。新しいボットにメッセージを送信してチャットIDを取得します。"
       }
     },
     "explore": {
@@ -937,5 +955,9 @@
       "system": "システム",
       "ms": "{ms}ms"
     }
+  },
+  "notifications": {
+    "testSuccess": "テストが無事送信されました！チャットアプリを確認してください。",
+    "testError": "テスト送信に失敗しました。トークンとユーザーIDを見直してください。"
   }
 }

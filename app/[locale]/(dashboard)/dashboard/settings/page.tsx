@@ -13,7 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
-import { Loader2, Palette, ShieldAlert, Target, Code, Globe, Lock, KeyRound, Sparkles } from "lucide-react";
+import { Loader2, Palette, ShieldAlert, Target, Code, Globe, Lock, KeyRound, Sparkles, BellRing, Mail, MessageCircle, Send } from "lucide-react";
 import { authApi, settingsApi } from "@/lib/api/api-client";
 import { toast } from "sonner";
 import { ConfirmDialog } from "@/components/dashboard/confirm-dialog";
@@ -131,8 +131,17 @@ export default function SettingsPage() {
     const [targetLanguage, setTargetLanguage] = useState("en");
     const [nativeLanguage, setNativeLanguage] = useState("vi");
     const [defaultTranslator, setDefaultTranslator] = useState("google");
+    const [isTesting, setIsTesting] = useState(false);
     const [preferencesJson, setPreferencesJson] = useState<string>("{}");
     const [customLlmsJson, setCustomLlmsJson] = useState<string>("[]");
+
+    const [isEmailReminderEnabled, setIsEmailReminderEnabled] = useState(true);
+    const [isTelegramReminderEnabled, setIsTelegramReminderEnabled] = useState(false);
+    const [telegramBotToken, setTelegramBotToken] = useState("");
+    const [telegramChatId, setTelegramChatId] = useState("");
+    const [isZaloReminderEnabled, setIsZaloReminderEnabled] = useState(false);
+    const [zaloBotToken, setZaloBotToken] = useState("");
+    const [zaloUserId, setZaloUserId] = useState("");
 
     useEffect(() => {
         if (user?.fullName) setProfileName(user.fullName);
@@ -150,6 +159,15 @@ export default function SettingsPage() {
                 setNativeLanguage(res.data.nativeLanguage || "vi");
                 if (res.data.defaultTranslator) setDefaultTranslator(res.data.defaultTranslator);
                 setCustomLlmsJson(res.data.customLlmsJson || "[]");
+                
+                setIsEmailReminderEnabled(res.data.isEmailReminderEnabled ?? true);
+                setIsTelegramReminderEnabled(res.data.isTelegramReminderEnabled ?? false);
+                setTelegramBotToken(res.data.telegramBotToken || "");
+                setTelegramChatId(res.data.telegramChatId || "");
+                setIsZaloReminderEnabled(res.data.isZaloReminderEnabled ?? false);
+                setZaloBotToken(res.data.zaloBotToken || "");
+                setZaloUserId(res.data.zaloUserId || "");
+                
                 try {
                     const parsed = JSON.parse(res.data.preferencesJson || "{}");
                     setPreferencesJson(JSON.stringify(parsed, null, 2));
@@ -259,6 +277,13 @@ export default function SettingsPage() {
                 defaultTranslator,
                 customLlmsJson,
                 preferencesJson: JSON.stringify(parsedPrefs),
+                isEmailReminderEnabled,
+                isTelegramReminderEnabled,
+                telegramBotToken,
+                telegramChatId,
+                isZaloReminderEnabled,
+                zaloBotToken,
+                zaloUserId,
             });
             if (res.success) {
                 toast.success(t("saveSuccess"));
@@ -267,6 +292,30 @@ export default function SettingsPage() {
             }
         } finally {
             setIsSaving(false);
+        }
+    };
+
+    const handleTestNotifications = async () => {
+        setIsTesting(true);
+        try {
+            const res = await settingsApi.testNotifications({
+                nativeLanguage,
+                isTelegramReminderEnabled,
+                telegramBotToken,
+                telegramChatId,
+                isZaloReminderEnabled,
+                zaloBotToken,
+                zaloUserId
+            });
+            if (res.success) {
+                toast.success(t("notifications.testSuccess") || "Ping successful! Check your bots/email.");
+            } else {
+                toast.error(res.error || t("notifications.testError") || "Failed to trigger test ping.");
+            }
+        } catch (error) {
+            toast.error(t("notifications.testError") || "Could not fetch testing endpoints.");
+        } finally {
+            setIsTesting(false);
         }
     };
 
@@ -418,8 +467,132 @@ export default function SettingsPage() {
                         </Card>
                     </motion.div>
 
-                    {/* Extension Preferences */}
+                    {/* Notification Preferences */}
                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+                        <form onSubmit={handleSave}>
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle className="flex items-center gap-2">
+                                        <BellRing className="w-5 h-5 text-primary" />
+                                        {t("notifications.title") || "Notification Preferences"}
+                                    </CardTitle>
+                                    <CardDescription>{t("notifications.desc") || "Manage how you receive review reminders."}</CardDescription>
+                                </CardHeader>
+                                <CardContent className="space-y-8">
+                                    {/* Email Reminders */}
+                                    <div className="flex items-center justify-between border-b pb-6">
+                                        <div className="space-y-0.5 pr-4">
+                                            <label className="text-base font-medium flex items-center gap-2">
+                                                <Mail className="w-4 h-4 text-blue-500" />
+                                                {t("notifications.emailTitle") || "Email Reminders"}
+                                            </label>
+                                            <p className="text-sm text-muted-foreground">{t("notifications.emailDesc") || "Receive reminders via email when you have vocabulary cards due for review."}</p>
+                                        </div>
+                                        <Switch checked={isEmailReminderEnabled} onCheckedChange={setIsEmailReminderEnabled} disabled={isSaving} />
+                                    </div>
+
+                                    {/* Telegram Reminders */}
+                                    <div className="space-y-4 border-b pb-6">
+                                        <div className="flex items-center justify-between">
+                                            <div className="space-y-0.5 pr-4">
+                                                <label className="text-base font-medium flex items-center gap-2">
+                                                    <Send className="w-4 h-4 text-[#0088cc]" />
+                                                    {t("notifications.telegramTitle") || "Telegram Reminders"}
+                                                </label>
+                                                <p className="text-sm text-muted-foreground">{t("notifications.telegramDesc") || "Receive reminders via your personal Telegram bot."}</p>
+                                            </div>
+                                            <Switch checked={isTelegramReminderEnabled} onCheckedChange={setIsTelegramReminderEnabled} disabled={isSaving} />
+                                        </div>
+                                        
+                                        {isTelegramReminderEnabled && (
+                                            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="grid gap-4 md:grid-cols-2 pt-2">
+                                                <div className="space-y-2">
+                                                    <label className="text-sm font-medium">{t("notifications.botToken") || "Bot Token"}</label>
+                                                    <Input
+                                                        type="password"
+                                                        placeholder={t("notifications.botTokenPlaceholder") || "Enter your Bot Token"}
+                                                        value={telegramBotToken}
+                                                        onChange={(e) => setTelegramBotToken(e.target.value)}
+                                                        disabled={isSaving}
+                                                    />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <label className="text-sm font-medium">{t("notifications.chatId") || "Chat ID"}</label>
+                                                    <Input
+                                                        placeholder={t("notifications.chatIdPlaceholder") || "Enter your Chat ID"}
+                                                        value={telegramChatId}
+                                                        onChange={(e) => setTelegramChatId(e.target.value)}
+                                                        disabled={isSaving}
+                                                    />
+                                                </div>
+                                                <p className="text-xs text-muted-foreground col-span-full pt-1">
+                                                    {t.rich("notifications.telegramHint", {
+                                                        a: (chunks) => <a href="https://t.me/BotFather" target="_blank" rel="noreferrer" className="text-primary hover:underline font-medium">{chunks}</a>
+                                                    })}
+                                                </p>
+                                            </motion.div>
+                                        )}
+                                    </div>
+
+                                    {/* Zalo Reminders */}
+                                    <div className="space-y-4 pb-2">
+                                        <div className="flex items-center justify-between">
+                                            <div className="space-y-0.5 pr-4">
+                                                <label className="text-base font-medium flex items-center gap-2">
+                                                    <MessageCircle className="w-4 h-4 text-[#0068ff]" />
+                                                    {t("notifications.zaloTitle") || "Zalo Reminders"}
+                                                </label>
+                                                <p className="text-sm text-muted-foreground">{t("notifications.zaloDesc") || "Receive reminders via your Zalo Official Account bot."}</p>
+                                            </div>
+                                            <Switch checked={isZaloReminderEnabled} onCheckedChange={setIsZaloReminderEnabled} disabled={isSaving} />
+                                        </div>
+                                        
+                                        {isZaloReminderEnabled && (
+                                            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="grid gap-4 md:grid-cols-2 pt-2">
+                                                <div className="space-y-2">
+                                                    <label className="text-sm font-medium">{t("notifications.botToken") || "Bot Token"}</label>
+                                                    <Input
+                                                        type="password"
+                                                        placeholder={t("notifications.botTokenPlaceholder") || "Enter your Bot Token"}
+                                                        value={zaloBotToken}
+                                                        onChange={(e) => setZaloBotToken(e.target.value)}
+                                                        disabled={isSaving}
+                                                    />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <label className="text-sm font-medium">{t("notifications.userId") || "User ID"}</label>
+                                                    <Input
+                                                        placeholder={t("notifications.userIdPlaceholder") || "Enter your User ID"}
+                                                        value={zaloUserId}
+                                                        onChange={(e) => setZaloUserId(e.target.value)}
+                                                        disabled={isSaving}
+                                                    />
+                                                </div>
+                                                <p className="text-xs text-muted-foreground col-span-full pt-1">
+                                                    {t.rich("notifications.zaloHint", {
+                                                        a: (chunks) => <a href="https://bot.zapps.me/docs/create-bot/" target="_blank" rel="noreferrer" className="text-primary hover:underline font-medium">{chunks}</a>
+                                                    })}
+                                                </p>
+                                            </motion.div>
+                                        )}
+                                    </div>
+                                </CardContent>
+                                <CardFooter className="border-t px-6 py-4 bg-muted/20 flex justify-between items-center">
+                                    <Button type="button" variant="outline" size="sm" onClick={handleTestNotifications} disabled={isSaving || isTesting}>
+                                        {isTesting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4 text-primary" />}
+                                        Test Notifications
+                                    </Button>
+                                    <Button type="submit" disabled={isSaving}>
+                                        {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                        {t("save")}
+                                    </Button>
+                                </CardFooter>
+                            </Card>
+                        </form>
+                    </motion.div>
+
+                    {/* Extension Preferences */}
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
                         <form onSubmit={handleSave}>
                             <Card>
                                 <CardHeader>

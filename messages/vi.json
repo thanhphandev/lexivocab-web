@@ -420,6 +420,24 @@
         "description": "Thao tác này sẽ đăng xuất bạn ngay lập tức khỏi tất cả thiết bị (trình duyệt, tiện ích, di động). Bạn sẽ cần đăng nhập lại trên từng thiết bị.",
         "confirmText": "Thu hồi tất cả",
         "confirmingText": "Đang thu hồi..."
+      },
+      "notifications": {
+        "title": "Tùy chọn thông báo",
+        "desc": "Quản lý cách nhận thông báo nhắc nhở ôn tập.",
+        "emailTitle": "Nhắc nhở qua Email",
+        "emailDesc": "Nhận email nhắc nhở khi có từ vựng cần ôn tập.",
+        "telegramTitle": "Nhắc nhở qua Telegram",
+        "telegramDesc": "Nhận thông báo qua bot Telegram cá nhân.",
+        "zaloTitle": "Nhắc nhở qua Zalo",
+        "zaloDesc": "Nhận thông báo qua bot Zalo mini app / OA.",
+        "botToken": "Bot Token",
+        "chatId": "Chat ID",
+        "userId": "User ID",
+        "botTokenPlaceholder": "Nhập Bot Token của bạn",
+        "chatIdPlaceholder": "Nhập Chat ID của bạn",
+        "userIdPlaceholder": "Nhập User ID của bạn",
+        "zaloHint": "Bạn chưa biết cách tạo? Xem <a>Hướng dẫn tạo Zalo Mini App / OA Bot</a> để lấy Token và User ID dễ dàng nhé.",
+        "telegramHint": "Tạo bot miễn phí qua <a>@BotFather</a> để lấy Token. Sau đó gửi 1 tin nhắn bất kỳ cho bot của bạn để tự động lấy Chat ID."
       }
     },
     "explore": {
@@ -942,5 +960,9 @@
       "system": "Hệ thống",
       "ms": "{ms}ms"
     }
+  },
+  "notifications": {
+    "testSuccess": "Gửi tin nhắn test thành công! Hãy kiểm tra ứng dụng chat của bạn.",
+    "testError": "Kiểm thử thất bại. Vui lòng xem lại Token và User ID."
   }
 }

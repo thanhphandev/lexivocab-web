@@ -414,6 +414,24 @@
         "description": "此操作将立即将您从所有设备（浏览器、扩展程序、移动端）退出登录。您需要在每台设备上重新登录。",
         "confirmText": "全部撤销",
         "confirmingText": "撤销中..."
+      },
+      "notifications": {
+        "title": "通知偏好",
+        "desc": "管理您接收复习提醒的方式。",
+        "emailTitle": "电子邮件提醒",
+        "emailDesc": "当您有需要复习的词汇卡片时，通过电子邮件接收提醒。",
+        "telegramTitle": "Telegram 提醒",
+        "telegramDesc": "通过您的个人 Telegram 机器人接收提醒。",
+        "zaloTitle": "Zalo 提醒",
+        "zaloDesc": "通过您的 Zalo OA 机器人接收提醒。",
+        "botToken": "机器人 Token",
+        "chatId": "聊天 ID",
+        "userId": "用户 ID",
+        "botTokenPlaceholder": "输入您的机器人 Token",
+        "chatIdPlaceholder": "输入您的聊天 ID",
+        "userIdPlaceholder": "输入您的用户 ID",
+        "zaloHint": "需要帮助？请查看 <a>Zalo Bot 指南</a> 获取您的机器人 Token 和 用户 ID。",
+        "telegramHint": "通过 <a>@BotFather</a> 创建机器人并获取 Token。向您的新机器人发送消息以提取您的聊天 ID。"
       }
     },
     "explore": {
@@ -937,5 +955,9 @@
       "system": "系统",
       "ms": "{ms}ms"
     }
+  },
+  "notifications": {
+    "testSuccess": "测试发送成功！请检查您的聊天应用程序。",
+    "testError": "测试发送失败。请检查API令牌和用户ID。"
   }
 }

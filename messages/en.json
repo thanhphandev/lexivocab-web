@@ -416,6 +416,24 @@
         "description": "This will immediately sign you out from all devices (browser, extension, mobile). You will need to log in again on each device.",
         "confirmText": "Revoke All",
         "confirmingText": "Revoking..."
+      },
+      "notifications": {
+        "title": "Notification Preferences",
+        "desc": "Manage how you receive review reminders.",
+        "emailTitle": "Email Reminders",
+        "emailDesc": "Receive reminders via email when you have vocabulary cards due for review.",
+        "telegramTitle": "Telegram Reminders",
+        "telegramDesc": "Receive reminders via your personal Telegram bot.",
+        "zaloTitle": "Zalo Reminders",
+        "zaloDesc": "Receive reminders via your Zalo Official Account bot.",
+        "botToken": "Bot Token",
+        "chatId": "Chat ID",
+        "userId": "User ID",
+        "botTokenPlaceholder": "Enter your Bot Token",
+        "chatIdPlaceholder": "Enter your Chat ID",
+        "userIdPlaceholder": "Enter your User ID",
+        "zaloHint": "Need help? Check out the <a>Zalo Bot guide</a> to get your Bot Token and User ID.",
+        "telegramHint": "Create a bot via <a>@BotFather</a> to retrieve your Token. To get your Chat ID, send a message to your new bot."
       }
     },
     "explore": {
@@ -939,5 +957,9 @@
       "system": "System",
       "ms": "{ms}ms"
     }
+  },
+  "notifications": {
+    "testSuccess": "Ping successful! Check your messaging apps.",
+    "testError": "Failed to trigger test ping. Please revise your API Token and User ID."
   }
 }

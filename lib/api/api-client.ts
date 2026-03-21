@@ -380,6 +380,7 @@ export const reviewsApi = {
 export const settingsApi = {
     get: () => clientApi.get<UserSettingsDto>('/api/proxy/settings'),
     update: (data: UpdateSettingsRequest) => clientApi.put<UserSettingsDto>('/api/proxy/settings', data),
+    testNotifications: (data: { nativeLanguage: string, isTelegramReminderEnabled: boolean, telegramBotToken: string, telegramChatId: string, isZaloReminderEnabled: boolean, zaloBotToken: string, zaloUserId: string }) => clientApi.post<boolean>('/api/proxy/settings/test-bot-notifications', data),
 };
 
 export const masterVocabApi = {
