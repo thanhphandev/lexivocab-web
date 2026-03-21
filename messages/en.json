@@ -433,7 +433,9 @@
         "chatIdPlaceholder": "Enter your Chat ID",
         "userIdPlaceholder": "Enter your User ID",
         "zaloHint": "Need help? Check out the <a>Zalo Bot guide</a> to get your Bot Token and User ID.",
-        "telegramHint": "Create a bot via <a>@BotFather</a> to retrieve your Token. To get your Chat ID, send a message to your new bot."
+        "telegramHint": "Create a bot via <a>@BotFather</a> to retrieve your Token. To get your Chat ID, send a message to your new bot.",
+        "testSuccess": "Ping successful! Check your messaging apps.",
+        "testFailed": "Ping failed. Please check your Bot Token and Chat ID."
       }
     },
     "explore": {
@@ -449,7 +451,7 @@
     }
   },
   "Hero": {
-    "badge": "🚀 New Release v1.0",
+    "badge": "🚀 New Release v2.0",
     "title": "Learn vocabulary passively while <highlight>browsing the web</highlight>",
     "subtitle": "Don't let dictionary lookups interrupt your reading flow. LexiVocab helps you translate, save, and review English vocabulary naturally.",
     "cta_install": "Add to Chrome",

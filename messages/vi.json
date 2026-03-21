@@ -437,7 +437,9 @@
         "chatIdPlaceholder": "Nhập Chat ID của bạn",
         "userIdPlaceholder": "Nhập User ID của bạn",
         "zaloHint": "Bạn chưa biết cách tạo? Xem <a>Hướng dẫn tạo Zalo Mini App / OA Bot</a> để lấy Token và User ID dễ dàng nhé.",
-        "telegramHint": "Tạo bot miễn phí qua <a>@BotFather</a> để lấy Token. Sau đó gửi 1 tin nhắn bất kỳ cho bot của bạn để tự động lấy Chat ID."
+        "telegramHint": "Tạo bot miễn phí qua <a>@BotFather</a> để lấy Token. Sau đó gửi 1 tin nhắn bất kỳ cho bot của bạn để tự động lấy Chat ID.",
+        "testSuccess": "Gửi tin nhắn test thành công! Hãy kiểm tra ứng dụng chat của bạn.",
+        "testError": "Kiểm thử thất bại. Vui lòng xem lại Token và User ID."
       }
     },
     "explore": {
@@ -453,7 +455,7 @@
     }
   },
   "Hero": {
-    "badge": "🚀 Phiên bản mới v1.0",
+    "badge": "🚀 Phiên bản mới v2.0",
     "title": "Học từ vựng thụ động ngay khi <highlight>lướt web</highlight>",
     "subtitle": "Đừng để việc tra từ làm gián đoạn việc đọc của bạn. LexiVocab giúp bạn dịch, lưu và ôn tập từ vựng tiếng Anh một cách tự nhiên nhất.",
     "cta_install": "Thêm vào Chrome",

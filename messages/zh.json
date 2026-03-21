@@ -383,8 +383,10 @@
         "advancedLabel": "高级配置 (JSON)",
         "advancedDesc": "从浏览器扩展同步的原始 JSON 设置，请谨慎修改！",
         "invalidJson": "高级偏好中的 JSON 格式无效。",
-        "targetLanguageLabel": "目标语言",
-        "targetLanguageDesc": "您想要翻译成的语言",
+        "learningLanguageLabel": "学习语言",
+        "learningLanguageDesc": "您想要学习的语言（例如：英语）",
+        "nativeLanguageLabel": "母语",
+        "nativeLanguageDesc": "显示含义和用于翻译的语言",
         "defaultTranslatorLabel": "默认翻译器",
         "defaultTranslatorDesc": "默认使用的翻译服务"
       },
@@ -431,7 +433,9 @@
         "chatIdPlaceholder": "输入您的聊天 ID",
         "userIdPlaceholder": "输入您的用户 ID",
         "zaloHint": "需要帮助？请查看 <a>Zalo Bot 指南</a> 获取您的机器人 Token 和 用户 ID。",
-        "telegramHint": "通过 <a>@BotFather</a> 创建机器人并获取 Token。向您的新机器人发送消息以提取您的聊天 ID。"
+        "telegramHint": "通过 <a>@BotFather</a> 创建机器人并获取 Token。向您的新机器人发送消息以提取您的聊天 ID。",
+        "testSuccess": "测试发送成功！请检查您的聊天应用程序。",
+        "testError": "测试发送失败。请检查API令牌和用户ID。"
       }
     },
     "explore": {
@@ -447,7 +451,7 @@
     }
   },
   "Hero": {
-    "badge": "🚀 全新发布 v1.0",
+    "badge": "🚀 全新发布 v2.0",
     "title": "在<highlight>浏览网页</highlight>时被动学习词汇",
     "subtitle": "不要让查词典打断你的阅读流程。LexiVocab帮助你自然地翻译、保存和复习英语词汇。",
     "cta_install": "添加到Chrome",

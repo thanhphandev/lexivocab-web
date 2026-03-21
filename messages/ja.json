@@ -383,8 +383,10 @@
         "advancedLabel": "高度な設定 (JSON)",
         "advancedDesc": "ブラウザ拡張機能から同期された生のJSON設定です。慎重に変更してください。",
         "invalidJson": "高度な設定のJSON形式が無効です。",
-        "targetLanguageLabel": "ターゲット言語",
-        "targetLanguageDesc": "翻訳したい言語",
+        "learningLanguageLabel": "学習中の言語",
+        "learningLanguageDesc": "学びたい言語（例：英語）",
+        "nativeLanguageLabel": "母国語",
+        "nativeLanguageDesc": "意味を表示し、翻訳に使用する言語",
         "defaultTranslatorLabel": "デフォルト翻訳サービス",
         "defaultTranslatorDesc": "デフォルトで使用する翻訳サービス"
       },
@@ -431,7 +433,9 @@
         "chatIdPlaceholder": "チャットIDを入力",
         "userIdPlaceholder": "ユーザーIDを入力",
         "zaloHint": "お困りですか？<a>Zalo Botの使い方</a>を見てボットトークンとユーザーIDを取得してください。",
-        "telegramHint": "<a>@BotFather</a>経由でボットを作成し、トークンを取得します。新しいボットにメッセージを送信してチャットIDを取得します。"
+        "telegramHint": "<a>@BotFather</a>経由でボットを作成し、トークンを取得します。新しいボットにメッセージを送信してチャットIDを取得します。",
+        "testSuccess": "テストが無事送信されました！チャットアプリを確認してください。",
+        "testError": "テスト送信に失敗しました。トークンとユーザーIDを見直してください。"
       }
     },
     "explore": {
@@ -447,7 +451,7 @@
     }
   },
   "Hero": {
-    "badge": "🚀 新リリース v1.0",
+    "badge": "🚀 新リリース v2.0",
     "title": "ウェブを<highlight>閲覧</highlight>しながら自然に単語を学ぶ",
     "subtitle": "辞書を引くために読書の流れを中断しないでください。LexiVocabは、英語の単語を自然に翻訳、保存、復習するのに役立ちます。",
     "cta_install": "Chromeに追加",
