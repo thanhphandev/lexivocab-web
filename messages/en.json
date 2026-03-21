@@ -114,6 +114,7 @@
       "addWord": "Add Word",
       "batchImportText": "Batch Import",
       "newTag": "New Tag",
+      "explore": "Explore",
       "export": "Export",
       "exportCsv": "Export as CSV",
       "exportJson": "Export as JSON",
@@ -249,14 +250,34 @@
         "save": "Save Word"
       },
       "batchImport": {
-        "desc": "Import multiple vocabulary words at once. Add each word on a new line. Format: Word, Meaning (optional), Context (optional)",
+        "desc": "Upload a CSV file or paste text (Word, Meaning, Context). True UTF-8 encoding is supported.",
         "listLabel": "Vocabulary List (CSV Format)",
         "listPlaceholder": "apple, A fruit, I ate an apple\nbanana, A yellow fruit\nubiquitous",
         "cancel": "Cancel",
+        "premiumTitle": "Premium Feature",
+        "premiumDesc": "Batch importing vocabulary is exclusively available for Premium users. Upgrade to unlock this and other advanced AI features.",
+        "upgradeToPremium": "Upgrade to Premium",
         "import": "Import Words",
+        "importNow": "Import Now",
         "noWords": "No valid words to import.",
         "success": "Successfully imported {count} words!",
-        "failed": "Import failed: {error}"
+        "failed": "Import failed: {error}",
+        "importing": "Importing words...",
+        "unexpectedError": "An unexpected error occurred during import.",
+        "uploadCsv": "Upload CSV File",
+        "pasteText": "Paste Text",
+        "fileReadSuccess": "File read successfully!",
+        "foundWords": "Found {count} words to import.",
+        "chooseDifferent": "Choose different file",
+        "clickToUpload": "Click to upload CSV",
+        "utf8Support": "UTF-8 encoded files are supported.",
+        "rawText": "Raw Text",
+        "dataPreview": "Data Preview ({count} words)",
+        "colWord": "Word",
+        "colMeaning": "Meaning",
+        "colContext": "Context",
+        "moreWords": "+ {count} more words",
+        "invalidFormat": "No valid words found. Check your CSV format."
       }
     },
     "flashcard": {
@@ -276,12 +297,12 @@
       "previous": "Previous",
       "next": "Next",
       "quality": {
-        "5": "Perfect",
-        "4": "Good",
-        "3": "Hard",
-        "2": "Struggled",
+        "0": "Blackout",
         "1": "Wrong",
-        "0": "Blackout"
+        "2": "Struggled",
+        "3": "Hard",
+        "4": "Good",
+        "5": "Perfect"
       }
     },
     "review": {
@@ -350,14 +371,24 @@
         "highlightToggleDesc": "Automatically highlight your active vocabulary words on web pages.",
         "highlightColorLabel": "Highlight Color",
         "highlightColorDesc": "Custom background color for highlighted words.",
-        "dailyGoalLabel": "Daily Review Goal",
-        "dailyGoalDesc": "How many words do you want to review per day?",
+        "dailyGoalLabel": "Daily Capture Goal",
+        "dailyGoalDesc": "How many words do you want to save via extension per day?",
+        "dailyNewCardLimitLabel": "New Cards / Day",
+        "dailyNewCardLimitDesc": "Maximum new flashcards to learn daily.",
+        "dailyReviewLimitLabel": "Review Limit / Day",
+        "dailyReviewLimitDesc": "Maximum cards to review daily.",
         "excludedDomainsLabel": "Excluded Domains",
         "excludedDomainsPlaceholder": "example.com\nreddit.com",
         "excludedDomainsDesc": "LexiVocab will disable highlighting on these websites. Add one domain per line.",
         "advancedLabel": "Advanced Configuration (JSON)",
         "advancedDesc": "Raw JSON settings synchronized from your browser extension. Modify with caution!",
-        "invalidJson": "Invalid JSON format in advanced preferences."
+        "invalidJson": "Invalid JSON format in advanced preferences.",
+        "learningLanguageLabel": "Learning Language",
+        "learningLanguageDesc": "The language you are studying (e.g., English)",
+        "nativeLanguageLabel": "Native Language",
+        "nativeLanguageDesc": "The language used for meanings and explanations (e.g., Vietnamese)",
+        "defaultTranslatorLabel": "Default Translator",
+        "defaultTranslatorDesc": "The default translation service to use"
       },
       "account": {
         "title": "Account Actions",
@@ -468,17 +499,22 @@
     "free": "Free",
     "plan_free": "Free",
     "plan_premium": "Premium",
+    "plan_ultimate": "Ultimate",
     "business_plan": "Business",
-    "Perfect for beginners": "Perfect for beginners",
-    "Unlock full potential": "Unlock full potential",
-    "For advanced learners and teams": "For advanced learners and teams",
-    "MAX_WORDS": "Up to {count} vocabulary words",
+    "Perfect for beginners to get started": "Perfect for beginners to get started",
+    "Unlock full potential with AI features": "Unlock full potential with AI features",
+    "Unlimited access for professionals and teams": "Unlimited access for professionals and teams",
+    "MAX_WORDS": "Vocabulary Limit",
     "AI_ACCESS": "AI Meaning & Context",
     "SUPPORT_LEVEL": "Support",
-    "EXPORT_PDF": "Export Data (PDF/CSV)",
+    "EXPORT_ANKI": "Export Data (Anki/PDF)",
+    "BATCH_IMPORT": "Batch Import",
+    "AI_DAILY_LIMIT": "AI Daily Limit",
+    "MAX_QUIZ_PER_DAY": "Daily Quizzes",
     "ADVANCED_AI": "Advanced AI Features",
     "QUIZ_GENERATION": "AI Quiz Generation",
-    "AI_DAILY_LIMIT": "AI Daily Limit",
+    "LLM_TRANSLATION_LIMIT": "Live Translations",
+    "AVAILABLE_LLM_MODELS": "Supported AI Models",
     "trust": {
       "secure": "Secure Payment",
       "lifetime": "Lifetime Access",
@@ -501,13 +537,17 @@
       "unlimited": "Unlimited",
       "standard": "Standard",
       "priority": "Priority",
-      "MAX_WORDS": "Up to {count} vocabulary words",
+      "MAX_WORDS": "Vocabulary Limit",
       "AI_ACCESS": "AI Meaning & Context",
-      "SUPPORT_LEVEL": "Support",
-      "EXPORT_PDF": "Export Data (PDF/CSV)",
-      "ADVANCED_AI": "Advanced AI Features",
-      "QUIZ_GENERATION": "AI Quiz Generation",
-      "AI_DAILY_LIMIT": "AI Daily Limit",
+      "SUPPORT_LEVEL": "Support Priority",
+      "EXPORT_ANKI": "Data Export (Anki/CSV)",
+      "BATCH_IMPORT": "Batch Import (CSV)",
+      "AI_DAILY_LIMIT": "AI Usage Limit (Words)",
+      "MAX_QUIZ_PER_DAY": "Daily Quiz Generation",
+      "ADVANCED_AI": "Advanced AI Access",
+      "QUIZ_GENERATION": "Interactive Quizzes",
+      "LLM_TRANSLATION_LIMIT": "Live Web Translations",
+      "AVAILABLE_LLM_MODELS": "Supported LLM Models",
       "duration_1m": "1 month",
       "duration_3m": "3 months",
       "duration_6m": "6 months",
@@ -549,7 +589,8 @@
     "remove_coupon": "Remove",
     "coupon_applied": "Coupon applied successfully!",
     "pricing_errors": {
-      "invalid_coupon": "Invalid or expired coupon"
+      "invalid_coupon": "Invalid or expired coupon",
+      "failed_to_create_order": "Failed to create order"
     }
   },
   "Billing": {
@@ -732,7 +773,11 @@
     "update_enforcement": "Added version update enforcement mechanism",
     "mode_toggle_feature": "Mode Toggle: Quickly switch between Standard Mode and Compact Mode",
     "realtime_input_translation": "Real-time Input Translation: Translate text while typing by pressing Space 3 times",
-    "highlight_performance_optimization": "Improved highlight performance for vocabulary words"
+    "highlight_performance_optimization": "Improved highlight performance for vocabulary words",
+    "v2_architecture_upgrade": "New Architecture: Transition from a pure client extension to a modern Web App and API system with real-time sync.",
+    "v2_ai_integration": "AI Integration: Smart AI capabilities for contextual translation, explanations, and deep practice generation.",
+    "v2_spaced_repetition": "Spaced Repetition: Smart vocabulary learning system based on the Spaced Repetition (SM-2) algorithm.",
+    "v2_i18n_support": "Multilingual: Comprehensive i18n support across the entire Web App and Extension system."
   },
   "VideoDemo": {
     "badge": "Video Demo",
@@ -757,6 +802,41 @@
     "go_dashboard": "Go to Dashboard"
   },
   "AI": {
+    "tags": {
+      "assistant": "AI Assistant",
+      "proTip": "Pro Tip",
+      "poweredBy": "Powered by LexiVocab AI"
+    },
+    "explanation": {
+      "title": "Meaning & Context",
+      "nuances": "Nuances",
+      "examples": "Examples",
+      "analyzing": "Analyzing context..."
+    },
+    "related": {
+      "synonyms": "Synonyms",
+      "antonyms": "Antonyms",
+      "collocations": "Collocations",
+      "finding": "Finding related words..."
+    },
+    "quiz": {
+      "generating": "Generating quiz...",
+      "instruction": "Select the correct answer",
+      "correct": "Correct!",
+      "incorrect": "Incorrect",
+      "tryAnother": "Try another question"
+    },
+    "actions": {
+      "tryAgain": "Try Again",
+      "regenerate": "Regenerate",
+      "feedback": "Feedback",
+      "history": "History",
+      "upgradePlan": "Upgrade Plan"
+    },
+    "errors": {
+      "title": "AI Assistant Error",
+      "quotaReachedTitle": "Daily AI Limit Reached"
+    },
     "tabs": {
       "explain": "Explain",
       "related": "Related",

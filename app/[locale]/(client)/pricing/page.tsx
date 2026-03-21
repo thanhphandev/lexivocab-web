@@ -4,8 +4,8 @@ import { useTranslations, useLocale } from "next-intl";
 import { useAuth } from "@/lib/auth/auth-context";
 import { usePermissions } from "@/lib/hooks/use-permissions";
 import { useState, useEffect } from "react";
-import { clientApi, paymentApi } from "@/lib/api/api-client";
-import type { CreatePaymentOrderResponse, SubscriptionPlanDto, PaymentHistoryDto } from "@/lib/api/types";
+import { paymentApi } from "@/lib/api/api-client";
+import type { SubscriptionPlanDto, PaymentHistoryDto } from "@/lib/api/types";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import {
@@ -21,21 +21,19 @@ import {
 import { Button } from "@/components/ui/button";
 import { PendingTransactionBanner } from "@/components/billing/pending-transaction-banner";
 import { SepayQRDialog } from "@/components/billing/sepay-qr-dialog";
-import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function PricingPage() {
     const locale = useLocale();
     const t = useTranslations("Pricing");
     const { user, isAuthenticated } = useAuth();
-    const { isPremium } = usePermissions();
-
+    const { isPremium, plan: userPlan } = usePermissions();
     const [isProcessing, setIsProcessing] = useState(false);
     const [selectedProvider, setSelectedProvider] = useState<number>(1); // 1: PayPal, 3: Sepay
     const [qrData, setQrData] = useState<{ url: string; ref: string; expiresAt?: string | null } | null>(null);
     const [isPolling, setIsPolling] = useState(false);
     const [plans, setPlans] = useState<SubscriptionPlanDto[]>([]);
     const [isLoadingPlans, setIsLoadingPlans] = useState(true);
-    const Object_values = Object.values;
     const [selectedPricingIds, setSelectedPricingIds] = useState<Record<string, string>>({});
     const [pendingTransaction, setPendingTransaction] = useState<PaymentHistoryDto | null>(null);
     const [lastSepayRequest, setLastSepayRequest] = useState<{ pricingId: string } | null>(null);
@@ -74,7 +72,7 @@ export default function PricingPage() {
                     paymentApi.getPlans(),
                     isAuthenticated ? paymentApi.getPaymentHistory(1, 10) : Promise.resolve({ success: true, data: { items: [] } })
                 ]);
-                
+
                 if (plansRes.success) {
                     setPlans(plansRes.data);
                 }
@@ -104,10 +102,10 @@ export default function PricingPage() {
 
         const isFree = plan.nameKey.toLowerCase().includes("free");
         if (isFree || !pricingId) return;
-        
+
         setIsProcessing(true);
         try {
-            const res = await paymentApi.createOrder({ 
+            const res = await paymentApi.createOrder({
                 pricingId: pricingId,
                 provider: selectedProvider,
                 couponCode: appliedCoupon?.code
@@ -133,10 +131,10 @@ export default function PricingPage() {
                     window.location.href = res.data.approvalUrl;
                 }
             } else {
-                alert("error" in res ? res.error : "Failed to create order");
+                toast.error(t("pricing_errors.failed_to_create_order"))
             }
         } catch (err) {
-            alert("An error occurred. Please try again.");
+            toast.error(t("pricing_errors.failed_to_create_order"))
         } finally {
             setIsProcessing(false);
         }
@@ -156,8 +154,8 @@ export default function PricingPage() {
                 });
                 setCouponError("");
             } else {
-                const errorMsg = 'error' in res ? (res as any).error : null;
-                setCouponError(errorMsg || t("pricing_errors.invalid_coupon" as any));
+                // const errorMsg = 'error' in res ? (res as any).error : null;
+                setCouponError(t("pricing_errors.invalid_coupon" as any));
                 setAppliedCoupon(null);
             }
         } catch (err) {
@@ -176,9 +174,9 @@ export default function PricingPage() {
 
     const handleResumePending = () => {
         if (!pendingTransaction || !pendingTransaction.approvalUrl) return;
-        
-        setQrData({ 
-            url: pendingTransaction.approvalUrl, 
+
+        setQrData({
+            url: pendingTransaction.approvalUrl,
             ref: pendingTransaction.externalOrderId,
             expiresAt: pendingTransaction.expiresAt ?? null
         });
@@ -245,21 +243,30 @@ export default function PricingPage() {
 
     // Build comparison rows dynamically from API data — no hard coding
     const freePlan = plans.find(p => p.nameKey.toLowerCase().includes("free"));
-    const premiumPlan2 = plans.find(p => p.nameKey.toLowerCase().includes("premium"));
+    const premiumPlan = plans.find(p => p.nameKey.toLowerCase().includes("premium"));
+    const ultimatePlan = plans.find(p => p.nameKey.toLowerCase().includes("ultimate"));
 
-    const comparisonRows = freePlan && premiumPlan2
+    const comparisonRows = freePlan && premiumPlan && ultimatePlan
         ? freePlan.features.map((freeFeature: any) => {
-            const premiumFeature = premiumPlan2.features.find((f: any) => f.textKey === freeFeature.textKey);
+            const premiumFeature = premiumPlan.features.find((f: any) => f.textKey === freeFeature.textKey);
+            const ultimateFeature = ultimatePlan.features.find((f: any) => f.textKey === freeFeature.textKey);
 
             const renderValue = (feature: any) => {
                 if (!feature) return false;
                 if (feature.params?.count !== undefined) {
-                    const count = feature.params.count;
-                    return count === 0 || String(count).toLowerCase() === "unlimited"
-                        ? t("comparison.unlimited")
-                        : t("comparison.words_limit", { count: Number(count) });
+                    const count = Number(feature.params.count);
+                    if (count === -1 || String(feature.params.count).toLowerCase() === "unlimited") {
+                        return t("comparison.unlimited");
+                    }
+                    if (count === 0) return "-";
+                    return count.toString(); // Generic number display instead of hardcoding 'words'
                 }
-                if (feature.params?.value !== undefined) return String(feature.params.value);
+                if (feature.params?.value !== undefined) {
+                    const val = String(feature.params.value);
+                    if (val === "-1" || val.toLowerCase() === "unlimited") return t("comparison.unlimited");
+                    if (val === "0") return "-";
+                    return val;
+                }
                 return feature.included;
             };
 
@@ -267,6 +274,7 @@ export default function PricingPage() {
                 key: freeFeature.textKey,
                 free: renderValue(freeFeature),
                 premium: renderValue(premiumFeature),
+                ultimate: renderValue(ultimateFeature)
             };
         })
         : [];
@@ -276,7 +284,7 @@ export default function PricingPage() {
             {/* Pending Transaction Banner */}
             {pendingTransaction && (
                 <div className="mx-auto max-w-5xl px-4 pt-8">
-                    <PendingTransactionBanner 
+                    <PendingTransactionBanner
                         transaction={pendingTransaction}
                         onResume={handleResumePending}
                         onCancel={() => setPendingTransaction(null)}
@@ -359,8 +367,8 @@ export default function PricingPage() {
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay, duration: 0.4 }}
                                     className={`rounded-2xl bg-card p-8 relative flex flex-col ${isFree
-                                            ? "border border-border shadow-sm"
-                                            : "border-2 border-primary shadow-lg overflow-hidden"
+                                        ? "border border-border shadow-sm"
+                                        : "border-2 border-primary shadow-lg overflow-hidden"
                                         }`}
                                 >
                                     {plan.isRecommended && (
@@ -398,26 +406,41 @@ export default function PricingPage() {
                                                     // Dropdown / Tabs for multiple duration options
                                                     <div className="mb-6">
                                                         <div className="flex flex-wrap gap-2">
-                                                            {availablePricings.map((pricing: any) => (
-                                                                <button
-                                                                    key={pricing.id}
-                                                                    onClick={() => setSelectedPricingIds(prev => ({ ...prev, [plan.id]: pricing.id }))}
-                                                                    className={`flex-1 min-w-[80px] px-3 py-2 rounded-xl text-xs font-bold transition-all border-2 ${
-                                                                        selectedPricingIds[plan.id] === pricing.id
-                                                                            ? "border-primary bg-primary/10 text-primary shadow-sm"
-                                                                            : "border-border bg-muted/30 text-muted-foreground hover:border-primary/30"
-                                                                    }`}
-                                                                >
-                                                                    {t(pricing.labelKey)}
-                                                                </button>
-                                                            ))}
+                                                            {availablePricings.map((pricing: any) => {
+                                                                const basePricing = availablePricings.find((p: any) => p.durationDays === 30 || p.durationDays === 31 || p.labelKey.includes("1_month"));
+                                                                let savings = 0;
+                                                                if (basePricing && pricing.durationDays && pricing.durationDays > 60) {
+                                                                    const months = Math.round(pricing.durationDays / 30);
+                                                                    const basePrice = parseFloat(basePricing.price);
+                                                                    const thisPrice = parseFloat(pricing.price);
+                                                                    savings = Math.round((1 - (thisPrice / (basePrice * months))) * 100);
+                                                                }
+
+                                                                return (
+                                                                    <button
+                                                                        key={pricing.id}
+                                                                        onClick={() => setSelectedPricingIds(prev => ({ ...prev, [plan.id]: pricing.id }))}
+                                                                        className={`relative flex-1 min-w-[80px] px-2 py-2.5 rounded-xl text-xs transition-all border-2 flex flex-col items-center justify-center ${selectedPricingIds[plan.id] === pricing.id
+                                                                            ? "border-primary bg-primary/10 shadow-sm"
+                                                                            : "border-border bg-muted/30 hover:border-primary/30"
+                                                                            }`}
+                                                                    >
+                                                                        {savings > 0 && (
+                                                                            <span className="absolute -top-2.5 bg-emerald-100 dark:bg-emerald-900 border border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400 text-[9px] font-bold px-1.5 py-0.5 rounded-sm">
+                                                                                -{savings}%
+                                                                            </span>
+                                                                        )}
+                                                                        <span className={selectedPricingIds[plan.id] === pricing.id ? "font-bold text-primary" : "font-semibold text-muted-foreground"}>{t(pricing.labelKey)}</span>
+                                                                    </button>
+                                                                )
+                                                            })}
                                                         </div>
                                                     </div>
                                                 ) : null}
                                                 {(() => {
                                                     const selectedPricingId = selectedPricingIds[plan.id];
                                                     const pricing = availablePricings.find((p: any) => p.id === selectedPricingId) || availablePricings[0];
-                                                    
+
                                                     if (!pricing) return null;
 
                                                     const priceVal = parseFloat(pricing.price);
@@ -475,27 +498,37 @@ export default function PricingPage() {
                                                 >
                                                     {(() => {
                                                         const key = feature.textKey.replace("Pricing.", "");
+                                                        let featureName = key;
+                                                        try { featureName = t(key); } catch { }
+
                                                         const p = feature.params as Record<string, any> | null | undefined;
+
                                                         // count-based feature (integer from backend)
                                                         if (p != null && "count" in p) {
-                                                            const c = p.count;
-                                                            if (c === 0 || String(c).toLowerCase() === "unlimited") {
-                                                                return t("comparison.unlimited");
-                                                            }
-                                                            return t("comparison.words_limit", { count: Number(c) });
+                                                            const c = Number(p.count);
+                                                            let valStr = c.toString();
+                                                            if (c === -1 || String(p.count).toLowerCase() === "unlimited") {
+                                                                valStr = t("comparison.unlimited");
+                                                            } else if (c === 0) valStr = "-";
+
+                                                            return (
+                                                                <span><span className="opacity-80 font-normal mr-1">{featureName}:</span>{valStr}</span>
+                                                            );
                                                         }
-                                                        // string value "Unlimited" from backend
+
+                                                        // string value from backend
                                                         if (p != null && "value" in p) {
-                                                            const v = String(p.value);
-                                                            if (v.toLowerCase() === "unlimited") return t("comparison.unlimited");
-                                                            return v;
+                                                            let v = String(p.value);
+                                                            if (v === "-1" || v.toLowerCase() === "unlimited") v = t("comparison.unlimited");
+                                                            else if (v === "0") v = "-";
+
+                                                            return (
+                                                                <span><span className="opacity-80 font-normal mr-1">{featureName}:</span>{v}</span>
+                                                            );
                                                         }
+
                                                         // boolean / no params — use key without interpolation
-                                                        try {
-                                                            return t(key);
-                                                        } catch {
-                                                            return key;
-                                                        }
+                                                        return featureName;
                                                     })()}
                                                 </span>
                                             </li>
@@ -526,34 +559,40 @@ export default function PricingPage() {
                                                 </Link>
                                             )
                                         ) : (
-                                            isPremium ? (
-                                                <Button disabled className="w-full h-12 text-base">
-                                                    <Shield className="mr-2 h-5 w-5" />
-                                                    {t("already_premium")}
-                                                </Button>
-                                            ) : (
-                                                <Button
-                                                    onClick={() => handleUpgrade(plan, selectedPricingIds[plan.id])}
-                                                    disabled={isProcessing}
-                                                    className="w-full h-12 text-base bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg"
-                                                >
-                                                    {isProcessing ? (
-                                                        <>
-                                                            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                                                            {t("processing")}
-                                                        </>
-                                                    ) : (
-                                                        <>
-                                                            <Crown className="mr-2 h-5 w-5" />
-                                                            {t("upgrade")}
-                                                        </>
-                                                    )}
-                                                </Button>
-                                            )
+                                            (() => {
+                                                const planName = plan.nameKey.replace("Pricing.", "").toLowerCase();
+                                                const isCurrent = userPlan?.toLowerCase() === planName || (userPlan?.toLowerCase() === "business" && planName === "ultimate");
+                                                const isDowngrade = (userPlan?.toLowerCase() === "ultimate" || userPlan?.toLowerCase() === "business") && planName === "premium";
+                                                const disabledUpgrade = isCurrent || isDowngrade;
+                                                return disabledUpgrade ? (
+                                                    <Button disabled className="w-full h-12 text-base">
+                                                        <Shield className="mr-2 h-5 w-5" />
+                                                        {isCurrent ? t("already_premium") : "Included in Ultimate"}
+                                                    </Button>
+                                                ) : (
+                                                    <Button
+                                                        onClick={() => handleUpgrade(plan, selectedPricingIds[plan.id])}
+                                                        disabled={isProcessing}
+                                                        className="w-full h-12 text-base bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg"
+                                                    >
+                                                        {isProcessing ? (
+                                                            <>
+                                                                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                                                                {t("processing")}
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <Crown className="mr-2 h-5 w-5" />
+                                                                {t("upgrade")}
+                                                            </>
+                                                        )}
+                                                    </Button>
+                                                );
+                                            })()
                                         )}
                                     </div>
 
-                                    {!isFree && !isPremium && (
+                                    {!isFree && userPlan?.toLowerCase() !== plan.nameKey.replace("Pricing.", "").toLowerCase() && !(userPlan?.toLowerCase() === "ultimate" && plan.nameKey.replace("Pricing.", "").toLowerCase() === "premium") && !(userPlan?.toLowerCase() === "business" && plan.nameKey.replace("Pricing.", "").toLowerCase() === "premium") && (
                                         <div className="mt-8 pt-6 border-t border-border">
                                             <p className="text-sm font-medium text-foreground mb-4 text-left">
                                                 {t("select_method")}
@@ -562,8 +601,8 @@ export default function PricingPage() {
                                                 <button
                                                     onClick={() => setSelectedProvider(1)}
                                                     className={`flex items-center gap-3 p-3 rounded-xl border-2 transition-all ${selectedProvider === 1
-                                                            ? "border-primary bg-primary/5"
-                                                            : "border-border hover:border-primary/50"
+                                                        ? "border-primary bg-primary/5"
+                                                        : "border-border hover:border-primary/50"
                                                         }`}
                                                 >
                                                     <div className="h-4 w-4 rounded-full border-2 border-primary flex items-center justify-center">
@@ -572,18 +611,18 @@ export default function PricingPage() {
                                                     <span className="text-sm font-medium">{t("method_paypal")}</span>
                                                 </button>
                                                 {locale === "vi" && (
-                                                <button
-                                                    onClick={() => setSelectedProvider(3)}
-                                                    className={`flex items-center gap-3 p-3 rounded-xl border-2 transition-all ${selectedProvider === 3
+                                                    <button
+                                                        onClick={() => setSelectedProvider(3)}
+                                                        className={`flex items-center gap-3 p-3 rounded-xl border-2 transition-all ${selectedProvider === 3
                                                             ? "border-primary bg-primary/5"
                                                             : "border-border hover:border-primary/50"
-                                                        }`}
-                                                >
-                                                    <div className="h-4 w-4 rounded-full border-2 border-primary flex items-center justify-center">
-                                                        {selectedProvider === 3 && <div className="h-2 w-2 rounded-full bg-primary" />}
-                                                    </div>
-                                                    <span className="text-sm font-medium">{t("method_sepay")}</span>
-                                                </button>
+                                                            }`}
+                                                    >
+                                                        <div className="h-4 w-4 rounded-full border-2 border-primary flex items-center justify-center">
+                                                            {selectedProvider === 3 && <div className="h-2 w-2 rounded-full bg-primary" />}
+                                                        </div>
+                                                        <span className="text-sm font-medium">{t("method_sepay")}</span>
+                                                    </button>
                                                 )}
                                             </div>
                                         </div>
@@ -617,8 +656,14 @@ export default function PricingPage() {
                                         <th className="py-6 px-8 font-semibold text-lg text-center">{t("comparison.free")}</th>
                                         <th className="py-6 px-8 font-semibold text-lg text-center text-primary">
                                             <div className="flex items-center justify-center gap-2">
-                                                <Crown className="h-5 w-5" />
+                                                <Zap className="h-5 w-5" />
                                                 {t("comparison.premium")}
+                                            </div>
+                                        </th>
+                                        <th className="py-6 px-8 font-semibold text-lg text-center text-primary">
+                                            <div className="flex items-center justify-center gap-2">
+                                                <Crown className="h-5 w-5" />
+                                                Ultimate
                                             </div>
                                         </th>
                                     </tr>
@@ -636,6 +681,11 @@ export default function PricingPage() {
                                                 {typeof row.premium === "boolean" ? (
                                                     row.premium ? <Check className="h-5 w-5 text-primary mx-auto" /> : <X className="h-5 w-5 text-muted-foreground/30 mx-auto" />
                                                 ) : row.premium}
+                                            </td>
+                                            <td className="py-5 px-8 text-center font-semibold text-foreground bg-primary/10">
+                                                {typeof row.ultimate === "boolean" ? (
+                                                    row.ultimate ? <Check className="h-5 w-5 text-primary mx-auto" /> : <X className="h-5 w-5 text-muted-foreground/30 mx-auto" />
+                                                ) : row.ultimate}
                                             </td>
                                         </tr>
                                     ))}
@@ -678,9 +728,9 @@ export default function PricingPage() {
             </div>
 
             {/* Sepay QR Modal */}
-            <SepayQRDialog 
-                qrData={qrData} 
-                onOpenChange={(open) => !open && setQrData(null)} 
+            <SepayQRDialog
+                qrData={qrData}
+                onOpenChange={(open) => !open && setQrData(null)}
                 onCreateNew={handleCreateNewSepay}
                 onRefresh={() => window.location.reload()}
             />

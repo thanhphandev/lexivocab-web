@@ -114,6 +114,7 @@
       "addWord": "Thêm từ",
       "batchImportText": "Nhập hàng loạt",
       "newTag": "Thẻ mới",
+      "explore": "Khám phá",
       "export": "Xuất",
       "exportCsv": "Xuất dạng CSV",
       "exportJson": "Xuất dạng JSON",
@@ -253,14 +254,34 @@
         "save": "Lưu từ"
       },
       "batchImport": {
-        "desc": "Nhập nhiều từ vựng cùng lúc. Mỗi từ trên một dòng. Định dạng: Từ, Nghĩa (tùy chọn), Ngữ cảnh (tùy chọn)",
+        "desc": "Tải lên tệp CSV hoặc dán văn bản (Từ vựng, Ý nghĩa, Ngữ cảnh). Hỗ trợ chuẩn mã hóa UTF-8.",
         "listLabel": "Danh sách từ vựng (định dạng CSV)",
         "listPlaceholder": "apple, Một loại trái cây, Tôi ăn một quả táo\nbanana, Trái chuối\nubiquitous",
         "cancel": "Hủy",
+        "premiumTitle": "Tính năng Cao cấp",
+        "premiumDesc": "Tính năng Nhập hàng loạt chỉ dành riêng cho người dùng Premium. Hãy nâng cấp để mở khóa tính năng này và các tính năng AI nâng cao khác.",
+        "upgradeToPremium": "Nâng cấp lên Premium",
         "import": "Nhập từ vựng",
+        "importNow": "Nhập ngay",
         "noWords": "Không có từ hợp lệ để nhập.",
         "success": "Đã nhập thành công {count} từ!",
-        "failed": "Nhập thất bại: {error}"
+        "failed": "Nhập thất bại: {error}",
+        "importing": "Đang nhập từ vựng...",
+        "unexpectedError": "Đã xảy ra lỗi không mong muốn khi nhập.",
+        "uploadCsv": "Tải lên tệp CSV",
+        "pasteText": "Dán văn bản",
+        "fileReadSuccess": "Đọc tệp thành công!",
+        "foundWords": "Tìm thấy {count} từ để nhập.",
+        "chooseDifferent": "Chọn tệp khác",
+        "clickToUpload": "Nhấn để tải lên CSV",
+        "utf8Support": "Hỗ trợ tệp mã hóa chuẩn UTF-8.",
+        "rawText": "Văn bản thô",
+        "dataPreview": "Dữ liệu xem trước ({count} từ)",
+        "colWord": "Từ",
+        "colMeaning": "Nghĩa",
+        "colContext": "Ngữ cảnh",
+        "moreWords": "+ {count} từ nữa",
+        "invalidFormat": "Không tìm thấy từ hợp lệ. Vui lòng kiểm tra định dạng CSV."
       }
     },
     "flashcard": {
@@ -280,12 +301,12 @@
       "previous": "Trước",
       "next": "Tiếp",
       "quality": {
-        "5": "Hoàn hảo",
-        "4": "Tốt",
-        "3": "Khó",
-        "2": "Vất vả",
+        "0": "Quên hoàn toàn",
         "1": "Sai",
-        "0": "Quên hoàn toàn"
+        "2": "Vất vả",
+        "3": "Khó",
+        "4": "Tốt",
+        "5": "Hoàn hảo"
       }
     },
     "review": {
@@ -354,14 +375,24 @@
         "highlightToggleDesc": "Tự động tô màu các từ vựng đang học trên trang web.",
         "highlightColorLabel": "Màu tô sáng",
         "highlightColorDesc": "Màu nền tùy chỉnh cho các từ được tô sáng.",
-        "dailyGoalLabel": "Mục tiêu ôn tập hàng ngày",
-        "dailyGoalDesc": "Bạn muốn ôn tập bao nhiêu từ mỗi ngày?",
+        "dailyGoalLabel": "Mục tiêu gom từ hàng ngày",
+        "dailyGoalDesc": "Số lượng từ bạn muốn lưu qua tiện ích mỗi ngày.",
+        "dailyNewCardLimitLabel": "Từ vựng mới / Ngày",
+        "dailyNewCardLimitDesc": "Giới hạn thẻ mới đưa vào chu kỳ học mỗi ngày.",
+        "dailyReviewLimitLabel": "Giới hạn ôn tập / Ngày",
+        "dailyReviewLimitDesc": "Số lượng thẻ ôn tập tối đa mỗi ngày.",
         "excludedDomainsLabel": "Tên miền loại trừ",
         "excludedDomainsPlaceholder": "example.com\nreddit.com",
         "excludedDomainsDesc": "LexiVocab sẽ tắt tô màu trên các trang web này. Thêm mỗi tên miền trên một dòng.",
         "advancedLabel": "Cấu hình nâng cao (JSON)",
         "advancedDesc": "Cài đặt JSON thô được đồng bộ từ tiện ích trình duyệt. Chỉnh sửa cẩn thận!",
-        "invalidJson": "Định dạng JSON không hợp lệ trong cài đặt nâng cao."
+        "invalidJson": "Định dạng JSON không hợp lệ trong cài đặt nâng cao.",
+        "learningLanguageLabel": "Ngôn ngữ đang học",
+        "learningLanguageDesc": "Ngôn ngữ bạn muốn học (VD: Tiếng Anh)",
+        "nativeLanguageLabel": "Ngôn ngữ của bạn",
+        "nativeLanguageDesc": "Ngôn ngữ dùng để hiển thị nghĩa và giải thích (VD: Tiếng Việt)",
+        "defaultTranslatorLabel": "Dịch vụ dịch mặc định",
+        "defaultTranslatorDesc": "Dịch vụ dịch mặc định sẽ sử dụng"
       },
       "account": {
         "title": "Hành động tài khoản",
@@ -472,17 +503,21 @@
     "free": "Miễn phí",
     "plan_free": "Miễn phí",
     "plan_premium": "Cao cấp",
-    "business_plan": "Doanh nghiệp",
-    "Perfect for beginners": "Dành cho người mới bắt đầu",
-    "Unlock full potential": "Mở khóa toàn bộ tính năng",
-    "For advanced learners and teams": "Dành cho người học nâng cao và nhóm",
-    "MAX_WORDS": "Tối đa {count} từ vựng",
+    "plan_ultimate": "Ultimate",
+    "Perfect for beginners to get started": "Dành cho người mới bắt đầu",
+    "Unlock full potential with AI features": "Mở khóa toàn bộ tính năng với AI",
+    "Unlimited access for professionals and teams": "Truy cập không giới hạn cho chuyên gia và nhóm",
+    "MAX_WORDS": "Giới hạn từ vựng",
     "AI_ACCESS": "Dịch AI & Ngữ cảnh",
     "SUPPORT_LEVEL": "Hỗ trợ",
-    "EXPORT_PDF": "Xuất dữ liệu (PDF/CSV)",
-    "ADVANCED_AI": "Tính năng AI nâng cao",
-    "QUIZ_GENERATION": "Tạo câu hỏi bằng AI",
+    "EXPORT_ANKI": "Xuất dữ liệu (Anki/PDF)",
+    "BATCH_IMPORT": "Nhập hàng loạt",
     "AI_DAILY_LIMIT": "Giới hạn AI hàng ngày",
+    "MAX_QUIZ_PER_DAY": "Tạo bài trắc nghiệm",
+    "ADVANCED_AI": "Tính năng AI nâng cao",
+    "QUIZ_GENERATION": "Tạo bài kiểm tra thông minh",
+    "LLM_TRANSLATION_LIMIT": "Dịch web trực tiếp",
+    "AVAILABLE_LLM_MODELS": "Các mô hình AI hỗ trợ",
     "trust": {
       "secure": "Thanh toán an toàn",
       "lifetime": "Truy cập trọn đời",
@@ -505,13 +540,17 @@
       "unlimited": "Không giới hạn",
       "standard": "Tiêu chuẩn",
       "priority": "Ưu tiên",
-      "MAX_WORDS": "Tối đa {count} từ vựng",
+      "MAX_WORDS": "Giới hạn từ vựng",
       "AI_ACCESS": "AI Dịch nghĩa & Ngữ cảnh",
-      "SUPPORT_LEVEL": "Hỗ trợ",
-      "EXPORT_PDF": "Xuất dữ liệu (PDF/CSV)",
-      "ADVANCED_AI": "Tính năng AI nâng cao",
-      "QUIZ_GENERATION": "Tạo bài kiểm tra AI",
-      "AI_DAILY_LIMIT": "Giới hạn AI mỗi ngày",
+      "SUPPORT_LEVEL": "Độ ưu tiên hỗ trợ",
+      "EXPORT_ANKI": "Xuất dữ liệu (Anki/CSV)",
+      "BATCH_IMPORT": "Nhập hàng loạt (CSV)",
+      "AI_DAILY_LIMIT": "Giới hạn AI mỗi ngày (Từ)",
+      "MAX_QUIZ_PER_DAY": "Tạo Quiz mỗi ngày",
+      "ADVANCED_AI": "Truy cập AI nâng cao",
+      "QUIZ_GENERATION": "Trắc nghiệm tương tác",
+      "LLM_TRANSLATION_LIMIT": "Giới hạn dịch trực tiếp",
+      "AVAILABLE_LLM_MODELS": "Mô hình AI đa dạng",
       "duration_1m": "1 tháng",
       "duration_3m": "3 tháng",
       "duration_6m": "6 tháng",
@@ -553,7 +592,8 @@
     "remove_coupon": "Bỏ mã",
     "coupon_applied": "Đã áp dụng mã giảm giá thành công!",
     "pricing_errors": {
-      "invalid_coupon": "Mã giảm giá không hợp lệ hoặc đã hết hạn"
+      "invalid_coupon": "Mã giảm giá không hợp lệ hoặc đã hết hạn",
+      "failed_to_create_order": "Không thể tạo đơn hàng"
     }
   },
   "Billing": {
@@ -736,7 +776,11 @@
     "update_enforcement": "Thêm cơ chế bắt buộc cập nhật phiên bản",
     "mode_toggle_feature": "Chuyển đổi chế độ: Chuyển nhanh giữa Standard Mode và Compact Mode",
     "realtime_input_translation": "Dịch khi gõ: Dịch văn bản ngay khi nhập bằng cách nhấn Space 3 lần",
-    "highlight_performance_optimization": "Tối ưu hiệu suất tô màu từ vựng"
+    "highlight_performance_optimization": "Tối ưu hiệu suất tô màu từ vựng",
+    "v2_architecture_upgrade": "Kiến trúc mới: Chuyển đổi từ extension thuần client sang hệ thống Web App và API hiện đại, đồng bộ hóa dữ liệu thời gian thực.",
+    "v2_ai_integration": "Hỗ trợ AI: Tích hợp AI giúp dịch theo ngữ cảnh, giải nghĩa và luyện tập chuyên sâu.",
+    "v2_spaced_repetition": "Ôn tập ngắt quãng: Hệ thống học từ vựng thông minh dựa trên thuật toán Spaced Repetition (SM-2).",
+    "v2_i18n_support": "Đa ngôn ngữ: Hỗ trợ i18n toàn diện trên toàn hệ thống Web App và Tiện ích."
   },
   "VideoDemo": {
     "badge": "Video Demo",
@@ -761,9 +805,44 @@
     "view_billing": "Xem chi tiết thanh toán"
   },
   "AI": {
+    "tags": {
+      "assistant": "Trợ lý AI",
+      "proTip": "Mẹo Nhỏ",
+      "poweredBy": "Cung cấp bởi LexiVocab AI"
+    },
+    "explanation": {
+      "title": "Ý nghĩa & Ngữ cảnh",
+      "nuances": "Sắc thái nghĩa",
+      "examples": "Ví dụ",
+      "analyzing": "Đang phân tích ngữ cảnh..."
+    },
+    "related": {
+      "synonyms": "Từ đồng nghĩa",
+      "antonyms": "Từ trái nghĩa",
+      "collocations": "Các cụm từ kết hợp",
+      "finding": "Đang tìm từ liên quan..."
+    },
+    "quiz": {
+      "generating": "Đang tạo câu hỏi...",
+      "instruction": "Chọn câu trả lời đúng",
+      "correct": "Chính xác!",
+      "incorrect": "Chưa đúng",
+      "tryAnother": "Thử câu khác"
+    },
+    "actions": {
+      "tryAgain": "Thử lặp lại",
+      "regenerate": "Tạo lại",
+      "feedback": "Góp ý",
+      "history": "Lịch sử",
+      "upgradePlan": "Nâng cấp gói"
+    },
+    "errors": {
+      "title": "Lỗi AI",
+      "quotaReachedTitle": "Đã hết hạn mức AI hàng ngày"
+    },
     "tabs": {
-      "explain": "Giải thích",
-      "related": "Từ liên quan",
+      "explain": "Giải nghĩa",
+      "related": "Liên quan",
       "quiz": "Trắc nghiệm"
     }
   },

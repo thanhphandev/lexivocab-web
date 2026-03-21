@@ -235,7 +235,7 @@ export default function HeroSection() {
                                     <div className="w-3 h-3 rounded-full bg-green-400/80" />
                                 </div>
                                 <div className="mx-auto px-4 py-1 text-xs font-medium text-muted-foreground bg-background/50 rounded-md border border-border/50 backdrop-blur-md">
-                                    app.lexivocab.com
+                                    app.lexivocab.store
                                 </div>
                             </div>
 

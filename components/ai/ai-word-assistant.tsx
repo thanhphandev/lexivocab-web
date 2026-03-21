@@ -19,7 +19,6 @@ import {
 } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import {
     Brain,
     Sparkles,
@@ -34,14 +33,15 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 function parsePartialAIJson(raw: string): Partial<WordExplanationDto> {
     if (!raw) return {};
-    
+
     try {
         const fullParsed = JSON.parse(raw);
         if (typeof fullParsed === 'object' && fullParsed !== null) {
-            return fullParsed; 
+            return fullParsed;
         }
     } catch {
         // Fallback for partial streaming JSON
@@ -97,17 +97,61 @@ export function AIWordAssistant({ word, context, isOpen, onClose }: AIWordAssist
     const [explanation, setExplanation] = useState<Partial<WordExplanationDto>>({});
     const [isStreaming, setIsStreaming] = useState(false);
     const [streamingContent, setStreamingContent] = useState("");
-    const [error, setError] = useState<string | null>(null);
+    const [explainError, setExplainError] = useState<string | null>(null);
 
     // Related State
     const [related, setRelated] = useState<RelatedWordsDto | null>(null);
     const [isLoadingRelated, setIsLoadingRelated] = useState(false);
+    const [relatedError, setRelatedError] = useState<string | null>(null);
 
     // Quiz State
     const [quiz, setQuiz] = useState<QuizDto | null>(null);
     const [isLoadingQuiz, setIsLoadingQuiz] = useState(false);
     const [selectedOption, setSelectedOption] = useState<number | null>(null);
     const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+    const [quizError, setQuizError] = useState<string | null>(null);
+
+    const isQuotaError = (err: string | null) => {
+        if (!err) return false;
+        const lower = err.toLowerCase();
+        return lower.includes("quota") || lower.includes("limit") || lower.includes("hạn ngạch") || lower.includes("giới hạn");
+    };
+
+    const ErrorDisplay = ({ error, onRetry }: { error: string, onRetry: () => void }) => {
+        const isQuota = isQuotaError(error);
+        return (
+            <div className={cn(
+                "p-4 rounded-xl border flex gap-3 text-sm flex-col sm:flex-row items-start",
+                isQuota 
+                    ? "bg-amber-500/10 border-amber-500/20 text-amber-700 dark:text-amber-400" 
+                    : "bg-destructive/5 border-destructive/20 text-destructive"
+            )}>
+                <AlertCircle className="h-5 w-5 shrink-0 mt-0.5" />
+                <div className="flex-1">
+                    <p className="font-semibold text-base mb-1">
+                        {isQuota ? t("errors.quotaReachedTitle") : t("errors.title")}
+                    </p>
+                    <p className="opacity-90 leading-relaxed mb-4">{error}</p>
+                    
+                    <div className="flex flex-wrap gap-2">
+                        {isQuota ? (
+                            <Link href="/dashboard/billing">
+                                <Button size="sm" className="bg-amber-500 hover:bg-amber-600 text-white shadow-none border-0">
+                                    <Sparkles className="h-3 w-3 mr-2" />
+                                    {t("actions.upgradePlan")}
+                                </Button>
+                            </Link>
+                        ) : (
+                            <Button variant="outline" size="sm" onClick={onRetry} className="border-current hover:bg-current/10 bg-transparent">
+                                <RotateCcw className="h-3 w-3 mr-2" />
+                                {t("actions.tryAgain")}
+                            </Button>
+                        )}
+                    </div>
+                </div>
+            </div>
+        );
+    };
 
     const scrollRef = useRef<HTMLDivElement>(null);
     const abortControllerRef = useRef<AbortController | null>(null);
@@ -126,7 +170,7 @@ export function AIWordAssistant({ word, context, isOpen, onClose }: AIWordAssist
         // Reset state
         setStreamingContent("");
         setExplanation({});
-        setError(null);
+        setExplainError(null);
         setIsStreaming(true);
 
         if (abortControllerRef.current) abortControllerRef.current.abort();
@@ -138,7 +182,14 @@ export function AIWordAssistant({ word, context, isOpen, onClose }: AIWordAssist
                 signal: controller.signal
             });
 
-            if (!response.ok) throw new Error("Failed to connect to AI stream");
+            if (!response.ok) {
+                let errMessage = "Failed to connect to AI stream";
+                try {
+                    const body = await response.json();
+                    if (body.error) errMessage = typeof body.error === 'string' ? body.error : JSON.stringify(body.error);
+                } catch { }
+                throw new Error(errMessage);
+            }
 
             const reader = response.body?.getReader();
             const decoder = new TextDecoder();
@@ -169,7 +220,7 @@ export function AIWordAssistant({ word, context, isOpen, onClose }: AIWordAssist
                                     // Optionally parse the final combined markdown if needed
                                     // but we'll stick to delta for now
                                 } else if (parsed.type === "error") {
-                                    setError(parsed.message);
+                                    setExplainError(parsed.message);
                                 }
                             } catch (e) {
                                 console.error("Error parsing stream chunk", e);
@@ -180,7 +231,7 @@ export function AIWordAssistant({ word, context, isOpen, onClose }: AIWordAssist
             }
         } catch (err: any) {
             if (err.name !== "AbortError") {
-                setError(err.message || "An error occurred while streaming AI response");
+                setExplainError(err.message || "An error occurred while streaming AI response");
             }
         } finally {
             if (abortControllerRef.current === controller) {
@@ -193,8 +244,10 @@ export function AIWordAssistant({ word, context, isOpen, onClose }: AIWordAssist
     const fetchRelated = async () => {
         if (related || isLoadingRelated) return;
         setIsLoadingRelated(true);
+        setRelatedError(null);
         const res = await aiApi.getRelated(word);
         if (res.success) setRelated(res.data);
+        else setRelatedError(res.error || "Failed finding related words.");
         setIsLoadingRelated(false);
     };
 
@@ -203,8 +256,10 @@ export function AIWordAssistant({ word, context, isOpen, onClose }: AIWordAssist
         setIsLoadingQuiz(true);
         setSelectedOption(null);
         setIsCorrect(null);
+        setQuizError(null);
         const res = await aiApi.getQuiz(word);
         if (res.success) setQuiz(res.data);
+        else setQuizError(res.error || "Failed generating quiz.");
         setIsLoadingQuiz(false);
     };
 
@@ -239,7 +294,7 @@ export function AIWordAssistant({ word, context, isOpen, onClose }: AIWordAssist
                             <Brain className="h-5 w-5" />
                         </div>
                         <Badge variant="secondary" className="px-1.5 py-0 h-5 text-[10px] uppercase font-bold tracking-wider">
-                            Lexi AI Assistant
+                            {t("tags.assistant")}
                         </Badge>
                     </div>
                     <SheetTitle className="text-2xl font-bold flex items-center gap-2">
@@ -273,23 +328,8 @@ export function AIWordAssistant({ word, context, isOpen, onClose }: AIWordAssist
                         <AnimatePresence mode="wait">
                             <TabsContent value="explain" key="explain" className="absolute inset-0 overflow-y-auto p-6 m-0 outline-none">
                                 <div className="space-y-6">
-                                    {error ? (
-                                        <div className="p-4 rounded-xl bg-destructive/5 border border-destructive/20 text-destructive flex gap-3 text-sm">
-                                            <AlertCircle className="h-5 w-5 shrink-0" />
-                                            <div>
-                                                <p className="font-semibold">Error</p>
-                                                <p>{error}</p>
-                                                <Button
-                                                    variant="outline"
-                                                    size="sm"
-                                                    className="mt-3"
-                                                    onClick={startStreaming}
-                                                >
-                                                    <RotateCcw className="h-3 w-3 mr-2" />
-                                                    Try Again
-                                                </Button>
-                                            </div>
-                                        </div>
+                                    {explainError ? (
+                                        <ErrorDisplay error={explainError} onRetry={startStreaming} />
                                     ) : (
                                         <div className="relative max-w-none">
                                             {(() => {
@@ -300,7 +340,7 @@ export function AIWordAssistant({ word, context, isOpen, onClose }: AIWordAssist
                                                             <div className="p-4 rounded-xl bg-primary/5 border border-primary/10 relative overflow-hidden">
                                                                 <div className="flex items-center gap-2 mb-2 text-primary font-semibold text-sm">
                                                                     <BookOpen className="h-4 w-4" />
-                                                                    Explanation
+                                                                    {t("explanation.title")}
                                                                 </div>
                                                                 <div className="text-sm leading-relaxed text-foreground whitespace-pre-wrap">
                                                                     {partial.explanation}
@@ -313,7 +353,7 @@ export function AIWordAssistant({ word, context, isOpen, onClose }: AIWordAssist
                                                             <div>
                                                                 <div className="flex items-center gap-2 mb-3 text-emerald-600 dark:text-emerald-400 font-semibold text-sm">
                                                                     <div className="h-1.5 w-1.5 rounded-full bg-current" />
-                                                                    Nuances
+                                                                    {t("explanation.nuances")}
                                                                 </div>
                                                                 <ul className="list-disc pl-5 space-y-1.5 text-sm text-muted-foreground">
                                                                     {partial.nuances.map((n, i) => (
@@ -328,7 +368,7 @@ export function AIWordAssistant({ word, context, isOpen, onClose }: AIWordAssist
                                                             <div>
                                                                 <div className="flex items-center gap-2 mb-3 text-blue-600 dark:text-blue-400 font-semibold text-sm">
                                                                     <div className="h-1.5 w-1.5 rounded-full bg-current" />
-                                                                    Examples
+                                                                    {t("explanation.examples")}
                                                                 </div>
                                                                 <div className="space-y-2">
                                                                     {partial.examples.map((ex, i) => (
@@ -345,7 +385,7 @@ export function AIWordAssistant({ word, context, isOpen, onClose }: AIWordAssist
                                                             <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-700 dark:text-amber-400 mt-6 !mt-8">
                                                                 <div className="flex items-center gap-2 mb-2 font-bold uppercase tracking-wider text-[11px]">
                                                                     <Sparkles className="h-3 w-3" />
-                                                                    Pro Tip
+                                                                    {t("tags.proTip")}
                                                                 </div>
                                                                 <div className="text-sm font-medium leading-relaxed">
                                                                     {partial.tip}
@@ -357,7 +397,7 @@ export function AIWordAssistant({ word, context, isOpen, onClose }: AIWordAssist
                                                         {!partial.explanation && isStreaming && (
                                                             <div className="flex items-center gap-2 text-muted-foreground animate-pulse p-4 text-sm font-medium border rounded-xl border-dashed">
                                                                 <Sparkles className="h-4 w-4 text-primary" />
-                                                                Analyzing word context...
+                                                                {t("explanation.analyzing")}
                                                             </div>
                                                         )}
                                                     </div>
@@ -375,7 +415,7 @@ export function AIWordAssistant({ word, context, isOpen, onClose }: AIWordAssist
                                         >
                                             <Button variant="outline" size="sm" onClick={startStreaming} className="w-fit">
                                                 <RotateCcw className="h-3 w-3 mr-2" />
-                                                Regenerate
+                                                {t("actions.regenerate")}
                                             </Button>
                                         </motion.div>
                                     )}
@@ -386,15 +426,17 @@ export function AIWordAssistant({ word, context, isOpen, onClose }: AIWordAssist
                                 {isLoadingRelated ? (
                                     <div className="flex flex-col items-center justify-center py-20 gap-3 text-muted-foreground">
                                         <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                                        <p className="text-sm font-medium">Finding synonyms & antonyms...</p>
+                                        <p className="text-sm font-medium">{t("related.finding")}</p>
                                     </div>
+                                ) : relatedError ? (
+                                    <ErrorDisplay error={relatedError} onRetry={fetchRelated} />
                                 ) : related ? (
                                     <div className="space-y-8">
                                         {/* Synonyms */}
                                         <section>
                                             <h4 className="text-sm font-bold flex items-center gap-2 mb-3 text-emerald-600 dark:text-emerald-400">
                                                 <div className="h-1.5 w-1.5 rounded-full bg-current" />
-                                                Synonyms
+                                                {t("related.synonyms")}
                                             </h4>
                                             <div className="flex flex-wrap gap-2">
                                                 {related.synonyms.map((s, idx) => (
@@ -409,7 +451,7 @@ export function AIWordAssistant({ word, context, isOpen, onClose }: AIWordAssist
                                         <section>
                                             <h4 className="text-sm font-bold flex items-center gap-2 mb-3 text-rose-600 dark:text-rose-400">
                                                 <div className="h-1.5 w-1.5 rounded-full bg-current" />
-                                                Antonyms
+                                                {t("related.antonyms")}
                                             </h4>
                                             <div className="flex flex-wrap gap-2">
                                                 {related.antonyms.map((a, idx) => (
@@ -424,7 +466,7 @@ export function AIWordAssistant({ word, context, isOpen, onClose }: AIWordAssist
                                         <section>
                                             <h4 className="text-sm font-bold flex items-center gap-2 mb-3 text-blue-600 dark:text-blue-400">
                                                 <div className="h-1.5 w-1.5 rounded-full bg-current" />
-                                                Collocations
+                                                {t("related.collocations")}
                                             </h4>
                                             <div className="grid grid-cols-1 gap-2">
                                                 {related.collocations.map((c, idx) => (
@@ -443,13 +485,15 @@ export function AIWordAssistant({ word, context, isOpen, onClose }: AIWordAssist
                                 {isLoadingQuiz ? (
                                     <div className="flex flex-col items-center justify-center py-20 gap-3 text-muted-foreground">
                                         <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                                        <p className="text-sm font-medium">Generating a mini quiz...</p>
+                                        <p className="text-sm font-medium">{t("quiz.generating")}</p>
                                     </div>
+                                ) : quizError ? (
+                                    <ErrorDisplay error={quizError} onRetry={fetchQuiz} />
                                 ) : quiz ? (
                                     <div className="space-y-6">
                                         <div className="p-4 rounded-2xl bg-primary/5 border border-primary/10">
                                             <h4 className="font-semibold text-lg mb-2">{quiz.question}</h4>
-                                            <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold">Pick the correct usage</p>
+                                            <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold">{t("quiz.instruction")}</p>
                                         </div>
 
                                         <div className="grid gap-3">
@@ -501,11 +545,11 @@ export function AIWordAssistant({ word, context, isOpen, onClose }: AIWordAssist
                                                     <AlertCircle className="h-5 w-5 text-rose-500 shrink-0" />
                                                 )}
                                                 <div className="text-sm">
-                                                    <p className="font-bold mb-1">{isCorrect ? "Correct!" : "Not quite..."}</p>
+                                                    <p className="font-bold mb-1">{isCorrect ? t("quiz.correct") : t("quiz.incorrect")}</p>
                                                     <p className="text-muted-foreground">{quiz.explanation}</p>
                                                     <Button variant="ghost" size="sm" onClick={fetchQuiz} className="mt-3 px-0 h-auto font-bold hover:bg-transparent">
                                                         <RotateCcw className="h-3 w-3 mr-2" />
-                                                        Try another one
+                                                        {t("quiz.tryAnother")}
                                                     </Button>
                                                 </div>
                                             </motion.div>
@@ -517,10 +561,10 @@ export function AIWordAssistant({ word, context, isOpen, onClose }: AIWordAssist
                     </div>
 
                     <div className="p-6 border-t bg-card mt-auto flex justify-between items-center text-[10px] text-muted-foreground font-medium uppercase tracking-widest">
-                        <span>Powered by LexiAI</span>
+                        <span>{t("tags.poweredBy")}</span>
                         <div className="flex gap-4">
-                            <button className="hover:text-primary transition-colors">Feedback</button>
-                            <button className="hover:text-primary transition-colors">History</button>
+                            <button className="hover:text-primary transition-colors">{t("actions.feedback")}</button>
+                            <button className="hover:text-primary transition-colors">{t("actions.history")}</button>
                         </div>
                     </div>
                 </Tabs>

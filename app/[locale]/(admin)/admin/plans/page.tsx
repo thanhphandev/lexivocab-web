@@ -39,7 +39,7 @@ export default function AdminPlansPage() {
                 adminApi.getPlans(),
                 adminApi.getFeatures()
             ]);
-            
+
             if (plansRes.success && plansRes.data) {
                 setPlans(plansRes.data);
             }
@@ -68,14 +68,14 @@ export default function AdminPlansPage() {
             setEditingPlan(null);
             setName("");
             setIsActive(true);
-            
+
             // Build default features map based on defaultValue from allFeatures
             const defaultFeats: Record<string, string> = {};
             allFeatures.forEach(f => {
                 defaultFeats[f.code] = f.defaultValue;
             });
             setSelectedFeatures(defaultFeats);
-            
+
             setPricings([
                 { id: crypto.randomUUID(), billingCycle: "Monthly", price: "0", currency: "VND", durationDays: 30, labelKey: "duration_1m" }
             ]);
@@ -115,7 +115,7 @@ export default function AdminPlansPage() {
             toast.error("You must add at least one pricing tier");
             return;
         }
-        
+
         // Ensure all prices are strings to avoid backend mapping issues
         const formattedPricings = pricings.map(p => ({
             ...p,
@@ -304,7 +304,7 @@ export default function AdminPlansPage() {
                             Configure pricing tiers and feature quotas for this subscription plan.
                         </DialogDescription>
                     </DialogHeader>
-                    
+
                     <div className="grid gap-8 py-4">
                         {/* Basic Info Section */}
                         <div className="grid gap-4 bg-muted/20 p-4 rounded-xl border">
@@ -343,14 +343,14 @@ export default function AdminPlansPage() {
                                     <Plus className="h-3 w-3 mr-1" /> Add Tier
                                 </Button>
                             </div>
-                            
+
                             <div className="space-y-3 px-1 pt-2">
                                 {pricings.length === 0 && (
                                     <div className="text-sm text-muted-foreground text-center py-6 border border-dashed rounded-lg bg-muted/10">
                                         No pricing tiers created. Add one to allow users to subscribe.
                                     </div>
                                 )}
-                                
+
                                 {pricings.map((pricing, index) => (
                                     <div key={pricing.id} className="relative grid grid-cols-1 lg:grid-cols-12 gap-3 items-end bg-card p-4 rounded-lg border shadow-sm transition-all hover:shadow-md">
                                         <div className="lg:col-span-3 grid gap-1.5">
@@ -364,18 +364,19 @@ export default function AdminPlansPage() {
                                                     <SelectItem value="Monthly">Monthly</SelectItem>
                                                     <SelectItem value="Quarterly">Quarterly</SelectItem>
                                                     <SelectItem value="Annual">Annual</SelectItem>
+                                                    <SelectItem value="SemiAnnual">Semi Annual</SelectItem>
                                                     <SelectItem value="Lifetime">Lifetime</SelectItem>
                                                 </SelectContent>
                                             </Select>
                                         </div>
                                         <div className="lg:col-span-3 grid gap-1.5">
                                             <Label className="text-xs font-medium text-muted-foreground">Price</Label>
-                                            <Input 
-                                                type="number" 
-                                                className="h-9 font-mono bg-background focus:bg-background" 
-                                                placeholder="0.00" 
-                                                value={pricing.price} 
-                                                onChange={(e) => updatePricing(index, "price", e.target.value)} 
+                                            <Input
+                                                type="number"
+                                                className="h-9 font-mono bg-background focus:bg-background"
+                                                placeholder="0.00"
+                                                value={pricing.price}
+                                                onChange={(e) => updatePricing(index, "price", e.target.value)}
                                             />
                                         </div>
                                         <div className="lg:col-span-2 grid gap-1.5">
@@ -392,20 +393,20 @@ export default function AdminPlansPage() {
                                         </div>
                                         <div className="lg:col-span-3 grid gap-1.5">
                                             <Label className="text-xs font-medium text-muted-foreground">Duration (Days)</Label>
-                                            <Input 
-                                                type="number" 
-                                                className="h-9 bg-background focus:bg-background" 
-                                                placeholder="e.g 30" 
-                                                value={pricing.durationDays || ""} 
-                                                onChange={(e) => updatePricing(index, "durationDays", e.target.value ? parseInt(e.target.value) : null)} 
+                                            <Input
+                                                type="number"
+                                                className="h-9 bg-background focus:bg-background"
+                                                placeholder="e.g 30"
+                                                value={pricing.durationDays || ""}
+                                                onChange={(e) => updatePricing(index, "durationDays", e.target.value ? parseInt(e.target.value) : null)}
                                             />
                                             <p className="text-[9px] text-muted-foreground absolute -bottom-4 hidden lg:block">Leave empty for Lifetime</p>
                                         </div>
                                         <div className="lg:col-span-1 flex items-center justify-end lg:justify-center">
-                                            <Button 
-                                                type="button" 
-                                                variant="ghost" 
-                                                size="icon" 
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                size="icon"
                                                 className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
                                                 onClick={() => removePricing(index)}
                                             >
@@ -423,18 +424,18 @@ export default function AdminPlansPage() {
                                 <Label className="text-base font-semibold">Feature Capabilities</Label>
                                 <Badge variant="secondary" className="text-[10px] bg-muted">{allFeatures.length} available</Badge>
                             </div>
-                            
+
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 pt-2">
                                 {allFeatures.length === 0 ? (
                                     <div className="col-span-full text-sm text-muted-foreground py-4 flex items-center gap-2">
-                                        <Loader2 className="h-4 w-4 animate-spin"/> Loading feature definitions...
+                                        <Loader2 className="h-4 w-4 animate-spin" /> Loading feature definitions...
                                     </div>
                                 ) : (
                                     allFeatures.map(feature => {
                                         const isBoolean = feature.valueType.toLowerCase() === "boolean";
                                         const currentValue = selectedFeatures[feature.code] ?? feature.defaultValue;
                                         const isBoolTrue = currentValue === "true" || currentValue === "1";
-                                        
+
                                         return (
                                             <div key={feature.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 rounded-md bg-card border shadow-sm">
                                                 <div className="flex-1 min-w-0">
@@ -448,20 +449,20 @@ export default function AdminPlansPage() {
                                                     </div>
                                                     <p className="text-[10px] text-muted-foreground truncate" title={feature.description}>{feature.description}</p>
                                                 </div>
-                                                
+
                                                 <div className="flex-shrink-0 flex items-center justify-end w-full sm:w-1/3">
                                                     {isBoolean ? (
                                                         <div className="flex items-center gap-2 border rounded-full px-2 py-1 bg-background">
-                                                            <Switch 
-                                                                checked={isBoolTrue} 
+                                                            <Switch
+                                                                checked={isBoolTrue}
                                                                 onCheckedChange={(checked) => handleFeatureChange(feature.code, checked ? "true" : "false")}
                                                                 className="data-[state=checked]:bg-green-500"
                                                             />
                                                             {isBoolTrue ? <Check className="h-3.5 w-3.5 text-green-500" /> : <XCircle className="h-3.5 w-3.5 text-muted-foreground opacity-50" />}
                                                         </div>
                                                     ) : (
-                                                        <Input 
-                                                            className="h-8 w-full min-w-[80px] text-xs font-mono text-center bg-background" 
+                                                        <Input
+                                                            className="h-8 w-full min-w-[80px] text-xs font-mono text-center bg-background"
                                                             value={currentValue}
                                                             onChange={(e) => handleFeatureChange(feature.code, e.target.value)}
                                                             placeholder={feature.defaultValue}
@@ -475,7 +476,7 @@ export default function AdminPlansPage() {
                             </div>
                         </div>
                     </div>
-                    
+
                     <DialogFooter className="bg-muted/30 -mx-6 -mb-6 p-4 border-t px-6">
                         <Button variant="outline" onClick={() => setIsDialogOpen(false)} disabled={isSaving}>Cancel</Button>
                         <Button onClick={handleSave} disabled={isSaving || !name}>

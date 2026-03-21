@@ -114,6 +114,7 @@
       "addWord": "添加单词",
       "batchImportText": "批量导入",
       "newTag": "新建标签",
+      "explore": "探索",
       "export": "导出",
       "exportCsv": "导出为 CSV",
       "exportJson": "导出为 JSON",
@@ -249,14 +250,34 @@
         "save": "保存单词"
       },
       "batchImport": {
-        "desc": "一次导入多个词汇。每行一个单词。格式：单词，释义（可选），语境（可选）",
+        "desc": "上传CSV文件或粘贴文本（单词、含义、语境）。支持真正的UTF-8编码。",
         "listLabel": "词汇列表（CSV格式）",
         "listPlaceholder": "apple, 一种水果, 我吃了一个苹果\nbanana, 黄色水果\nubiquitous",
         "cancel": "取消",
+        "premiumTitle": "高级功能",
+        "premiumDesc": "批量导入词汇是高级用户的专属功能。升级以解锁此功能和其他高级AI功能。",
+        "upgradeToPremium": "升级到高级版",
         "import": "导入单词",
+        "importNow": "立即导入",
         "noWords": "没有有效的单词可导入。",
         "success": "成功导入 {count} 个单词！",
-        "failed": "导入失败：{error}"
+        "failed": "导入失败：{error}",
+        "importing": "正在导入单词...",
+        "unexpectedError": "导入期间发生意外错误。",
+        "uploadCsv": "上传CSV文件",
+        "pasteText": "粘贴文本",
+        "fileReadSuccess": "文件读取成功！",
+        "foundWords": "找到 {count} 个单词待导入。",
+        "chooseDifferent": "选择其他文件",
+        "clickToUpload": "点击上传CSV",
+        "utf8Support": "支持UTF-8编码的文件。",
+        "rawText": "原始文本",
+        "dataPreview": "数据预览 ({count} 个单词)",
+        "colWord": "单词",
+        "colMeaning": "含义",
+        "colContext": "语境",
+        "moreWords": "还有 {count} 个单词",
+        "invalidFormat": "未找到有效单词，请检查您的CSV格式。"
       }
     },
     "flashcard": {
@@ -276,12 +297,12 @@
       "previous": "上一页",
       "next": "下一页",
       "quality": {
-        "5": "完美",
-        "4": "良好",
-        "3": "困难",
-        "2": "费力",
+        "0": "完全忘记",
         "1": "错误",
-        "0": "完全忘记"
+        "2": "费力",
+        "3": "困难",
+        "4": "良好",
+        "5": "完美"
       }
     },
     "review": {
@@ -350,14 +371,22 @@
         "highlightToggleDesc": "在网页上自动高亮您正在学习的词汇。",
         "highlightColorLabel": "高亮颜色",
         "highlightColorDesc": "高亮单词的自定义背景颜色。",
-        "dailyGoalLabel": "每日复习目标",
-        "dailyGoalDesc": "您每天想复习多少个单词？",
+        "dailyGoalLabel": "每日收集目标",
+        "dailyGoalDesc": "您每天想通过扩展程序保存多少个单词？",
+        "dailyNewCardLimitLabel": "新卡片 / 天",
+        "dailyNewCardLimitDesc": "每天学习的新卡片数量上限。",
+        "dailyReviewLimitLabel": "复习上限 / 天",
+        "dailyReviewLimitDesc": "每天复习的卡片数量上限。",
         "excludedDomainsLabel": "排除域名",
         "excludedDomainsPlaceholder": "example.com\nreddit.com",
         "excludedDomainsDesc": "LexiVocab 将在这些网站上禁用高亮功能。每行输入一个域名。",
         "advancedLabel": "高级配置 (JSON)",
         "advancedDesc": "从浏览器扩展同步的原始 JSON 设置，请谨慎修改！",
-        "invalidJson": "高级偏好中的 JSON 格式无效。"
+        "invalidJson": "高级偏好中的 JSON 格式无效。",
+        "targetLanguageLabel": "目标语言",
+        "targetLanguageDesc": "您想要翻译成的语言",
+        "defaultTranslatorLabel": "默认翻译器",
+        "defaultTranslatorDesc": "默认使用的翻译服务"
       },
       "account": {
         "title": "账户操作",
@@ -468,17 +497,22 @@
     "free": "免费",
     "plan_free": "免费版",
     "plan_premium": "高级版",
+    "plan_ultimate": "终极版",
     "business_plan": "商业版",
-    "Perfect for beginners": "适合初学者",
-    "Unlock full potential": "解锁全部功能",
-    "For advanced learners and teams": "适合高级学习者和团队",
-    "MAX_WORDS": "最多{count}个词汇",
+    "Perfect for beginners to get started": "适合初学者",
+    "Unlock full potential with AI features": "利用AI功能解锁全部功能",
+    "Unlimited access for professionals and teams": "适合专业人士和团队的无限制访问",
+    "MAX_WORDS": "词汇存储上限",
     "AI_ACCESS": "AI 释义与语境",
     "SUPPORT_LEVEL": "支持",
-    "EXPORT_PDF": "导出数据 (PDF/CSV)",
+    "EXPORT_ANKI": "导出数据 (Anki/PDF)",
+    "BATCH_IMPORT": "批量导入",
+    "AI_DAILY_LIMIT": "AI每日限制",
+    "MAX_QUIZ_PER_DAY": "每日测验生成",
     "ADVANCED_AI": "高级AI功能",
     "QUIZ_GENERATION": "AI测验生成",
-    "AI_DAILY_LIMIT": "AI每日限制",
+    "LLM_TRANSLATION_LIMIT": "网页直接翻译",
+    "AVAILABLE_LLM_MODELS": "支持的AI模型",
     "trust": {
       "secure": "安全支付",
       "lifetime": "终身访问",
@@ -501,13 +535,17 @@
       "unlimited": "无限制",
       "standard": "标准",
       "priority": "优先",
-      "MAX_WORDS": "最多 {count} 个词汇",
+      "MAX_WORDS": "词汇存储上限",
       "AI_ACCESS": "AI 释义与语境",
-      "SUPPORT_LEVEL": "支持",
-      "EXPORT_PDF": "导出数据 (PDF/CSV)",
-      "ADVANCED_AI": "高级 AI 功能",
-      "QUIZ_GENERATION": "AI 测验生成",
-      "AI_DAILY_LIMIT": "AI 每日限额",
+      "SUPPORT_LEVEL": "优先支持",
+      "EXPORT_ANKI": "导出数据 (Anki/CSV)",
+      "BATCH_IMPORT": "批量导入 (CSV)",
+      "AI_DAILY_LIMIT": "AI 每日限额 (词)",
+      "MAX_QUIZ_PER_DAY": "每日测验生成",
+      "ADVANCED_AI": "高级 AI 功能访问",
+      "QUIZ_GENERATION": "交互式测验",
+      "LLM_TRANSLATION_LIMIT": "网页端翻译限制",
+      "AVAILABLE_LLM_MODELS": "多款 AI 模型",
       "duration_1m": "1个月",
       "duration_3m": "3个月",
       "duration_6m": "6个月",
@@ -549,7 +587,8 @@
     "remove_coupon": "移除",
     "coupon_applied": "优惠券已成功应用！",
     "pricing_errors": {
-      "invalid_coupon": "优惠券无效或已过期"
+      "invalid_coupon": "优惠券无效或已过期",
+      "failed_to_create_order": "创建订单失败"
     }
   },
   "Billing": {
@@ -732,7 +771,11 @@
     "update_enforcement": "添加版本强制更新机制",
     "mode_toggle_feature": "模式切换: 在标准模式和紧凑模式之间快速切换",
     "realtime_input_translation": "实时输入翻译: 连续按3次空格键即可翻译正在输入的文本",
-    "highlight_performance_optimization": "改进词汇高亮性能"
+    "highlight_performance_optimization": "改进词汇高亮性能",
+    "v2_architecture_upgrade": "新架构：从纯客户端扩展程序过渡到具有实时数据同步功能的现代Web应用和API系统。",
+    "v2_ai_integration": "AI集成：包含语境翻译、详细解释以及深度练习生成的智能AI功能。",
+    "v2_spaced_repetition": "间隔重复：基于间隔重复（SM-2）算法的智能词汇学习系统。",
+    "v2_i18n_support": "多语言支持：覆盖整个Web应用和扩展程序系统的全面国际化（i18n）支持。"
   },
   "VideoDemo": {
     "badge": "视频演示",
@@ -757,9 +800,44 @@
     "view_billing": "查看账单"
   },
   "AI": {
+    "tags": {
+      "assistant": "AI 助手",
+      "proTip": "小贴士",
+      "poweredBy": "由 LexiVocab AI 提供"
+    },
+    "explanation": {
+      "title": "含义与语境",
+      "nuances": "细微差别",
+      "examples": "例句",
+      "analyzing": "正在分析语境..."
+    },
+    "related": {
+      "synonyms": "同义词",
+      "antonyms": "反义词",
+      "collocations": "搭配",
+      "finding": "正在查找相关词..."
+    },
+    "quiz": {
+      "generating": "正在生成测试...",
+      "instruction": "选择正确答案",
+      "correct": "正确！",
+      "incorrect": "不正确",
+      "tryAnother": "换一题"
+    },
+    "actions": {
+      "tryAgain": "重试",
+      "regenerate": "重新生成",
+      "feedback": "反馈",
+      "history": "历史",
+      "upgradePlan": "升级套餐"
+    },
+    "errors": {
+      "title": "AI 错误",
+      "quotaReachedTitle": "已达到每日 AI 限制"
+    },
     "tabs": {
       "explain": "解释",
-      "related": "相关词",
+      "related": "相关",
       "quiz": "测试"
     }
   },

@@ -16,7 +16,21 @@ import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { Loader2 } from "lucide-react";
 
-const getQualityColor = (quality: number) => {
+const getNumericQuality = (qualityRaw: any): number => {
+    if (typeof qualityRaw === 'number') return qualityRaw;
+    switch (String(qualityRaw).toLowerCase()) {
+        case "perfect": return 5;
+        case "good": return 4;
+        case "hard": return 3;
+        case "barelyrecalled": return 2;
+        case "wrong": return 1;
+        case "blackout": return 0;
+        default: return 0;
+    }
+};
+
+const getQualityColor = (qualityRaw: any) => {
+    const quality = getNumericQuality(qualityRaw);
     switch (quality) {
         case 5: return "text-emerald-600 bg-emerald-500/10 border border-emerald-500/20";
         case 4: return "text-green-600 bg-green-500/10 border border-green-500/20";
@@ -46,8 +60,9 @@ export function ReviewHistoryTable() {
 
     useEffect(() => { fetchHistory(); }, [fetchHistory]);
 
-    const getQualityLabel = (quality: number) => {
-        const key = String(quality) as "0" | "1" | "2" | "3" | "4" | "5";
+    const getQualityLabel = (qualityRaw: any) => {
+        const num = getNumericQuality(qualityRaw);
+        const key = String(num) as "0" | "1" | "2" | "3" | "4" | "5";
         return t(`quality.${key}`);
     };
 
@@ -89,7 +104,7 @@ export function ReviewHistoryTable() {
                                     </TableCell>
                                     <TableCell>
                                         <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${getQualityColor(item.qualityScore)}`}>
-                                            {getQualityLabel(item.qualityScore)} ({item.qualityScore})
+                                            {getQualityLabel(item.qualityScore)} ({getNumericQuality(item.qualityScore)})
                                         </span>
                                     </TableCell>
                                     <TableCell className="text-muted-foreground text-sm font-medium">

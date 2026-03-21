@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useTranslations, useLocale } from "next-intl";
-import { clientApi, reviewsApi } from "@/lib/api/api-client";
-import type { ReviewSessionDto, SubmitReviewRequest } from "@/lib/api/types";
+import { reviewsApi } from "@/lib/api/api-client";
+import type { ReviewSessionDto } from "@/lib/api/types";
 
 import { Flashcard } from "@/components/dashboard/flashcard";
 import { Button } from "@/components/ui/button";
@@ -53,7 +53,7 @@ export default function ReviewPage() {
     // Handle tab switching / visibility changes
     useEffect(() => {
         let hideTimeout: NodeJS.Timeout;
-        
+
         const handleVisibilityChange = () => {
             if (document.hidden) {
                 // Pausing: save progress
@@ -62,7 +62,7 @@ export default function ReviewPage() {
             } else {
                 // Resuming: reset start mark
                 startTimeRef.current = Date.now();
-                
+
                 // Show notification if paused for > 5 seconds
                 if (lastPauseTimeRef.current > 0 && Date.now() - lastPauseTimeRef.current > 5000) {
                     setPauseNotice(true);

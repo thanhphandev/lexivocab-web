@@ -2,12 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader2, ArrowLeft } from "lucide-react";
+import { Loader2, ArrowLeft, AlertCircle } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
+import { motion } from "framer-motion";
 import { authApi } from "@/lib/api/api-client";
 import {
     InputOTP,
@@ -19,6 +21,7 @@ import {
 export default function ResetPasswordPage() {
     const t = useTranslations("Auth");
     const router = useRouter();
+    const locale = useLocale();
     const searchParams = useSearchParams();
 
     const [email, setEmail] = useState("");
@@ -47,7 +50,7 @@ export default function ResetPasswordPage() {
         try {
             const res = await authApi.resetPassword({ email, code, newPassword });
             if (res.success) {
-                router.push(`/auth/login?reset=success`);
+                router.push(`/${locale}/auth/login?reset=success`);
             } else {
                 setError(res.error || t("unexpectedError"));
             }
@@ -59,29 +62,65 @@ export default function ResetPasswordPage() {
     };
 
     return (
-        <div className="flex flex-col space-y-6">
-            <div className="flex flex-col space-y-2 text-center">
-                <h1 className="text-2xl font-bold tracking-tight">{t("resetPasswordTitle")}</h1>
-                <p className="text-sm text-muted-foreground">
+        <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            className="w-full max-w-md space-y-8 rounded-2xl border border-border bg-card p-8 shadow-2xl"
+        >
+            <div className="text-center">
+                <div className="flex items-center gap-3 mb-6">
+                    {/* Logo Container */}
+                    <div className="flex h-12 w-12 items-center justify-center">
+                        <Image src="/apple-icon.png" alt="Logo" width={32} height={32} />
+                    </div>
+
+                    {/* Branding Text */}
+                    <div className="flex items-baseline">
+                        <span className="text-2xl font-bold tracking-tight text-gray-900">
+                            LexiVocab<span className="text-orange-600">.</span>
+                        </span>
+                    </div>
+                </div>
+
+                <h1 className="text-3xl font-bold tracking-tight text-foreground">
+                    {t("resetPasswordTitle")}
+                </h1>
+                <p className="mt-2 text-sm text-muted-foreground">
                     {t("resetPasswordSubtitle")}
                 </p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
+                {error && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="flex items-center gap-2 rounded-lg bg-destructive/10 p-3 text-sm text-destructive"
+                    >
+                        <AlertCircle className="h-4 w-4 shrink-0" />
+                        <p>{error}</p>
+                    </motion.div>
+                )}
+
                 <div className="space-y-2">
-                    <Label htmlFor="email">{t("resetPasswordEmailLabel")}</Label>
+                    <Label htmlFor="email" className="text-sm font-medium">
+                        {t("resetPasswordEmailLabel")}
+                    </Label>
                     <Input
                         id="email"
                         type="email"
                         value={email}
                         readOnly
-                        className="bg-muted text-muted-foreground"
+                        className="bg-muted text-muted-foreground cursor-not-allowed border-border py-3"
                     />
                 </div>
 
                 <div className="space-y-2">
-                    <Label>{t("resetPasswordCodeLabel")}</Label>
-                    <p className="text-xs text-muted-foreground mb-2">{t("resetPasswordCodeDesc")}</p>
+                    <Label className="text-sm font-medium">{t("resetPasswordCodeLabel")}</Label>
+                    <p className="text-xs text-muted-foreground mb-3">
+                        {t("resetPasswordCodeDesc")}
+                    </p>
                     <div className="flex justify-center py-2">
                         <InputOTP maxLength={6} value={code} onChange={setCode} disabled={isLoading}>
                             <InputOTPGroup>
@@ -110,25 +149,30 @@ export default function ResetPasswordPage() {
                         required
                         disabled={isLoading}
                         minLength={6}
+                        className="border-border py-3 focus:ring-primary"
                     />
                 </div>
 
-                {error && <p className="text-sm font-medium text-destructive">{error}</p>}
-
-                <Button className="w-full" type="submit" disabled={isLoading || code.length !== 6 || !newPassword}>
-                    {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                <Button
+                    className="w-full h-11 text-sm font-semibold transition-all shadow-md hover:shadow-lg"
+                    type="submit"
+                    disabled={isLoading || code.length !== 6 || !newPassword}
+                >
+                    {isLoading ? (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : null}
                     {t("resetPasswordSubmit")}
                 </Button>
             </form>
 
-            <div className="text-center">
-                <Button variant="link" asChild className="text-xs text-muted-foreground">
-                    <Link href="/auth/login" className="flex items-center gap-2">
+            <div className="text-center pt-2">
+                <Button variant="link" asChild className="text-xs text-muted-foreground hover:text-primary transition-colors">
+                    <Link href={`/${locale}/auth/login`} className="flex items-center justify-center gap-2">
                         <ArrowLeft className="w-3 h-3" />
                         {t("backToLogin")}
                     </Link>
                 </Button>
             </div>
-        </div>
+        </motion.div>
     );
 }

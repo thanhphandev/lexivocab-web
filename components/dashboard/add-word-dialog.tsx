@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
-import { clientApi, tagsApi } from "@/lib/api/api-client";
+import { clientApi, tagsApi, settingsApi } from "@/lib/api/api-client";
 import type { TagDto } from "@/lib/api/types";
 import {
     Dialog,
@@ -18,7 +18,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, Plus, Search, Volume2 } from "lucide-react";
+import { Loader2, Plus, Search, Volume2, ArrowLeftRight } from "lucide-react";
+import { QuickModelSwitcher } from "@/components/ai/quick-model-switcher";
+import { useLLMTranslation } from "@/hooks/use-llm-translation";
 
 export function AddWordDialog({ onSuccess }: { onSuccess: () => void }) {
     const t = useTranslations("Dashboard.vocabulary");
@@ -32,6 +34,45 @@ export function AddWordDialog({ onSuccess }: { onSuccess: () => void }) {
     const [contextSentence, setContextSentence] = useState("");
     const [sourceUrl, setSourceUrl] = useState("");
     const [tagId, setTagId] = useState<string>("none");
+
+    const [aiProvider, setAiProvider] = useState("");
+    const { isStreaming, aiData, streamingError, streamTranslation } = useLLMTranslation();
+    const [isSwapped, setIsSwapped] = useState(false);
+    const [settings, setSettings] = useState<any>(null);
+
+    useEffect(() => {
+        if (open && !settings) {
+            settingsApi.get().then((res: any) => {
+                if (res.success && res.data) setSettings(res.data);
+            }).catch(console.error);
+        }
+    }, [open, settings]);
+
+    useEffect(() => {
+        if (aiData.meaning) setCustomMeaning(aiData.meaning);
+        if (aiData.context) setContextSentence(aiData.context);
+    }, [aiData.meaning, aiData.context]);
+
+    const handleAiAutofill = () => {
+        if (!wordText.trim()) return;
+        
+        let fromLang = "auto";
+        let toLang = "auto";
+        
+        if (settings) {
+            // Default: Auto -> Native (e.g. English word -> Vietnamese meaning)
+            // Swapped: Native -> Target (e.g. Vietnamese word -> English meaning)
+            if (isSwapped) {
+                fromLang = settings.nativeLanguage || "Vietnamese";
+                toLang = settings.targetLanguage || "English";
+            } else {
+                fromLang = "auto";
+                toLang = settings.nativeLanguage || "Vietnamese";
+            }
+        }
+        
+        streamTranslation(wordText.trim(), "", aiProvider, fromLang, toLang);
+    };
 
     const [tags, setTags] = useState<TagDto[]>([]);
 
@@ -125,7 +166,7 @@ export function AddWordDialog({ onSuccess }: { onSuccess: () => void }) {
                     {t("addWord")}
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[800px]">
                 <form onSubmit={handleSave}>
                     <DialogHeader>
                         <DialogTitle>{t("addWord")}</DialogTitle>
@@ -193,15 +234,45 @@ export function AddWordDialog({ onSuccess }: { onSuccess: () => void }) {
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="customMeaning">
-                                {tDialog("meaningLabel")} <span className="text-muted-foreground text-xs font-normal">({tDialog("optional")})</span>
-                            </Label>
+                            <div className="flex items-center justify-between">
+                                <Label htmlFor="customMeaning">
+                                    {tDialog("meaningLabel")} <span className="text-muted-foreground text-xs font-normal">({tDialog("optional")})</span>
+                                </Label>
+                                <div className="flex items-center gap-2">
+                                    {settings && (
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            type="button"
+                                            onClick={() => setIsSwapped(!isSwapped)}
+                                            className="h-8 px-2 text-xs text-muted-foreground hover:text-foreground"
+                                            title="Swap Translation Direction"
+                                        >
+                                            <ArrowLeftRight className="h-3 w-3 mr-1.5" />
+                                            {isSwapped 
+                                                ? `${(settings.nativeLanguage || 'VI').substring(0,2).toUpperCase()} → ${(settings.targetLanguage || 'EN').substring(0,2).toUpperCase()}` 
+                                                : `Auto → ${(settings.nativeLanguage || 'VI').substring(0,2).toUpperCase()}`
+                                            }
+                                        </Button>
+                                    )}
+                                    <QuickModelSwitcher
+                                        provider={aiProvider}
+                                        setProvider={setAiProvider}
+                                        onTriggerAi={handleAiAutofill}
+                                        isStreaming={isStreaming}
+                                        disabled={!wordText.trim()}
+                                    />
+                                </div>
+                            </div>
                             <Input
                                 id="customMeaning"
                                 placeholder={tDialog("meaningPlaceholder")}
                                 value={customMeaning}
                                 onChange={(e) => setCustomMeaning(e.target.value)}
                             />
+                            {streamingError && (
+                                <p className="text-destructive text-sm mt-1">{streamingError}</p>
+                            )}
                         </div>
 
                         <div className="space-y-2">

@@ -82,7 +82,7 @@ export default function BillingPage() {
                     // Handle different response structures
                     const items = (historyRes.data as any)?.items || historyRes.data || [];
                     setHistory(items);
-                    
+
                     const pending = items.find((tx: any) => tx.status === "Pending" && tx.provider === "Sepay");
                     if (pending) {
                         setPendingTransaction(pending);
@@ -101,9 +101,9 @@ export default function BillingPage() {
 
     const handleResumePending = () => {
         if (!pendingTransaction || !pendingTransaction.approvalUrl) return;
-        
-        setQrData({ 
-            url: pendingTransaction.approvalUrl, 
+
+        setQrData({
+            url: pendingTransaction.approvalUrl,
             ref: pendingTransaction.externalOrderId,
             expiresAt: pendingTransaction.expiresAt ?? null
         });
@@ -112,7 +112,7 @@ export default function BillingPage() {
 
     const handleCancelPending = async () => {
         if (!pendingTransaction) return;
-        
+
         setIsCancelling(true);
         const reference = pendingTransaction.externalOrderId;
         try {
@@ -217,7 +217,7 @@ export default function BillingPage() {
 
             {/* Pending Transaction Banner */}
             {pendingTransaction && (
-                <PendingTransactionBanner 
+                <PendingTransactionBanner
                     transaction={pendingTransaction}
                     onResume={handleResumePending}
                     onCancel={() => setConfirmCancelPendingOpen(true)}
@@ -245,16 +245,18 @@ export default function BillingPage() {
                                     <CardTitle className="text-xl">
                                         {(() => {
                                             if (!billing?.activeSubscription) return t("current_plan.title_free");
-                                            if (!billing.activeSubscription.endDate) return t("current_plan.title_lifetime", { plan: billing.plan || "Premium" });
-                                            
+
+                                            const planNameLocal = tPricing("plan_" + (billing.plan || "Premium").toLowerCase());
+                                            if (!billing.activeSubscription.endDate) return t("current_plan.title_lifetime", { plan: planNameLocal });
+
                                             // Calculate months based on start and end dates
                                             const start = new Date(billing.activeSubscription.startDate);
                                             const end = new Date(billing.activeSubscription.endDate);
                                             const msPerMonth = 1000 * 60 * 60 * 24 * 30.436875;
                                             const months = Math.max(1, Math.round((end.getTime() - start.getTime()) / msPerMonth));
-                                            
+
                                             return t("current_plan.title_premium", {
-                                                plan: billing.plan || "Premium",
+                                                plan: planNameLocal,
                                                 months: months,
                                                 month_label: tPricing(months > 1 ? "comparison.months" : "comparison.month")
                                             });
@@ -383,34 +385,78 @@ export default function BillingPage() {
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <div className="flex items-center justify-between mb-2">
-                            <span className="text-sm font-medium">{t("quota.used")}</span>
-                            <span className="text-sm font-bold">
-                                {perms.quotaMax >= 2147483647 
-                                    ? `${perms.quotaUsed} / ${t("quota.unlimited")}` 
-                                    : `${perms.quotaUsed} / ${perms.quotaMax}`}
-                            </span>
+                        {/* Vocabulary Quota */}
+                        <div>
+                            <div className="flex items-center justify-between mb-2">
+                                <span className="text-sm font-medium">{t("quota.used")}</span>
+                                <span className="text-sm font-bold">
+                                    {perms.quotaMax === -1
+                                        ? `${perms.quotaUsed} / ${t("quota.unlimited")}`
+                                        : `${perms.quotaUsed} / ${perms.quotaMax}`}
+                                </span>
+                            </div>
+                            <div className="w-full bg-secondary rounded-full h-2.5 overflow-hidden">
+                                <div
+                                    className={`h-full rounded-full transition-all duration-500 ${perms.quotaMax === -1 ? 'bg-primary' :
+                                            perms.quotaMax > 0 ? `bg-primary` : 'w-[0%] bg-orange-500'
+                                        }`}
+                                    style={{
+                                        width: perms.quotaMax === -1
+                                            ? '100%'
+                                            : perms.quotaMax > 0 ? `${Math.min((perms.quotaUsed / perms.quotaMax) * 100, 100)}%` : '0%'
+                                    }}
+                                />
+                            </div>
                         </div>
-                        <div className="w-full bg-secondary rounded-full h-2.5 overflow-hidden">
-                            <div 
-                                className={`h-full rounded-full transition-all duration-500 ${
-                                    perms.isPremium ? 'w-full bg-primary' : 
-                                    perms.quotaMax > 0 
-                                        ? `bg-primary` 
-                                        : 'w-[0%] bg-orange-500'
-                                }`}
-                                style={{ 
-                                    width: perms.quotaMax > 0 
-                                        ? `${Math.min((perms.quotaUsed / perms.quotaMax) * 100, 100)}%` 
-                                        : '0%' 
-                                }}
-                            />
+
+                        {/* AI Explanation Quota */}
+                        <div>
+                            <div className="flex items-center justify-between mb-2">
+                                <span className="text-sm font-medium">AI Explanations</span>
+                                <span className="text-sm font-bold">
+                                    {perms.aiMax === -1
+                                        ? `${perms.aiUsed} / ${t("quota.unlimited")}`
+                                        : `${perms.aiUsed} / ${perms.aiMax}`}
+                                </span>
+                            </div>
+                            <div className="w-full bg-secondary rounded-full h-2.5 overflow-hidden">
+                                <div
+                                    className={`h-full rounded-full transition-all duration-500 bg-primary`}
+                                    style={{
+                                        width: perms.aiMax === -1
+                                            ? '100%'
+                                            : perms.aiMax > 0 ? `${Math.min((perms.aiUsed / perms.aiMax) * 100, 100)}%` : '0%'
+                                    }}
+                                />
+                            </div>
                         </div>
-                        <p className="text-xs text-muted-foreground">
-                            {perms.isPremium 
-                                ? t("quota.desc_premium")
-                                : t("quota.desc_free", { used: perms.quotaUsed, max: perms.quotaMax })}
-                        </p>
+
+                        {/* AI Translation Quota */}
+                        <div>
+                            <div className="flex items-center justify-between mb-2">
+                                <span className="text-sm font-medium">AI Translations</span>
+                                <span className="text-sm font-bold">
+                                    {perms.transMax === -1
+                                        ? `${perms.transUsed} / ${t("quota.unlimited")}`
+                                        : `${perms.transUsed} / ${perms.transMax}`}
+                                </span>
+                            </div>
+                            <div className="w-full bg-secondary rounded-full h-2.5 overflow-hidden">
+                                <div
+                                    className={`h-full rounded-full transition-all duration-500 bg-primary`}
+                                    style={{
+                                        width: perms.transMax === -1
+                                            ? '100%'
+                                            : perms.transMax > 0 ? `${Math.min((perms.transUsed / perms.transMax) * 100, 100)}%` : '0%'
+                                    }}
+                                />
+                            </div>
+                        </div>
+
+                        {/* <div className="pt-2 border-t border-border flex items-center justify-between">
+                            <span className="text-xs text-muted-foreground">Active Model</span>
+                            <span className="text-xs font-semibold">{perms.activeAiModel}</span>
+                        </div> */}
                     </CardContent>
                 </Card>
             </motion.div>
@@ -540,9 +586,9 @@ export default function BillingPage() {
             </motion.div>
 
             {/* Sepay QR Modal */}
-            <SepayQRDialog 
-                qrData={qrData} 
-                onOpenChange={(open) => !open && setQrData(null)} 
+            <SepayQRDialog
+                qrData={qrData}
+                onOpenChange={(open) => !open && setQrData(null)}
             />
 
             <ConfirmDialog

@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import Header from '@/components/landing/header';
 import { locales } from '@/lib/i18n';
+import Footer from '@/components/landing/footer';
 
 export default async function Layout({
     children,
@@ -20,6 +21,7 @@ export default async function Layout({
         <>
             <Header locale={locale} />
             {children}
+            <Footer locale={locale} />
         </>
     );
 }

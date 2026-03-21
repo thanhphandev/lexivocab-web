@@ -13,10 +13,91 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
-import { Loader2, Palette, ShieldAlert, Target, Code, Globe, Lock, KeyRound } from "lucide-react";
+import { Loader2, Palette, ShieldAlert, Target, Code, Globe, Lock, KeyRound, Sparkles } from "lucide-react";
 import { authApi, settingsApi } from "@/lib/api/api-client";
 import { toast } from "sonner";
 import { ConfirmDialog } from "@/components/dashboard/confirm-dialog";
+import { CustomLlmManager } from "./custom-llm-manager";
+import { QuickModelSwitcher } from "@/components/ai/quick-model-switcher";
+
+const SUPPORTED_LANGUAGES = [
+    { value: "auto", label: "Auto Detect 🌐" },
+    { value: "en", label: "English 🇺🇸" },
+    { value: "vi", label: "Tiếng Việt 🇻🇳" },
+    { value: "es", label: "Español 🇪🇸" },
+    { value: "fr", label: "Français 🇫🇷" },
+    { value: "ja", label: "日本語 🇯🇵" },
+    { value: "ko", label: "한국어 🇰🇷" },
+    { value: "zh", label: "中文 (Simplified) 🇨🇳" },
+    { value: "zh-Hant", label: "中文 (Traditional) 🇹🇼" },
+    { value: "de", label: "Deutsch 🇩🇪" },
+    { value: "it", label: "Italiano 🇮🇹" },
+    { value: "ru", label: "Russian 🇷🇺" },
+    { value: "pt", label: "Portuguese 🇵🇹" },
+    { value: "ar", label: "العربية 🇸🇦" },
+    { value: "hi", label: "हिन्दी 🇮🇳" },
+    { value: "id", label: "Bahasa Indonesia 🇮🇩" },
+    { value: "th", label: "ไทย 🇹🇭" },
+    { value: "tr", label: "Türkçe 🇹🇷" },
+    { value: "nl", label: "Nederlands 🇳🇱" },
+    { value: "pl", label: "Polski 🇵🇱" },
+    { value: "sv", label: "Svenska 🇸🇪" },
+    { value: "da", label: "Dansk 🇩🇰" },
+    { value: "no", label: "Norsk 🇳🇴" },
+    { value: "fi", label: "Suomi 🇫🇮" },
+    { value: "el", label: "Ελληνικά 🇬🇷" },
+    { value: "cs", label: "Čeština 🇨🇿" },
+    { value: "hu", label: "Magyar 🇭🇺" },
+    { value: "ro", label: "Română 🇷🇴" },
+    { value: "uk", label: "Українська 🇺🇦" },
+    { value: "ms", label: "Bahasa Melayu 🇲🇾" },
+    { value: "tl", label: "Filipino 🇵🇭" },
+    { value: "he", label: "עברית 🇮🇱" },
+    { value: "fa", label: "فارسی 🇮🇷" },
+    { value: "bn", label: "বাংলা 🇧🇩" },
+    { value: "pa", label: "ਪੰਜਾਬੀ 🇮🇳" },
+    { value: "mr", label: "मराठी 🇮🇳" },
+    { value: "ta", label: "தமிழ் 🇮🇳" },
+    { value: "te", label: "తెలుగు 🇮🇳" },
+    { value: "ur", label: "اردو 🇵🇰" },
+    { value: "sw", label: "Kiswahili 🇰🇪" },
+    { value: "am", label: "አማርኛ 🇪🇹" },
+    { value: "az", label: "Azərbaycan 🇦🇿" },
+    { value: "uz", label: "Oʻzbekcha 🇺🇿" },
+    { value: "kk", label: "Қазақша 🇰🇿" },
+    { value: "ka", label: "ქართული 🇬🇪" },
+    { value: "sk", label: "Slovenčina 🇸🇰" },
+    { value: "hr", label: "Hrvatski 🇭🇷" },
+    { value: "bg", label: "Български 🇧🇬" },
+    { value: "sr", label: "Српски 🇷🇸" },
+    { value: "sl", label: "Slovenščina 🇸🇮" },
+    { value: "et", label: "Eesti 🇪🇪" },
+    { value: "lv", label: "Latviešu 🇱🇻" },
+    { value: "lt", label: "Lietuvių 🇱🇹" },
+    { value: "is", label: "Íslenska 🇮🇸" },
+    { value: "af", label: "Afrikaans 🇿🇦" },
+    { value: "my", label: "မြန်မာဘာသာ 🇲🇲" },
+    { value: "km", label: "ភាសាខ្មែរ 🇰🇭" },
+    { value: "lo", label: "ພາສາລາວ 🇱🇦" },
+    { value: "sq", label: "Shqip 🇦🇱" },
+    { value: "hy", label: "Հայերեն 🇦🇲" },
+    { value: "eu", label: "Euskara 🇪🇸" },
+    { value: "be", label: "Беларуская 🇧🇾" },
+    { value: "bs", label: "Bosanski 🇧🇦" },
+    { value: "ca", label: "Català 🇪🇸" },
+    { value: "gl", label: "Galego 🇪🇸" },
+    { value: "gu", label: "ગુજરાતી 🇮🇳" },
+    { value: "kn", label: "ಕನ್ನಡ 🇮🇳" },
+    { value: "ml", label: "മലയാളം 🇮🇳" },
+    { value: "mn", label: "Монгол 🇲🇳" },
+    { value: "ne", label: "नेपाली 🇳🇵" },
+    { value: "si", label: "සිංහල 🇱🇰" },
+    { value: "tg", label: "Toҷикӣ 🇹🇯" },
+    { value: "tk", label: "Türkmençe 🇹🇲" },
+    { value: "cy", label: "Cymraeg 󠁧󠁢󠁷󠁬󠁳󠁿" },
+    { value: "yo", label: "Yorùbá 🇳🇬" },
+    { value: "zu", label: "isiZulu 🇿🇦" }
+];
 
 
 export default function SettingsPage() {
@@ -45,7 +126,13 @@ export default function SettingsPage() {
     const [highlightColor, setHighlightColor] = useState("#ffb13b");
     const [excludedDomains, setExcludedDomains] = useState("");
     const [dailyGoal, setDailyGoal] = useState<number>(10);
+    const [dailyNewCardLimit, setDailyNewCardLimit] = useState<number>(20);
+    const [dailyReviewLimit, setDailyReviewLimit] = useState<number>(100);
+    const [targetLanguage, setTargetLanguage] = useState("en");
+    const [nativeLanguage, setNativeLanguage] = useState("vi");
+    const [defaultTranslator, setDefaultTranslator] = useState("google");
     const [preferencesJson, setPreferencesJson] = useState<string>("{}");
+    const [customLlmsJson, setCustomLlmsJson] = useState<string>("[]");
 
     useEffect(() => {
         if (user?.fullName) setProfileName(user.fullName);
@@ -57,6 +144,12 @@ export default function SettingsPage() {
                 setHighlightColor(res.data.highlightColor || "#ffb13b");
                 setExcludedDomains(res.data.excludedDomains?.join("\n") || "");
                 setDailyGoal(res.data.dailyGoal || 10);
+                setDailyNewCardLimit(res.data.dailyNewCardLimit || 20);
+                setDailyReviewLimit(res.data.dailyReviewLimit || 100);
+                setTargetLanguage(res.data.targetLanguage || "en");
+                setNativeLanguage(res.data.nativeLanguage || "vi");
+                if (res.data.defaultTranslator) setDefaultTranslator(res.data.defaultTranslator);
+                setCustomLlmsJson(res.data.customLlmsJson || "[]");
                 try {
                     const parsed = JSON.parse(res.data.preferencesJson || "{}");
                     setPreferencesJson(JSON.stringify(parsed, null, 2));
@@ -159,6 +252,12 @@ export default function SettingsPage() {
                 highlightColor,
                 excludedDomains: domains,
                 dailyGoal: Number(dailyGoal),
+                dailyNewCardLimit: Number(dailyNewCardLimit),
+                dailyReviewLimit: Number(dailyReviewLimit),
+                targetLanguage,
+                nativeLanguage,
+                defaultTranslator,
+                customLlmsJson,
                 preferencesJson: JSON.stringify(parsedPrefs),
             });
             if (res.success) {
@@ -359,10 +458,14 @@ export default function SettingsPage() {
                                             </div>
                                             <p className="text-xs text-muted-foreground">{t("extension.highlightColorDesc")}</p>
                                         </div>
+                                    </div>
+
+                                    {/* App Goals & Limits */}
+                                    <div className="grid gap-6 md:grid-cols-3 border-b pb-6">
                                         <div className="space-y-3">
                                             <label className="text-sm font-medium flex items-center gap-2">
-                                                <Target className="w-4 h-4" />
-                                                {t("extension.dailyGoalLabel")}
+                                                <Target className="w-4 h-4 text-slate-500" />
+                                                {t("extension.dailyGoalLabel") || "Daily Capture"}
                                             </label>
                                             <Input
                                                 type="number"
@@ -371,8 +474,130 @@ export default function SettingsPage() {
                                                 value={dailyGoal}
                                                 onChange={(e) => setDailyGoal(Number(e.target.value))}
                                             />
-                                            <p className="text-xs text-muted-foreground">{t("extension.dailyGoalDesc")}</p>
+                                            <p className="text-xs text-muted-foreground">{t("extension.dailyGoalDesc") || "Words to save via extension."}</p>
                                         </div>
+                                        <div className="space-y-3">
+                                            <label className="text-sm font-medium flex items-center gap-2">
+                                                <Target className="w-4 h-4 text-emerald-500" />
+                                                {t("extension.dailyNewCardLimitLabel") || "New Cards / Day"}
+                                            </label>
+                                            <Input
+                                                type="number"
+                                                min={1}
+                                                max={500}
+                                                value={dailyNewCardLimit}
+                                                onChange={(e) => setDailyNewCardLimit(Number(e.target.value))}
+                                            />
+                                            <p className="text-xs text-muted-foreground">{t("extension.dailyNewCardLimitDesc") || "New flashcards to learn."}</p>
+                                        </div>
+                                        <div className="space-y-3">
+                                            <label className="text-sm font-medium flex items-center gap-2">
+                                                <Target className="w-4 h-4 text-purple-500" />
+                                                {t("extension.dailyReviewLimitLabel") || "Review Limit / Day"}
+                                            </label>
+                                            <Input
+                                                type="number"
+                                                min={1}
+                                                max={2000}
+                                                value={dailyReviewLimit}
+                                                onChange={(e) => setDailyReviewLimit(Number(e.target.value))}
+                                            />
+                                            <p className="text-xs text-muted-foreground">{t("extension.dailyReviewLimitDesc") || "Max cards to review."}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="grid gap-6 md:grid-cols-2 border-b pb-6">
+                                        <div className="space-y-3">
+                                            <label className="text-sm font-medium flex items-center gap-2">
+                                                <Target className="w-4 h-4 text-emerald-500" />
+                                                {t("extension.learningLanguageLabel") || "Learning Language"}
+                                            </label>
+                                            <Select
+                                                value={targetLanguage}
+                                                onValueChange={async (val) => {
+                                                    setTargetLanguage(val);
+                                                    try {
+                                                        await settingsApi.update({ targetLanguage: val });
+                                                        toast.success(t("saveSuccess"));
+                                                    } catch {
+                                                        toast.error("Failed to sync learning language");
+                                                    }
+                                                }}
+                                                disabled={!isHighlightEnabled}
+                                            >
+                                                <SelectTrigger className="w-full">
+                                                    <SelectValue placeholder="Select learning language" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {SUPPORTED_LANGUAGES.map((lang) => (
+                                                        <SelectItem key={lang.value} value={lang.value}>
+                                                            {lang.label}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                            <p className="text-xs text-muted-foreground">{t("extension.learningLanguageDesc") || "The language you are studying (e.g., English)."}</p>
+                                        </div>
+
+                                        <div className="space-y-3">
+                                            <label className="text-sm font-medium flex items-center gap-2">
+                                                <Globe className="w-4 h-4 text-blue-500" />
+                                                {t("extension.nativeLanguageLabel") || "Native Language"}
+                                            </label>
+                                            <Select
+                                                value={nativeLanguage}
+                                                onValueChange={async (val) => {
+                                                    setNativeLanguage(val);
+                                                    try {
+                                                        await settingsApi.update({ nativeLanguage: val });
+                                                        toast.success(t("saveSuccess"));
+                                                    } catch {
+                                                        toast.error("Failed to sync native language");
+                                                    }
+                                                }}
+                                                disabled={!isHighlightEnabled}
+                                            >
+                                                <SelectTrigger className="w-full">
+                                                    <SelectValue placeholder="Select native language" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {SUPPORTED_LANGUAGES.map((lang) => (
+                                                        <SelectItem key={lang.value} value={lang.value}>
+                                                            {lang.label}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                            <p className="text-xs text-muted-foreground">{t("extension.nativeLanguageDesc") || "The language used for UI texts and explanations."}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-3 pb-6 border-b">
+                                        <label className="text-sm font-medium flex items-center gap-2">
+                                            <Sparkles className="w-4 h-4 text-amber-500" />
+                                            {t("extension.defaultTranslatorLabel") || "Default Translation Provider"}
+                                        </label>
+                                        <div className="w-full md:w-[250px]">
+                                            <QuickModelSwitcher
+                                                provider={defaultTranslator}
+                                                setProvider={async (val) => {
+                                                    setDefaultTranslator(val);
+                                                    try {
+                                                        await settingsApi.update({ defaultTranslator: val });
+                                                        toast.success(t("saveSuccess"));
+                                                    } catch {
+                                                        toast.error("Failed to sync default translator");
+                                                    }
+                                                }}
+                                                hideTrigger={true}
+                                            />
+                                        </div>
+                                        <p className="text-xs text-muted-foreground">{t("extension.defaultTranslatorDesc") || "Select the underlying AI or model that powers real-time translation and Smart Bubble."}</p>
+                                    </div>
+
+                                    {/* Custom LLM Manager */}
+                                    <div className="pb-6 border-b">
+                                        <CustomLlmManager customLlmsJson={customLlmsJson} onChange={setCustomLlmsJson} />
                                     </div>
 
                                     <div className="space-y-3">

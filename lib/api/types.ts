@@ -306,7 +306,13 @@ export interface UserSettingsDto {
     highlightColor: string;
     excludedDomains: string[];
     dailyGoal: number;
+    dailyNewCardLimit: number;
+    dailyReviewLimit: number;
     preferencesJson?: string;
+    targetLanguage?: string;
+    nativeLanguage?: string;
+    customLlmsJson?: string;
+    defaultTranslator?: string;
 }
 
 export interface UpdateSettingsRequest {
@@ -314,7 +320,13 @@ export interface UpdateSettingsRequest {
     highlightColor?: string;
     excludedDomains?: string[];
     dailyGoal?: number;
+    dailyNewCardLimit?: number;
+    dailyReviewLimit?: number;
     preferencesJson?: string;
+    targetLanguage?: string;
+    nativeLanguage?: string;
+    customLlmsJson?: string;
+    defaultTranslator?: string;
 }
 
 // ─── Payment & Billing DTOs ─────────────────────────────────────
@@ -340,6 +352,10 @@ export interface PaymentHistoryDto {
     expiresAt?: string | null;
     cancelledAt?: string | null;
     approvalUrl?: string;
+    originalAmount?: number | null;
+    discountAmount?: number | null;
+    couponCode?: string | null;
+    planName?: string | null;
 }
 
 export interface BillingOverviewDto {
@@ -355,6 +371,7 @@ export interface UserPermissionsDto {
     currentCount: number;
     planExpiresAt: string | null;
     featureFlags: Record<string, string>;
+    quotaUsages?: Record<string, number>;
 }
 
 export interface CreatePaymentOrderRequest {
@@ -446,6 +463,7 @@ export interface AdminCouponDto {
     currentUses: number;
     startsAt: string;
     expiresAt: string | null;
+    currency?: string | null;
     isActive: boolean;
     createdAt: string;
 }
@@ -457,6 +475,7 @@ export interface CreateCouponRequest {
     maxUses?: number | null;
     startsAt: string;
     expiresAt?: string | null;
+    currency?: string | null;
     isActive: boolean;
 }
 
@@ -467,6 +486,7 @@ export interface UpdateCouponRequest {
     maxUses?: number | null;
     startsAt: string;
     expiresAt?: string | null;
+    currency?: string | null;
     isActive: boolean;
 }
 

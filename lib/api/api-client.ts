@@ -434,6 +434,90 @@ export const aiApi = {
         clientApi.get<RelatedWordsDto>(`/api/proxy/ai/related/${encodeURIComponent(word)}`),
     getQuiz: (word: string) =>
         clientApi.get<QuizDto>(`/api/proxy/ai/quiz/${encodeURIComponent(word)}`),
+        
+    translate: async (
+        word: string, 
+        context?: string, 
+        provider?: string, 
+        from?: string, 
+        to?: string,
+        customParams?: { customBaseUrl?: string, customApiKey?: string, customModel?: string }
+    ) => {
+        const query = new URLSearchParams({ word });
+        if (context) query.append('context', context);
+        if (provider) query.append('provider', provider);
+        if (from) query.append('from', from);
+        if (to) query.append('to', to);
+        if (customParams?.customBaseUrl) query.append('customBaseUrl', customParams.customBaseUrl);
+        if (customParams?.customApiKey) query.append('customApiKey', customParams.customApiKey);
+        if (customParams?.customModel) query.append('customModel', customParams.customModel);
+
+        const res = await fetch(`/api/proxy/ai/translate?${query.toString()}`);
+        if (!res.ok) {
+            let errorBody;
+            try { errorBody = await res.json(); } catch { }
+            throw { status: res.status, message: errorBody?.error || "Translation failed" };
+        }
+        return await res.json();
+    },
+
+    streamTranslation: async function* (
+        word: string, 
+        context?: string, 
+        provider?: string, 
+        from?: string, 
+        to?: string,
+        customParams?: { customBaseUrl?: string, customApiKey?: string, customModel?: string }
+    ) {
+        const query = new URLSearchParams({ word });
+        if (context) query.append('context', context);
+        if (provider) query.append('provider', provider);
+        if (from) query.append('from', from);
+        if (to) query.append('to', to);
+        if (customParams?.customBaseUrl) query.append('customBaseUrl', customParams.customBaseUrl);
+        if (customParams?.customApiKey) query.append('customApiKey', customParams.customApiKey);
+        if (customParams?.customModel) query.append('customModel', customParams.customModel);
+
+        const res = await fetch(`/api/proxy/ai/translate-stream?${query.toString()}`);
+        
+        if (!res.ok) {
+            let errorBody;
+            try { errorBody = await res.json(); } catch { }
+            throw { status: res.status, message: errorBody?.error || "Streaming translation failed" };
+        }
+
+        const reader = res.body?.getReader();
+        const decoder = new TextDecoder();
+        if (!reader) throw new Error("No readable stream available");
+
+        let done = false;
+        let buffer = "";
+
+        while (!done) {
+            const { value, done: readerDone } = await reader.read();
+            done = readerDone;
+            if (value) {
+                buffer += decoder.decode(value, { stream: !done });
+                const lines = buffer.split('\n\n');
+                buffer = lines.pop() || "";
+
+                for (const line of lines) {
+                    if (line.startsWith('data: ')) {
+                        const dataStr = line.slice(6).trim();
+                        if (dataStr === '[DONE]') continue;
+                        if (!dataStr) continue;
+
+                        try {
+                            const parsed = JSON.parse(dataStr);
+                            yield parsed;
+                        } catch (e) {
+                            console.error("Error parsing SSE JSON:", e, dataStr);
+                        }
+                    }
+                }
+            }
+        }
+    },
 };
 
 

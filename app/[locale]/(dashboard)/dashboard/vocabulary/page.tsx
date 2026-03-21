@@ -85,63 +85,36 @@ export default function VocabularyPage() {
 
     useEffect(() => { fetchVocabulary(); }, [fetchVocabulary]);
 
-    const handleExport = async (format: "csv" | "json") => {
+    const handleExport = async (format: "csv" | "json" | "quizlet" | "txt") => {
+        const loadingId = toast.loading("Exporting...");
         try {
             const res = await fetch(`/api/proxy/vocabularies/export?format=${format}`);
             if (!res.ok) {
-                toast.error(t("exportFailed"));
+                toast.error(t("exportFailed") || "Export failed.");
+                toast.dismiss(loadingId);
                 return;
             }
-            toast.success(t("exportSuccess", { format: format.toUpperCase() }));
+            toast.success(t("exportSuccess", { format: format.toUpperCase() }) || `Exported ${format.toUpperCase()}`);
             const blob = await res.blob();
             const downloadUrl = window.URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = downloadUrl;
-            a.download = `lexivocab-export-${new Date().toISOString().split('T')[0]}.${format}`;
+
+            let ext = format;
+            if (format === "quizlet") ext = "txt";
+            a.download = `lexivocab-export-${new Date().toISOString().split('T')[0]}.${ext}`;
+
             document.body.appendChild(a);
             a.click();
             a.remove();
+            toast.dismiss(loadingId);
         } catch (e) {
             console.error("Export failed", e);
         }
     };
 
-    const totalItems = data?.totalCount ?? permissions?.currentCount ?? 0;
-    const maxItems = quotaMax;
-    const isNearLimit = maxItems !== 2147483647 && totalItems >= maxItems * 0.8;
-    const isOverLimit = maxItems !== 2147483647 && totalItems >= maxItems;
-
     return (
         <div className="space-y-6 pb-10">
-            <AnimatePresence>
-                {isNearLimit && (
-                    <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        className="overflow-hidden"
-                    >
-                        <Alert variant={isOverLimit ? "destructive" : "default"} className="mb-4 bg-orange-500/10 border-orange-500/20 text-orange-700 dark:text-orange-400">
-                            <AlertCircle className="h-4 w-4" />
-                            <AlertTitle className="font-bold">
-                                {isOverLimit ? t("quota.exceededTitle") : t("quota.nearLimitTitle")}
-                            </AlertTitle>
-                            <AlertDescription className="flex items-center justify-between">
-                                <span>
-                                    {isOverLimit
-                                        ? t("quota.exceededDesc")
-                                        : t("quota.nearLimitDesc", { used: totalItems, max: maxItems })}
-                                </span>
-                                {permissions?.plan === "Free" && (
-                                    <Link href={`/${locale}/pricing`} className="font-bold underline ml-4 whitespace-nowrap">
-                                        {t("quota.upgradeNow")}
-                                    </Link>
-                                )}
-                            </AlertDescription>
-                        </Alert>
-                    </motion.div>
-                )}
-            </AnimatePresence>
 
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -159,8 +132,10 @@ export default function VocabularyPage() {
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={() => handleExport("csv")}>{t("exportCsv")}</DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => handleExport("json")}>{t("exportJson")}</DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleExport("csv")}>{t("exportCsv") || "Export CSV"}</DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleExport("quizlet")}>Export Quizlet</DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleExport("json")}>{t("exportJson") || "Export JSON"}</DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleExport("txt")}>Export Plain Text</DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
                     )}
@@ -192,7 +167,7 @@ export default function VocabularyPage() {
                     />
                 </aside>
 
-                <div className="space-y-6">
+                <div className="space-y-6 min-w-0">
                     {/* Toolbar */}
                     <motion.div
                         initial={{ opacity: 0, y: 10 }}
@@ -310,29 +285,33 @@ export default function VocabularyPage() {
                     </div>
 
                     {/* Pagination */}
-                    {data && data.totalPages > 1 && (
-                        <div className="flex justify-center items-center gap-4 pt-4 pb-10">
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                disabled={page === 1}
-                                onClick={() => setPage(p => Math.max(1, p - 1))}
-                                className="h-9 px-4"
-                            >
-                                {t("pagination.previous")}
-                            </Button>
-                            <span className="text-sm font-medium text-muted-foreground bg-muted/50 px-3 py-1.5 rounded-lg border">
-                                {t("pagination.pageOf", { page, total: data.totalPages })}
-                            </span>
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                disabled={page >= data.totalPages}
-                                onClick={() => setPage(p => Math.min(data.totalPages, p + 1))}
-                                className="h-9 px-4"
-                            >
-                                {t("pagination.next")}
-                            </Button>
+                    {data && (
+                        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-6 pb-10 border-t mt-4 border-muted/50">
+                            <div className="text-sm text-muted-foreground flex items-center gap-1.5 bg-muted/20 px-3 py-1.5 rounded-md border border-muted/40">
+                                <span className="font-medium">{t("pagination.pageOf", { page, total: Math.max(1, data.totalPages) })}</span>
+                                <span className="opacity-40 text-[10px] uppercase font-bold tracking-wider ml-1.5 pt-0.5">• {data.totalCount} ITEMS</span>
+                            </div>
+
+                            <div className="flex justify-center items-center gap-2">
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    disabled={page <= 1}
+                                    onClick={() => setPage(p => Math.max(1, p - 1))}
+                                    className="h-9 px-4 rounded-lg bg-background shadow-sm hover:shadow transition-all"
+                                >
+                                    {t("pagination.previous")}
+                                </Button>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    disabled={page >= data.totalPages}
+                                    onClick={() => setPage(p => Math.min(data.totalPages, p + 1))}
+                                    className="h-9 px-4 rounded-lg bg-background shadow-sm hover:shadow transition-all"
+                                >
+                                    {t("pagination.next")}
+                                </Button>
+                            </div>
                         </div>
                     )}
                 </div>

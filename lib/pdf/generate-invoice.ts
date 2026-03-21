@@ -99,18 +99,32 @@ export async function downloadInvoicePdf(tx: PaymentHistoryDto): Promise<void> {
     doc.text(value, W - margin - 8, posY, { align: "right" });
   };
 
-  row("Plan Name", "LexiVocab Premium", y + 12);
-  row("Amount", `${tx.currency} ${tx.amount.toFixed(2)}`, y + 20);
+  row("Plan Name", `LexiVocab ${tx.planName || "Premium"}`, y + 12);
 
-  // Status với màu Emerald nếu thành công
-  doc.setFont("helvetica", "normal");
-  doc.setTextColor(secondary[0], secondary[1], secondary[2]);
-  doc.text("Status", margin + 8, y + 28);
-  doc.setTextColor(16, 185, 129); // Emerald 500
-  doc.setFont("helvetica", "bold");
-  doc.text("Paid", W - margin - 8, y + 28, { align: "right" });
+  if (tx.couponCode && tx.originalAmount != null && tx.discountAmount != null) {
+    row("Subtotal", `${tx.currency} ${tx.originalAmount.toFixed(2)}`, y + 20);
+    row(`Discount (${tx.couponCode})`, `-${tx.currency} ${tx.discountAmount.toFixed(2)}`, y + 28);
 
-  row("Reference ID", tx.externalOrderId || tx.id, y + 36);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(secondary[0], secondary[1], secondary[2]);
+    doc.text("Status", margin + 8, y + 36);
+    doc.setTextColor(16, 185, 129); // Emerald 500
+    doc.setFont("helvetica", "bold");
+    doc.text("Paid", W - margin - 8, y + 36, { align: "right" });
+
+    row("Reference ID", tx.externalOrderId || tx.id, y + 44);
+  } else {
+    row("Amount", `${tx.currency} ${tx.amount.toFixed(2)}`, y + 20);
+
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(secondary[0], secondary[1], secondary[2]);
+    doc.text("Status", margin + 8, y + 28);
+    doc.setTextColor(16, 185, 129); // Emerald 500
+    doc.setFont("helvetica", "bold");
+    doc.text("Paid", W - margin - 8, y + 28, { align: "right" });
+
+    row("Reference ID", tx.externalOrderId || tx.id, y + 36);
+  }
 
   // ── Total Section ──────────────────────────────────────────────────────
   y += 45;

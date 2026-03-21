@@ -159,12 +159,12 @@ export function VocabularyTable({ data, tags, isLoading, onRefresh }: Vocabulary
 
     return (
         <div className="rounded-xl border bg-card overflow-hidden">
-            <div className="overflow-x-auto">
-                <Table>
+            <div className="overflow-x-auto pb-4">
+                <Table className="table-fixed min-w-[1000px]">
                     <TableHeader>
                         <TableRow>
-                            <TableHead className="w-[200px]">{t("table.word")}</TableHead>
-                            <TableHead className="min-w-[200px]">{t("table.meaning")}</TableHead>
+                            <TableHead className="w-[280px]">{t("table.word")}</TableHead>
+                            <TableHead className="w-[280px]">{t("table.meaning")}</TableHead>
                             <TableHead className="w-[120px]">{t("table.level")}</TableHead>
                             <TableHead className="w-[120px]">{t("table.tag")}</TableHead>
                             <TableHead className="w-[150px]">{t("table.nextReview")}</TableHead>
@@ -178,49 +178,83 @@ export function VocabularyTable({ data, tags, isLoading, onRefresh }: Vocabulary
                             const isArchived = item.isArchived;
 
                             return (
-                                <TableRow key={item.id} className={isArchived ? "opacity-60" : ""}>
-                                    <TableCell className="font-medium">
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-lg">{item.wordText}</span>
-                                            {item.audioUrl && (
-                                                <button
-                                                    onClick={() => playAudio(item.audioUrl)}
-                                                    className="text-muted-foreground hover:text-primary transition-colors focus:outline-none"
-                                                    title="Play audio"
+                                <TableRow 
+                                    key={item.id} 
+                                    className={cn(
+                                        "group transition-all duration-200 hover:bg-muted/40 hover:shadow-[0_2px_15px_-5px_rgba(0,0,0,0.05)] relative z-0 hover:z-10",
+                                        isArchived ? "opacity-60 bg-muted/20" : "bg-card"
+                                    )}
+                                >
+                                    <TableCell className="font-medium align-top">
+                                        <div className="flex items-start justify-between gap-2 h-full">
+                                            <div className="min-w-0 flex-1">
+                                                <div 
+                                                    className="text-lg font-bold line-clamp-3 break-words"
+                                                    title={item.wordText?.length > 150 ? item.wordText.substring(0, 150) + '...' : item.wordText}
                                                 >
-                                                    <Volume2 className="h-4 w-4" />
-                                                </button>
-                                            )}
-                                            <button
-                                                onClick={() => setAiAssistantData({ word: item.wordText, context: item.contextSentence || undefined })}
-                                                className="text-primary/40 hover:text-primary transition-all focus:outline-none hover:scale-110 active:scale-95"
-                                                title="AI Assistant"
-                                            >
-                                                <Brain className="h-4 w-4" />
-                                            </button>
-                                        </div>
+                                                    {item.wordText}
+                                                </div>
 
-                                        {(item.phoneticUs || item.phoneticUk) && (
-                                            <div className="text-xs text-muted-foreground font-mono mt-0.5">
-                                                {item.phoneticUs || item.phoneticUk}
-                                            </div>
-                                        )}
-                                        {item.isMasterApproved !== undefined && item.isMasterApproved !== null && (
-                                            <div className="mt-1 flex items-center gap-1 text-[10px]">
-                                                {item.isMasterApproved ? (
-                                                    <span className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 px-1.5 py-0.5 rounded flex items-center gap-1">
-                                                        <Sparkles className="w-3 h-3" /> {t("badges.communityApproved")}
-                                                    </span>
-                                                ) : (
-                                                    <span className="bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 px-1.5 py-0.5 rounded flex items-center gap-1">
-                                                        <Loader2 className="w-3 h-3" /> {t("badges.communityPending")}
-                                                    </span>
+                                                {item.contextSentence && (
+                                                    <div 
+                                                        className="text-xs text-muted-foreground/80 mt-1.5 line-clamp-2 italic border-l-[3px] py-0.5 border-primary/40 pl-2 break-words"
+                                                        style={{ borderColor: item.tagId && tags[item.tagId]?.color ? tags[item.tagId]!.color! : undefined }}
+                                                        title={item.contextSentence?.length > 200 ? item.contextSentence.substring(0, 200) + '...' : item.contextSentence}
+                                                    >
+                                                        "{item.contextSentence}"
+                                                    </div>
+                                                )}
+
+                                                {(item.phoneticUs || item.phoneticUk) && (
+                                                    <div className="flex flex-wrap items-center gap-1 mt-1.5">
+                                                        {(item.phoneticUs || item.phoneticUk)!.split(',').map((p, i) => (
+                                                            <span key={i} className="text-[10px] text-muted-foreground font-mono truncate bg-muted/40 px-1.5 py-0.5 rounded max-w-full group-hover:bg-background transition-colors">
+                                                                {p.trim()}
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                )}
+
+                                                {item.isMasterApproved !== undefined && item.isMasterApproved !== null && (
+                                                    <div className="mt-2 flex items-center gap-1 text-[10px]">
+                                                        {item.isMasterApproved ? (
+                                                            <span className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 px-1.5 py-0.5 rounded flex items-center gap-1 font-medium whitespace-nowrap overflow-hidden">
+                                                                <Sparkles className="w-2.5 h-2.5 shrink-0" /> <span className="truncate">{t("badges.communityApproved")}</span>
+                                                            </span>
+                                                        ) : (
+                                                            <span className="bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400 px-1.5 py-0.5 rounded flex items-center gap-1 font-medium whitespace-nowrap overflow-hidden">
+                                                                <Loader2 className="w-2.5 h-2.5 shrink-0" /> <span className="truncate">{t("badges.communityPending")}</span>
+                                                            </span>
+                                                        )}
+                                                    </div>
                                                 )}
                                             </div>
-                                        )}
+
+                                            <div className="flex items-center gap-1.5 shrink-0 mt-0.5">
+                                                {item.audioUrl && (
+                                                    <button
+                                                        onClick={() => playAudio(item.audioUrl)}
+                                                        className="text-muted-foreground hover:text-primary transition-colors focus:outline-none"
+                                                        title="Play audio"
+                                                    >
+                                                        <Volume2 className="h-4 w-4" />
+                                                    </button>
+                                                )}
+                                                <button
+                                                    onClick={() => setAiAssistantData({ word: item.wordText, context: item.contextSentence || undefined })}
+                                                    className="text-primary/40 hover:text-primary transition-all focus:outline-none hover:scale-110 active:scale-95"
+                                                    title="AI Assistant"
+                                                >
+                                                    <Brain className="h-4 w-4" />
+                                                </button>
+                                            </div>
+                                        </div>
                                     </TableCell>
-                                    <TableCell>
-                                        <div className="line-clamp-2" title={item.customMeaning || ""}>
+                                    <TableCell className="align-top">
+                                        <div 
+                                            className="line-clamp-4 break-words text-sm" 
+                                            title={item.customMeaning && item.customMeaning.length > 300 ? item.customMeaning.substring(0, 300) + '...' : item.customMeaning || ""}
+                                        >
                                             {item.customMeaning || <span className="text-muted-foreground italic">{t("table.noMeaning")}</span>}
                                         </div>
                                     </TableCell>

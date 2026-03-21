@@ -26,6 +26,7 @@ export default function AdminCouponsPage() {
     const [code, setCode] = useState("");
     const [discountType, setDiscountType] = useState<string>("0"); // 0: Percentage, 1: Fixed
     const [discountValue, setDiscountValue] = useState("");
+    const [currency, setCurrency] = useState<string>("VND");
     const [maxUses, setMaxUses] = useState("");
     const [isActive, setIsActive] = useState(true);
 
@@ -50,6 +51,7 @@ export default function AdminCouponsPage() {
             setCode(coupon.code);
             setDiscountType(coupon.discountType.toString());
             setDiscountValue(coupon.discountValue.toString());
+            setCurrency(coupon.currency || "VND");
             setMaxUses(coupon.maxUses?.toString() || "");
             setIsActive(coupon.isActive);
         } else {
@@ -57,6 +59,7 @@ export default function AdminCouponsPage() {
             setCode("");
             setDiscountType("0");
             setDiscountValue("");
+            setCurrency("VND");
             setMaxUses("");
             setIsActive(true);
         }
@@ -73,6 +76,7 @@ export default function AdminCouponsPage() {
             code,
             discountType: parseInt(discountType),
             discountValue: parseFloat(discountValue),
+            currency: discountType === "1" ? currency : null,
             maxUses: maxUses ? parseInt(maxUses) : null,
             startsAt: new Date().toISOString(), // Default to now
             isActive
@@ -127,7 +131,7 @@ export default function AdminCouponsPage() {
                             <Plus className="h-4 w-4" /> Create Coupon
                         </Button>
                     </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px]">
+                    <DialogContent key={editingId || "new"} className="sm:max-w-[425px]">
                         <DialogHeader>
                             <DialogTitle>{editingId ? "Edit Coupon" : "Create Coupon"}</DialogTitle>
                             <DialogDescription>
@@ -156,6 +160,20 @@ export default function AdminCouponsPage() {
                                     <Label htmlFor="discountValue">Value <span className="text-red-500">*</span></Label>
                                     <Input id="discountValue" type="number" value={discountValue} onChange={(e) => setDiscountValue(e.target.value)} placeholder="e.g. 20" />
                                 </div>
+                                {discountType === "1" && (
+                                    <div className="grid gap-2">
+                                        <Label>Currency</Label>
+                                        <Select value={currency} onValueChange={setCurrency}>
+                                            <SelectTrigger>
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="USD">USD ($)</SelectItem>
+                                                <SelectItem value="VND">VND</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                )}
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="maxUses">Max Uses (Optional)</Label>
@@ -205,7 +223,7 @@ export default function AdminCouponsPage() {
                                         <TableCell>
                                             {coupon.discountType === 0 
                                                 ? <Badge variant="secondary" className="bg-blue-500/10 text-blue-600 border-blue-500/20">{coupon.discountValue}% OFF</Badge>
-                                                : <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20">${coupon.discountValue} OFF</Badge>}
+                                                : <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20">{coupon.currency === "VND" ? "" : "$"}{coupon.discountValue} {coupon.currency === "VND" ? "VND" : ""} OFF</Badge>}
                                         </TableCell>
                                         <TableCell>
                                             <span className="text-sm font-medium">

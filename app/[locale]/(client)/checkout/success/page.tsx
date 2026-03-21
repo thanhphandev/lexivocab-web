@@ -14,6 +14,7 @@ import confetti from "canvas-confetti";
 export default function CheckoutSuccessPage() {
     const locale = useLocale();
     const t = useTranslations("Checkout");
+    const tPricing = useTranslations("Pricing");
     const searchParams = useSearchParams();
     const { refreshSession, permissions } = useAuth();
     const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
@@ -101,7 +102,7 @@ export default function CheckoutSuccessPage() {
                 {status === "success" && (
                     <>
                         <div className="relative py-4">
-                            <motion.div 
+                            <motion.div
                                 initial={{ scale: 0 }}
                                 animate={{ scale: 1 }}
                                 transition={{ type: "spring", damping: 12, stiffness: 200 }}
@@ -109,9 +110,9 @@ export default function CheckoutSuccessPage() {
                             >
                                 <CheckCircle2 className="h-12 w-12 text-emerald-500" />
                             </motion.div>
-                            
+
                             {/* Animated Rings */}
-                            <motion.div 
+                            <motion.div
                                 animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.2, 0.5] }}
                                 transition={{ duration: 4, repeat: Infinity }}
                                 className="absolute inset-0 m-auto w-24 h-24 border-4 border-emerald-500/20 rounded-full"
@@ -119,7 +120,7 @@ export default function CheckoutSuccessPage() {
                         </div>
 
                         <div className="space-y-2">
-                             <motion.div 
+                            <motion.div
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.2 }}
@@ -146,13 +147,13 @@ export default function CheckoutSuccessPage() {
                                 <span className="text-muted-foreground">{t("account_status")}</span>
                                 <span className="font-bold text-primary flex items-center gap-1.5">
                                     <Sparkles className="h-4 w-4" />
-                                    Premium
+                                    {permissions?.plan ? tPricing("plan_" + permissions.plan.toLowerCase()) : "Premium"}
                                 </span>
                             </div>
                             <div className="flex justify-between items-center text-sm">
                                 <span className="text-muted-foreground">{t("validity")}</span>
                                 <span className="font-semibold text-foreground">
-                                    {permissions?.planExpiresAt 
+                                    {permissions?.planExpiresAt
                                         ? new Date(permissions.planExpiresAt).toLocaleDateString(locale, { dateStyle: 'long' })
                                         : t("validity_lifetime")}
                                 </span>

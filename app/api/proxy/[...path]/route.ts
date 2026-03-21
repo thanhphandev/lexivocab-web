@@ -28,7 +28,8 @@ const ALLOWED_PREFIXES = [
     "admin",
     "tags",
     "ai",
-    "diagnostics"
+    "diagnostics",
+    "coupons"
 ];
 
 

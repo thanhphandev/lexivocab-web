@@ -114,6 +114,7 @@
       "addWord": "単語を追加",
       "batchImportText": "一括インポート",
       "newTag": "新しいタグ",
+      "explore": "探索",
       "export": "エクスポート",
       "exportCsv": "CSVでエクスポート",
       "exportJson": "JSONでエクスポート",
@@ -249,14 +250,34 @@
         "save": "単語を保存"
       },
       "batchImport": {
-        "desc": "複数の単語を一度にインポートします。各単語を新しい行に入力してください。形式：単語、意味（任意）、文脈（任意）",
+        "desc": "CSVファイルをアップロードするか、テキストを貼り付けます（単語、意味、文脈）。UTF-8エンコーディングをサポートしています。",
         "listLabel": "語彙リスト（CSV形式）",
         "listPlaceholder": "apple, 果物, 私はリンゴを食べた\nbanana, 黄色い果物\nubiquitous",
         "cancel": "キャンセル",
+        "premiumTitle": "プレミアム機能",
+        "premiumDesc": "単語の一括インポートはプレミアムユーザー限定の機能です。アップグレードして、この機能やその他の高度なAI機能をアンロックしてください。",
+        "upgradeToPremium": "プレミアムにアップグレード",
         "import": "単語をインポート",
+        "importNow": "今すぐインポート",
         "noWords": "インポートする有効な単語がありません。",
         "success": "{count}個の単語をインポートしました！",
-        "failed": "インポート失敗：{error}"
+        "failed": "インポート失敗：{error}",
+        "importing": "単語をインポート中...",
+        "unexpectedError": "インポート中に予期しないエラーが発生しました。",
+        "uploadCsv": "CSVファイルをアップロード",
+        "pasteText": "テキストを貼り付け",
+        "fileReadSuccess": "ファイルの読み込みに成功しました！",
+        "foundWords": "インポートする単語が{count}個見つかりました。",
+        "chooseDifferent": "別のファイルを選択",
+        "clickToUpload": "クリックしてCSVをアップロード",
+        "utf8Support": "UTF-8エンコードされたファイルをサポートしています。",
+        "rawText": "生テキスト",
+        "dataPreview": "データプレビュー ({count} 単語)",
+        "colWord": "単語",
+        "colMeaning": "意味",
+        "colContext": "文脈",
+        "moreWords": "ほか {count} 単語",
+        "invalidFormat": "有効な単語が見つかりません。CSVフォーマットを確認してください。"
       }
     },
     "flashcard": {
@@ -276,12 +297,12 @@
       "previous": "前へ",
       "next": "次へ",
       "quality": {
-        "5": "完璧",
-        "4": "良い",
-        "3": "難しい",
-        "2": "苦労した",
+        "0": "完全に忘れた",
         "1": "間違い",
-        "0": "完全に忘れた"
+        "2": "苦労した",
+        "3": "難しい",
+        "4": "良い",
+        "5": "完璧"
       }
     },
     "review": {
@@ -350,14 +371,22 @@
         "highlightToggleDesc": "ウェブページ上のアクティブな語彙を自動的にハイライトします。",
         "highlightColorLabel": "ハイライトカラー",
         "highlightColorDesc": "ハイライトされた単語のカスタム背景色。",
-        "dailyGoalLabel": "毎日の復習目標",
-        "dailyGoalDesc": "1日に何単語復習したいですか？",
+        "dailyGoalLabel": "毎日の収集目標",
+        "dailyGoalDesc": "拡張機能経由で1日に保存したい単語数。",
+        "dailyNewCardLimitLabel": "新規カード / 日",
+        "dailyNewCardLimitDesc": "1日に学習する新しいカードの最大数。",
+        "dailyReviewLimitLabel": "復習上限 / 日",
+        "dailyReviewLimitDesc": "1日に復習するカードの最大数。",
         "excludedDomainsLabel": "除外ドメイン",
         "excludedDomainsPlaceholder": "example.com\nreddit.com",
         "excludedDomainsDesc": "これらのウェブサイトではLexiVocabのハイライトを無効にします。1行に1ドメインを入力してください。",
         "advancedLabel": "高度な設定 (JSON)",
         "advancedDesc": "ブラウザ拡張機能から同期された生のJSON設定です。慎重に変更してください。",
-        "invalidJson": "高度な設定のJSON形式が無効です。"
+        "invalidJson": "高度な設定のJSON形式が無効です。",
+        "targetLanguageLabel": "ターゲット言語",
+        "targetLanguageDesc": "翻訳したい言語",
+        "defaultTranslatorLabel": "デフォルト翻訳サービス",
+        "defaultTranslatorDesc": "デフォルトで使用する翻訳サービス"
       },
       "account": {
         "title": "アカウントアクション",
@@ -468,17 +497,22 @@
     "free": "無料",
     "plan_free": "無料",
     "plan_premium": "プレミアム",
-    "business_plan": "ビジネス",
-    "Perfect for beginners": "初心者に最適",
-    "Unlock full potential": "すべての機能を解放",
-    "For advanced learners and teams": "上級学習者とチーム向け",
-    "MAX_WORDS": "最大{count}語の語彙",
+    "plan_ultimate": "アルティメット",
+    "plan_business": "ビジネス",
+    "Perfect for beginners to get started": "初心者に最適",
+    "Unlock full potential with AI features": "AI機能で最大限の可能性を引き出す",
+    "Unlimited access for professionals and teams": "専門家やチーム向けの無制限アクセス",
+    "MAX_WORDS": "語彙数の上限",
     "AI_ACCESS": "AI意味・文脈抽出",
     "SUPPORT_LEVEL": "サポート",
-    "EXPORT_PDF": "データエクスポート (PDF/CSV)",
-    "ADVANCED_AI": "高度なAI機能",
-    "QUIZ_GENERATION": "AIクイズ生成",
+    "EXPORT_ANKI": "データエクスポート (Anki/PDF)",
+    "BATCH_IMPORT": "一括インポート",
     "AI_DAILY_LIMIT": "AI日次制限",
+    "MAX_QUIZ_PER_DAY": "毎日のクイズ生成",
+    "ADVANCED_AI": "高度なAI機能",
+    "QUIZ_GENERATION": "スマートクイズ生成",
+    "LLM_TRANSLATION_LIMIT": "Web直接翻訳",
+    "AVAILABLE_LLM_MODELS": "対応AIモデル",
     "trust": {
       "secure": "安全な決済",
       "lifetime": "永久アクセス",
@@ -501,13 +535,17 @@
       "unlimited": "無制限",
       "standard": "標準",
       "priority": "優先",
-      "MAX_WORDS": "最大 {count} 語彙",
+      "MAX_WORDS": "語彙数の上限",
       "AI_ACCESS": "AI 意味・文脈",
-      "SUPPORT_LEVEL": "サポート",
-      "EXPORT_PDF": "データエクスポート (PDF/CSV)",
-      "ADVANCED_AI": "高度なAI機能",
-      "QUIZ_GENERATION": "AIクイズ生成",
-      "AI_DAILY_LIMIT": "AI 1日の制限",
+      "SUPPORT_LEVEL": "サポート優先度",
+      "EXPORT_ANKI": "データエクスポート (Anki/CSV)",
+      "BATCH_IMPORT": "一括インポート (CSV)",
+      "AI_DAILY_LIMIT": "AI 使用制限 (単語)",
+      "MAX_QUIZ_PER_DAY": "毎日のクイズ生成",
+      "ADVANCED_AI": "高度なAI機能アクセス",
+      "QUIZ_GENERATION": "インタラクティブクイズ",
+      "LLM_TRANSLATION_LIMIT": "Web直接翻訳制限",
+      "AVAILABLE_LLM_MODELS": "多様なAIモデル",
       "duration_1m": "1ヶ月",
       "duration_3m": "3ヶ月",
       "duration_6m": "6ヶ月",
@@ -549,7 +587,8 @@
     "remove_coupon": "削除する",
     "coupon_applied": "クーポンが適用されました！",
     "pricing_errors": {
-      "invalid_coupon": "クーポンが無効か、期限が切れています"
+      "invalid_coupon": "クーポンが無効か、期限が切れています",
+      "failed_to_create_order": "注文の作成に失敗しました"
     }
   },
   "Billing": {
@@ -732,7 +771,11 @@
     "update_enforcement": "バージョン強制更新メカニズムを追加",
     "mode_toggle_feature": "モード切替: スタンダードモードとコンパクトモードを素早く切り替え",
     "realtime_input_translation": "リアルタイム入力翻訳: スペースキーを3回押すと入力中のテキストを翻訳",
-    "highlight_performance_optimization": "単語ハイライトのパフォーマンスを改善"
+    "highlight_performance_optimization": "単語ハイライトのパフォーマンスを改善",
+    "v2_architecture_upgrade": "新アーキテクチャ：純粋なクライアント拡張機能から、リアルタイムでデータを同期する最新のWebアプリおよびAPIシステムに移行。",
+    "v2_ai_integration": "AI統合：文脈に沿った翻訳、詳細な説明、深い練習作成のためのスマートAI機能。",
+    "v2_spaced_repetition": "間隔反復：間隔反復（SM-2）アルゴリズムに基づいたスマートな語彙学習システム。",
+    "v2_i18n_support": "多言語対応：Webアプリおよび拡張機能システム全体にわたる包括的な多言語（i18n）サポート。"
   },
   "VideoDemo": {
     "badge": "動画デモ",
@@ -757,9 +800,44 @@
     "view_billing": "請求内容を確認"
   },
   "AI": {
+    "tags": {
+      "assistant": "AI アシスタント",
+      "proTip": "ヒント",
+      "poweredBy": "LexiVocab AI 提供"
+    },
+    "explanation": {
+      "title": "意味と文脈",
+      "nuances": "ニュアンス",
+      "examples": "例文",
+      "analyzing": "文脈を分析中..."
+    },
+    "related": {
+      "synonyms": "同義語",
+      "antonyms": "反意語",
+      "collocations": "コロケーション",
+      "finding": "関連語を検索中..."
+    },
+    "quiz": {
+      "generating": "クイズを作成中...",
+      "instruction": "正しい答えを選択してください",
+      "correct": "正解！",
+      "incorrect": "不正解",
+      "tryAnother": "他の問題に挑戦"
+    },
+    "actions": {
+      "tryAgain": "再試行",
+      "regenerate": "再生成",
+      "feedback": "フィードバック",
+      "history": "履歴",
+      "upgradePlan": "プランをアップグレード"
+    },
+    "errors": {
+      "title": "AI エラー",
+      "quotaReachedTitle": "1日のAI制限に達しました"
+    },
     "tabs": {
       "explain": "説明",
-      "related": "関連語",
+      "related": "関連",
       "quiz": "クイズ"
     }
   },

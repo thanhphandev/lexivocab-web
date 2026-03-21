@@ -72,19 +72,16 @@ export default function AnalyticsPage() {
                     title={t("currentStreak")}
                     value={`${dashboardData.currentStreak} Days`}
                     icon={<Flame className="text-orange-500" />}
-                    className="border-l-4 border-l-orange-500"
                 />
                 <StatCard
                     title={t("activeDays")}
                     value={dashboardData.totalStudyDays}
                     icon={<Target className="text-primary" />}
-                    className="border-l-4 border-l-primary"
                 />
                 <StatCard
                     title="Mastery Rate"
                     value={`${masteryRate}%`}
                     icon={<Trophy className="text-yellow-500" />}
-                    className="border-l-4 border-l-yellow-500"
                 />
             </motion.div>
 

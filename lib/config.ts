@@ -12,7 +12,7 @@ export const siteConfig = {
     },
 
     // Contact
-    email: 'support@lexivocab.com',
+    email: 'support@lexivocab.store',
 
     // Author
     author: {

@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import { useTranslations, useLocale } from "next-intl";
 import { Loader2, AlertCircle } from "lucide-react";
 import { GoogleLogin } from '@react-oauth/google';
+import Image from "next/image";
 
 export default function RegisterPage() {
     const [email, setEmail] = useState("");
@@ -55,8 +56,18 @@ export default function RegisterPage() {
             className="w-full max-w-md space-y-8 rounded-2xl border border-border bg-card p-8 shadow-2xl"
         >
             <div className="text-center">
-                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-orange-500 text-white shadow-md">
-                    <span className="text-xl font-bold">L</span>
+                <div className="flex items-center gap-3">
+                    {/* Logo Container */}
+                    <div className="flex h-12 w-12 items-center justify-center">
+                        <Image src="/apple-icon.png" alt="Logo" width={32} height={32} />
+                    </div>
+
+                    {/* Branding Text */}
+                    <div className="flex items-baseline">
+                        <span className="text-2xl font-bold tracking-tight text-gray-900">
+                            LexiVocab<span className="text-orange-600">.</span>
+                        </span>
+                    </div>
                 </div>
                 <h2 className="mt-6 text-3xl font-bold tracking-tight text-foreground">
                     {t("registerTitle")}
@@ -111,14 +122,14 @@ export default function RegisterPage() {
                         <p>{error}</p>
                     </motion.div>
                 )}
-                
+
                 {/* Show a "Verify Email" button if the error suggests the email needs verification */}
                 {error && error.toLowerCase().includes("verif") && (
-                     <div className="flex justify-center mt-2">
-                         <Link href={`/auth/verify-email?email=${encodeURIComponent(email)}`} className="text-sm font-medium text-primary underline">
+                    <div className="flex justify-center mt-2">
+                        <Link href={`/auth/verify-email?email=${encodeURIComponent(email)}`} className="text-sm font-medium text-primary underline">
                             {t("verifyEmailLink")}
-                         </Link>
-                     </div>
+                        </Link>
+                    </div>
                 )}
 
                 <div className="space-y-4 rounded-md shadow-sm">
