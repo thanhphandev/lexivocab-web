@@ -53,21 +53,22 @@ export function EditWordDialog({ item, open, onOpenChange, onSuccess }: EditWord
         if (aiData.context) setContextSentence(aiData.context);
     }, [aiData.meaning, aiData.context]);
 
-    const handleAiAutofill = () => {
+    const handleAiAutofill = (modelId: string = aiProvider, trueProvider?: string) => {
         let fromLang = "auto";
         let toLang = "auto";
         
         if (settings) {
             if (isSwapped) {
-                fromLang = settings.nativeLanguage || "Vietnamese";
-                toLang = settings.targetLanguage || "English";
+                fromLang = settings.nativeLanguage || "vi";
+                toLang = settings.targetLanguage || "en";
             } else {
                 fromLang = "auto";
-                toLang = settings.nativeLanguage || "Vietnamese";
+                toLang = settings.nativeLanguage || "vi";
             }
         }
         
-        streamTranslation(item.wordText, "", aiProvider, fromLang, toLang);
+        const aiProviderName = trueProvider || modelId.split("/")[0];
+        streamTranslation(item.wordText, "", aiProviderName, modelId, fromLang, toLang);
     };
 
     useEffect(() => {

@@ -183,8 +183,12 @@ export function DashboardNav({ locale }: { locale: string }) {
             {/* User Footer */}
             <div className="border-t border-border/50 px-3 py-3">
                 <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-primary/80 to-orange-500 text-white font-bold text-xs">
-                        {initials}
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-primary/80 to-orange-500 text-white font-bold text-xs overflow-hidden">
+                        {user?.avatarUrl ? (
+                            <img src={user.avatarUrl} alt={user.fullName} className="w-full h-full object-cover" />
+                        ) : (
+                            initials
+                        )}
                     </div>
                     <AnimatePresence>
                         {!collapsed && (

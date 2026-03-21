@@ -349,6 +349,7 @@
         "role": "アカウントタイプ",
         "joined": "参加日",
         "updateButton": "更新",
+        "randomizeAvatar": "アバターをランダム化",
         "languageLabel": "言語インターフェース",
         "languagePlaceholder": "言語を選択",
         "languageDesc": "ダッシュボードのデフォルト表示言語を設定します。"

@@ -64,6 +64,7 @@ export interface VerifyEmailRequest {
 
 export interface UpdateProfileRequest {
     fullName: string;
+    avatarUrl?: string;
 }
 
 export interface ChangePasswordRequest {

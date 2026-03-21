@@ -10,7 +10,7 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { Loader2, Palette, ShieldAlert, Target, Code, Globe, Lock, KeyRound, Sparkles, BellRing, Mail, MessageCircle, Send } from "lucide-react";
@@ -114,6 +114,7 @@ export default function SettingsPage() {
     const [isRevoking, setIsRevoking] = useState(false);
 
     const [profileName, setProfileName] = useState("");
+    const [profileAvatarUrl, setProfileAvatarUrl] = useState<string | null>(null);
     const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
 
     const [currentPassword, setCurrentPassword] = useState("");
@@ -145,6 +146,7 @@ export default function SettingsPage() {
 
     useEffect(() => {
         if (user?.fullName) setProfileName(user.fullName);
+        if (user?.avatarUrl) setProfileAvatarUrl(user.avatarUrl);
 
         const fetchSettings = async () => {
             const res = await settingsApi.get();
@@ -178,12 +180,12 @@ export default function SettingsPage() {
             setIsLoading(false);
         };
         fetchSettings();
-    }, [user?.fullName]);
+    }, [user?.fullName, user?.avatarUrl]);
 
     const handleUpdateProfile = async () => {
         if (!profileName.trim()) return;
         setIsUpdatingProfile(true);
-        const success = await updateProfile({ fullName: profileName });
+        const success = await updateProfile({ fullName: profileName, avatarUrl: profileAvatarUrl ?? undefined });
         if (success) {
             toast.success(t("password.profileUpdated"));
         } else {
@@ -349,13 +351,30 @@ export default function SettingsPage() {
                             <CardContent className="space-y-6">
                                 <div className="flex items-center gap-4 mb-6">
                                     <Avatar className="h-20 w-20">
+                                        {profileAvatarUrl ? (
+                                            <AvatarImage src={profileAvatarUrl} alt={user?.fullName || ""} className="object-cover" />
+                                        ) : null}
                                         <AvatarFallback className="bg-primary/10 text-primary text-xl font-bold">
                                             {initials}
                                         </AvatarFallback>
                                     </Avatar>
-                                    <div>
-                                        <h3 className="font-medium text-lg">{user?.fullName}</h3>
-                                        <p className="text-sm text-muted-foreground">{user?.role} Account</p>
+                                    <div className="flex flex-col gap-2">
+                                        <div>
+                                            <h3 className="font-medium text-lg">{user?.fullName}</h3>
+                                            <p className="text-sm text-muted-foreground">{user?.role} Account</p>
+                                        </div>
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            size="sm"
+                                            className="w-fit"
+                                            onClick={() => {
+                                                const seed = Math.random().toString(36).substring(7);
+                                                setProfileAvatarUrl(`https://api.dicebear.com/9.x/thumbs/svg?seed=${seed}`);
+                                            }}
+                                        >
+                                            <span className="mr-2">🎲</span> {t("profile.randomizeAvatar") || "Randomize Avatar"}
+                                        </Button>
                                     </div>
                                 </div>
                                 <div className="grid gap-4 md:grid-cols-2">
@@ -371,7 +390,7 @@ export default function SettingsPage() {
                                                 type="button"
                                                 variant="secondary"
                                                 onClick={handleUpdateProfile}
-                                                disabled={isUpdatingProfile || profileName === user?.fullName || !profileName.trim()}
+                                                disabled={isUpdatingProfile || (profileName === user?.fullName && profileAvatarUrl === (user?.avatarUrl || null)) || !profileName.trim()}
                                             >
                                                 {isUpdatingProfile && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                                                 {t("profile.updateButton")}

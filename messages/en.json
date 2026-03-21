@@ -349,6 +349,7 @@
         "role": "Account Type",
         "joined": "Joined",
         "updateButton": "Update",
+        "randomizeAvatar": "Randomize Avatar",
         "languageLabel": "Language Interface",
         "languagePlaceholder": "Select language",
         "languageDesc": "Sets the default display language for your dashboard."

@@ -349,6 +349,7 @@
         "role": "账户类型",
         "joined": "加入时间",
         "updateButton": "更新",
+        "randomizeAvatar": "随机头像",
         "languageLabel": "界面语言",
         "languagePlaceholder": "选择语言",
         "languageDesc": "设置仪表板的默认显示语言。"

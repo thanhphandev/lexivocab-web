@@ -10,7 +10,7 @@ import { settingsApi } from "@/lib/api/api-client";
 interface QuickModelSwitcherProps {
     provider: string;
     setProvider: (val: string) => void;
-    onTriggerAi?: () => void;
+    onTriggerAi?: (modelId: string, trueProvider: string) => void;
     isStreaming?: boolean;
     disabled?: boolean;
     hideTrigger?: boolean;
@@ -164,7 +164,10 @@ export function QuickModelSwitcher({ provider, setProvider, onTriggerAi, isStrea
                     className="h-8 px-3 gap-1.5 border-primary/20 bg-primary/5 hover:bg-primary/10 text-primary transition-all shadow-none"
                     onClick={() => {
                         if (provider === "chrome-ai") return;
-                        onTriggerAi();
+                        const allPossibleModels = [...availableModels, ...customModels];
+                        const selectedModel = allPossibleModels.find(m => m.id === provider);
+                        const actualProvider = selectedModel?.provider || provider.split("/")[0];
+                        if (onTriggerAi) onTriggerAi(provider, actualProvider);
                     }}
                     disabled={isStreaming || disabled || provider === "chrome-ai"}
                 >

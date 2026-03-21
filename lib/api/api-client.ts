@@ -435,12 +435,12 @@ export const aiApi = {
         clientApi.get<RelatedWordsDto>(`/api/proxy/ai/related/${encodeURIComponent(word)}`),
     getQuiz: (word: string) =>
         clientApi.get<QuizDto>(`/api/proxy/ai/quiz/${encodeURIComponent(word)}`),
-        
+
     translate: async (
-        word: string, 
-        context?: string, 
-        provider?: string, 
-        from?: string, 
+        word: string,
+        context?: string,
+        provider?: string,
+        from?: string,
         to?: string,
         customParams?: { customBaseUrl?: string, customApiKey?: string, customModel?: string }
     ) => {
@@ -463,16 +463,18 @@ export const aiApi = {
     },
 
     streamTranslation: async function* (
-        word: string, 
-        context?: string, 
-        provider?: string, 
-        from?: string, 
+        word: string,
+        context?: string,
+        provider?: string,
+        modelId?: string,
+        from?: string,
         to?: string,
         customParams?: { customBaseUrl?: string, customApiKey?: string, customModel?: string }
     ) {
         const query = new URLSearchParams({ word });
         if (context) query.append('context', context);
         if (provider) query.append('provider', provider);
+        if (modelId) query.append('modelId', modelId);
         if (from) query.append('from', from);
         if (to) query.append('to', to);
         if (customParams?.customBaseUrl) query.append('customBaseUrl', customParams.customBaseUrl);
@@ -480,7 +482,7 @@ export const aiApi = {
         if (customParams?.customModel) query.append('customModel', customParams.customModel);
 
         const res = await fetch(`/api/proxy/ai/translate-stream?${query.toString()}`);
-        
+
         if (!res.ok) {
             let errorBody;
             try { errorBody = await res.json(); } catch { }

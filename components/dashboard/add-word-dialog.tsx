@@ -53,25 +53,27 @@ export function AddWordDialog({ onSuccess }: { onSuccess: () => void }) {
         if (aiData.context) setContextSentence(aiData.context);
     }, [aiData.meaning, aiData.context]);
 
-    const handleAiAutofill = () => {
+    const handleAiAutofill = (modelId: string = aiProvider, trueProvider?: string) => {
         if (!wordText.trim()) return;
-        
+
         let fromLang = "auto";
         let toLang = "auto";
-        
+
         if (settings) {
             // Default: Auto -> Native (e.g. English word -> Vietnamese meaning)
             // Swapped: Native -> Target (e.g. Vietnamese word -> English meaning)
             if (isSwapped) {
-                fromLang = settings.nativeLanguage || "Vietnamese";
-                toLang = settings.targetLanguage || "English";
+                fromLang = settings.nativeLanguage || "vi";
+                toLang = settings.targetLanguage || "en";
             } else {
                 fromLang = "auto";
-                toLang = settings.nativeLanguage || "Vietnamese";
+                toLang = settings.nativeLanguage || "vi";
             }
         }
         
-        streamTranslation(wordText.trim(), "", aiProvider, fromLang, toLang);
+        const aiProviderName = trueProvider || modelId.split("/")[0];
+
+        streamTranslation(wordText.trim(), "", aiProviderName, modelId, fromLang, toLang);
     };
 
     const [tags, setTags] = useState<TagDto[]>([]);
@@ -249,9 +251,9 @@ export function AddWordDialog({ onSuccess }: { onSuccess: () => void }) {
                                             title="Swap Translation Direction"
                                         >
                                             <ArrowLeftRight className="h-3 w-3 mr-1.5" />
-                                            {isSwapped 
-                                                ? `${(settings.nativeLanguage || 'VI').substring(0,2).toUpperCase()} → ${(settings.targetLanguage || 'EN').substring(0,2).toUpperCase()}` 
-                                                : `Auto → ${(settings.nativeLanguage || 'VI').substring(0,2).toUpperCase()}`
+                                            {isSwapped
+                                                ? `${(settings.nativeLanguage || 'VI').substring(0, 2).toUpperCase()} → ${(settings.targetLanguage || 'EN').substring(0, 2).toUpperCase()}`
+                                                : `Auto → ${(settings.nativeLanguage || 'VI').substring(0, 2).toUpperCase()}`
                                             }
                                         </Button>
                                     )}

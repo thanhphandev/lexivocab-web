@@ -22,7 +22,7 @@ export function useLLMTranslation() {
         };
 
         let parsedMeaning = streamMatch("meaning");
-        
+
         // Clean up LLM hallucinations where it puts a full sentence context in parentheses inside the meaning field
         parsedMeaning = parsedMeaning.replace(/\s*\(\.\s*.*?\)?$/, ''); // Catch " (. sentence"
         parsedMeaning = parsedMeaning.replace(/\s*\([^)]{20,}\)$/, ''); // Catch any long parenthesis at the end (over 20 chars)
@@ -36,10 +36,11 @@ export function useLLMTranslation() {
     };
 
     const streamTranslation = useCallback(async (
-        word: string, 
-        context?: string, 
-        provider?: string, 
-        from?: string, 
+        word: string,
+        context?: string,
+        provider?: string,
+        modelId?: string,
+        from?: string,
         to?: string,
         customParams?: { customBaseUrl?: string, customApiKey?: string, customModel?: string }
     ) => {
@@ -56,14 +57,14 @@ export function useLLMTranslation() {
 
             if (isNonStreamingModel) {
                 const result = await aiApi.translate(word, context, actualProvider, from, to, customParams);
-                setAiData({ 
-                    word: result.word || "", 
-                    meaning: result.meaning || "", 
-                    phonetic: result.phonetic || "", 
-                    context: result.context || "" 
+                setAiData({
+                    word: result.word || "",
+                    meaning: result.meaning || "",
+                    phonetic: result.phonetic || "",
+                    context: result.context || ""
                 });
             } else {
-                const stream = aiApi.streamTranslation(word, context, provider, from, to, customParams);
+                const stream = aiApi.streamTranslation(word, context, provider, modelId, from, to, customParams);
                 let fullText = "";
 
                 for await (const chunk of stream) {

@@ -18,6 +18,7 @@ interface AuthUser {
     email: string;
     fullName: string;
     role: string;
+    avatarUrl?: string | null;
 }
 
 interface AuthContextType {
@@ -68,6 +69,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                     email: result.data.email,
                     fullName: result.data.fullName,
                     role: result.data.role,
+                    avatarUrl: (result.data as any).avatarUrl,
                 });
                 refreshPermissions();
                 return true;
@@ -89,6 +91,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                         email: result.data.email,
                         fullName: result.data.fullName,
                         role: result.data.role,
+                        avatarUrl: (result.data as any).avatarUrl,
                     });
                     refreshPermissions();
                 } else {
@@ -190,7 +193,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             const result = await authApi.updateProfile(data);
             if (result.success) {
                 // Update the local user state with the new profile data
-                setUser(prev => prev ? { ...prev, fullName: result.data.fullName } : null);
+                setUser(prev => prev ? { ...prev, fullName: result.data.fullName, avatarUrl: (result.data as any).avatarUrl } : null);
                 return true;
             }
             setError("error" in result ? result.error : "Failed to update profile");
