@@ -682,6 +682,7 @@ export interface RelatedWordsDto {
     synonyms: string[];
     antonyms: string[];
     collocations: string[];
+    mnemonic?: string;
 }
 
 export interface QuizDto {

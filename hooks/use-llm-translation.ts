@@ -56,7 +56,7 @@ export function useLLMTranslation() {
             const isNonStreamingModel = ['google', 'bing', 'lingva'].includes(actualProvider.toLowerCase().split('/')[0]);
 
             if (isNonStreamingModel) {
-                const result = await aiApi.translate(word, context, actualProvider, from, to, customParams);
+                const result = await aiApi.translate(word, context, actualProvider, modelId, from, to, customParams);
                 setAiData({
                     word: result.word || "",
                     meaning: result.meaning || "",

@@ -35,7 +35,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
-function parsePartialAIJson(raw: string): Partial<WordExplanationDto> {
+interface PartialAI extends Partial<WordExplanationDto> {
+    story?: string;
+    translation?: string;
+    mnemonic?: string;
+    imagePrompt?: string;
+}
+
+function parsePartialAIJson(raw: string): PartialAI {
     if (!raw) return {};
 
     try {
@@ -47,7 +54,7 @@ function parsePartialAIJson(raw: string): Partial<WordExplanationDto> {
         // Fallback for partial streaming JSON
     }
 
-    const partial: Partial<WordExplanationDto> = {};
+    const partial: PartialAI = {};
 
     const extractString = (key: string) => {
         const match = raw.match(new RegExp(`"${key}"\\s*:\\s*"([^]*?)(?:"\\s*(?:,|})|$)`));
@@ -79,6 +86,12 @@ function parsePartialAIJson(raw: string): Partial<WordExplanationDto> {
     partial.nuances = extractArray("nuances");
     partial.examples = extractArray("examples");
 
+    // Extensions for Story and Mnemonic
+    partial.story = extractString("story");
+    partial.translation = extractString("translation");
+    partial.mnemonic = extractString("mnemonic");
+    partial.imagePrompt = extractString("imagePrompt");
+
     return partial;
 }
 
@@ -87,9 +100,11 @@ interface AIWordAssistantProps {
     context?: string;
     isOpen: boolean;
     onClose: () => void;
+    provider?: string;
+    modelId?: string;
 }
 
-export function AIWordAssistant({ word, context, isOpen, onClose }: AIWordAssistantProps) {
+export function AIWordAssistant({ word, context, isOpen, onClose, provider, modelId }: AIWordAssistantProps) {
     const t = useTranslations("AI");
     const [activeTab, setActiveTab] = useState("explain");
 
@@ -111,6 +126,11 @@ export function AIWordAssistant({ word, context, isOpen, onClose }: AIWordAssist
     const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
     const [quizError, setQuizError] = useState<string | null>(null);
 
+    // Story State
+    const [isStoryStreaming, setIsStoryStreaming] = useState(false);
+    const [storyStreamingContent, setStoryStreamingContent] = useState("");
+    const [storyError, setStoryError] = useState<string | null>(null);
+
     const isQuotaError = (err: string | null) => {
         if (!err) return false;
         const lower = err.toLowerCase();
@@ -122,8 +142,8 @@ export function AIWordAssistant({ word, context, isOpen, onClose }: AIWordAssist
         return (
             <div className={cn(
                 "p-4 rounded-xl border flex gap-3 text-sm flex-col sm:flex-row items-start",
-                isQuota 
-                    ? "bg-amber-500/10 border-amber-500/20 text-amber-700 dark:text-amber-400" 
+                isQuota
+                    ? "bg-amber-500/10 border-amber-500/20 text-amber-700 dark:text-amber-400"
                     : "bg-destructive/5 border-destructive/20 text-destructive"
             )}>
                 <AlertCircle className="h-5 w-5 shrink-0 mt-0.5" />
@@ -132,7 +152,7 @@ export function AIWordAssistant({ word, context, isOpen, onClose }: AIWordAssist
                         {isQuota ? t("errors.quotaReachedTitle") : t("errors.title")}
                     </p>
                     <p className="opacity-90 leading-relaxed mb-4">{error}</p>
-                    
+
                     <div className="flex flex-wrap gap-2">
                         {isQuota ? (
                             <Link href="/dashboard/billing">
@@ -178,7 +198,10 @@ export function AIWordAssistant({ word, context, isOpen, onClose }: AIWordAssist
         abortControllerRef.current = controller;
 
         try {
-            const response = await fetch(`/api/proxy/ai/explain-stream?word=${encodeURIComponent(word)}${context ? `&context=${encodeURIComponent(context)}` : ''}&asJson=true`, {
+            let url = `/api/proxy/ai/explain-stream?word=${encodeURIComponent(word)}${context ? `&context=${encodeURIComponent(context)}` : ''}&asJson=true`;
+            if (provider) url += `&provider=${encodeURIComponent(provider)}`;
+            if (modelId) url += `&modelId=${encodeURIComponent(modelId)}`;
+            const response = await fetch(url, {
                 signal: controller.signal
             });
 
@@ -240,12 +263,73 @@ export function AIWordAssistant({ word, context, isOpen, onClose }: AIWordAssist
         }
     };
 
+    // --- AI Story Streaming ---
+    const startStoryStreaming = async () => {
+        if (!word) return;
+        setStoryStreamingContent("");
+        setStoryError(null);
+        setIsStoryStreaming(true);
+
+        if (abortControllerRef.current) abortControllerRef.current.abort();
+        const controller = new AbortController();
+        abortControllerRef.current = controller;
+
+        try {
+            let url = `/api/proxy/ai/story-stream?word=${encodeURIComponent(word)}`;
+            if (provider) url += `&provider=${encodeURIComponent(provider)}`;
+            if (modelId) url += `&modelId=${encodeURIComponent(modelId)}`;
+            const response = await fetch(url, {
+                signal: controller.signal
+            });
+
+            if (!response.ok) {
+                const body = await response.json();
+                throw new Error(body.error || "Failed finding story");
+            }
+
+            const reader = response.body?.getReader();
+            const decoder = new TextDecoder();
+            if (!reader) throw new Error("No readable stream");
+
+            let done = false;
+            let buffer = "";
+
+            while (!done) {
+                const { value, done: readerDone } = await reader.read();
+                done = readerDone;
+                if (value) {
+                    buffer += decoder.decode(value, { stream: !done });
+                    const lines = buffer.split("\n\n");
+                    buffer = lines.pop() || "";
+
+                    for (const line of lines) {
+                        if (line.startsWith("data: ")) {
+                            const data = line.slice(6);
+                            try {
+                                const parsed = JSON.parse(data);
+                                if (parsed.type === "content") {
+                                    setStoryStreamingContent(prev => prev + parsed.delta);
+                                } else if (parsed.type === "error") {
+                                    setStoryError(parsed.message);
+                                }
+                            } catch { }
+                        }
+                    }
+                }
+            }
+        } catch (err: any) {
+            if (err.name !== "AbortError") setStoryError(err.message || "An error occurred");
+        } finally {
+            if (abortControllerRef.current === controller) setIsStoryStreaming(false);
+        }
+    };
+
     // --- AI Related Words ---
     const fetchRelated = async () => {
         if (related || isLoadingRelated) return;
         setIsLoadingRelated(true);
         setRelatedError(null);
-        const res = await aiApi.getRelated(word);
+        const res = await aiApi.getRelated(word, provider, modelId);
         if (res.success) setRelated(res.data);
         else setRelatedError(res.error || "Failed finding related words.");
         setIsLoadingRelated(false);
@@ -257,7 +341,7 @@ export function AIWordAssistant({ word, context, isOpen, onClose }: AIWordAssist
         setSelectedOption(null);
         setIsCorrect(null);
         setQuizError(null);
-        const res = await aiApi.getQuiz(word);
+        const res = await aiApi.getQuiz(word, provider, modelId);
         if (res.success) setQuiz(res.data);
         else setQuizError(res.error || "Failed generating quiz.");
         setIsLoadingQuiz(false);
@@ -271,6 +355,8 @@ export function AIWordAssistant({ word, context, isOpen, onClose }: AIWordAssist
                 fetchRelated();
             } else if (activeTab === "quiz" && !quiz) {
                 fetchQuiz();
+            } else if (activeTab === "story" && !storyStreamingContent) {
+                startStoryStreaming();
             }
         }
 
@@ -307,19 +393,23 @@ export function AIWordAssistant({ word, context, isOpen, onClose }: AIWordAssist
                 </SheetHeader>
 
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
-                    <div className="px-6 py-2 border-b bg-muted/30">
-                        <TabsList className="grid grid-cols-3 w-full h-10">
-                            <TabsTrigger value="explain" className="flex items-center gap-2">
+                    <div className="px-4 py-3 border-b bg-muted/30">
+                        <TabsList className="flex flex-wrap w-full h-auto gap-2 bg-transparent justify-start p-0">
+                            <TabsTrigger value="explain" className="flex items-center gap-2 shrink-0 rounded-full px-4 py-2 border border-transparent data-[state=active]:border-border bg-muted/50 hover:bg-muted data-[state=active]:bg-background data-[state=active]:shadow-sm">
                                 <BookOpen className="h-4 w-4" />
-                                {t("tabs.explain")}
+                                {t("tabs.explain") || "Giải thích"}
                             </TabsTrigger>
-                            <TabsTrigger value="related" className="flex items-center gap-2">
+                            <TabsTrigger value="related" className="flex items-center gap-2 shrink-0 rounded-full px-4 py-2 border border-transparent data-[state=active]:border-border bg-muted/50 hover:bg-muted data-[state=active]:bg-background data-[state=active]:shadow-sm">
                                 <Sparkles className="h-4 w-4" />
-                                {t("tabs.related")}
+                                {t("tabs.related") || "Liên quan"}
                             </TabsTrigger>
-                            <TabsTrigger value="quiz" className="flex items-center gap-2">
+                            <TabsTrigger value="quiz" className="flex items-center gap-2 shrink-0 rounded-full px-4 py-2 border border-transparent data-[state=active]:border-border bg-muted/50 hover:bg-muted data-[state=active]:bg-background data-[state=active]:shadow-sm">
                                 <HelpCircle className="h-4 w-4" />
-                                {t("tabs.quiz")}
+                                {t("tabs.quiz") || "Câu đố"}
+                            </TabsTrigger>
+                            <TabsTrigger value="story" className="flex items-center gap-2 shrink-0 rounded-full px-4 py-2 border border-transparent data-[state=active]:border-border bg-muted/50 hover:bg-muted data-[state=active]:bg-background data-[state=active]:shadow-sm">
+                                <BookOpen className="h-4 w-4 text-blue-500" />
+                                Truyện ngắn
                             </TabsTrigger>
                         </TabsList>
                     </div>
@@ -471,12 +561,27 @@ export function AIWordAssistant({ word, context, isOpen, onClose }: AIWordAssist
                                             <div className="grid grid-cols-1 gap-2">
                                                 {related.collocations.map((c, idx) => (
                                                     <div key={idx} className="text-sm p-2 rounded-lg bg-blue-500/5 border border-blue-500/10 flex items-center gap-2">
-                                                        <ChevronRight className="h-3 w-3 text-blue-400" />
+                                                        <ChevronRight className="h-3 w-3 text-blue-400 shrink-0" />
                                                         {c}
                                                     </div>
                                                 ))}
                                             </div>
                                         </section>
+
+                                        {/* Mnemonic */}
+                                        {related.mnemonic && (
+                                            <section>
+                                                <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 relative overflow-hidden">
+                                                    <div className="flex items-center gap-2 mb-2 text-amber-600 font-semibold text-sm">
+                                                        <Brain className="h-4 w-4 shrink-0" />
+                                                        Mẹo nhớ thú vị
+                                                    </div>
+                                                    <div className="text-sm leading-relaxed text-foreground whitespace-pre-wrap font-medium">
+                                                        {related.mnemonic}
+                                                    </div>
+                                                </div>
+                                            </section>
+                                        )}
                                     </div>
                                 ) : null}
                             </TabsContent>
@@ -556,6 +661,62 @@ export function AIWordAssistant({ word, context, isOpen, onClose }: AIWordAssist
                                         )}
                                     </div>
                                 ) : null}
+                            </TabsContent>
+
+                            <TabsContent value="story" key="story" className="absolute inset-0 overflow-y-auto p-6 m-0 outline-none">
+                                <div className="space-y-6">
+                                    {storyError ? (
+                                        <ErrorDisplay error={storyError} onRetry={startStoryStreaming} />
+                                    ) : (
+                                        <div className="relative max-w-none">
+                                            {(() => {
+                                                const partial = parsePartialAIJson(storyStreamingContent);
+                                                return (
+                                                    <div className="space-y-6">
+                                                        {partial.story && (
+                                                            <div className="p-4 rounded-xl bg-blue-500/10 border border-blue-500/20 relative overflow-hidden">
+                                                                <div className="flex items-center gap-2 mb-2 text-blue-600 font-semibold text-sm">
+                                                                    <BookOpen className="h-4 w-4" />
+                                                                    Truyện ngắn
+                                                                </div>
+                                                                <div className="text-sm leading-relaxed text-foreground whitespace-pre-wrap italic">
+                                                                    {partial.story}
+                                                                    {isStoryStreaming && (!partial.translation) && <motion.span animate={{ opacity: [1, 0] }} transition={{ repeat: Infinity, duration: 0.8 }} className="inline-block w-1.5 h-4 ml-1 bg-blue-500 align-middle" />}
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                        {partial.translation && (
+                                                            <div className="p-4 rounded-xl bg-muted/50 border border-border mt-4">
+                                                                <div className="flex items-center gap-2 mb-2 font-bold uppercase tracking-wider text-[11px] text-muted-foreground">
+                                                                    Tạm dịch
+                                                                </div>
+                                                                <div className="text-sm font-medium leading-relaxed">
+                                                                    {partial.translation}
+                                                                    {isStoryStreaming && <motion.span animate={{ opacity: [1, 0] }} transition={{ repeat: Infinity, duration: 0.8 }} className="inline-block w-1.5 h-4 ml-1 bg-muted-foreground align-middle" />}
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                        {!partial.story && isStoryStreaming && (
+                                                            <div className="flex items-center gap-2 text-muted-foreground animate-pulse p-4 text-sm font-medium border rounded-xl border-dashed">
+                                                                <Sparkles className="h-4 w-4 text-blue-500" />
+                                                                Đang sáng tác truyện...
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                );
+                                            })()}
+                                            <div ref={scrollRef} />
+                                        </div>
+                                    )}
+                                    {!isStoryStreaming && storyStreamingContent && (
+                                        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="pt-6 border-t flex flex-col gap-4">
+                                            <Button variant="outline" size="sm" onClick={startStoryStreaming} className="w-fit">
+                                                <RotateCcw className="h-3 w-3 mr-2" />
+                                                Viết truyện khác
+                                            </Button>
+                                        </motion.div>
+                                    )}
+                                </div>
                             </TabsContent>
                         </AnimatePresence>
                     </div>

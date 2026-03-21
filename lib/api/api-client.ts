@@ -428,18 +428,36 @@ export const analyticsApi = {
 };
 
 export const aiApi = {
-    explain: (data: AiExplainRequest) =>
-        clientApi.post<WordExplanationDto>('/api/proxy/ai/explain', data),
-    getRelated: (word: string) =>
-
-        clientApi.get<RelatedWordsDto>(`/api/proxy/ai/related/${encodeURIComponent(word)}`),
-    getQuiz: (word: string) =>
-        clientApi.get<QuizDto>(`/api/proxy/ai/quiz/${encodeURIComponent(word)}`),
+    explain: (data: AiExplainRequest, provider?: string, modelId?: string) => {
+        let url = '/api/proxy/ai/explain';
+        const params = new URLSearchParams();
+        if (provider) params.append('provider', provider);
+        if (modelId) params.append('modelId', modelId);
+        if (params.toString()) url += `?${params.toString()}`;
+        return clientApi.post<WordExplanationDto>(url, data);
+    },
+    getRelated: (word: string, provider?: string, modelId?: string) => {
+        let url = `/api/proxy/ai/related/${encodeURIComponent(word)}`;
+        const params = new URLSearchParams();
+        if (provider) params.append('provider', provider);
+        if (modelId) params.append('modelId', modelId);
+        if (params.toString()) url += `?${params.toString()}`;
+        return clientApi.get<RelatedWordsDto>(url);
+    },
+    getQuiz: (word: string, provider?: string, modelId?: string) => {
+        let url = `/api/proxy/ai/quiz/${encodeURIComponent(word)}`;
+        const params = new URLSearchParams();
+        if (provider) params.append('provider', provider);
+        if (modelId) params.append('modelId', modelId);
+        if (params.toString()) url += `?${params.toString()}`;
+        return clientApi.get<QuizDto>(url);
+    },
 
     translate: async (
         word: string,
         context?: string,
         provider?: string,
+        modelId?: string,
         from?: string,
         to?: string,
         customParams?: { customBaseUrl?: string, customApiKey?: string, customModel?: string }
@@ -447,6 +465,7 @@ export const aiApi = {
         const query = new URLSearchParams({ word });
         if (context) query.append('context', context);
         if (provider) query.append('provider', provider);
+        if (modelId) query.append('modelId', modelId);
         if (from) query.append('from', from);
         if (to) query.append('to', to);
         if (customParams?.customBaseUrl) query.append('customBaseUrl', customParams.customBaseUrl);
