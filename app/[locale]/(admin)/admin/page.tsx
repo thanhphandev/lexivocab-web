@@ -146,8 +146,8 @@ export default function AdminOverviewPage() {
             {/* Metrics Grid */}
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
                 {cards.map((card, idx) => (
-                    <Card key={idx} className="relative overflow-hidden border-none shadow-sm hover:shadow-md transition-all duration-300 group bg-card">
-                        <div className={`absolute top-0 left-0 w-1 h-full bg-gradient-to-b ${card.color}`} />
+                    <Card key={idx} className="relative overflow-hidden transition-all duration-300 group bg-card">
+                        <div className={`absolute top-0 left-0 h-full bg-gradient-to-b ${card.color}`} />
                         <CardHeader className="flex flex-row items-center justify-between pb-2">
                             <CardTitle className="text-sm font-medium text-muted-foreground group-hover:text-primary transition-colors">
                                 {card.title}
@@ -181,14 +181,14 @@ export default function AdminOverviewPage() {
                             <AreaChart data={advMetrics?.financial.revenueByDay || []} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                                 <defs>
                                     <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
-                                        <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                                        <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
+                                        <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                                     </linearGradient>
                                 </defs>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.2} />
                                 <XAxis dataKey="label" axisLine={false} tickLine={false} tick={{ fontSize: 12 }} opacity={0.5} />
                                 <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12 }} opacity={0.5} tickFormatter={(val) => `$${val}`} />
-                                <Tooltip 
+                                <Tooltip
                                     contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
                                     formatter={(value: any) => [`$${value}`, "Revenue"]}
                                 />
@@ -212,7 +212,7 @@ export default function AdminOverviewPage() {
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.2} />
                                 <XAxis dataKey="label" axisLine={false} tickLine={false} tick={{ fontSize: 12 }} opacity={0.5} />
                                 <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12 }} opacity={0.5} />
-                                <Tooltip 
+                                <Tooltip
                                     contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', backgroundColor: 'var(--background)', color: 'var(--foreground)' }}
                                     cursor={{ fill: 'rgba(0,0,0,0.05)' }}
                                     formatter={(value: any) => [value, "New Users"]}
@@ -243,7 +243,7 @@ export default function AdminOverviewPage() {
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.2} />
                                 <XAxis dataKey="label" axisLine={false} tickLine={false} tick={{ fontSize: 12 }} opacity={0.5} />
                                 <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12 }} opacity={0.5} />
-                                <Tooltip 
+                                <Tooltip
                                     contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
                                     formatter={(value: any) => [value, "Total Reviews"]}
                                 />
@@ -253,7 +253,7 @@ export default function AdminOverviewPage() {
                     </CardContent>
                 </Card>
             </div>
-            
+
         </div>
     );
 }

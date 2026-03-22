@@ -276,6 +276,8 @@ export const adminApi = {
         clientApi.post<string>(`/api/proxy/admin/users/${id}/subscriptions`, data),
     cancelSubscription: (id: string) =>
         clientApi.delete<string>(`/api/proxy/admin/users/${id}/subscriptions`),
+    impersonateUser: (id: string) =>
+        clientApi.post<AuthResponse>(`/api/admin/impersonate`, { userId: id }),
     getMetrics: () =>
         clientApi.get<SystemStatsDto>(`/api/proxy/admin/metrics`),
     getAdvancedMetrics: () =>

@@ -18,13 +18,13 @@ export async function POST(request: Request) {
     }
 
     const payload = data.data || data;
-    const { accessToken, expiresAt, userId, email, fullName, role } = payload;
+    const { accessToken, expiresAt, userId, email, fullName, role, avatarUrl } = payload;
 
     // If backend requires email verification, no tokens are returned yet
     if (!accessToken) {
         return NextResponse.json({
             success: true,
-            data: { id: userId, email, fullName, role, requiresVerification: true },
+            data: { id: userId, email, fullName, role, avatarUrl, requiresVerification: true },
         });
     }
 
@@ -69,6 +69,7 @@ export async function POST(request: Request) {
             email,
             fullName,
             role,
+            avatarUrl,
         },
     });
 }

@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, User, Mail, ShieldAlert, Star, Shield, Ban, Activity, RefreshCw, XCircle } from "lucide-react";
+import { ArrowLeft, User, Mail, ShieldAlert, Star, Shield, Ban, Activity, RefreshCw, XCircle, LogIn } from "lucide-react";
 import { toast } from "sonner";
 import { ConfirmDialog } from "@/components/dashboard/confirm-dialog";
 
@@ -134,6 +134,25 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
         });
     };
 
+    const handleImpersonate = () => {
+        openConfirm({
+            title: "Impersonate User",
+            description: "Are you sure you want to impersonate this user? You will be logged in as them for 15 minutes to debug issues. After 15 minutes, you will be logged out.",
+            confirmText: "Impersonate (15m)",
+            onConfirm: async () => {
+                setActionLoading(true);
+                const res = await adminApi.impersonateUser(id);
+                if (res.success) {
+                    toast.success("Impersonation successful. Redirecting...");
+                    window.location.href = "/"; // Force full reload to reset all states
+                } else {
+                    toast.error(res.error || "Failed to impersonate");
+                    setActionLoading(false);
+                }
+            }
+        });
+    };
+
     if (loading || !user) {
         return (
             <div className="flex justify-center items-center min-h-[50vh]">
@@ -227,6 +246,14 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
                         </div>
                         <Separator className="bg-red-500/10" />
                         <div className="flex flex-col gap-2">
+                            <Button
+                                variant="outline"
+                                className="w-full border-blue-500 text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950"
+                                onClick={handleImpersonate}
+                                disabled={actionLoading || user.role === "Admin"}
+                            >
+                                <LogIn className="h-4 w-4 mr-2" /> Impersonate (15m)
+                            </Button>
                             <Button
                                 variant={user.isActive ? "destructive" : "default"}
                                 className="w-full"

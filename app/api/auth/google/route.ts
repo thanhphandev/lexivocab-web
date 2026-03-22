@@ -23,7 +23,7 @@ export async function POST(request: Request) {
     }
 
     const payload = data.data || data;
-    const { accessToken, expiresAt, userId, email, fullName, role } = payload;
+    const { accessToken, expiresAt, userId, email, fullName, role, avatarUrl } = payload;
     const expiresDate = new Date(expiresAt);
 
     // Extract refreshToken and its expiration from the Set-Cookie header returned by .NET
@@ -66,6 +66,7 @@ export async function POST(request: Request) {
             email,
             fullName,
             role,
+            avatarUrl,
         },
     });
 }
