@@ -21,6 +21,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Loader2, Plus, Search, Volume2, ArrowLeftRight } from "lucide-react";
 import { QuickModelSwitcher } from "@/components/ai/quick-model-switcher";
 import { useLLMTranslation } from "@/hooks/use-llm-translation";
+import { toast } from "sonner";
 
 export function AddWordDialog({ onSuccess }: { onSuccess: () => void }) {
     const t = useTranslations("Dashboard.vocabulary");
@@ -36,6 +37,7 @@ export function AddWordDialog({ onSuccess }: { onSuccess: () => void }) {
     const [tagId, setTagId] = useState<string>("none");
 
     const [aiProvider, setAiProvider] = useState("");
+    const [aiProviderName, setAiProviderName] = useState("");
     const { isStreaming, aiData, streamingError, streamTranslation } = useLLMTranslation();
     const [isSwapped, setIsSwapped] = useState(false);
     const [settings, setSettings] = useState<any>(null);
@@ -70,10 +72,10 @@ export function AddWordDialog({ onSuccess }: { onSuccess: () => void }) {
                 toLang = settings.nativeLanguage || "vi";
             }
         }
-        
-        const aiProviderName = trueProvider || modelId.split("/")[0];
 
-        streamTranslation(wordText.trim(), "", aiProviderName, modelId, fromLang, toLang);
+        const resolvedProvider = trueProvider || aiProviderName || modelId.split("/")[0];
+
+        streamTranslation(wordText.trim(), "", resolvedProvider, modelId, fromLang, toLang);
     };
 
     const [tags, setTags] = useState<TagDto[]>([]);
@@ -147,7 +149,13 @@ export function AddWordDialog({ onSuccess }: { onSuccess: () => void }) {
                 setLookupResult(null);
                 onSuccess();
             } else {
-                alert(res.error || "Failed to add word");
+                if (res.error?.includes("ERR_QUOTA_EXCEEDED")) {
+                    toast.error(t("quota.exceededDesc"));
+                } else if (res.error?.includes("already saved")) {
+                    toast.error(tDialog("conflict", { word: wordText.trim() }));
+                } else {
+                    toast.error(tDialog("failed"));
+                }
             }
         } finally {
             setIsLoading(false);
@@ -260,8 +268,9 @@ export function AddWordDialog({ onSuccess }: { onSuccess: () => void }) {
                                     <QuickModelSwitcher
                                         provider={aiProvider}
                                         setProvider={setAiProvider}
-                                        onTriggerAi={handleAiAutofill}
+                                        onProviderResolved={setAiProviderName}
                                         isStreaming={isStreaming}
+                                        onTriggerAi={handleAiAutofill}
                                         disabled={!wordText.trim()}
                                     />
                                 </div>

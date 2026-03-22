@@ -27,7 +27,7 @@ export default function PricingPage() {
     const locale = useLocale();
     const t = useTranslations("Pricing");
     const { user, isAuthenticated } = useAuth();
-    const { isPremium, plan: userPlan } = usePermissions();
+    const { isPremium, plan: userPlan, displayOrder: currentPlanOrder } = usePermissions();
     const [isProcessing, setIsProcessing] = useState(false);
     const [selectedProvider, setSelectedProvider] = useState<number>(1); // 1: PayPal, 3: Sepay
     const [qrData, setQrData] = useState<{ url: string; ref: string; expiresAt?: string | null } | null>(null);
@@ -560,14 +560,15 @@ export default function PricingPage() {
                                             )
                                         ) : (
                                             (() => {
-                                                const planName = plan.nameKey.replace("Pricing.", "").toLowerCase();
-                                                const isCurrent = userPlan?.toLowerCase() === planName || (userPlan?.toLowerCase() === "business" && planName === "ultimate");
-                                                const isDowngrade = (userPlan?.toLowerCase() === "ultimate" || userPlan?.toLowerCase() === "business") && planName === "premium";
+                                                // Use displayOrder for tier comparison: higher = better plan
+                                                const isCurrent = currentPlanOrder === plan.displayOrder;
+                                                const isDowngrade = currentPlanOrder > plan.displayOrder;
+                                                const isUpgrade = currentPlanOrder < plan.displayOrder;
                                                 const disabledUpgrade = isCurrent || isDowngrade;
                                                 return disabledUpgrade ? (
                                                     <Button disabled className="w-full h-12 text-base">
                                                         <Shield className="mr-2 h-5 w-5" />
-                                                        {isCurrent ? t("already_premium") : "Included in Ultimate"}
+                                                        {isCurrent ? t("already_premium") : t("included_in_higher_plan")}
                                                     </Button>
                                                 ) : (
                                                     <Button
@@ -592,7 +593,7 @@ export default function PricingPage() {
                                         )}
                                     </div>
 
-                                    {!isFree && userPlan?.toLowerCase() !== plan.nameKey.replace("Pricing.", "").toLowerCase() && !(userPlan?.toLowerCase() === "ultimate" && plan.nameKey.replace("Pricing.", "").toLowerCase() === "premium") && !(userPlan?.toLowerCase() === "business" && plan.nameKey.replace("Pricing.", "").toLowerCase() === "premium") && (
+                                    {!isFree && currentPlanOrder !== plan.displayOrder && currentPlanOrder < plan.displayOrder && (
                                         <div className="mt-8 pt-6 border-t border-border">
                                             <p className="text-sm font-medium text-foreground mb-4 text-left">
                                                 {t("select_method")}

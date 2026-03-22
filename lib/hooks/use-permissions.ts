@@ -24,6 +24,7 @@ export function usePermissions() {
     const transMax = getIntFlag("LLM_TRANSLATION_LIMIT", 20);
 
     const planName = permissions?.plan ?? "Free";
+    const displayOrder = permissions?.displayOrder ?? 0;
 
     // const activeAiModel = getBoolFlag("ADVANCED_AI") 
     //     ? "Advanced Models (GPT-4o, Claude 3.5 Sonnet)" 
@@ -37,6 +38,8 @@ export function usePermissions() {
 
         /** Current plan name */
         plan: planName,
+        /** Current plan display order (tier level) */
+        displayOrder,
         /** Dynamic check for a premium account based on plan name (since Admin plan doesn't have isPremium field anymore) */
         isPremium: planName !== "Free" && planName !== "None",
 

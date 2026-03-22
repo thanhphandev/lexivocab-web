@@ -494,6 +494,38 @@ export default function BillingPage() {
                 </motion.div>
             )}
 
+            {perms.isPremium && perms.displayOrder < 3 && (
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 }}
+                >
+                    <Card className="border-dashed border-2 border-amber-400/50 bg-amber-50/5">
+                        <CardContent className="flex flex-col sm:flex-row items-center justify-between gap-4 p-6">
+                            <div className="flex items-center gap-4">
+                                <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center">
+                                    <Crown className="h-7 w-7 text-white" />
+                                </div>
+                                <div>
+                                    <h3 className="font-semibold text-foreground text-lg">
+                                        {tPricing("ultimate_plan")}
+                                    </h3>
+                                    <p className="text-sm text-muted-foreground">
+                                        {tPricing("ultimate_desc")}
+                                    </p>
+                                </div>
+                            </div>
+                            <Link href={`/${locale}/pricing`}>
+                                <Button className="shrink-0 bg-amber-500 hover:bg-amber-600 text-white">
+                                    {tPricing("upgrade_to_ultimate")}
+                                    <ExternalLink className="ml-2 h-4 w-4" />
+                                </Button>
+                            </Link>
+                        </CardContent>
+                    </Card>
+                </motion.div>
+            )}
+
             {/* Payment History */}
             <motion.div
                 initial={{ opacity: 0, y: 20 }}

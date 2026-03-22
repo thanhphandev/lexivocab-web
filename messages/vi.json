@@ -235,7 +235,9 @@
         "contextPlaceholder": "Từ này được dùng trong câu như thế nào?",
         "sourcePlaceholder": "https://...",
         "cancel": "Hủy",
-        "save": "Lưu thay đổi"
+        "save": "Lưu thay đổi",
+        "failed": "Lỗi khi cập nhật từ.",
+        "notFound": "Không tìm thấy từ vựng này."
       },
       "addWordDialog": {
         "wordLabel": "Từ",
@@ -251,7 +253,9 @@
         "sourcePlaceholder": "https://...",
         "noTag": "Không có thẻ",
         "cancel": "Hủy",
-        "save": "Lưu từ"
+        "save": "Lưu từ",
+        "failed": "Lỗi khi thêm từ.",
+        "conflict": "Từ này đã có trong danh sách từ vựng của bạn."
       },
       "batchImport": {
         "desc": "Tải lên tệp CSV hoặc dán văn bản (Từ vựng, Ý nghĩa, Ngữ cảnh). Hỗ trợ chuẩn mã hóa UTF-8.",
@@ -495,6 +499,10 @@
     "go_dashboard": "Tới Bảng Điểu Khiển",
     "get_started": "Bắt đầu miễn phí",
     "already_premium": "Bạn là thành viên Cao cấp ✨",
+    "included_in_higher_plan": "Đã bao gồm trong gói cao hơn",
+    "ultimate_plan": "Gói Ultimate",
+    "ultimate_desc": "Mở khóa mọi thứ không giới hạn",
+    "upgrade_to_ultimate": "Nâng cấp lên Ultimate",
     "upgrade": "Nâng cấp Cao cấp",
     "processing": "Đang xử lý...",
     "secure_payment": "Thanh toán an toàn. Mua một lần.",

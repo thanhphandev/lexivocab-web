@@ -387,6 +387,7 @@ export interface UserPermissionsDto {
     planExpiresAt: string | null;
     featureFlags: Record<string, string>;
     quotaUsages?: Record<string, number>;
+    displayOrder: number;
 }
 
 export interface CreatePaymentOrderRequest {

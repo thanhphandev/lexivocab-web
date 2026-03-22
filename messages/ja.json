@@ -231,7 +231,9 @@
         "contextPlaceholder": "この単語はどのように使われますか？",
         "sourcePlaceholder": "https://...",
         "cancel": "キャンセル",
-        "save": "変更を保存"
+        "save": "変更を保存",
+        "failed": "単語の更新に失敗しました。",
+        "notFound": "語彙が見つかりません。"
       },
       "addWordDialog": {
         "wordLabel": "単語",
@@ -247,7 +249,9 @@
         "sourcePlaceholder": "https://...",
         "noTag": "タグなし",
         "cancel": "キャンセル",
-        "save": "単語を保存"
+        "save": "単語を保存",
+        "failed": "単語の追加に失敗しました。",
+        "conflict": "単語はすでに語彙に保存されています。"
       },
       "batchImport": {
         "desc": "CSVファイルをアップロードするか、テキストを貼り付けます（単語、意味、文脈）。UTF-8エンコーディングをサポートしています。",
@@ -490,7 +494,11 @@
     "best_value": "最高のコスパ",
     "go_dashboard": "ダッシュボードへ",
     "get_started": "無料で始める",
-    "already_premium": "プレミアム会員です ✨",
+    "already_premium": "すでにプレミアムです ✨",
+    "included_in_higher_plan": "上位プランに含まれています",
+    "ultimate_plan": "アルティメットプラン",
+    "ultimate_desc": "無制限の全機能を解除",
+    "upgrade_to_ultimate": "アルティメットにアップグレード",
     "upgrade": "プレミアムにアップグレード",
     "processing": "処理中...",
     "secure_payment": "安全な決済。一回限りの購入。",

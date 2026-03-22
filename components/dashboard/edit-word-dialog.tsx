@@ -19,6 +19,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Loader2, ArrowLeftRight } from "lucide-react";
 import { QuickModelSwitcher } from "@/components/ai/quick-model-switcher";
 import { useLLMTranslation } from "@/hooks/use-llm-translation";
+import { toast } from "sonner";
 
 interface EditWordDialogProps {
     item: VocabularyDto;
@@ -36,6 +37,7 @@ export function EditWordDialog({ item, open, onOpenChange, onSuccess }: EditWord
     const [sourceUrl, setSourceUrl] = useState(item.sourceUrl || "");
 
     const [aiProvider, setAiProvider] = useState("");
+    const [aiProviderName, setAiProviderName] = useState("");
     const { isStreaming, aiData, streamingError, streamTranslation } = useLLMTranslation();
     const [isSwapped, setIsSwapped] = useState(false);
     const [settings, setSettings] = useState<any>(null);
@@ -56,7 +58,7 @@ export function EditWordDialog({ item, open, onOpenChange, onSuccess }: EditWord
     const handleAiAutofill = (modelId: string = aiProvider, trueProvider?: string) => {
         let fromLang = "auto";
         let toLang = "auto";
-        
+
         if (settings) {
             if (isSwapped) {
                 fromLang = settings.nativeLanguage || "vi";
@@ -66,9 +68,9 @@ export function EditWordDialog({ item, open, onOpenChange, onSuccess }: EditWord
                 toLang = settings.nativeLanguage || "vi";
             }
         }
-        
-        const aiProviderName = trueProvider || modelId.split("/")[0];
-        streamTranslation(item.wordText, "", aiProviderName, modelId, fromLang, toLang);
+
+        const resolvedProvider = trueProvider || aiProviderName || modelId.split("/")[0];
+        streamTranslation(item.wordText, "", resolvedProvider, modelId, fromLang, toLang);
     };
 
     useEffect(() => {
@@ -94,7 +96,11 @@ export function EditWordDialog({ item, open, onOpenChange, onSuccess }: EditWord
                 onOpenChange(false);
                 onSuccess();
             } else {
-                alert(res.error || "Failed to update word");
+                if (res.error?.includes("not found")) {
+                    toast.error(t("notFound"));
+                } else {
+                    toast.error(t("failed"));
+                }
             }
         } finally {
             setIsLoading(false);
@@ -129,15 +135,16 @@ export function EditWordDialog({ item, open, onOpenChange, onSuccess }: EditWord
                                             title="Swap Translation Direction"
                                         >
                                             <ArrowLeftRight className="h-3 w-3 mr-1.5" />
-                                            {isSwapped 
-                                                ? `${(settings.nativeLanguage || 'VI').substring(0,2).toUpperCase()} → ${(settings.targetLanguage || 'EN').substring(0,2).toUpperCase()}` 
-                                                : `Auto → ${(settings.nativeLanguage || 'VI').substring(0,2).toUpperCase()}`
+                                            {isSwapped
+                                                ? `${(settings.nativeLanguage || 'VI').substring(0, 2).toUpperCase()} → ${(settings.targetLanguage || 'EN').substring(0, 2).toUpperCase()}`
+                                                : `Auto → ${(settings.nativeLanguage || 'VI').substring(0, 2).toUpperCase()}`
                                             }
                                         </Button>
                                     )}
-                                    <QuickModelSwitcher 
+                                    <QuickModelSwitcher
                                         provider={aiProvider}
                                         setProvider={setAiProvider}
+                                        onProviderResolved={setAiProviderName}
                                         onTriggerAi={handleAiAutofill}
                                         isStreaming={isStreaming}
                                     />

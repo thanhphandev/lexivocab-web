@@ -14,9 +14,10 @@ interface QuickModelSwitcherProps {
     isStreaming?: boolean;
     disabled?: boolean;
     hideTrigger?: boolean;
+    onProviderResolved?: (trueProvider: string) => void;
 }
 
-export function QuickModelSwitcher({ provider, setProvider, onTriggerAi, isStreaming, disabled, hideTrigger }: QuickModelSwitcherProps) {
+export function QuickModelSwitcher({ provider, setProvider, onTriggerAi, isStreaming, disabled, hideTrigger, onProviderResolved }: QuickModelSwitcherProps) {
     const { permissions } = useAuth();
     const llmConfigStr = permissions?.featureFlags?.['AVAILABLE_LLM_MODELS'];
     const isPremium = permissions?.plan === 'Premium' || permissions?.plan === 'Ultimate';
@@ -97,6 +98,16 @@ export function QuickModelSwitcher({ provider, setProvider, onTriggerAi, isStrea
             await settingsApi.update({ defaultTranslator: newVal });
         } catch { }
     };
+
+    useEffect(() => {
+        if (!provider || availableModels.length === 0) return;
+        const allPossibleModels = [...availableModels, ...customModels];
+        const selectedModel = allPossibleModels.find((m: any) => m.id === provider);
+        const actualProvider = selectedModel?.provider || provider.split('/')[0];
+        if (onProviderResolved) {
+            onProviderResolved(actualProvider);
+        }
+    }, [provider, availableModels, customModels, onProviderResolved]);
 
     return (
         <div className="flex items-center gap-2">

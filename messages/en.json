@@ -231,7 +231,9 @@
         "contextPlaceholder": "How is this word used in a sentence?",
         "sourcePlaceholder": "https://...",
         "cancel": "Cancel",
-        "save": "Save Changes"
+        "save": "Save Changes",
+        "failed": "Failed to update word.",
+        "notFound": "Vocabulary word not found."
       },
       "addWordDialog": {
         "wordLabel": "Word",
@@ -247,7 +249,9 @@
         "sourcePlaceholder": "https://...",
         "noTag": "No tag",
         "cancel": "Cancel",
-        "save": "Save Word"
+        "save": "Save Word",
+        "failed": "Failed to add word.",
+        "conflict": "Word is already saved in your vocabulary."
       },
       "batchImport": {
         "desc": "Upload a CSV file or paste text (Word, Meaning, Context). True UTF-8 encoding is supported.",
@@ -491,6 +495,10 @@
     "go_dashboard": "Go to Dashboard",
     "get_started": "Get Started Free",
     "already_premium": "You're Premium ✨",
+    "included_in_higher_plan": "Included in Higher Plan",
+    "ultimate_plan": "Ultimate Plan",
+    "ultimate_desc": "Unlock unlimited everything",
+    "upgrade_to_ultimate": "Upgrade to Ultimate",
     "upgrade": "Upgrade to Premium",
     "processing": "Processing...",
     "secure_payment": "Secure payment. One-time purchase.",

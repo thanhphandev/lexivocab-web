@@ -29,11 +29,13 @@ import {
     CheckCircle2,
     XCircle,
     AlertCircle,
-    Loader2
+    Loader2,
+    Square
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { QuickModelSwitcher } from "./quick-model-switcher";
 
 interface PartialAI extends Partial<WordExplanationDto> {
     story?: string;
@@ -102,11 +104,20 @@ interface AIWordAssistantProps {
     onClose: () => void;
     provider?: string;
     modelId?: string;
+    onProviderChange?: (val: string) => void;
 }
 
-export function AIWordAssistant({ word, context, isOpen, onClose, provider, modelId }: AIWordAssistantProps) {
+export function AIWordAssistant({ word, context, isOpen, onClose, provider, modelId, onProviderChange }: AIWordAssistantProps) {
     const t = useTranslations("AI");
     const [activeTab, setActiveTab] = useState("explain");
+
+    // Internal provider fallback if not passed via props
+    const [localAiProvider, setLocalAiProvider] = useState("");
+    const [localAiProviderName, setLocalAiProviderName] = useState("");
+
+    const activeModelId = modelId || localAiProvider;
+    // We strictly use the resolved provider name because default splitting by '/' fails for cases like openrouter/qwen/...
+    const activeProvider = provider || localAiProviderName || activeModelId.split('/')[0];
 
     // Explanation State
     const [explanation, setExplanation] = useState<Partial<WordExplanationDto>>({});
@@ -173,19 +184,36 @@ export function AIWordAssistant({ word, context, isOpen, onClose, provider, mode
         );
     };
 
-    const scrollRef = useRef<HTMLDivElement>(null);
+    const explainScrollRef = useRef<HTMLDivElement>(null);
+    const storyScrollRef = useRef<HTMLDivElement>(null);
     const abortControllerRef = useRef<AbortController | null>(null);
+
+    const stopStreaming = () => {
+        if (abortControllerRef.current) {
+            abortControllerRef.current.abort();
+        }
+    };
 
     // Auto-scroll to bottom of stream
     useEffect(() => {
-        if (isStreaming && scrollRef.current) {
-            scrollRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
+        if (isStreaming && explainScrollRef.current) {
+            explainScrollRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
         }
     }, [streamingContent, isStreaming]);
 
+    useEffect(() => {
+        if (isStoryStreaming && storyScrollRef.current) {
+            storyScrollRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
+        }
+    }, [storyStreamingContent, isStoryStreaming]);
+
     // --- AI Explain Streaming ---
-    const startStreaming = async () => {
+    const startStreaming = async (overrideModelId?: string, overrideProvider?: string) => {
         if (!word) return;
+
+        // Fallbacks
+        const reqProvider = overrideProvider || activeProvider;
+        const reqModelId = overrideModelId || activeModelId;
 
         // Reset state
         setStreamingContent("");
@@ -199,8 +227,8 @@ export function AIWordAssistant({ word, context, isOpen, onClose, provider, mode
 
         try {
             let url = `/api/proxy/ai/explain-stream?word=${encodeURIComponent(word)}${context ? `&context=${encodeURIComponent(context)}` : ''}&asJson=true`;
-            if (provider) url += `&provider=${encodeURIComponent(provider)}`;
-            if (modelId) url += `&modelId=${encodeURIComponent(modelId)}`;
+            if (reqProvider) url += `&provider=${encodeURIComponent(reqProvider)}`;
+            if (reqModelId) url += `&modelId=${encodeURIComponent(reqModelId)}`;
             const response = await fetch(url, {
                 signal: controller.signal
             });
@@ -264,11 +292,14 @@ export function AIWordAssistant({ word, context, isOpen, onClose, provider, mode
     };
 
     // --- AI Story Streaming ---
-    const startStoryStreaming = async () => {
+    const startStoryStreaming = async (overrideModelId?: string, overrideProvider?: string) => {
         if (!word) return;
         setStoryStreamingContent("");
         setStoryError(null);
         setIsStoryStreaming(true);
+
+        const reqProvider = overrideProvider || activeProvider;
+        const reqModelId = overrideModelId || activeModelId;
 
         if (abortControllerRef.current) abortControllerRef.current.abort();
         const controller = new AbortController();
@@ -276,8 +307,8 @@ export function AIWordAssistant({ word, context, isOpen, onClose, provider, mode
 
         try {
             let url = `/api/proxy/ai/story-stream?word=${encodeURIComponent(word)}`;
-            if (provider) url += `&provider=${encodeURIComponent(provider)}`;
-            if (modelId) url += `&modelId=${encodeURIComponent(modelId)}`;
+            if (reqProvider) url += `&provider=${encodeURIComponent(reqProvider)}`;
+            if (reqModelId) url += `&modelId=${encodeURIComponent(reqModelId)}`;
             const response = await fetch(url, {
                 signal: controller.signal
             });
@@ -325,30 +356,35 @@ export function AIWordAssistant({ word, context, isOpen, onClose, provider, mode
     };
 
     // --- AI Related Words ---
-    const fetchRelated = async () => {
-        if (related || isLoadingRelated) return;
+    const fetchRelated = async (overrideModelId?: string, overrideProvider?: string) => {
+        if (isLoadingRelated) return;
         setIsLoadingRelated(true);
         setRelatedError(null);
-        const res = await aiApi.getRelated(word, provider, modelId);
+        const reqProvider = overrideProvider || activeProvider;
+        const reqModelId = overrideModelId || activeModelId;
+        const res = await aiApi.getRelated(word, reqProvider, reqModelId);
         if (res.success) setRelated(res.data);
         else setRelatedError(res.error || "Failed finding related words.");
         setIsLoadingRelated(false);
     };
 
     // --- AI Quiz ---
-    const fetchQuiz = async () => {
+    const fetchQuiz = async (overrideModelId?: string, overrideProvider?: string) => {
         setIsLoadingQuiz(true);
         setSelectedOption(null);
         setIsCorrect(null);
         setQuizError(null);
-        const res = await aiApi.getQuiz(word, provider, modelId);
+        const reqProvider = overrideProvider || activeProvider;
+        const reqModelId = overrideModelId || activeModelId;
+        const res = await aiApi.getQuiz(word, reqProvider, reqModelId);
         if (res.success) setQuiz(res.data);
         else setQuizError(res.error || "Failed generating quiz.");
         setIsLoadingQuiz(false);
     };
 
     useEffect(() => {
-        if (isOpen && word) {
+        // Wait until both modelId and its true provider name are resolved
+        if (isOpen && word && activeModelId && localAiProviderName) {
             if (activeTab === "explain" && !streamingContent) {
                 startStreaming();
             } else if (activeTab === "related" && !related) {
@@ -363,7 +399,7 @@ export function AIWordAssistant({ word, context, isOpen, onClose, provider, mode
         return () => {
             if (abortControllerRef.current) abortControllerRef.current.abort();
         };
-    }, [isOpen, word, activeTab]);
+    }, [isOpen, word, activeTab, activeModelId, localAiProviderName]);
 
     const handleAnswer = (index: number) => {
         if (selectedOption !== null || !quiz) return;
@@ -375,15 +411,35 @@ export function AIWordAssistant({ word, context, isOpen, onClose, provider, mode
         <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
             <SheetContent className="sm:max-w-md md:max-w-lg flex flex-col p-0 gap-0 h-full">
                 <SheetHeader className="p-6 border-b bg-card">
-                    <div className="flex items-center gap-2 mb-1">
-                        <div className="p-2 rounded-lg bg-primary/10 text-primary">
-                            <Brain className="h-5 w-5" />
+                    <div className="flex items-center justify-between mb-1">
+                        <div className="flex items-center gap-2">
+                            <div className="p-2 rounded-lg bg-primary/10 text-primary">
+                                <Brain className="h-5 w-5" />
+                            </div>
+                            <Badge variant="secondary" className="px-1.5 py-0 h-5 text-[10px] uppercase font-bold tracking-wider">
+                                {t("tags.assistant")}
+                            </Badge>
                         </div>
-                        <Badge variant="secondary" className="px-1.5 py-0 h-5 text-[10px] uppercase font-bold tracking-wider">
-                            {t("tags.assistant")}
-                        </Badge>
+                        {(!provider || !modelId) && (
+                            <QuickModelSwitcher
+                                provider={localAiProvider}
+                                setProvider={(val) => {
+                                    setLocalAiProvider(val);
+                                    if (onProviderChange) onProviderChange(val);
+                                }}
+                                onProviderResolved={setLocalAiProviderName}
+                                isStreaming={isStreaming || isStoryStreaming || isLoadingQuiz || isLoadingRelated}
+                                disabled={isStreaming || isStoryStreaming || isLoadingQuiz || isLoadingRelated}
+                                onTriggerAi={(triggerModelId, triggerProvider) => {
+                                    if (activeTab === 'explain') startStreaming(triggerModelId, triggerProvider);
+                                    else if (activeTab === 'story') startStoryStreaming(triggerModelId, triggerProvider);
+                                    else if (activeTab === 'related') { setRelated(null); fetchRelated(triggerModelId, triggerProvider); }
+                                    else if (activeTab === 'quiz') { setQuiz(null); fetchQuiz(triggerModelId, triggerProvider); }
+                                }}
+                            />
+                        )}
                     </div>
-                    <SheetTitle className="text-2xl font-bold flex items-center gap-2">
+                    <SheetTitle className="text-2xl font-bold flex items-center gap-2 mt-2">
                         {word}
                         <Sparkles className="h-4 w-4 text-yellow-500 animate-pulse" />
                     </SheetTitle>
@@ -419,7 +475,7 @@ export function AIWordAssistant({ word, context, isOpen, onClose, provider, mode
                             <TabsContent value="explain" key="explain" className="absolute inset-0 overflow-y-auto p-6 m-0 outline-none">
                                 <div className="space-y-6">
                                     {explainError ? (
-                                        <ErrorDisplay error={explainError} onRetry={startStreaming} />
+                                        <ErrorDisplay error={explainError} onRetry={() => startStreaming()} />
                                     ) : (
                                         <div className="relative max-w-none">
                                             {(() => {
@@ -493,8 +549,21 @@ export function AIWordAssistant({ word, context, isOpen, onClose, provider, mode
                                                     </div>
                                                 );
                                             })()}
-                                            <div ref={scrollRef} />
+                                            <div ref={explainScrollRef} />
                                         </div>
+                                    )}
+
+                                    {isStreaming && (
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            className="pt-6 border-t flex flex-col gap-4"
+                                        >
+                                            <Button variant="outline" size="sm" onClick={stopStreaming} className="w-fit text-muted-foreground hover:text-destructive hover:border-destructive/30 hover:bg-destructive/10">
+                                                <Square className="h-3 w-3 mr-2 fill-current" />
+                                                Stop
+                                            </Button>
+                                        </motion.div>
                                     )}
 
                                     {!isStreaming && streamingContent && (
@@ -503,7 +572,7 @@ export function AIWordAssistant({ word, context, isOpen, onClose, provider, mode
                                             animate={{ opacity: 1, y: 0 }}
                                             className="pt-6 border-t flex flex-col gap-4"
                                         >
-                                            <Button variant="outline" size="sm" onClick={startStreaming} className="w-fit">
+                                            <Button variant="outline" size="sm" onClick={() => startStreaming()} className="w-fit">
                                                 <RotateCcw className="h-3 w-3 mr-2" />
                                                 {t("actions.regenerate")}
                                             </Button>
@@ -519,10 +588,11 @@ export function AIWordAssistant({ word, context, isOpen, onClose, provider, mode
                                         <p className="text-sm font-medium">{t("related.finding")}</p>
                                     </div>
                                 ) : relatedError ? (
-                                    <ErrorDisplay error={relatedError} onRetry={fetchRelated} />
+                                    <ErrorDisplay error={relatedError} onRetry={() => fetchRelated()} />
                                 ) : related ? (
                                     <div className="space-y-8">
                                         {/* Synonyms */}
+                                        {related.synonyms && related.synonyms.length > 0 && (
                                         <section>
                                             <h4 className="text-sm font-bold flex items-center gap-2 mb-3 text-emerald-600 dark:text-emerald-400">
                                                 <div className="h-1.5 w-1.5 rounded-full bg-current" />
@@ -536,8 +606,10 @@ export function AIWordAssistant({ word, context, isOpen, onClose, provider, mode
                                                 ))}
                                             </div>
                                         </section>
+                                        )}
 
                                         {/* Antonyms */}
+                                        {related.antonyms && related.antonyms.length > 0 && (
                                         <section>
                                             <h4 className="text-sm font-bold flex items-center gap-2 mb-3 text-rose-600 dark:text-rose-400">
                                                 <div className="h-1.5 w-1.5 rounded-full bg-current" />
@@ -551,8 +623,10 @@ export function AIWordAssistant({ word, context, isOpen, onClose, provider, mode
                                                 ))}
                                             </div>
                                         </section>
+                                        )}
 
                                         {/* Collocations */}
+                                        {related.collocations && related.collocations.length > 0 && (
                                         <section>
                                             <h4 className="text-sm font-bold flex items-center gap-2 mb-3 text-blue-600 dark:text-blue-400">
                                                 <div className="h-1.5 w-1.5 rounded-full bg-current" />
@@ -567,6 +641,7 @@ export function AIWordAssistant({ word, context, isOpen, onClose, provider, mode
                                                 ))}
                                             </div>
                                         </section>
+                                        )}
 
                                         {/* Mnemonic */}
                                         {related.mnemonic && (
@@ -593,7 +668,7 @@ export function AIWordAssistant({ word, context, isOpen, onClose, provider, mode
                                         <p className="text-sm font-medium">{t("quiz.generating")}</p>
                                     </div>
                                 ) : quizError ? (
-                                    <ErrorDisplay error={quizError} onRetry={fetchQuiz} />
+                                    <ErrorDisplay error={quizError} onRetry={() => fetchQuiz()} />
                                 ) : quiz ? (
                                     <div className="space-y-6">
                                         <div className="p-4 rounded-2xl bg-primary/5 border border-primary/10">
@@ -602,7 +677,7 @@ export function AIWordAssistant({ word, context, isOpen, onClose, provider, mode
                                         </div>
 
                                         <div className="grid gap-3">
-                                            {quiz.options.map((opt, idx) => (
+                                            {quiz.options?.map((opt, idx) => (
                                                 <button
                                                     key={idx}
                                                     onClick={() => handleAnswer(idx)}
@@ -652,7 +727,7 @@ export function AIWordAssistant({ word, context, isOpen, onClose, provider, mode
                                                 <div className="text-sm">
                                                     <p className="font-bold mb-1">{isCorrect ? t("quiz.correct") : t("quiz.incorrect")}</p>
                                                     <p className="text-muted-foreground">{quiz.explanation}</p>
-                                                    <Button variant="ghost" size="sm" onClick={fetchQuiz} className="mt-3 px-0 h-auto font-bold hover:bg-transparent">
+                                                    <Button variant="ghost" size="sm" onClick={() => fetchQuiz()} className="mt-3 px-0 h-auto font-bold hover:bg-transparent">
                                                         <RotateCcw className="h-3 w-3 mr-2" />
                                                         {t("quiz.tryAnother")}
                                                     </Button>
@@ -666,7 +741,7 @@ export function AIWordAssistant({ word, context, isOpen, onClose, provider, mode
                             <TabsContent value="story" key="story" className="absolute inset-0 overflow-y-auto p-6 m-0 outline-none">
                                 <div className="space-y-6">
                                     {storyError ? (
-                                        <ErrorDisplay error={storyError} onRetry={startStoryStreaming} />
+                                        <ErrorDisplay error={storyError} onRetry={() => startStoryStreaming()} />
                                     ) : (
                                         <div className="relative max-w-none">
                                             {(() => {
@@ -705,12 +780,20 @@ export function AIWordAssistant({ word, context, isOpen, onClose, provider, mode
                                                     </div>
                                                 );
                                             })()}
-                                            <div ref={scrollRef} />
+                                            <div ref={storyScrollRef} />
                                         </div>
+                                    )}
+                                    {isStoryStreaming && (
+                                        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="pt-6 border-t flex flex-col gap-4">
+                                            <Button variant="outline" size="sm" onClick={stopStreaming} className="w-fit text-muted-foreground hover:text-destructive hover:border-destructive/30 hover:bg-destructive/10">
+                                                <Square className="h-3 w-3 mr-2 fill-current" />
+                                                Stop
+                                            </Button>
+                                        </motion.div>
                                     )}
                                     {!isStoryStreaming && storyStreamingContent && (
                                         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="pt-6 border-t flex flex-col gap-4">
-                                            <Button variant="outline" size="sm" onClick={startStoryStreaming} className="w-fit">
+                                            <Button variant="outline" size="sm" onClick={() => startStoryStreaming()} className="w-fit">
                                                 <RotateCcw className="h-3 w-3 mr-2" />
                                                 Viết truyện khác
                                             </Button>

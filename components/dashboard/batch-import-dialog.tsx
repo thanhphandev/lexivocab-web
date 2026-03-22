@@ -33,12 +33,12 @@ export function BatchImportDialog({ onSuccess }: { onSuccess: () => void }) {
     const [importText, setImportText] = useState("");
     const [activeTab, setActiveTab] = useState<"file" | "text">("file");
     const [parsedPreview, setParsedPreview] = useState<any[]>([]);
-    
+
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const parseTextToPreview = (text: string) => {
         const res = Papa.parse<string[]>(text, { header: false, skipEmptyLines: true });
-        
+
         let rows = res.data;
         if (rows.length > 0 && rows[0][0]?.toLowerCase() === "word" && rows[0][1]?.toLowerCase() === "meaning") {
             rows = rows.slice(1);
@@ -82,7 +82,7 @@ export function BatchImportDialog({ onSuccess }: { onSuccess: () => void }) {
 
         setIsLoading(true);
         const loadingId = toast.loading(tImport("importing") || "Importing words...");
-        
+
         try {
             const res = await clientApi.post("/api/proxy/vocabularies/batch", { words: parsedPreview });
             if (res.success) {
@@ -145,126 +145,126 @@ export function BatchImportDialog({ onSuccess }: { onSuccess: () => void }) {
                         <>
                             <div className="flex-1 overflow-y-auto p-4 space-y-6">
                                 {/* Tab Toggle */}
-                        <div className="flex p-1 bg-muted/50 rounded-lg w-fit mx-auto border">
-                            <button
-                                type="button"
-                                onClick={() => setActiveTab("file")}
-                                className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${activeTab === "file" ? "bg-background shadow text-foreground" : "text-muted-foreground hover:text-foreground"}`}
-                            >
-                                {tImport("uploadCsv") || "Upload CSV File"}
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => setActiveTab("text")}
-                                className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${activeTab === "text" ? "bg-background shadow text-foreground" : "text-muted-foreground hover:text-foreground"}`}
-                            >
-                                {tImport("pasteText") || "Paste Text"}
-                            </button>
-                        </div>
+                                <div className="flex p-1 bg-muted/50 rounded-lg w-fit mx-auto border">
+                                    <button
+                                        type="button"
+                                        onClick={() => setActiveTab("file")}
+                                        className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${activeTab === "file" ? "bg-background shadow text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                                    >
+                                        {tImport("uploadCsv") || "Upload CSV File"}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setActiveTab("text")}
+                                        className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${activeTab === "text" ? "bg-background shadow text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                                    >
+                                        {tImport("pasteText") || "Paste Text"}
+                                    </button>
+                                </div>
 
-                        {activeTab === "file" ? (
-                            <div 
-                                className={`border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center text-center transition-colors
+                                {activeTab === "file" ? (
+                                    <div
+                                        className={`border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center text-center transition-colors
                                     ${parsedPreview.length > 0 ? 'border-primary/50 bg-primary/5' : 'border-muted hover:border-primary/30 hover:bg-muted/30 cursor-pointer'}`}
-                                onClick={() => !parsedPreview.length && fileInputRef.current?.click()}
-                            >
-                                <input 
-                                    type="file" 
-                                    ref={fileInputRef} 
-                                    className="hidden" 
-                                    accept=".csv,.txt"
-                                    onChange={handleFileUpload} 
-                                />
-                                
-                                {parsedPreview.length > 0 ? (
-                                    <div className="space-y-3">
-                                        <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mx-auto text-green-600">
-                                            <Check className="h-6 w-6" />
-                                        </div>
-                                        <div>
-                                            <p className="font-semibold text-green-700">{tImport("fileReadSuccess") || "File read successfully!"}</p>
-                                            <p className="text-sm text-green-600/80">{tImport("foundWords", { count: parsedPreview.length }) || `Found ${parsedPreview.length} words to import.`}</p>
-                                        </div>
-                                        <Button type="button" variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); setImportText(""); setParsedPreview([]); }} className="mt-2">
-                                            {tImport("chooseDifferent") || "Choose different file"}
-                                        </Button>
+                                        onClick={() => !parsedPreview.length && fileInputRef.current?.click()}
+                                    >
+                                        <input
+                                            type="file"
+                                            ref={fileInputRef}
+                                            className="hidden"
+                                            accept=".csv,.txt"
+                                            onChange={handleFileUpload}
+                                        />
+
+                                        {parsedPreview.length > 0 ? (
+                                            <div className="space-y-3">
+                                                <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mx-auto text-green-600">
+                                                    <Check className="h-6 w-6" />
+                                                </div>
+                                                <div>
+                                                    <p className="font-semibold text-green-700">{tImport("fileReadSuccess") || "File read successfully!"}</p>
+                                                    <p className="text-sm text-green-600/80">{tImport("foundWords", { count: parsedPreview.length }) || `Found ${parsedPreview.length} words to import.`}</p>
+                                                </div>
+                                                <Button type="button" variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); setImportText(""); setParsedPreview([]); }} className="mt-2">
+                                                    {tImport("chooseDifferent") || "Choose different file"}
+                                                </Button>
+                                            </div>
+                                        ) : (
+                                            <div className="space-y-3">
+                                                <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mx-auto text-muted-foreground">
+                                                    <Upload className="h-5 w-5" />
+                                                </div>
+                                                <div>
+                                                    <p className="font-medium">{tImport("clickToUpload") || "Click to upload CSV"}</p>
+                                                    <p className="text-sm text-muted-foreground mt-1">{tImport("utf8Support") || "UTF-8 encoded files are supported."}</p>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 ) : (
-                                    <div className="space-y-3">
-                                        <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mx-auto text-muted-foreground">
-                                            <Upload className="h-5 w-5" />
+                                    <div className="space-y-2">
+                                        <Label htmlFor="importData" className="text-muted-foreground text-xs uppercase tracking-wider font-bold">{tImport("rawText") || "Raw Text"}</Label>
+                                        <Textarea
+                                            id="importData"
+                                            placeholder={`Word, Meaning, Context\napple, quả táo, I eat an apple\n"banana, raw", chuối, He ate it`}
+                                            className="min-h-[150px] font-mono text-sm resize-y"
+                                            value={importText}
+                                            onChange={(e) => handleTextChange(e.target.value)}
+                                        />
+                                    </div>
+                                )}
+
+                                {/* Data Preview */}
+                                {parsedPreview.length > 0 && (
+                                    <div className="space-y-3 animate-in fade-in slide-in-from-bottom-4">
+                                        <div className="flex items-center justify-between">
+                                            <Label className="text-muted-foreground text-xs uppercase tracking-wider font-bold flex items-center gap-1.5">
+                                                <FileText className="h-3.5 w-3.5" />
+                                                {tImport("dataPreview", { count: parsedPreview.length }) || `Data Preview (${parsedPreview.length} words)`}
+                                            </Label>
                                         </div>
-                                        <div>
-                                            <p className="font-medium">{tImport("clickToUpload") || "Click to upload CSV"}</p>
-                                            <p className="text-sm text-muted-foreground mt-1">{tImport("utf8Support") || "UTF-8 encoded files are supported."}</p>
+                                        <div className="border rounded-lg overflow-hidden flex flex-col max-h-[200px] shadow-sm">
+                                            <div className="bg-muted/50 grid grid-cols-3 gap-2 p-2 border-b text-xs font-semibold text-muted-foreground">
+                                                <div>{tImport("colWord") || "Word"}</div>
+                                                <div>{tImport("colMeaning") || "Meaning"}</div>
+                                                <div>{tImport("colContext") || "Context"}</div>
+                                            </div>
+                                            <div className="overflow-y-auto p-1 divide-y divide-border/50">
+                                                {parsedPreview.slice(0, 5).map((w, i) => (
+                                                    <div key={i} className="grid grid-cols-3 gap-2 px-2 py-1.5 text-sm hover:bg-muted/30">
+                                                        <div className="font-medium truncate" title={w.wordText}>{w.wordText}</div>
+                                                        <div className="text-muted-foreground truncate" title={w.customMeaning}>{w.customMeaning || "-"}</div>
+                                                        <div className="text-muted-foreground truncate" title={w.contextSentence}>{w.contextSentence || "-"}</div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            {parsedPreview.length > 5 && (
+                                                <div className="p-2 text-center text-xs text-muted-foreground border-t bg-muted/20">
+                                                    {tImport("moreWords", { count: parsedPreview.length - 5 }) || `+ ${parsedPreview.length - 5} more words`}
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 )}
-                            </div>
-                        ) : (
-                            <div className="space-y-2">
-                                <Label htmlFor="importData" className="text-muted-foreground text-xs uppercase tracking-wider font-bold">{tImport("rawText") || "Raw Text"}</Label>
-                                <Textarea
-                                    id="importData"
-                                    placeholder={`Word, Meaning, Context\napple, quả táo, I eat an apple\n"banana, raw", chuối, He ate it`}
-                                    className="min-h-[150px] font-mono text-sm resize-y"
-                                    value={importText}
-                                    onChange={(e) => handleTextChange(e.target.value)}
-                                />
-                            </div>
-                        )}
 
-                        {/* Data Preview */}
-                        {parsedPreview.length > 0 && (
-                            <div className="space-y-3 animate-in fade-in slide-in-from-bottom-4">
-                                <div className="flex items-center justify-between">
-                                    <Label className="text-muted-foreground text-xs uppercase tracking-wider font-bold flex items-center gap-1.5">
-                                        <FileText className="h-3.5 w-3.5" />
-                                        {tImport("dataPreview", { count: parsedPreview.length }) || `Data Preview (${parsedPreview.length} words)`}
-                                    </Label>
-                                </div>
-                                <div className="border rounded-lg overflow-hidden flex flex-col max-h-[200px] shadow-sm">
-                                    <div className="bg-muted/50 grid grid-cols-3 gap-2 p-2 border-b text-xs font-semibold text-muted-foreground">
-                                        <div>{tImport("colWord") || "Word"}</div>
-                                        <div>{tImport("colMeaning") || "Meaning"}</div>
-                                        <div>{tImport("colContext") || "Context"}</div>
+                                {importText.trim().length > 0 && parsedPreview.length === 0 && (
+                                    <div className="p-3 bg-red-50 text-red-600 rounded-lg flex items-start gap-2 text-sm border border-red-100">
+                                        <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
+                                        <span>{tImport("invalidFormat") || "No valid words found. Check your CSV format."}</span>
                                     </div>
-                                    <div className="overflow-y-auto p-1 divide-y divide-border/50">
-                                        {parsedPreview.slice(0, 5).map((w, i) => (
-                                            <div key={i} className="grid grid-cols-3 gap-2 px-2 py-1.5 text-sm hover:bg-muted/30">
-                                                <div className="font-medium truncate" title={w.wordText}>{w.wordText}</div>
-                                                <div className="text-muted-foreground truncate" title={w.customMeaning}>{w.customMeaning || "-"}</div>
-                                                <div className="text-muted-foreground truncate" title={w.contextSentence}>{w.contextSentence || "-"}</div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                    {parsedPreview.length > 5 && (
-                                        <div className="p-2 text-center text-xs text-muted-foreground border-t bg-muted/20">
-                                            {tImport("moreWords", { count: parsedPreview.length - 5 }) || `+ ${parsedPreview.length - 5} more words`}
-                                        </div>
-                                    )}
-                                </div>
+                                )}
                             </div>
-                        )}
-                        
-                        {importText.trim().length > 0 && parsedPreview.length === 0 && (
-                            <div className="p-3 bg-red-50 text-red-600 rounded-lg flex items-start gap-2 text-sm border border-red-100">
-                                <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
-                                <span>{tImport("invalidFormat") || "No valid words found. Check your CSV format."}</span>
-                            </div>
-                        )}
-                    </div>
 
-                    <DialogFooter className="px-6 py-4 border-t bg-muted/20">
-                        <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-                            {tImport("cancel") || "Cancel"}
-                        </Button>
-                        <Button type="submit" disabled={isLoading || parsedPreview.length === 0} className="min-w-[120px]">
-                            {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />}
-                            {tImport("importNow") || "Import Now"}
-                        </Button>
-                    </DialogFooter>
-                    </>
+                            <DialogFooter className="px-6 py-4 border-t bg-muted/20">
+                                <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+                                    {tImport("cancel") || "Cancel"}
+                                </Button>
+                                <Button type="submit" disabled={isLoading || parsedPreview.length === 0} className="min-w-[120px]">
+                                    {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />}
+                                    {tImport("importNow") || "Import Now"}
+                                </Button>
+                            </DialogFooter>
+                        </>
                     )}
                 </form>
             </DialogContent>

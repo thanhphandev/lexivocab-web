@@ -55,8 +55,7 @@ export function VocabularyTable({ data, tags, isLoading, onRefresh }: Vocabulary
     const [editingItem, setEditingItem] = useState<VocabularyDto | null>(null);
     const [itemToDelete, setItemToDelete] = useState<VocabularyDto | null>(null);
     const [aiAssistantData, setAiAssistantData] = useState<{ word: string, context?: string } | null>(null);
-
-
+    const [aiProvider, setAiProvider] = useState<string>("");
 
     const getLevelBadge = (level: number, nextReviewDate: string | null) => {
         if (nextReviewDate) {
@@ -432,6 +431,8 @@ export function VocabularyTable({ data, tags, isLoading, onRefresh }: Vocabulary
                     context={aiAssistantData.context}
                     isOpen={!!aiAssistantData}
                     onClose={() => setAiAssistantData(null)}
+                    modelId={aiProvider}
+                    onProviderChange={(val: string) => setAiProvider(val)}
                 />
             )}
 

@@ -231,7 +231,9 @@
         "contextPlaceholder": "这个单词在句子中如何使用？",
         "sourcePlaceholder": "https://...",
         "cancel": "取消",
-        "save": "保存更改"
+        "save": "保存更改",
+        "failed": "更新单词失败。",
+        "notFound": "未找到词汇。"
       },
       "addWordDialog": {
         "wordLabel": "单词",
@@ -247,7 +249,9 @@
         "sourcePlaceholder": "https://...",
         "noTag": "无标签",
         "cancel": "取消",
-        "save": "保存单词"
+        "save": "保存单词",
+        "failed": "添加单词失败。",
+        "conflict": "单词已保存在您的词汇中。"
       },
       "batchImport": {
         "desc": "上传CSV文件或粘贴文本（单词、含义、语境）。支持真正的UTF-8编码。",
@@ -491,6 +495,10 @@
     "go_dashboard": "前往控制台",
     "get_started": "免费开始",
     "already_premium": "您已是高级会员 ✨",
+    "included_in_higher_plan": "已包含在更高套餐中",
+    "ultimate_plan": "旗舰版",
+    "ultimate_desc": "解锁无限功能",
+    "upgrade_to_ultimate": "升级到旗舰版",
     "upgrade": "升级到高级版",
     "processing": "处理中...",
     "secure_payment": "安全支付。一次性购买。",

@@ -9,7 +9,12 @@ import {
     type ReactNode,
 } from "react";
 import { clientApi, authApi } from "@/lib/api/api-client";
-import type { UserProfile, UserPermissionsDto, LoginRequest, RegisterRequest, UpdateProfileRequest } from "@/lib/api/types";
+import type {
+    UserPermissionsDto,
+    LoginRequest,
+    RegisterRequest,
+    UpdateProfileRequest
+} from "@/lib/api/types";
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { useRouter, usePathname } from "next/navigation";
 
@@ -47,7 +52,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    /** Fetch user permissions (quotas, feature flags) */
     const refreshPermissions = useCallback(async () => {
         try {
             const res = await clientApi.get<UserPermissionsDto>("/api/proxy/auth/permissions");
@@ -55,13 +59,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } catch { /* non-critical */ }
     }, []);
 
-    /** Try to refresh the session via server-side refresh route */
     const refreshSession = useCallback(async (): Promise<boolean> => {
         try {
             const res = await authApi.refresh();
             if (!res.success) return false;
 
-            // Re-fetch user profile after successful token refresh
             const result = await authApi.getMe();
             if (result.success && result.data) {
                 setUser({
@@ -69,20 +71,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                     email: result.data.email,
                     fullName: result.data.fullName,
                     role: result.data.role,
-                    avatarUrl: (result.data as any).avatarUrl,
+                    avatarUrl: (result.data as any).avatarUrl || (result.data as any).AvatarUrl,
                 });
                 refreshPermissions();
                 return true;
             }
             return false;
-        } catch {
-            return false;
-        }
+        } catch { return false; }
     }, [refreshPermissions]);
 
-    // Hydrate user from cookie on mount
     useEffect(() => {
-        (async () => {
+        const initAuth = async () => {
             try {
                 const result = await authApi.getMe();
                 if (result.success && result.data) {
@@ -91,20 +90,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                         email: result.data.email,
                         fullName: result.data.fullName,
                         role: result.data.role,
-                        avatarUrl: (result.data as any).avatarUrl,
+                        avatarUrl: (result.data as any).avatarUrl || (result.data as any).AvatarUrl,
                     });
                     refreshPermissions();
                 } else {
-                    // Try to refresh if /me fails (token might be expired)
                     await refreshSession();
                 }
             } catch {
-                // Not authenticated — try refresh
                 await refreshSession();
             } finally {
                 setIsLoading(false);
             }
-        })();
+        };
+        initAuth();
     }, [refreshSession, refreshPermissions]);
 
     const login = useCallback(async (data: LoginRequest): Promise<boolean> => {
@@ -112,12 +110,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setError(null);
         try {
             const result = await authApi.login(data);
-            if (result.success) {
-                setUser(result.data);
+            if (result.success && result.data) {
+                setUser({
+                    id: result.data.id,
+                    email: result.data.email,
+                    fullName: result.data.fullName,
+                    role: result.data.role,
+                    avatarUrl: (result.data as any).avatarUrl || (result.data as any).AvatarUrl,
+                });
                 refreshPermissions();
                 return true;
             }
-            setError("error" in result ? result.error : "Login failed");
+            setError("error" in result ? (result.error as string) : "Login failed");
             return false;
         } catch {
             setError("An unexpected error occurred");
@@ -133,41 +137,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         try {
             const result = await authApi.register(data);
             if (result.success) {
-                // If verification is required, backend returns success but no accessToken
-                if (result.data.requiresVerification) {
-                    setError("Your email is not verified. Please check your inbox for the verification code.");
-                    return false;
-                }
-                setUser(result.data);
-                refreshPermissions();
+                // Thường sau khi register thành công ta sẽ login luôn hoặc redirect
                 return true;
             }
-            setError("error" in result ? result.error : "Registration failed");
-            return false;
-        } catch {
-            setError("An unexpected error occurred");
-            return false;
-        } finally {
-            setIsLoading(false);
-        }
-    }, [refreshPermissions]);
-
-    const googleLogin = useCallback(async (idToken: string): Promise<boolean> => {
-        setIsLoading(true);
-        setError(null);
-        try {
-            const result = await authApi.googleLogin({ idToken });
-            if (result.success) {
-                setUser(result.data);
-                return true;
-            }
-            // Check for deactivated account (403 status)
-            const errorMsg = "error" in result ? result.error : "Google login failed";
-            if (errorMsg.toLowerCase().includes("deactivated") || errorMsg.toLowerCase().includes("banned")) {
-                setError("Your account has been deactivated. Please contact support for assistance.");
-            } else {
-                setError(errorMsg);
-            }
+            setError("error" in result ? (result.error as string) : "Registration failed");
             return false;
         } catch {
             setError("An unexpected error occurred");
@@ -177,13 +150,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
     }, []);
 
+    const googleLogin = useCallback(async (idToken: string): Promise<boolean> => {
+        setIsLoading(true);
+        setError(null);
+        try {
+            const result = await authApi.googleLogin({ idToken });
+            if (result.success && result.data) {
+                setUser({
+                    id: result.data.id,
+                    email: result.data.email,
+                    fullName: result.data.fullName,
+                    role: result.data.role,
+                    avatarUrl: (result.data as any).avatarUrl || (result.data as any).AvatarUrl,
+                });
+                refreshPermissions();
+                return true;
+            }
+            return false;
+        } catch {
+            setError("Google login failed");
+            return false;
+        } finally {
+            setIsLoading(false);
+        }
+    }, [refreshPermissions]);
+
     const logout = useCallback(async () => {
-        await authApi.logout();
-        setUser(null);
-        setPermissions(null);
-        // Extract locale from current pathname (e.g. /en/dashboard -> en)
-        const locale = pathname.split("/")[1] || "en";
-        router.push(`/${locale}/auth/login`);
+        try {
+            await authApi.logout();
+        } finally {
+            setUser(null);
+            setPermissions(null);
+            const locale = pathname.split("/")[1] || "en";
+            router.push(`/${locale}/auth/login`);
+        }
     }, [pathname, router]);
 
     const updateProfile = useCallback(async (data: UpdateProfileRequest): Promise<boolean> => {
@@ -192,11 +192,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         try {
             const result = await authApi.updateProfile(data);
             if (result.success) {
-                // Update the local user state with the new profile data
-                setUser(prev => prev ? { ...prev, fullName: result.data.fullName, avatarUrl: (result.data as any).avatarUrl } : null);
+                setUser(prev => prev ? {
+                    ...prev,
+                    fullName: result.data.fullName,
+                    avatarUrl: (result.data as any).avatarUrl
+                } : null);
                 return true;
             }
-            setError("error" in result ? result.error : "Failed to update profile");
+            setError("error" in result ? (result.error as string) : "Update failed");
             return false;
         } catch {
             setError("An unexpected error occurred");

@@ -161,7 +161,7 @@ export default function SettingsPage() {
                 setNativeLanguage(res.data.nativeLanguage || "vi");
                 if (res.data.defaultTranslator) setDefaultTranslator(res.data.defaultTranslator);
                 setCustomLlmsJson(res.data.customLlmsJson || "[]");
-                
+
                 setIsEmailReminderEnabled(res.data.isEmailReminderEnabled ?? true);
                 setIsTelegramReminderEnabled(res.data.isTelegramReminderEnabled ?? false);
                 setTelegramBotToken(res.data.telegramBotToken || "");
@@ -169,7 +169,7 @@ export default function SettingsPage() {
                 setIsZaloReminderEnabled(res.data.isZaloReminderEnabled ?? false);
                 setZaloBotToken(res.data.zaloBotToken || "");
                 setZaloUserId(res.data.zaloUserId || "");
-                
+
                 try {
                     const parsed = JSON.parse(res.data.preferencesJson || "{}");
                     setPreferencesJson(JSON.stringify(parsed, null, 2));
@@ -349,31 +349,38 @@ export default function SettingsPage() {
                                 <CardDescription>{t("profile.desc")}</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-6">
-                                <div className="flex items-center gap-4 mb-6">
-                                    <Avatar className="h-20 w-20">
-                                        {profileAvatarUrl ? (
-                                            <AvatarImage src={profileAvatarUrl} alt={user?.fullName || ""} className="object-cover" />
-                                        ) : null}
-                                        <AvatarFallback className="bg-primary/10 text-primary text-xl font-bold">
-                                            {initials}
+                                <div className="flex items-center gap-5 mb-6">
+                                    <Avatar className="h-24 w-24 ring-2 ring-offset-4 ring-offset-background ring-primary/20 transition-all duration-300 hover:ring-primary/50 shadow-md">
+                                        {profileAvatarUrl && (
+                                            <AvatarImage 
+                                                src={profileAvatarUrl} 
+                                                alt={user?.fullName || "User Avatar"} 
+                                                className="object-cover transition-opacity duration-300"
+                                            />
+                                        )}
+                                        <AvatarFallback className="bg-primary/5 flex items-center justify-center">
+                                            <Loader2 className="w-8 h-8 animate-spin text-primary/40" />
                                         </AvatarFallback>
                                     </Avatar>
-                                    <div className="flex flex-col gap-2">
+                                    <div className="flex flex-col gap-2.5">
                                         <div>
-                                            <h3 className="font-medium text-lg">{user?.fullName}</h3>
-                                            <p className="text-sm text-muted-foreground">{user?.role} Account</p>
+                                            <h3 className="font-semibold text-xl tracking-tight leading-none mb-1.5">{user?.fullName}</h3>
+                                            <p className="text-sm font-medium text-muted-foreground flex items-center gap-1.5">
+                                                <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                                {user?.role} Account
+                                            </p>
                                         </div>
                                         <Button
                                             type="button"
-                                            variant="outline"
+                                            variant="secondary"
                                             size="sm"
-                                            className="w-fit"
+                                            className="w-fit hover:bg-primary/10 transition-colors shadow-sm"
                                             onClick={() => {
                                                 const seed = Math.random().toString(36).substring(7);
                                                 setProfileAvatarUrl(`https://api.dicebear.com/9.x/thumbs/svg?seed=${seed}`);
                                             }}
                                         >
-                                            <span className="mr-2">🎲</span> {t("profile.randomizeAvatar") || "Randomize Avatar"}
+                                            <span className="mr-2 text-base">🎲</span> {t("profile.randomizeAvatar") || "Randomize Avatar"}
                                         </Button>
                                     </div>
                                 </div>
@@ -522,7 +529,7 @@ export default function SettingsPage() {
                                             </div>
                                             <Switch checked={isTelegramReminderEnabled} onCheckedChange={setIsTelegramReminderEnabled} disabled={isSaving} />
                                         </div>
-                                        
+
                                         {isTelegramReminderEnabled && (
                                             <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="grid gap-4 md:grid-cols-2 pt-2">
                                                 <div className="space-y-2">
@@ -565,7 +572,7 @@ export default function SettingsPage() {
                                             </div>
                                             <Switch checked={isZaloReminderEnabled} onCheckedChange={setIsZaloReminderEnabled} disabled={isSaving} />
                                         </div>
-                                        
+
                                         {isZaloReminderEnabled && (
                                             <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="grid gap-4 md:grid-cols-2 pt-2">
                                                 <div className="space-y-2">
