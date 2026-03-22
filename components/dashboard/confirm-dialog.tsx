@@ -6,11 +6,11 @@ import {
     DialogDescription,
     DialogHeader,
     DialogTitle,
-    DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, Loader2 } from "lucide-react";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 interface ConfirmDialogProps {
     open: boolean;
@@ -29,11 +29,15 @@ export function ConfirmDialog({
     title,
     description,
     onConfirm,
-    confirmText = "Confirm",
-    cancelText = "Cancel",
-    variant = "default",
+    confirmText,
+    cancelText,
+    variant = "destructive",
 }: ConfirmDialogProps) {
+    const t = useTranslations("Modal");
     const [isLoading, setIsLoading] = useState(false);
+
+    const finalConfirmText = confirmText || t("confirm");
+    const finalCancelText = cancelText || t("cancel");
 
     const handleConfirm = async () => {
         setIsLoading(true);
@@ -47,38 +51,40 @@ export function ConfirmDialog({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[400px] p-0 overflow-hidden border-none shadow-2xl">
+            <DialogContent className="sm:max-w-105 p-0 overflow-hidden border-none shadow-lg">
                 <div className="p-6">
                     <DialogHeader className="flex-row items-start gap-4 space-y-0">
-                        <div className={`p-3 rounded-full ${variant === "destructive" ? "bg-red-500/10 text-red-600" : "bg-primary/10 text-primary"}`}>
+                        <div className={`p-3 rounded-full shrink-0 ${variant === "destructive" ? "bg-red-500/10 text-red-600 dark:bg-red-950/30 dark:text-red-400" : "bg-amber-500/10 text-amber-600 dark:bg-amber-950/30 dark:text-amber-400"}`}>
                             <AlertCircle className="h-6 w-6" />
                         </div>
-                        <div className="space-y-1">
-                            <DialogTitle className="text-xl font-bold">{title}</DialogTitle>
-                            <DialogDescription className="text-sm leading-relaxed">
+                        <div className="space-y-2 flex-1">
+                            <DialogTitle className="text-lg font-bold leading-tight">{title}</DialogTitle>
+                            <DialogDescription className="text-sm leading-relaxed text-foreground/80">
                                 {description}
                             </DialogDescription>
                         </div>
                     </DialogHeader>
                 </div>
 
-                <div className="p-4 bg-muted/40 border-t flex justify-end gap-3 rounded-b-xl">
+                <div className="px-6 py-4 bg-muted/40 dark:bg-background/50 border-t flex justify-end gap-3">
                     <Button
+                        type="button"
                         variant="ghost"
                         onClick={() => onOpenChange(false)}
-                        className="rounded-xl h-10 px-4"
+                        className="rounded-lg h-10 px-4 font-medium"
                         disabled={isLoading}
                     >
-                        {cancelText}
+                        {finalCancelText}
                     </Button>
                     <Button
+                        type="button"
                         variant={variant === "destructive" ? "destructive" : "default"}
                         onClick={handleConfirm}
-                        className="rounded-xl h-10 px-6 font-bold shadow-sm"
+                        className="rounded-lg h-10 px-6 font-bold shadow-sm"
                         disabled={isLoading}
                     >
                         {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                        {confirmText}
+                        {finalConfirmText}
                     </Button>
                 </div>
             </DialogContent>

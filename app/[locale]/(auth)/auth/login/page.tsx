@@ -13,7 +13,7 @@ import Image from "next/image";
 export default function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const { login, googleLogin, isLoading, error, clearError, isAuthenticated } = useAuth();
+    const { login, googleLogin, isLoading, error, errorCode, clearError, isAuthenticated } = useAuth();
     const router = useRouter();
     const locale = useLocale();
     const t = useTranslations("Auth");
@@ -23,18 +23,24 @@ export default function LoginPage() {
     const verified = searchParams.get("verified");
     const reset = searchParams.get("reset");
 
+    const getSafeRedirectUrl = (url: string | null, fallback: string) => {
+        if (!url) return fallback;
+        if (url.startsWith('/') && !url.startsWith('//')) return url;
+        return fallback;
+    };
+
     // Redirect if already authenticated
     useEffect(() => {
         if (isAuthenticated) {
-            router.replace(`/${locale}/dashboard`);
+            router.replace(getSafeRedirectUrl(searchParams.get("redirect"), `/${locale}/dashboard`));
         }
-    }, [isAuthenticated, router, locale]);
+    }, [isAuthenticated, router, locale, searchParams]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         const success = await login({ email, password });
         if (success) {
-            router.push(`/${locale}/dashboard`);
+            router.push(getSafeRedirectUrl(searchParams.get("redirect"), `/${locale}/dashboard`));
         }
     };
 
@@ -43,9 +49,9 @@ export default function LoginPage() {
         const success = await googleLogin(credential);
         setGoogleLoading(false);
         if (success) {
-            router.push(`/${locale}/dashboard`);
+            router.push(getSafeRedirectUrl(searchParams.get("redirect"), `/${locale}/dashboard`));
         }
-    }, [googleLogin, router, locale]);
+    }, [googleLogin, router, locale, searchParams]);
 
 
     if (isAuthenticated) {
@@ -195,7 +201,7 @@ export default function LoginPage() {
                     </div>
 
                     {/* Show a "Verify Email" button if the error suggests the email needs verification */}
-                    {error && error.toLowerCase().includes("verif") && (
+                    {errorCode === "AUTH_EMAIL_NOT_VERIFIED" && (
                         <div className="flex justify-center mt-2">
                             <Link href={`/auth/verify-email?email=${encodeURIComponent(email)}`} className="text-sm font-medium text-primary underline">
                                 {t("verifyEmailLink")}
@@ -222,9 +228,9 @@ export default function LoginPage() {
                     <p className="text-sm text-muted-foreground">
                         {t("noAccount")}{" "}
                         <Link
-                            href={`/${locale}/auth/register`}
-                            className="font-medium text-primary hover:text-primary/90 transition-colors"
-                        >
+                        href={`/${locale}/auth/register${searchParams.get("redirect") ? `?redirect=${encodeURIComponent(searchParams.get("redirect") as string)}` : ""}`}
+                        className="font-medium text-primary hover:text-primary/90 transition-colors"
+                    >
                             {t("registerLink")}
                         </Link>
                     </p>

@@ -194,7 +194,7 @@ export default function ReviewPage() {
                             {t("title")}
                         </h2>
                         <p className="text-muted-foreground">
-                            {session.cards.length} words due for review today.
+                            {t("dueToday", { count: session.cards.length })}
                         </p>
                     </div>
                     <Button size="lg" className="w-full text-lg h-14" onClick={handleStart}>

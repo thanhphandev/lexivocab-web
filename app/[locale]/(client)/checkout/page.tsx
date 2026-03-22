@@ -9,10 +9,12 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { CheckCircle2, XCircle, Loader2, ArrowRight, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { getLocalizedApiError } from "@/lib/error-handler";
 
 export default function CheckoutPage() {
     const locale = useLocale();
     const t = useTranslations("Checkout");
+    const tErrors = useTranslations("errors");
     const searchParams = useSearchParams();
     const { refreshPermissions } = useAuth();
 
@@ -22,11 +24,10 @@ export default function CheckoutPage() {
     useEffect(() => {
         const token = searchParams.get("token");
         const payerId = searchParams.get("PayerID");
-        const provider = searchParams.get("provider") || "paypal";
 
         if (!token) {
             setStatus("error");
-            setErrorMessage("Missing payment token. Please try again from the pricing page.");
+            setErrorMessage(getLocalizedApiError({ errorCode: "PAYMENT_ORDER_NOT_FOUND" }, tErrors, tErrors("RESOURCE_NOT_FOUND")));
             return;
         }
 
@@ -45,11 +46,11 @@ export default function CheckoutPage() {
                     await refreshPermissions();
                 } else {
                     setStatus("error");
-                    setErrorMessage("error" in res ? res.error : "Payment capture failed. Please contact support.");
+                    setErrorMessage(getLocalizedApiError(res, tErrors, tErrors("PAYMENT_PROVIDER_ERROR")));
                 }
             } catch (err) {
                 setStatus("error");
-                setErrorMessage("An unexpected error occurred. Please contact support.");
+                setErrorMessage(tErrors("GENERIC_ERROR"));
             }
         };
 

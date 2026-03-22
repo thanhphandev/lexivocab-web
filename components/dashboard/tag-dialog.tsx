@@ -17,6 +17,7 @@ import { Label } from "@/components/ui/label";
 import { Loader2, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { showErrorToast } from "@/lib/error-handler";
 
 const PRESET_COLORS = [
     "#6366f1", "#f43f5e", "#10b981", "#f59e0b", "#0ea5e9",
@@ -42,6 +43,7 @@ export function TagDialog({
     editingTag 
 }: TagDialogProps) {
     const t = useTranslations("Dashboard.vocabulary.tagDialog");
+    const tErrors = useTranslations("errors");
     const [isLoading, setIsLoading] = useState(false);
     const [name, setName] = useState("");
     const [icon, setIcon] = useState("📁");
@@ -87,7 +89,7 @@ export function TagDialog({
                 onOpenChange(false);
                 onSuccess();
             } else {
-                toast.error(res.error || (editingTag ? t("updateFailed") : t("createFailed")));
+                showErrorToast(res, editingTag ? t("updateFailed") : t("createFailed"), tErrors);
             }
         } finally {
             setIsLoading(false);

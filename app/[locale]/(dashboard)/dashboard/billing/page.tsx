@@ -28,6 +28,7 @@ import {
 import { downloadInvoicePdf } from "@/lib/pdf/generate-invoice";
 import { ConfirmDialog } from "@/components/dashboard/confirm-dialog";
 import { toast } from "sonner";
+import { showErrorToast } from "@/lib/error-handler";
 import { PendingTransactionBanner } from "@/components/billing/pending-transaction-banner";
 import { SepayQRDialog } from "@/components/billing/sepay-qr-dialog";
 function StatusBadge({ status }: { status: string }) {
@@ -55,6 +56,7 @@ export default function BillingPage() {
     const perms = usePermissions();
     const t = useTranslations("Billing");
     const tPricing = useTranslations("Pricing");
+    const tErrors = useTranslations("errors");
 
     const [billing, setBilling] = useState<BillingOverviewDto | null>(null);
     const [history, setHistory] = useState<PaymentHistoryDto[]>([]);
@@ -123,7 +125,7 @@ export default function BillingPage() {
                 setQrData(null);
                 setIsPolling(false);
             } else {
-                toast.error(res.error || tPricing("pending_transaction.cancel_error"));
+                showErrorToast(res, tPricing("pending_transaction.cancel_error"), tErrors);
             }
         } catch (err) {
             console.error("Cancel error", err);
@@ -147,7 +149,7 @@ export default function BillingPage() {
                         : null
                 } : null);
             } else {
-                toast.error(res.error || t("subscription_details.cancel_error"));
+                showErrorToast(res, t("subscription_details.cancel_error"), tErrors);
             }
         } finally {
             setIsCancelling(false);

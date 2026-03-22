@@ -16,15 +16,17 @@ import {
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Upload, FileUp, FileText, Check, AlertCircle, Lock } from "lucide-react";
 import { toast } from "sonner";
+import { showErrorToast } from "@/lib/error-handler";
 import { usePermissions } from "@/lib/hooks/use-permissions";
+import { Loader2, Upload, FileUp, FileText, Check, AlertCircle, Lock } from "lucide-react";
 import { useLocale } from "next-intl";
 import Link from "next/link";
 
 export function BatchImportDialog({ onSuccess }: { onSuccess: () => void }) {
     const t = useTranslations("Dashboard.vocabulary");
     const tImport = useTranslations("Dashboard.vocabulary.batchImport");
+    const tErrors = useTranslations("errors");
     const locale = useLocale();
     const { canBatchImport } = usePermissions();
 
@@ -92,11 +94,15 @@ export function BatchImportDialog({ onSuccess }: { onSuccess: () => void }) {
                 toast.success(tImport("success", { count: (res.data as number) || parsedPreview.length }));
                 onSuccess();
             } else {
-                toast.error(tImport("failed", { error: res.error }) || res.error || "Failed to import vocabulary.");
+                showErrorToast(
+                    res,
+                    res.errorCode ? tErrors(res.errorCode as any) : (tImport("failed", { error: res.error }) || res.error || "Failed to import vocabulary."),
+                    tErrors
+                );
             }
         } catch (e) {
             console.error("Batch import error:", e);
-            toast.error(tImport("unexpectedError") || "An unexpected error occurred during import.");
+            showErrorToast(e, tImport("unexpectedError") || "An unexpected error occurred during import.", tErrors);
         } finally {
             setIsLoading(false);
             toast.dismiss(loadingId);

@@ -101,6 +101,45 @@
         "currentStreak": "当前连续学习",
         "totalStudyDays": "总学习天数"
       },
+      "liveSync": {
+        "active": "实时同步中",
+        "paused": "同步已暂停"
+      },
+      "controls": {
+        "refresh": "刷新"
+      },
+      "streak": {
+        "title": "一致性引擎",
+        "badge": "天",
+        "motivationalText": "坚持下去！你在学习者中排名前5%。",
+        "personalBest": "个人最佳",
+        "completion": "完成度"
+      },
+      "power": {
+        "title": "今日复习能力",
+        "completed": "已完成",
+        "averageAccuracy": "平均准确率",
+        "retentionRate": "保留率"
+      },
+      "quota": {
+        "title": "账户配额",
+        "storageLabel": "词库容量",
+        "unlimited": "∞",
+        "unlockPro": "解锁Pro 🚀"
+      },
+      "insight": {
+        "title": "等级洞察",
+        "toughChallenges": "难度挑战",
+        "noChallenges": "零难度。太棒了！"
+      },
+      "activity": {
+        "subtitle": "每日活动频率",
+        "warming": "引擎启动中..."
+      },
+      "footer": {
+        "lastUpdated": "最后更新:",
+        "dataProtection": "由 LexiGuard Engine v1.0 保护"
+      },
       "heatmap": {
         "title": "学习历史",
         "less": "少",
@@ -318,6 +357,7 @@
       "sessionStats": "您今天复习了 {count} 个单词。继续保持！",
       "backToDashboard": "返回控制台",
       "noReviews": "您已跟上进度！目前没有待复习的单词。",
+      "dueToday": "今天有{count}个单词待复习。",
       "cardFront": "点击查看释义",
       "quality": {
         "score_0": "重来",
@@ -340,7 +380,13 @@
       "longestStreak": "最长连续天数",
       "activeDays": "活跃天数",
       "distribution": "单词分布",
-      "performance": "复习表现"
+      "performance": "复习表现",
+      "loadError": "加载分析数据失败。",
+      "masteryRate": "掌握率",
+      "activeLearning": "学习中",
+      "mastered": "已掌握",
+      "today": "今天",
+      "thisWeek": "本周"
     },
     "settings": {
       "title": "设置",
@@ -421,6 +467,29 @@
         "description": "此操作将立即将您从所有设备（浏览器、扩展程序、移动端）退出登录。您需要在每台设备上重新登录。",
         "confirmText": "全部撤销",
         "confirmingText": "撤销中..."
+      },
+      "customLlm": {
+        "title": "AI 自定义供应商",
+        "desc": "添加自己的 API 密钥来使用自定义模型。",
+        "byok": "BYOK（提供自己的密钥）",
+        "add": "添加供应商",
+        "edit": "编辑自定义供应商",
+        "editTitle": "编辑自定义供应商",
+        "addTitle": "添加自定义供应商 (BYOK)",
+        "displayName": "显示名称",
+        "displayNamePlaceholder": "例如 My OpenRouter GPT-4o",
+        "baseUrl": "基础 URL",
+        "baseUrlPlaceholder": "例如 https://openrouter.ai/api/v1",
+        "apiKey": "API 密钥",
+        "apiKeyPlaceholder": "sk-...",
+        "modelId": "模型 ID",
+        "modelIdPlaceholder": "例如 openai/gpt-4o",
+        "cancel": "取消",
+        "save": "保存配置",
+        "delete": "删除",
+        "deleteConfirm": "您确定要删除此自定义供应商吗？",
+        "noProviders": "未配置任何自定义供应商。",
+        "noProvidersDesc": "添加 OpenRouter、xAI、Groq 等的 API 密钥，以便在 LexiVocab 工具中使用。"
       },
       "notifications": {
         "title": "通知偏好",
@@ -619,7 +688,8 @@
     "coupon_applied": "优惠券已成功应用！",
     "pricing_errors": {
       "invalid_coupon": "优惠券无效或已过期",
-      "failed_to_create_order": "创建订单失败"
+      "failed_to_create_order": "创建订单失败",
+      "coupon_currency_mismatch": "此优惠券仅适用于{currency}支付。"
     }
   },
   "Billing": {
@@ -830,6 +900,10 @@
     "go_dashboard": "前往控制台",
     "view_billing": "查看账单"
   },
+  "Modal": {
+    "confirm": "确认",
+    "cancel": "取消"
+  },
   "AI": {
     "tags": {
       "assistant": "AI 助手",
@@ -869,7 +943,14 @@
     "tabs": {
       "explain": "解释",
       "related": "相关",
-      "quiz": "测试"
+      "quiz": "测试",
+      "story": "故事"
+    },
+    "story": {
+      "title": "短篇故事",
+      "translation": "简介翻译",
+      "generating": "正在编写故事...",
+      "stop": "停止"
     }
   },
   "Admin": {
@@ -972,5 +1053,63 @@
   "notifications": {
     "testSuccess": "测试发送成功！请检查您的聊天应用程序。",
     "testError": "测试发送失败。请检查API令牌和用户ID。"
+  },
+  "errors": {
+    "UNKNOWN_ERROR": "发生未知错误，请稍后再试。",
+    "GENERIC_ERROR": "发生未知错误，请稍后再试。",
+    "INTERNAL_SERVER_ERROR": "发生内部服务器错误。",
+    "VALIDATION_FAILED": "请检查您的输入并重试。",
+    "SERVICE_UNAVAILABLE": "服务暂时不可用，请稍后重试。",
+    "UNAUTHORIZED": "请登录以继续。",
+    "RESOURCE_NOT_FOUND": "未找到请求的资源。",
+    "RESOURCE_CONFLICT": "资源状态冲突，请稍后再试。",
+    "AUTH_INVALID_CREDENTIALS": "电子邮件或密码不正确。",
+    "AUTH_EMAIL_ALREADY_EXISTS": "此电子邮件已注册，请直接登录。",
+    "AUTH_EMAIL_NOT_VERIFIED": "请验证您的电子邮件地址以继续。",
+    "AUTH_ACCOUNT_LOCKED": "您的帐户由于登录失败次数过多而被锁定。",
+    "AUTH_ACCOUNT_DISABLED": "您的帐户已被停用。",
+    "AUTH_SOCIAL_LOGIN_CONFLICT": "请使用链接的社交帐户登录。",
+    "AUTH_INVALID_TOKEN": "您的会话无效，请重新登录。",
+    "AUTH_TOKEN_EXPIRED": "您的会话已过期，请重新登录。",
+    "AUTH_REFRESH_TOKEN_INVALID": "无法刷新您的会话，请重新登录。",
+    "AUTH_GOOGLE_TOKEN_INVALID": "Google登录失败，请重试。",
+    "AUTH_PASSWORD_TOO_WEAK": "请选择一个较强的密码。",
+    "AUTH_VERIFICATION_CODE_INVALID": "验证码不正确。",
+    "AUTH_VERIFICATION_CODE_EXPIRED": "验证码已过期，请请求新的验证码。",
+    "AUTH_SESSION_EXPIRED": "您的会话已过期。",
+    "AUTHZ_RESOURCE_FORBIDDEN": "您无权访问该资源。",
+    "AUTHZ_ADMIN_ONLY": "需要管理员权限。",
+    "VOCAB_NOT_FOUND": "找不到词汇。",
+    "VOCAB_ALREADY_EXISTS": "您已经保存了该单词。",
+    "VOCAB_QUOTA_EXCEEDED": "您已达到单词数限制，请升级订阅。",
+    "VOCAB_INVALID_IMPORT_FORMAT": "词汇导入格式无效。",
+    "VOCAB_BATCH_IMPORT_FAILED": "批量导入失败。",
+    "VOCAB_EXPORT_FAILED": "词汇导出失败。",
+    "TAG_NOT_FOUND": "找不到指定的标签。",
+    "TAG_ALREADY_EXISTS": "具有此名称的标签已存在。",
+    "TAG_NAME_ALREADY_EXISTS": "该标签名称已存在。",
+    "TAG_CANNOT_DELETE_WITH_WORDS": "该标签下仍有关联单词，无法删除。",
+    "REVIEW_SESSION_NOT_FOUND": "未找到复习会话。",
+    "REVIEW_INVALID_QUALITY_SCORE": "复习评分无效。",
+    "REVIEW_NO_CARDS_DUE": "当前没有到期需要复习的卡片。",
+    "PAYMENT_DECLINED": "支付被拒绝。",
+    "PAYMENT_INVALID_COUPON": "优惠券代码无效或未激活。",
+    "PAYMENT_COUPON_EXPIRED": "优惠券已过期。",
+    "PAYMENT_ORDER_NOT_FOUND": "未找到支付订单。",
+    "PAYMENT_ORDER_EXPIRED": "支付订单已过期。",
+    "PAYMENT_PROVIDER_ERROR": "支付服务提供方返回错误。",
+    "PAYMENT_ALREADY_PROCESSED": "该支付已处理。",
+    "SUB_NOT_FOUND": "未找到订阅。",
+    "SUB_ALREADY_ACTIVE": "订阅已处于激活状态。",
+    "SUB_EXPIRED": "订阅已过期。",
+    "SUB_CANCELLED": "订阅已取消。",
+    "SUB_PLAN_NOT_FOUND": "未找到订阅方案。",
+    "RATE_LIMIT_EXCEEDED": "请求太多，请稍后再试。",
+    "AI_QUOTA_EXCEEDED": "AI使用额度已达上限。请升级至Pro版。",
+    "AI_SERVICE_UNAVAILABLE": "AI 服务暂时不可用。",
+    "AI_INVALID_REQUEST": "AI 请求无效。",
+    "AI_PROVIDER_ERROR": "AI 服务提供方返回错误。",
+    "AI_MODEL_NOT_AVAILABLE": "所选 AI 模型当前不可用。",
+    "AUTHZ_INSUFFICIENT_PERMISSIONS": "权限不足。请升级至Pro版。"
   }
 }

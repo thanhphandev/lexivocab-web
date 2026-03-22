@@ -30,6 +30,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 export default function VocabularyPage() {
     const t = useTranslations("Dashboard.vocabulary");
+    const tErrors = useTranslations("errors");
     const locale = useLocale();
     const { permissions } = useAuth();
     const { canExport, quotaMax } = usePermissions();
@@ -86,11 +87,11 @@ export default function VocabularyPage() {
     useEffect(() => { fetchVocabulary(); }, [fetchVocabulary]);
 
     const handleExport = async (format: "csv" | "json" | "quizlet" | "txt") => {
-        const loadingId = toast.loading("Exporting...");
+        const loadingId = toast.loading(`${t("export")}...`);
         try {
             const res = await fetch(`/api/proxy/vocabularies/export?format=${format}`);
             if (!res.ok) {
-                toast.error(t("exportFailed") || "Export failed.");
+                toast.error(t("exportFailed") || tErrors("VOCAB_EXPORT_FAILED"));
                 toast.dismiss(loadingId);
                 return;
             }
@@ -110,6 +111,8 @@ export default function VocabularyPage() {
             toast.dismiss(loadingId);
         } catch (e) {
             console.error("Export failed", e);
+            toast.error(t("exportFailed") || tErrors("VOCAB_EXPORT_FAILED"));
+            toast.dismiss(loadingId);
         }
     };
 

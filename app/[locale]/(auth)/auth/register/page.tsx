@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/lib/auth/auth-context";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useTranslations, useLocale } from "next-intl";
@@ -14,26 +14,34 @@ export default function RegisterPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [fullName, setFullName] = useState("");
-    const { register, googleLogin, isLoading, error, clearError, isAuthenticated } = useAuth();
+    const { register, googleLogin, isLoading, error, errorCode, clearError, isAuthenticated } = useAuth();
     const router = useRouter();
     const locale = useLocale();
     const t = useTranslations("Auth");
     const [googleLoading, setGoogleLoading] = useState(false);
 
+    const searchParams = useSearchParams();
+
+    const getSafeRedirectUrl = (url: string | null, fallback: string) => {
+        if (!url) return fallback;
+        if (url.startsWith('/') && !url.startsWith('//')) return url;
+        return fallback;
+    };
+
     useEffect(() => {
         if (isAuthenticated) {
-            router.replace(`/${locale}/dashboard`);
+            router.replace(getSafeRedirectUrl(searchParams.get("redirect"), `/${locale}/dashboard`));
         }
-    }, [isAuthenticated, router, locale]);
+    }, [isAuthenticated, router, locale, searchParams]);
 
     const handleGoogleResponse = useCallback(async (credential: string) => {
         setGoogleLoading(true);
         const success = await googleLogin(credential);
         setGoogleLoading(false);
         if (success) {
-            router.push(`/${locale}/dashboard`);
+            router.push(getSafeRedirectUrl(searchParams.get("redirect"), `/${locale}/dashboard`));
         }
-    }, [googleLogin, router, locale]);
+    }, [googleLogin, router, locale, searchParams]);
 
     if (isAuthenticated) {
         return null;
@@ -43,7 +51,7 @@ export default function RegisterPage() {
         e.preventDefault();
         const success = await register({ email, password, fullName });
         if (success) {
-            router.push(`/${locale}/dashboard`);
+            router.push(getSafeRedirectUrl(searchParams.get("redirect"), `/${locale}/dashboard`));
         }
     };
 
@@ -124,7 +132,7 @@ export default function RegisterPage() {
                 )}
 
                 {/* Show a "Verify Email" button if the error suggests the email needs verification */}
-                {error && error.toLowerCase().includes("verif") && (
+                {errorCode === "AUTH_EMAIL_NOT_VERIFIED" && (
                     <div className="flex justify-center mt-2">
                         <Link href={`/auth/verify-email?email=${encodeURIComponent(email)}`} className="text-sm font-medium text-primary underline">
                             {t("verifyEmailLink")}
@@ -215,7 +223,7 @@ export default function RegisterPage() {
                 <p className="text-sm text-muted-foreground">
                     {t("hasAccount")}{" "}
                     <Link
-                        href={`/${locale}/auth/login`}
+                        href={`/${locale}/auth/login${searchParams.get("redirect") ? `?redirect=${encodeURIComponent(searchParams.get("redirect") as string)}` : ""}`}
                         className="font-medium text-primary hover:text-primary/90 transition-colors"
                     >
                         {t("loginLink")}

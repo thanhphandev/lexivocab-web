@@ -36,6 +36,9 @@ export async function serverFetch<T>(
             return {
                 success: false,
                 error: body?.error || body?.title || `Request failed (${res.status})`,
+                errorCode: body?.errorCode,
+                traceId: body?.traceId,
+                details: body?.details,
             };
         }
 
@@ -82,6 +85,9 @@ class ClientApi {
                 return {
                     success: false,
                     error: body?.error || `Request failed (${res.status})`,
+                    errorCode: body?.errorCode,
+                    traceId: body?.traceId,
+                    details: body?.details,
                 };
             }
 
@@ -353,7 +359,7 @@ export const paymentApi = {
     getInvoiceUrl: (id: string) =>
         `/api/proxy/payments/invoice/${id}`,
     validateCoupon: (code: string) =>
-        clientApi.get<{ code: string; discountType: number; discountValue: number }>(`/api/proxy/coupons/validate?code=${encodeURIComponent(code)}`),
+        clientApi.get<{ code: string; discountType: number; discountValue: number, currency?: string | null }>(`/api/proxy/coupons/validate?code=${encodeURIComponent(code)}`),
 };
 
 

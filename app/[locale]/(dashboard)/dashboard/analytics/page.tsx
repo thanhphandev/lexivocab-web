@@ -42,7 +42,7 @@ export default function AnalyticsPage() {
     if (!dashboardData) {
         return (
             <div className="text-center py-20 text-muted-foreground">
-                Failed to load analytics data.
+                {t("loadError")}
             </div>
         );
     }
@@ -79,7 +79,7 @@ export default function AnalyticsPage() {
                     icon={<Target className="text-primary" />}
                 />
                 <StatCard
-                    title="Mastery Rate"
+                    title={t("masteryRate")}
                     value={`${masteryRate}%`}
                     icon={<Trophy className="text-yellow-500" />}
                 />
@@ -97,7 +97,7 @@ export default function AnalyticsPage() {
                     <div className="space-y-4">
                         <div>
                             <div className="flex justify-between text-sm mb-1">
-                                <span>Active Learning</span>
+                                <span>{t("activeLearning")}</span>
                                 <span className="font-medium">{dashboardData.vocabulary.activeWords}</span>
                             </div>
                             <div className="w-full bg-secondary rounded-full h-2">
@@ -109,7 +109,7 @@ export default function AnalyticsPage() {
                         </div>
                         <div>
                             <div className="flex justify-between text-sm mb-1">
-                                <span>Mastered</span>
+                                <span>{t("mastered")}</span>
                                 <span className="font-medium">{dashboardData.vocabulary.masteredWords}</span>
                             </div>
                             <div className="w-full bg-secondary rounded-full h-2">
@@ -129,13 +129,13 @@ export default function AnalyticsPage() {
                             <span className="block text-3xl font-bold text-primary mb-1">
                                 {dashboardData.reviews.totalReviewsToday}
                             </span>
-                            <span className="text-xs text-muted-foreground uppercase tracking-wider">Today</span>
+                            <span className="text-xs text-muted-foreground uppercase tracking-wider">{t("today")}</span>
                         </div>
                         <div className="p-4 bg-secondary/50 rounded-lg text-center">
                             <span className="block text-3xl font-bold text-primary mb-1">
                                 {dashboardData.reviews.totalReviewsThisWeek}
                             </span>
-                            <span className="text-xs text-muted-foreground uppercase tracking-wider">This Week</span>
+                            <span className="text-xs text-muted-foreground uppercase tracking-wider">{t("thisWeek")}</span>
                         </div>
                     </div>
                 </div>

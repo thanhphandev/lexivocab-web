@@ -16,6 +16,7 @@ import { useState, useEffect } from "react";
 import { Loader2, Palette, ShieldAlert, Target, Code, Globe, Lock, KeyRound, Sparkles, BellRing, Mail, MessageCircle, Send } from "lucide-react";
 import { authApi, settingsApi } from "@/lib/api/api-client";
 import { toast } from "sonner";
+import { showErrorToast, getErrorMessage } from "@/lib/error-handler";
 import { ConfirmDialog } from "@/components/dashboard/confirm-dialog";
 import { CustomLlmManager } from "./custom-llm-manager";
 import { QuickModelSwitcher } from "@/components/ai/quick-model-switcher";
@@ -102,6 +103,7 @@ const SUPPORTED_LANGUAGES = [
 
 export default function SettingsPage() {
     const t = useTranslations("Dashboard.settings");
+    const tErrors = useTranslations("errors");
     const locale = useLocale();
     const router = useRouter();
     const pathname = usePathname();
@@ -182,6 +184,17 @@ export default function SettingsPage() {
         fetchSettings();
     }, [user?.fullName, user?.avatarUrl]);
 
+    const syncSettingField = async (payload: Record<string, unknown>) => {
+        const res = await settingsApi.update(payload as any);
+        if (res.success) {
+            toast.success(t("saveSuccess"));
+            return true;
+        }
+
+        showErrorToast(res, t("saveFailed"), tErrors);
+        return false;
+    };
+
     const handleUpdateProfile = async () => {
         if (!profileName.trim()) return;
         setIsUpdatingProfile(true);
@@ -209,8 +222,8 @@ export default function SettingsPage() {
                     router.push(`/${locale}/auth/login`);
                 }, 2000);
             } else {
-                toast.error(res.error || t("password.failMsg"));
-                setPasswordError(res.error || t("password.failMsg"));
+                showErrorToast(res, t("password.failMsg"), tErrors);
+                setPasswordError(getErrorMessage(res, tErrors, t("password.failMsg")));
             }
         } catch {
             toast.error(t("unexpectedError"));
@@ -229,7 +242,7 @@ export default function SettingsPage() {
             logout();
             router.push(`/${locale}/auth/login`);
         } else {
-            toast.error(t("account.deleteFailed", { error: res.error }));
+            showErrorToast(res, t("account.deleteFailed"), tErrors);
         }
         setConfirmDeleteOpen(false);
     };
@@ -243,7 +256,7 @@ export default function SettingsPage() {
                 logout();
                 router.push(`/${locale}/auth/login`);
             } else {
-                toast.error(res.error || t("account.revokeFailed"));
+                showErrorToast(res, t("account.revokeFailed"), tErrors);
             }
         } finally {
             setIsRevoking(false);
@@ -290,7 +303,7 @@ export default function SettingsPage() {
             if (res.success) {
                 toast.success(t("saveSuccess"));
             } else {
-                toast.error(t("saveFailed", { error: res.error }));
+                showErrorToast(res, t("saveFailed"), tErrors);
             }
         } finally {
             setIsSaving(false);
@@ -312,10 +325,10 @@ export default function SettingsPage() {
             if (res.success) {
                 toast.success(t("notifications.testSuccess") || "Ping successful! Check your bots/email.");
             } else {
-                toast.error(res.error || t("notifications.testError") || "Failed to trigger test ping.");
+                showErrorToast(res, t("notifications.testError") || "Failed to trigger test ping.", tErrors);
             }
         } catch (error) {
-            toast.error(t("notifications.testError") || "Could not fetch testing endpoints.");
+            toast.error(t("notifications.testError") || tErrors("SERVICE_UNAVAILABLE"));
         } finally {
             setIsTesting(false);
         }
@@ -715,12 +728,7 @@ export default function SettingsPage() {
                                                 value={targetLanguage}
                                                 onValueChange={async (val) => {
                                                     setTargetLanguage(val);
-                                                    try {
-                                                        await settingsApi.update({ targetLanguage: val });
-                                                        toast.success(t("saveSuccess"));
-                                                    } catch {
-                                                        toast.error("Failed to sync learning language");
-                                                    }
+                                                    await syncSettingField({ targetLanguage: val });
                                                 }}
                                                 disabled={!isHighlightEnabled}
                                             >
@@ -747,12 +755,7 @@ export default function SettingsPage() {
                                                 value={nativeLanguage}
                                                 onValueChange={async (val) => {
                                                     setNativeLanguage(val);
-                                                    try {
-                                                        await settingsApi.update({ nativeLanguage: val });
-                                                        toast.success(t("saveSuccess"));
-                                                    } catch {
-                                                        toast.error("Failed to sync native language");
-                                                    }
+                                                    await syncSettingField({ nativeLanguage: val });
                                                 }}
                                                 disabled={!isHighlightEnabled}
                                             >
@@ -781,12 +784,7 @@ export default function SettingsPage() {
                                                 provider={defaultTranslator}
                                                 setProvider={async (val) => {
                                                     setDefaultTranslator(val);
-                                                    try {
-                                                        await settingsApi.update({ defaultTranslator: val });
-                                                        toast.success(t("saveSuccess"));
-                                                    } catch {
-                                                        toast.error("Failed to sync default translator");
-                                                    }
+                                                    await syncSettingField({ defaultTranslator: val });
                                                 }}
                                                 hideTrigger={true}
                                             />

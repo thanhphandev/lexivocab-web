@@ -11,6 +11,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { authApi } from "@/lib/api/api-client";
+import { getLocalizedApiError } from "@/lib/error-handler";
 import {
     InputOTP,
     InputOTPGroup,
@@ -20,6 +21,7 @@ import {
 
 export default function ResetPasswordPage() {
     const t = useTranslations("Auth");
+    const tErrors = useTranslations("errors");
     const router = useRouter();
     const locale = useLocale();
     const searchParams = useSearchParams();
@@ -52,7 +54,7 @@ export default function ResetPasswordPage() {
             if (res.success) {
                 router.push(`/${locale}/auth/login?reset=success`);
             } else {
-                setError(res.error || t("unexpectedError"));
+                setError(getLocalizedApiError(res, tErrors, t("unexpectedError")));
             }
         } catch {
             setError(t("unexpectedError"));

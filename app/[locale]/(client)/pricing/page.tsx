@@ -5,6 +5,7 @@ import { useAuth } from "@/lib/auth/auth-context";
 import { usePermissions } from "@/lib/hooks/use-permissions";
 import { useState, useEffect } from "react";
 import { paymentApi } from "@/lib/api/api-client";
+import { showErrorToast, getLocalizedApiError } from "@/lib/error-handler";
 import type { SubscriptionPlanDto, PaymentHistoryDto } from "@/lib/api/types";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -26,6 +27,7 @@ import { toast } from "sonner";
 export default function PricingPage() {
     const locale = useLocale();
     const t = useTranslations("Pricing");
+    const tErrors = useTranslations("errors");
     const { user, isAuthenticated } = useAuth();
     const { isPremium, plan: userPlan, displayOrder: currentPlanOrder } = usePermissions();
     const [isProcessing, setIsProcessing] = useState(false);
@@ -39,7 +41,7 @@ export default function PricingPage() {
     const [lastSepayRequest, setLastSepayRequest] = useState<{ pricingId: string } | null>(null);
 
     const [couponCode, setCouponCode] = useState("");
-    const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; type: number; value: number } | null>(null);
+    const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; type: number; value: number; currency?: string | null } | null>(null);
     const [isValidatingCoupon, setIsValidatingCoupon] = useState(false);
     const [couponError, setCouponError] = useState("");
 
@@ -131,10 +133,10 @@ export default function PricingPage() {
                     window.location.href = res.data.approvalUrl;
                 }
             } else {
-                toast.error(t("pricing_errors.failed_to_create_order"))
+                showErrorToast(res, tErrors("GENERIC_ERROR"), tErrors);
             }
-        } catch (err) {
-            toast.error(t("pricing_errors.failed_to_create_order"))
+        } catch {
+            toast.error(tErrors("GENERIC_ERROR"));
         } finally {
             setIsProcessing(false);
         }
@@ -147,19 +149,28 @@ export default function PricingPage() {
         try {
             const res = await paymentApi.validateCoupon(couponCode.trim());
             if (res.success) {
+                const couponCurrency = res.data.currency?.toUpperCase() ?? null;
+                const pageCurrency = locale === "vi" ? "VND" : "USD";
+
+                if (couponCurrency && couponCurrency !== pageCurrency) {
+                    setCouponError(t("pricing_errors.coupon_currency_mismatch", { currency: couponCurrency }));
+                    setAppliedCoupon(null);
+                    return;
+                }
+
                 setAppliedCoupon({
                     code: res.data.code,
                     type: res.data.discountType,
-                    value: res.data.discountValue
+                    value: res.data.discountValue,
+                    currency: res.data.currency ?? null
                 });
                 setCouponError("");
             } else {
-                // const errorMsg = 'error' in res ? (res as any).error : null;
-                setCouponError(t("pricing_errors.invalid_coupon" as any));
+                setCouponError(getLocalizedApiError(res, tErrors, tErrors("PAYMENT_INVALID_COUPON")));
                 setAppliedCoupon(null);
             }
-        } catch (err) {
-            setCouponError(t("pricing_errors.invalid_coupon" as any));
+        } catch {
+            setCouponError(tErrors("PAYMENT_INVALID_COUPON"));
             setAppliedCoupon(null);
         } finally {
             setIsValidatingCoupon(false);
@@ -207,6 +218,8 @@ export default function PricingPage() {
                 if (statusRes.success && statusRes.data.expiresAt) {
                     setQrData(prev => prev && prev.ref === ref ? { ...prev, expiresAt: statusRes.data.expiresAt } : prev);
                 }
+            } else if (!res.success) {
+                showErrorToast(res, tErrors("GENERIC_ERROR"), tErrors);
             }
         } finally {
             setIsProcessing(false);
@@ -445,7 +458,10 @@ export default function PricingPage() {
 
                                                     const priceVal = parseFloat(pricing.price);
                                                     let discountedPrice = priceVal;
-                                                    if (appliedCoupon) {
+                                                    const isCouponCurrencyMatch = !appliedCoupon?.currency
+                                                        || appliedCoupon.currency.toUpperCase() === String(pricing.currency || "").toUpperCase();
+
+                                                    if (appliedCoupon && isCouponCurrencyMatch) {
                                                         if (appliedCoupon.type === 1) { // Percentage
                                                             discountedPrice = priceVal - (priceVal * (appliedCoupon.value / 100));
                                                         } else { // Fixed
@@ -456,7 +472,7 @@ export default function PricingPage() {
 
                                                     return (
                                                         <>
-                                                            {appliedCoupon && (
+                                                            {appliedCoupon && isCouponCurrencyMatch && (
                                                                 <span className="text-2xl font-bold text-muted-foreground line-through block mb-1">
                                                                     {locale === "vi"
                                                                         ? `${Math.round(priceVal).toLocaleString("vi-VN")}đ`

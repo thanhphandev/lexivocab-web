@@ -17,6 +17,7 @@ import type {
 } from "@/lib/api/types";
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { useRouter, usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 interface AuthUser {
     id: string;
@@ -32,6 +33,7 @@ interface AuthContextType {
     isAuthenticated: boolean;
     isLoading: boolean;
     error: string | null;
+    errorCode: string | null;
     login: (data: LoginRequest) => Promise<boolean>;
     register: (data: RegisterRequest) => Promise<boolean>;
     googleLogin: (idToken: string) => Promise<boolean>;
@@ -51,6 +53,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [permissions, setPermissions] = useState<UserPermissionsDto | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [errorCode, setErrorCode] = useState<string | null>(null);
+    const t = useTranslations("errors");
+
+    // Helper to extract translation from API result
+    const handleError = (result: any, defaultMsg: string) => {
+        if ("error" in result) {
+            const code = result.errorCode;
+            setErrorCode(code || null);
+            if (code) {
+                // Return translated error, or fallback to server error if next-intl returns the key itself
+                const translated = t(code as any);
+                setError(translated !== code ? translated : (result.error as string) || defaultMsg);
+            } else {
+                setError((result.error as string) || defaultMsg);
+            }
+        } else {
+            setErrorCode(null);
+            setError(defaultMsg);
+        }
+    };
 
     const refreshPermissions = useCallback(async () => {
         try {
@@ -62,7 +84,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const refreshSession = useCallback(async (): Promise<boolean> => {
         try {
             const res = await authApi.refresh();
-            if (!res.success) return false;
+            if (!res.success) {
+                localStorage.removeItem("lexivocab_auth_hint");
+                return false;
+            }
 
             const result = await authApi.getMe();
             if (result.success && result.data) {
@@ -73,15 +98,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                     role: result.data.role,
                     avatarUrl: (result.data as any).avatarUrl || (result.data as any).AvatarUrl,
                 });
+                localStorage.setItem("lexivocab_auth_hint", "true");
                 refreshPermissions();
                 return true;
             }
+            localStorage.removeItem("lexivocab_auth_hint");
             return false;
-        } catch { return false; }
+        } catch {
+            localStorage.removeItem("lexivocab_auth_hint");
+            return false;
+        }
     }, [refreshPermissions]);
 
     useEffect(() => {
         const initAuth = async () => {
+            const hasAuthHint = localStorage.getItem("lexivocab_auth_hint") === "true";
+            if (!hasAuthHint) {
+                setIsLoading(false);
+                return;
+            }
+
             try {
                 const result = await authApi.getMe();
                 if (result.success && result.data) {
@@ -118,13 +154,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                     role: result.data.role,
                     avatarUrl: (result.data as any).avatarUrl || (result.data as any).AvatarUrl,
                 });
+                localStorage.setItem("lexivocab_auth_hint", "true");
                 refreshPermissions();
                 return true;
             }
-            setError("error" in result ? (result.error as string) : "Login failed");
+            handleError(result, t("GENERIC_ERROR"));
             return false;
         } catch {
-            setError("An unexpected error occurred");
+            setError(t("GENERIC_ERROR"));
             return false;
         } finally {
             setIsLoading(false);
@@ -140,10 +177,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 // Thường sau khi register thành công ta sẽ login luôn hoặc redirect
                 return true;
             }
-            setError("error" in result ? (result.error as string) : "Registration failed");
+            handleError(result, t("GENERIC_ERROR"));
             return false;
         } catch {
-            setError("An unexpected error occurred");
+            setError(t("GENERIC_ERROR"));
             return false;
         } finally {
             setIsLoading(false);
@@ -163,12 +200,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                     role: result.data.role,
                     avatarUrl: (result.data as any).avatarUrl || (result.data as any).AvatarUrl,
                 });
+                localStorage.setItem("lexivocab_auth_hint", "true");
                 refreshPermissions();
                 return true;
             }
+            handleError(result, t("AUTH_GOOGLE_TOKEN_INVALID"));
             return false;
         } catch {
-            setError("Google login failed");
+            setError(t("AUTH_GOOGLE_TOKEN_INVALID"));
             return false;
         } finally {
             setIsLoading(false);
@@ -181,6 +220,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } finally {
             setUser(null);
             setPermissions(null);
+            localStorage.removeItem("lexivocab_auth_hint");
             const locale = pathname.split("/")[1] || "en";
             router.push(`/${locale}/auth/login`);
         }
@@ -199,17 +239,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 } : null);
                 return true;
             }
-            setError("error" in result ? (result.error as string) : "Update failed");
+            handleError(result, t("GENERIC_ERROR"));
             return false;
         } catch {
-            setError("An unexpected error occurred");
+            setError(t("GENERIC_ERROR"));
             return false;
         } finally {
             setIsLoading(false);
         }
     }, []);
 
-    const clearError = useCallback(() => setError(null), []);
+    const clearError = useCallback(() => {
+        setError(null);
+        setErrorCode(null);
+    }, []);
 
     const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "";
 
@@ -222,6 +265,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                     isAuthenticated: !!user,
                     isLoading,
                     error,
+                    errorCode,
                     login,
                     register,
                     googleLogin,

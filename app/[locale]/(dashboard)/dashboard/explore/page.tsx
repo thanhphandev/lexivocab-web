@@ -12,9 +12,11 @@ import { masterVocabApi, vocabularyApi } from "@/lib/api/api-client";
 import type { MasterVocabularyDto } from "@/lib/api/types";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
+import { showErrorToast } from "@/lib/error-handler";
 
 export default function ExplorePage() {
     const t = useTranslations("Dashboard.explore");
+    const tErrors = useTranslations("errors");
     const [searchQuery, setSearchQuery] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState("");
     const [words, setWords] = useState<MasterVocabularyDto[]>([]);
@@ -63,9 +65,9 @@ export default function ExplorePage() {
             customMeaning: word.meaning || undefined,
         });
         if (res.success) {
-            toast.success(`Added "${word.word}" to your vocabulary!`);
+            toast.success(`${t("addToVocab")}: "${word.word}"`);
         } else {
-            toast.error(res.error || "Failed to add word.");
+            showErrorToast(res, tErrors("GENERIC_ERROR"), tErrors);
         }
         setIsSaving(false);
     };

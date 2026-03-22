@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, ArrowLeft, MailCheck } from "lucide-react";
 import Link from "next/link";
 import { authApi } from "@/lib/api/api-client";
+import { getLocalizedApiError } from "@/lib/error-handler";
 import {
     InputOTP,
     InputOTPGroup,
@@ -17,6 +18,7 @@ import { motion } from "framer-motion";
 
 export default function VerifyEmailPage() {
     const t = useTranslations("Auth");
+    const tErrors = useTranslations("errors");
     const router = useRouter();
     const searchParams = useSearchParams();
 
@@ -51,7 +53,7 @@ export default function VerifyEmailPage() {
             if (res.success) {
                 router.push(`/auth/login?verified=true`);
             } else {
-                setError(res.error || t("verifyEmailFailed"));
+                setError(getLocalizedApiError(res, tErrors, t("verifyEmailFailed")));
             }
         } catch {
             setError(t("unexpectedError"));
@@ -70,7 +72,7 @@ export default function VerifyEmailPage() {
             if (res.success) {
                 setSuccessMessage(t("verifyEmailResendSuccess"));
             } else {
-                setError(res.error || t("verifyEmailResendFailed"));
+                setError(getLocalizedApiError(res, tErrors, t("verifyEmailResendFailed")));
             }
         } catch {
             setError(t("unexpectedError"));

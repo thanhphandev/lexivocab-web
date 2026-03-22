@@ -101,6 +101,45 @@
         "currentStreak": "現在の連続記録",
         "totalStudyDays": "合計学習日数"
       },
+      "liveSync": {
+        "active": "ライブ同期中",
+        "paused": "同期一時停止"
+      },
+      "controls": {
+        "refresh": "更新"
+      },
+      "streak": {
+        "title": "一貫性エンジン",
+        "badge": "日",
+        "motivationalText": "頑張って！あなたは学習者の上位5%の中にいます。",
+        "personalBest": "個人最高記録",
+        "completion": "完了"
+      },
+      "power": {
+        "title": "今日のレビュー力",
+        "completed": "完了",
+        "averageAccuracy": "平均精度",
+        "retentionRate": "保持率"
+      },
+      "quota": {
+        "title": "アカウントクォータ",
+        "storageLabel": "ライブラリ容量",
+        "unlimited": "∞",
+        "unlockPro": "Proをアンロック 🚀"
+      },
+      "insight": {
+        "title": "レベルインサイト",
+        "toughChallenges": "難しい課題",
+        "noChallenges": "問題なし。素晴らしい！"
+      },
+      "activity": {
+        "subtitle": "毎日のアクティビティ頻度",
+        "warming": "エンジンの起動中..."
+      },
+      "footer": {
+        "lastUpdated": "最後に更新:",
+        "dataProtection": "LexiGuard Engine v1.0により保護されています"
+      },
       "heatmap": {
         "title": "学習履歴",
         "less": "少ない",
@@ -318,6 +357,7 @@
       "sessionStats": "今日 {count} 個の単語を復習しました。この調子で頑張りましょう！",
       "backToDashboard": "ダッシュボードに戻る",
       "noReviews": "目標達成です！現在、復習が必要な単語はありません。",
+      "dueToday": "今日は{count}個の単語を復習する必要があります。",
       "cardFront": "タップして意味を表示",
       "quality": {
         "score_0": "もう一度",
@@ -340,7 +380,13 @@
       "longestStreak": "最長連続記録",
       "activeDays": "活動日数",
       "distribution": "単語の分布",
-      "performance": "復習のパフォーマンス"
+      "performance": "復習のパフォーマンス",
+      "loadError": "分析データを読み込めませんでした。",
+      "masteryRate": "習得率",
+      "activeLearning": "学習中",
+      "mastered": "習得済み",
+      "today": "本日",
+      "thisWeek": "今週"
     },
     "settings": {
       "title": "設定",
@@ -421,6 +467,29 @@
         "description": "この操作により、すべてのデバイス（ブラウザ、拡張機能、モバイル）から即座にサインアウトされます。各デバイスで再度ログインが必要になります。",
         "confirmText": "すべて無効化",
         "confirmingText": "無効化中..."
+      },
+      "customLlm": {
+        "title": "AI カスタムプロバイダー",
+        "desc": "カスタムモデル用のAPI キーを追加してください。",
+        "byok": "BYOK（自分のキーを持っている）",
+        "add": "プロバイダーを追加",
+        "edit": "カスタムプロバイダーを編集",
+        "editTitle": "カスタムプロバイダーを編集",
+        "addTitle": "カスタムプロバイダーを追加（BYOK）",
+        "displayName": "表示名",
+        "displayNamePlaceholder": "例えば My OpenRouter GPT-4o",
+        "baseUrl": "ベース URL",
+        "baseUrlPlaceholder": "例えば https://openrouter.ai/api/v1",
+        "apiKey": "API キー",
+        "apiKeyPlaceholder": "sk-...",
+        "modelId": "モデル ID",
+        "modelIdPlaceholder": "例えば openai/gpt-4o",
+        "cancel": "キャンセル",
+        "save": "設定を保存",
+        "delete": "削除",
+        "deleteConfirm": "このカスタムプロバイダーを削除してもよろしいですか？",
+        "noProviders": "設定されたカスタムプロバイダーがありません。",
+        "noProvidersDesc": "OpenRouter、xAI、Groq等のAPI キーを追加して、LexiVocab ツール全体で使用してください。"
       },
       "notifications": {
         "title": "通知設定",
@@ -619,7 +688,8 @@
     "coupon_applied": "クーポンが適用されました！",
     "pricing_errors": {
       "invalid_coupon": "クーポンが無効か、期限が切れています",
-      "failed_to_create_order": "注文の作成に失敗しました"
+      "failed_to_create_order": "注文の作成に失敗しました",
+      "coupon_currency_mismatch": "このクーポンは{currency}払いにのみ使用できます。"
     }
   },
   "Billing": {
@@ -830,6 +900,10 @@
     "go_dashboard": "ダッシュボードへ",
     "view_billing": "請求内容を確認"
   },
+  "Modal": {
+    "confirm": "確認",
+    "cancel": "キャンセル"
+  },
   "AI": {
     "tags": {
       "assistant": "AI アシスタント",
@@ -869,7 +943,14 @@
     "tabs": {
       "explain": "説明",
       "related": "関連",
-      "quiz": "クイズ"
+      "quiz": "クイズ",
+      "story": "ストーリー"
+    },
+    "story": {
+      "title": "短編物語",
+      "translation": "簡易翻訳",
+      "generating": "ストーリーを作成中...",
+      "stop": "中止"
     }
   },
   "Admin": {
@@ -972,5 +1053,63 @@
   "notifications": {
     "testSuccess": "テストが無事送信されました！チャットアプリを確認してください。",
     "testError": "テスト送信に失敗しました。トークンとユーザーIDを見直してください。"
+  },
+  "errors": {
+    "UNKNOWN_ERROR": "不明なエラーが発生しました。後でもう一度お試しください。",
+    "GENERIC_ERROR": "不明なエラーが発生しました。後でもう一度お試しください。",
+    "INTERNAL_SERVER_ERROR": "サーバー内部エラーが発生しました。",
+    "VALIDATION_FAILED": "入力内容を確認してください。",
+    "SERVICE_UNAVAILABLE": "サービスは一時的に利用できません。しばらくしてから再試行してください。",
+    "UNAUTHORIZED": "続行するにはログインしてください。",
+    "RESOURCE_NOT_FOUND": "リクエストされたリソースが見つかりませんでした。",
+    "RESOURCE_CONFLICT": "リソースが現在の状態と競合しています。",
+    "AUTH_INVALID_CREDENTIALS": "メールアドレスまたはパスワードが間違っています。",
+    "AUTH_EMAIL_ALREADY_EXISTS": "このメールはすでに登録されています。",
+    "AUTH_EMAIL_NOT_VERIFIED": "メールアドレスを確認してください。",
+    "AUTH_ACCOUNT_LOCKED": "アカウントはロックされました。",
+    "AUTH_ACCOUNT_DISABLED": "アカウントは無効になっています。",
+    "AUTH_SOCIAL_LOGIN_CONFLICT": "リンクされたソーシャルアカウントでログインしてください。",
+    "AUTH_INVALID_TOKEN": "セッションが無効です。",
+    "AUTH_TOKEN_EXPIRED": "セッションの有効期限が切れました。",
+    "AUTH_REFRESH_TOKEN_INVALID": "セッションを更新できませんでした。",
+    "AUTH_GOOGLE_TOKEN_INVALID": "Googleログインに失敗しました。",
+    "AUTH_PASSWORD_TOO_WEAK": "より強力なパスワードを選択してください。",
+    "AUTH_VERIFICATION_CODE_INVALID": "確認コードが間違っています。",
+    "AUTH_VERIFICATION_CODE_EXPIRED": "確認コードの有効期限が切れました。",
+    "AUTH_SESSION_EXPIRED": "セッションの有効期限が切れました。",
+    "AUTHZ_RESOURCE_FORBIDDEN": "このリソースにアクセスする権限がありません。",
+    "AUTHZ_ADMIN_ONLY": "管理者権限が必要です。",
+    "VOCAB_NOT_FOUND": "単語が見つかりませんでした。",
+    "VOCAB_ALREADY_EXISTS": "この単語はすでに保存されています。",
+    "VOCAB_QUOTA_EXCEEDED": "保存できる単語の制限に達しました。",
+    "VOCAB_INVALID_IMPORT_FORMAT": "語彙インポートの形式が無効です。",
+    "VOCAB_BATCH_IMPORT_FAILED": "一括インポートに失敗しました。",
+    "VOCAB_EXPORT_FAILED": "語彙のエクスポートに失敗しました。",
+    "TAG_NOT_FOUND": "タグが見つかりませんでした。",
+    "TAG_ALREADY_EXISTS": "このタグはすでに存在します。",
+    "TAG_NAME_ALREADY_EXISTS": "このタグ名はすでに存在します。",
+    "TAG_CANNOT_DELETE_WITH_WORDS": "単語が紐づいているため、このタグは削除できません。",
+    "REVIEW_SESSION_NOT_FOUND": "復習セッションが見つかりません。",
+    "REVIEW_INVALID_QUALITY_SCORE": "復習品質スコアが無効です。",
+    "REVIEW_NO_CARDS_DUE": "現在、復習対象のカードはありません。",
+    "PAYMENT_DECLINED": "支払いが拒否されました。",
+    "PAYMENT_INVALID_COUPON": "クーポンコードが無効、または無効化されています。",
+    "PAYMENT_COUPON_EXPIRED": "クーポンの有効期限が切れています。",
+    "PAYMENT_ORDER_NOT_FOUND": "支払い注文が見つかりません。",
+    "PAYMENT_ORDER_EXPIRED": "支払い注文の有効期限が切れました。",
+    "PAYMENT_PROVIDER_ERROR": "決済プロバイダーでエラーが発生しました。",
+    "PAYMENT_ALREADY_PROCESSED": "この支払いはすでに処理済みです。",
+    "SUB_NOT_FOUND": "サブスクリプションが見つかりません。",
+    "SUB_ALREADY_ACTIVE": "サブスクリプションはすでに有効です。",
+    "SUB_EXPIRED": "サブスクリプションの有効期限が切れています。",
+    "SUB_CANCELLED": "サブスクリプションはキャンセル済みです。",
+    "SUB_PLAN_NOT_FOUND": "サブスクリプションプランが見つかりません。",
+    "RATE_LIMIT_EXCEEDED": "リクエストが多すぎます。後でお試しください。",
+    "AI_QUOTA_EXCEEDED": "AIの利用制限に達しました。Proにアップグレードしてください。",
+    "AI_SERVICE_UNAVAILABLE": "AIサービスは一時的に利用できません。",
+    "AI_INVALID_REQUEST": "AIリクエストが無効です。",
+    "AI_PROVIDER_ERROR": "AIプロバイダーでエラーが発生しました。",
+    "AI_MODEL_NOT_AVAILABLE": "選択したAIモデルは利用できません。",
+    "AUTHZ_INSUFFICIENT_PERMISSIONS": "権限がありません。Proにアップグレードしてください。"
   }
 }

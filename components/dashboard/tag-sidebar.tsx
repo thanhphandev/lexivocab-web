@@ -24,6 +24,7 @@ import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { TagDialog } from "./tag-dialog";
 import { toast } from "sonner";
+import { showErrorToast } from "@/lib/error-handler";
 import { ConfirmDialog } from "./confirm-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -49,6 +50,7 @@ export function TagSidebar({
     const [editingTag, setEditingTag] = useState<TagDto | null>(null);
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
     const t = useTranslations("Dashboard.vocabulary.tagSidebar");
+    const tErrors = useTranslations("errors");
 
     const handleDelete = async () => {
         if (!tagToDelete) return;
@@ -62,7 +64,7 @@ export function TagSidebar({
                 if (selectedTagId === id) onSelectTag("all");
                 onRefresh();
             } else {
-                toast.error(res.error || t("deleteFailed"));
+                showErrorToast(res, t("deleteFailed"), t);
             }
         } finally {
             setIsDeleting(null);

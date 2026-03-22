@@ -108,7 +108,7 @@ export default function DashboardHome() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
                 <div>
                     <h1 className="text-4xl font-extrabold tracking-tight text-foreground bg-gradient-to-r from-foreground to-foreground/60 bg-clip-text">
-                        {t("title")}, {user?.fullName?.split(" ")[0]}! 👋
+                        {t("title")}, {user?.fullName}! 👋
                     </h1>
                     <p className="mt-1.5 text-muted-foreground font-medium">
                         {t("subtitle")}
@@ -174,7 +174,7 @@ export default function DashboardHome() {
                 <Card className="md:col-span-4 shadow-md overflow-hidden border-none bg-gradient-to-br from-orange-400 to-rose-500 text-white">
                     <CardHeader className="pb-2">
                         <div className="flex justify-between items-center">
-                            <span className="text-[10px] font-bold uppercase tracking-widest opacity-80">Consistency Engine</span>
+                            <span className="text-[10px] font-bold uppercase tracking-widest opacity-80">{t("streak.title")}</span>
                             <Flame className="h-5 w-5 fill-white/20" />
                         </div>
                     </CardHeader>
@@ -188,19 +188,19 @@ export default function DashboardHome() {
                                 {dashboardData.currentStreak || 0}
                              </motion.div>
                              <div className="absolute -top-2 -right-6">
-                                <Badge className="bg-white/20 backdrop-blur-md text-white border-none py-0">DAYS</Badge>
+                                <Badge className="bg-white/20 backdrop-blur-md text-white border-none py-0">{t("streak.badge")}</Badge>
                              </div>
                         </div>
                         <h3 className="text-lg font-bold opacity-90">{t("stats.currentStreak")}</h3>
-                        <p className="text-xs opacity-70 mt-2 font-medium">Keep going! You're in the top 5% of learners.</p>
+                        <p className="text-xs opacity-70 mt-2 font-medium">{t("streak.motivationalText")}</p>
                         
                         <div className="mt-8 flex justify-center gap-6 border-t border-white/10 pt-6">
                             <div>
-                                <p className="text-[9px] font-bold uppercase opacity-60">Personal Best</p>
+                                <p className="text-[9px] font-bold uppercase opacity-60">{t("streak.personalBest")}</p>
                                 <p className="text-xl font-black">{streakDetails?.longestStreak || 0}d</p>
                             </div>
                             <div>
-                                <p className="text-[9px] font-bold uppercase opacity-60">Completion</p>
+                                <p className="text-[9px] font-bold uppercase opacity-60">{t("streak.completion")}</p>
                                 <p className="text-xl font-black">{inDepthStats?.learningProgress || 0}%</p>
                             </div>
                         </div>
@@ -213,19 +213,19 @@ export default function DashboardHome() {
                         <CardHeader className="pb-2">
                             <CardTitle className="text-sm font-bold flex items-center gap-2">
                                 <Zap className="h-4 w-4 text-yellow-500" />
-                                Today's Review Power
+                                {t("power.title")}
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="flex items-baseline gap-2 mb-4">
                                 <span className="text-4xl font-black text-foreground">{dashboardData.reviews?.totalReviewsToday || 0}</span>
-                                <span className="text-xs text-muted-foreground font-bold uppercase tracking-tighter">Completed</span>
+                                <span className="text-xs text-muted-foreground font-bold uppercase tracking-tighter">{t("power.completed")}</span>
                             </div>
                             
                             <div className="space-y-4">
                                 <div>
                                     <div className="flex justify-between text-[10px] font-bold uppercase mb-1.5 opacity-60">
-                                        <span>Average Accuracy</span>
+                                        <span>{t("power.averageAccuracy")}</span>
                                         <span>{(dashboardData.reviews?.averageQualityScore || 0).toFixed(1)} / 5.0</span>
                                     </div>
                                     <Progress value={(dashboardData.reviews?.averageQualityScore || 0) * 20} className="h-1.5" />
@@ -233,7 +233,7 @@ export default function DashboardHome() {
                                 <div className="p-3 bg-secondary/50 rounded-xl flex items-center justify-between">
                                     <div className="flex items-center gap-2">
                                         <TrendingUp className="h-4 w-4 text-indigo-500" />
-                                        <span className="text-xs font-bold">Retention Rate</span>
+                                        <span className="text-xs font-bold">{t("power.retentionRate")}</span>
                                     </div>
                                     <span className="text-sm font-black text-indigo-600 dark:text-indigo-400">{inDepthStats?.retentionRate || 0}%</span>
                                 </div>
@@ -246,7 +246,7 @@ export default function DashboardHome() {
                             <div className="flex justify-between items-center">
                                 <CardTitle className="text-sm font-bold flex items-center gap-2">
                                     <Shield className="h-4 w-4 text-primary" />
-                                    Account Quota
+                                    {t("quota.title")}
                                 </CardTitle>
                                 <Badge className="bg-primary/10 text-primary border-none text-[10px] font-black uppercase">
                                     {permissions?.plan || "Free"}
@@ -256,10 +256,10 @@ export default function DashboardHome() {
                         <CardContent className="space-y-6 pt-2">
                             <div className="space-y-2">
                                 <div className="flex items-center justify-between text-[11px] font-bold uppercase opacity-60">
-                                    <span>Library Storage</span>
+                                    <span>{t("quota.storageLabel")}</span>
                                     <span>
                                         {quotaMax >= 2147483647 
-                                            ? `${dashboardData.vocabulary?.totalWords || 0} / ∞` 
+                                            ? `${dashboardData.vocabulary?.totalWords || 0} / ${t("quota.unlimited")}` 
                                             : `${dashboardData.vocabulary?.totalWords || 0} / ${quotaMax}`}
                                     </span>
                                 </div>
@@ -281,7 +281,7 @@ export default function DashboardHome() {
                                     href={`/pricing`} 
                                     className="block w-full text-center py-2.5 bg-primary text-primary-foreground text-xs font-black uppercase tracking-widest rounded-xl hover:shadow-lg transition-all"
                                 >
-                                    Unlock Pro 🚀
+                                    {t("quota.unlockPro")}
                                 </Link>
                             )}
                         </CardContent>
@@ -296,7 +296,7 @@ export default function DashboardHome() {
                     <CardHeader>
                         <CardTitle className="text-sm font-bold flex items-center gap-2">
                             <Trophy className="h-4 w-4 text-emerald-500" />
-                            Level Insight
+                            {t("insight.title")}
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-6">
@@ -316,7 +316,7 @@ export default function DashboardHome() {
                         </div>
 
                         <div className="pt-4 border-t border-border/50">
-                            <p className="text-[10px] font-bold text-muted-foreground uppercase mb-3 px-1">Tough Challenges</p>
+                            <p className="text-[10px] font-bold text-muted-foreground uppercase mb-3 px-1">{t("insight.toughChallenges")}</p>
                             <div className="flex flex-wrap gap-1.5">
                                 {(inDepthStats?.mostDifficultWords?.length || 0) > 0 ? (
                                     inDepthStats?.mostDifficultWords?.slice(0, 6).map((word, idx) => (
@@ -325,7 +325,7 @@ export default function DashboardHome() {
                                         </Badge>
                                     ))
                                 ) : (
-                                    <p className="text-[10px] text-muted-foreground italic px-1">Zero friction found. Solid!</p>
+                                    <p className="text-[10px] text-muted-foreground italic px-1">{t("insight.noChallenges")}</p>
                                 )}
                             </div>
                         </div>
@@ -337,7 +337,7 @@ export default function DashboardHome() {
                     <CardHeader className="flex flex-row items-center justify-between">
                         <div>
                             <CardTitle className="text-lg font-bold">{t("heatmap.title")}</CardTitle>
-                            <p className="text-xs text-muted-foreground">Daily activity frequency</p>
+                            <p className="text-xs text-muted-foreground">{t("activity.subtitle")}</p>
                         </div>
                         <Badge className="bg-primary shadow-sm">{heatmapData?.year || new Date().getFullYear()}</Badge>
                     </CardHeader>
@@ -348,7 +348,7 @@ export default function DashboardHome() {
                             </div>
                         ) : (
                             <div className="h-48 flex items-center justify-center text-muted-foreground italic text-sm">
-                                Warming up engine...
+                                {t("activity.warming")}
                             </div>
                         )}
                     </CardContent>
@@ -356,9 +356,9 @@ export default function DashboardHome() {
             </div>
             
             <div className="flex items-center justify-between text-[10px] text-muted-foreground px-4 italic font-medium">
-                <span>Last updated: {lastRefresh.toLocaleTimeString()}</span>
+                <span>{t("footer.lastUpdated")} {lastRefresh.toLocaleTimeString()}</span>
                 <span className="flex items-center gap-1.5 underline decoration-emerald-500/30 underline-offset-4 cursor-help">
-                    <Shield className="h-2.5 w-2.5" /> Data protected by LexiGuard Engine v1.0
+                    <Shield className="h-2.5 w-2.5" /> {t("footer.dataProtection")}
                 </span>
             </div>
         </div>

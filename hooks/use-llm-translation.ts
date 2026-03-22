@@ -79,17 +79,19 @@ export function useLLMTranslation() {
                     }
                 }
             }
-        } catch (err) {
-            const status = (err as any)?.status;
+        } catch (err: any) {
+            const status = err?.status;
+            const code = err?.errorCode || err?.code;
             let message: string;
-            if (status === 403) {
+            
+            if (code === "AI_QUOTA_EXCEEDED" || code === "AUTHZ_INSUFFICIENT_PERMISSIONS" || status === 403) {
                 message = "LLM translation quota reached. Upgrade to Pro.";
             } else if (status === 401) {
                 message = "Please sign in to use LLM features.";
-            } else if (status === 429) {
+            } else if (code === "RATE_LIMIT_EXCEEDED" || status === 429) {
                 message = "Too many requests. Please wait a moment.";
             } else {
-                message = err instanceof Error ? err.message : "Failed to connect to AI service";
+                message = err?.message || "Failed to connect to AI service";
             }
             setStreamingError(message);
         } finally {

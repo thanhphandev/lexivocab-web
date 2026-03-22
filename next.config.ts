@@ -10,10 +10,16 @@ const nextConfig: NextConfig = {
   // Image optimization - use modern formats
   images: {
     formats: ['image/avif', 'image/webp'],
-    // Enable remote patterns if needed
-    // remotePatterns: [
-    //   { protocol: 'https', hostname: 'example.com' },
-    // ],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'api.dicebear.com',
+      }
+    ],
   },
 
   // Compression

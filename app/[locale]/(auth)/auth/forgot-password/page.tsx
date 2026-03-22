@@ -9,10 +9,12 @@ import { Loader2, ArrowLeft, MailCheck, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { authApi } from "@/lib/api/api-client";
+import { getLocalizedApiError } from "@/lib/error-handler";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function ForgotPasswordPage() {
     const t = useTranslations("Auth");
+    const tErrors = useTranslations("errors");
     const locale = useLocale();
     const [email, setEmail] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -29,7 +31,7 @@ export default function ForgotPasswordPage() {
             if (res.success) {
                 setIsSuccess(true);
             } else {
-                setError(res.error || t("unexpectedError"));
+                setError(getLocalizedApiError(res, tErrors, t("unexpectedError")));
             }
         } catch {
             setError(t("unexpectedError"));

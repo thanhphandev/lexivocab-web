@@ -20,6 +20,7 @@ import { Loader2, ArrowLeftRight } from "lucide-react";
 import { QuickModelSwitcher } from "@/components/ai/quick-model-switcher";
 import { useLLMTranslation } from "@/hooks/use-llm-translation";
 import { toast } from "sonner";
+import { showErrorToast } from "@/lib/error-handler";
 
 interface EditWordDialogProps {
     item: VocabularyDto;
@@ -30,6 +31,7 @@ interface EditWordDialogProps {
 
 export function EditWordDialog({ item, open, onOpenChange, onSuccess }: EditWordDialogProps) {
     const t = useTranslations("Dashboard.vocabulary.editWordDialog");
+    const tErrors = useTranslations("errors");
     const [isLoading, setIsLoading] = useState(false);
 
     const [customMeaning, setCustomMeaning] = useState(item.customMeaning || "");
@@ -96,11 +98,7 @@ export function EditWordDialog({ item, open, onOpenChange, onSuccess }: EditWord
                 onOpenChange(false);
                 onSuccess();
             } else {
-                if (res.error?.includes("not found")) {
-                    toast.error(t("notFound"));
-                } else {
-                    toast.error(t("failed"));
-                }
+                showErrorToast(res, t("failed"), tErrors);
             }
         } finally {
             setIsLoading(false);

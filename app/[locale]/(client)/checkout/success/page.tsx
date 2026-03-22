@@ -10,11 +10,13 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, Loader2, XCircle, ArrowRight, Crown, Sparkles } from "lucide-react";
 import confetti from "canvas-confetti";
+import { getLocalizedApiError } from "@/lib/error-handler";
 
 export default function CheckoutSuccessPage() {
     const locale = useLocale();
     const t = useTranslations("Checkout");
     const tPricing = useTranslations("Pricing");
+    const tErrors = useTranslations("errors");
     const searchParams = useSearchParams();
     const { refreshSession, permissions } = useAuth();
     const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
@@ -28,7 +30,7 @@ export default function CheckoutSuccessPage() {
 
             if (!orderId) {
                 setStatus("error");
-                setMessage("Missing order information. Please contact support.");
+                setMessage(getLocalizedApiError({ errorCode: "PAYMENT_ORDER_NOT_FOUND" }, tErrors, tErrors("RESOURCE_NOT_FOUND")));
                 return;
             }
 
@@ -51,12 +53,12 @@ export default function CheckoutSuccessPage() {
                         triggerConfetti();
                     } else {
                         setStatus("error");
-                        setMessage("error" in res ? res.error : "Payment processing failed.");
+                        setMessage(getLocalizedApiError(res, tErrors, tErrors("PAYMENT_PROVIDER_ERROR")));
                     }
                 }
             } catch (err) {
                 setStatus("error");
-                setMessage("An unexpected error occurred.");
+                setMessage(tErrors("GENERIC_ERROR"));
             }
         };
 

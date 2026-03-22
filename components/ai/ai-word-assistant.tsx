@@ -3,7 +3,8 @@
 import { useState, useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { aiApi } from "@/lib/api/api-client";
-import type { WordExplanationDto, RelatedWordsDto, QuizDto } from "@/lib/api/types";
+import type { WordExplanationDto, RelatedWordsDto, QuizDto, ApiErrorResponse } from "@/lib/api/types";
+import { ErrorCode } from "@/lib/api/types";
 import {
     Sheet,
     SheetContent,
@@ -123,32 +124,33 @@ export function AIWordAssistant({ word, context, isOpen, onClose, provider, mode
     const [explanation, setExplanation] = useState<Partial<WordExplanationDto>>({});
     const [isStreaming, setIsStreaming] = useState(false);
     const [streamingContent, setStreamingContent] = useState("");
-    const [explainError, setExplainError] = useState<string | null>(null);
+    const [explainError, setExplainError] = useState<ApiErrorResponse | null>(null);
 
     // Related State
     const [related, setRelated] = useState<RelatedWordsDto | null>(null);
     const [isLoadingRelated, setIsLoadingRelated] = useState(false);
-    const [relatedError, setRelatedError] = useState<string | null>(null);
+    const [relatedError, setRelatedError] = useState<ApiErrorResponse | null>(null);
 
     // Quiz State
     const [quiz, setQuiz] = useState<QuizDto | null>(null);
     const [isLoadingQuiz, setIsLoadingQuiz] = useState(false);
     const [selectedOption, setSelectedOption] = useState<number | null>(null);
     const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
-    const [quizError, setQuizError] = useState<string | null>(null);
+    const [quizError, setQuizError] = useState<ApiErrorResponse | null>(null);
 
     // Story State
     const [isStoryStreaming, setIsStoryStreaming] = useState(false);
     const [storyStreamingContent, setStoryStreamingContent] = useState("");
-    const [storyError, setStoryError] = useState<string | null>(null);
+    const [storyError, setStoryError] = useState<ApiErrorResponse | null>(null);
 
-    const isQuotaError = (err: string | null) => {
-        if (!err) return false;
-        const lower = err.toLowerCase();
+    const isQuotaError = (errObj: ApiErrorResponse | null) => {
+        if (!errObj) return false;
+        if (errObj.errorCode === ErrorCode.AI_QUOTA_EXCEEDED || errObj.errorCode === ErrorCode.AUTHZ_INSUFFICIENT_PERMISSIONS) return true;
+        const lower = errObj.error?.toLowerCase() || "";
         return lower.includes("quota") || lower.includes("limit") || lower.includes("hạn ngạch") || lower.includes("giới hạn");
     };
 
-    const ErrorDisplay = ({ error, onRetry }: { error: string, onRetry: () => void }) => {
+    const ErrorDisplay = ({ error, onRetry }: { error: ApiErrorResponse, onRetry: () => void }) => {
         const isQuota = isQuotaError(error);
         return (
             <div className={cn(
@@ -162,7 +164,11 @@ export function AIWordAssistant({ word, context, isOpen, onClose, provider, mode
                     <p className="font-semibold text-base mb-1">
                         {isQuota ? t("errors.quotaReachedTitle") : t("errors.title")}
                     </p>
-                    <p className="opacity-90 leading-relaxed mb-4">{error}</p>
+                    <p className="opacity-90 leading-relaxed mb-1">{error.error || "An error occurred"}</p>
+                    {error.traceId && (
+                        <p className="opacity-50 text-[10px] font-mono leading-relaxed mb-4">Trace ID: {error.traceId}</p>
+                    )}
+                    {!error.traceId && <div className="mb-4" />}
 
                     <div className="flex flex-wrap gap-2">
                         {isQuota ? (
@@ -234,12 +240,12 @@ export function AIWordAssistant({ word, context, isOpen, onClose, provider, mode
             });
 
             if (!response.ok) {
-                let errMessage = "Failed to connect to AI stream";
+                let errObj: ApiErrorResponse = { success: false, error: "Failed to connect to AI stream" };
                 try {
                     const body = await response.json();
-                    if (body.error) errMessage = typeof body.error === 'string' ? body.error : JSON.stringify(body.error);
+                    if (body.error) errObj = body;
                 } catch { }
-                throw new Error(errMessage);
+                throw errObj;
             }
 
             const reader = response.body?.getReader();
@@ -271,7 +277,7 @@ export function AIWordAssistant({ word, context, isOpen, onClose, provider, mode
                                     // Optionally parse the final combined markdown if needed
                                     // but we'll stick to delta for now
                                 } else if (parsed.type === "error") {
-                                    setExplainError(parsed.message);
+                                    setExplainError({ success: false, error: parsed.message, errorCode: parsed.code, traceId: parsed.traceId });
                                 }
                             } catch (e) {
                                 console.error("Error parsing stream chunk", e);
@@ -282,7 +288,7 @@ export function AIWordAssistant({ word, context, isOpen, onClose, provider, mode
             }
         } catch (err: any) {
             if (err.name !== "AbortError") {
-                setExplainError(err.message || "An error occurred while streaming AI response");
+                setExplainError(err.success === false ? err : { success: false, error: err.message || "An error occurred while streaming AI response" });
             }
         } finally {
             if (abortControllerRef.current === controller) {
@@ -314,8 +320,12 @@ export function AIWordAssistant({ word, context, isOpen, onClose, provider, mode
             });
 
             if (!response.ok) {
-                const body = await response.json();
-                throw new Error(body.error || "Failed finding story");
+                let errObj: ApiErrorResponse = { success: false, error: "Failed finding story" };
+                try {
+                    const body = await response.json();
+                    if (body.error) errObj = body;
+                } catch { }
+                throw errObj;
             }
 
             const reader = response.body?.getReader();
@@ -341,7 +351,7 @@ export function AIWordAssistant({ word, context, isOpen, onClose, provider, mode
                                 if (parsed.type === "content") {
                                     setStoryStreamingContent(prev => prev + parsed.delta);
                                 } else if (parsed.type === "error") {
-                                    setStoryError(parsed.message);
+                                    setStoryError({ success: false, error: parsed.message, errorCode: parsed.code, traceId: parsed.traceId });
                                 }
                             } catch { }
                         }
@@ -349,7 +359,7 @@ export function AIWordAssistant({ word, context, isOpen, onClose, provider, mode
                 }
             }
         } catch (err: any) {
-            if (err.name !== "AbortError") setStoryError(err.message || "An error occurred");
+            if (err.name !== "AbortError") setStoryError(err.success === false ? err : { success: false, error: err.message || "An error occurred" });
         } finally {
             if (abortControllerRef.current === controller) setIsStoryStreaming(false);
         }
@@ -364,7 +374,7 @@ export function AIWordAssistant({ word, context, isOpen, onClose, provider, mode
         const reqModelId = overrideModelId || activeModelId;
         const res = await aiApi.getRelated(word, reqProvider, reqModelId);
         if (res.success) setRelated(res.data);
-        else setRelatedError(res.error || "Failed finding related words.");
+        else setRelatedError(res);
         setIsLoadingRelated(false);
     };
 
@@ -378,7 +388,7 @@ export function AIWordAssistant({ word, context, isOpen, onClose, provider, mode
         const reqModelId = overrideModelId || activeModelId;
         const res = await aiApi.getQuiz(word, reqProvider, reqModelId);
         if (res.success) setQuiz(res.data);
-        else setQuizError(res.error || "Failed generating quiz.");
+        else setQuizError(res);
         setIsLoadingQuiz(false);
     };
 
@@ -409,7 +419,7 @@ export function AIWordAssistant({ word, context, isOpen, onClose, provider, mode
 
     return (
         <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
-            <SheetContent className="sm:max-w-md md:max-w-lg flex flex-col p-0 gap-0 h-full">
+            <SheetContent className="sm:max-w-md md:max-w-xl flex flex-col p-0 gap-0 h-full">
                 <SheetHeader className="p-6 border-b bg-card">
                     <div className="flex items-center justify-between mb-1">
                         <div className="flex items-center gap-2">
@@ -448,9 +458,9 @@ export function AIWordAssistant({ word, context, isOpen, onClose, provider, mode
                     </SheetDescription>
                 </SheetHeader>
 
-                <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
-                    <div className="px-4 py-3 border-b bg-muted/30">
-                        <TabsList className="flex flex-wrap w-full h-auto gap-2 bg-transparent justify-start p-0">
+                <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col min-h-0 overflow-hidden">
+                    <div className="w-full border-b bg-muted/30 overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                        <TabsList className="flex w-max rounded-none h-auto gap-2 bg-transparent justify-start p-0 px-4 py-3">
                             <TabsTrigger value="explain" className="flex items-center gap-2 shrink-0 rounded-full px-4 py-2 border border-transparent data-[state=active]:border-border bg-muted/50 hover:bg-muted data-[state=active]:bg-background data-[state=active]:shadow-sm">
                                 <BookOpen className="h-4 w-4" />
                                 {t("tabs.explain") || "Giải thích"}
@@ -465,7 +475,7 @@ export function AIWordAssistant({ word, context, isOpen, onClose, provider, mode
                             </TabsTrigger>
                             <TabsTrigger value="story" className="flex items-center gap-2 shrink-0 rounded-full px-4 py-2 border border-transparent data-[state=active]:border-border bg-muted/50 hover:bg-muted data-[state=active]:bg-background data-[state=active]:shadow-sm">
                                 <BookOpen className="h-4 w-4 text-blue-500" />
-                                Truyện ngắn
+                                {t("tabs.story") || "Story"}
                             </TabsTrigger>
                         </TabsList>
                     </div>
@@ -593,54 +603,54 @@ export function AIWordAssistant({ word, context, isOpen, onClose, provider, mode
                                     <div className="space-y-8">
                                         {/* Synonyms */}
                                         {related.synonyms && related.synonyms.length > 0 && (
-                                        <section>
-                                            <h4 className="text-sm font-bold flex items-center gap-2 mb-3 text-emerald-600 dark:text-emerald-400">
-                                                <div className="h-1.5 w-1.5 rounded-full bg-current" />
-                                                {t("related.synonyms")}
-                                            </h4>
-                                            <div className="flex flex-wrap gap-2">
-                                                {related.synonyms.map((s, idx) => (
-                                                    <Badge key={idx} variant="outline" className="bg-emerald-500/5 hover:bg-emerald-500/10 cursor-pointer transition-colors border-emerald-500/20">
-                                                        {s}
-                                                    </Badge>
-                                                ))}
-                                            </div>
-                                        </section>
+                                            <section>
+                                                <h4 className="text-sm font-bold flex items-center gap-2 mb-3 text-emerald-600 dark:text-emerald-400">
+                                                    <div className="h-1.5 w-1.5 rounded-full bg-current" />
+                                                    {t("related.synonyms")}
+                                                </h4>
+                                                <div className="flex flex-wrap gap-2">
+                                                    {related.synonyms.map((s, idx) => (
+                                                        <Badge key={idx} variant="outline" className="bg-emerald-500/5 hover:bg-emerald-500/10 cursor-pointer transition-colors border-emerald-500/20">
+                                                            {s}
+                                                        </Badge>
+                                                    ))}
+                                                </div>
+                                            </section>
                                         )}
 
                                         {/* Antonyms */}
                                         {related.antonyms && related.antonyms.length > 0 && (
-                                        <section>
-                                            <h4 className="text-sm font-bold flex items-center gap-2 mb-3 text-rose-600 dark:text-rose-400">
-                                                <div className="h-1.5 w-1.5 rounded-full bg-current" />
-                                                {t("related.antonyms")}
-                                            </h4>
-                                            <div className="flex flex-wrap gap-2">
-                                                {related.antonyms.map((a, idx) => (
-                                                    <Badge key={idx} variant="outline" className="bg-rose-500/5 hover:bg-rose-500/10 cursor-pointer transition-colors border-rose-500/20">
-                                                        {a}
-                                                    </Badge>
-                                                ))}
-                                            </div>
-                                        </section>
+                                            <section>
+                                                <h4 className="text-sm font-bold flex items-center gap-2 mb-3 text-rose-600 dark:text-rose-400">
+                                                    <div className="h-1.5 w-1.5 rounded-full bg-current" />
+                                                    {t("related.antonyms")}
+                                                </h4>
+                                                <div className="flex flex-wrap gap-2">
+                                                    {related.antonyms.map((a, idx) => (
+                                                        <Badge key={idx} variant="outline" className="bg-rose-500/5 hover:bg-rose-500/10 cursor-pointer transition-colors border-rose-500/20">
+                                                            {a}
+                                                        </Badge>
+                                                    ))}
+                                                </div>
+                                            </section>
                                         )}
 
                                         {/* Collocations */}
                                         {related.collocations && related.collocations.length > 0 && (
-                                        <section>
-                                            <h4 className="text-sm font-bold flex items-center gap-2 mb-3 text-blue-600 dark:text-blue-400">
-                                                <div className="h-1.5 w-1.5 rounded-full bg-current" />
-                                                {t("related.collocations")}
-                                            </h4>
-                                            <div className="grid grid-cols-1 gap-2">
-                                                {related.collocations.map((c, idx) => (
-                                                    <div key={idx} className="text-sm p-2 rounded-lg bg-blue-500/5 border border-blue-500/10 flex items-center gap-2">
-                                                        <ChevronRight className="h-3 w-3 text-blue-400 shrink-0" />
-                                                        {c}
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </section>
+                                            <section>
+                                                <h4 className="text-sm font-bold flex items-center gap-2 mb-3 text-blue-600 dark:text-blue-400">
+                                                    <div className="h-1.5 w-1.5 rounded-full bg-current" />
+                                                    {t("related.collocations")}
+                                                </h4>
+                                                <div className="grid grid-cols-1 gap-2">
+                                                    {related.collocations.map((c, idx) => (
+                                                        <div key={idx} className="text-sm p-2 rounded-lg bg-blue-500/5 border border-blue-500/10 flex items-center gap-2">
+                                                            <ChevronRight className="h-3 w-3 text-blue-400 shrink-0" />
+                                                            {c}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </section>
                                         )}
 
                                         {/* Mnemonic */}
@@ -752,7 +762,7 @@ export function AIWordAssistant({ word, context, isOpen, onClose, provider, mode
                                                             <div className="p-4 rounded-xl bg-blue-500/10 border border-blue-500/20 relative overflow-hidden">
                                                                 <div className="flex items-center gap-2 mb-2 text-blue-600 font-semibold text-sm">
                                                                     <BookOpen className="h-4 w-4" />
-                                                                    Truyện ngắn
+                                                                    {t("story.title")}
                                                                 </div>
                                                                 <div className="text-sm leading-relaxed text-foreground whitespace-pre-wrap italic">
                                                                     {partial.story}
@@ -763,7 +773,7 @@ export function AIWordAssistant({ word, context, isOpen, onClose, provider, mode
                                                         {partial.translation && (
                                                             <div className="p-4 rounded-xl bg-muted/50 border border-border mt-4">
                                                                 <div className="flex items-center gap-2 mb-2 font-bold uppercase tracking-wider text-[11px] text-muted-foreground">
-                                                                    Tạm dịch
+                                                                    {t("story.translation")}
                                                                 </div>
                                                                 <div className="text-sm font-medium leading-relaxed">
                                                                     {partial.translation}
@@ -774,7 +784,7 @@ export function AIWordAssistant({ word, context, isOpen, onClose, provider, mode
                                                         {!partial.story && isStoryStreaming && (
                                                             <div className="flex items-center gap-2 text-muted-foreground animate-pulse p-4 text-sm font-medium border rounded-xl border-dashed">
                                                                 <Sparkles className="h-4 w-4 text-blue-500" />
-                                                                Đang sáng tác truyện...
+                                                                {t("story.generating")}
                                                             </div>
                                                         )}
                                                     </div>
@@ -787,7 +797,7 @@ export function AIWordAssistant({ word, context, isOpen, onClose, provider, mode
                                         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="pt-6 border-t flex flex-col gap-4">
                                             <Button variant="outline" size="sm" onClick={stopStreaming} className="w-fit text-muted-foreground hover:text-destructive hover:border-destructive/30 hover:bg-destructive/10">
                                                 <Square className="h-3 w-3 mr-2 fill-current" />
-                                                Stop
+                                                {t("story.stop")}
                                             </Button>
                                         </motion.div>
                                     )}

@@ -40,6 +40,7 @@ import {
 import { cn } from "@/lib/utils";
 import { EditWordDialog } from "./edit-word-dialog";
 import { toast } from "sonner";
+import { showErrorToast } from "@/lib/error-handler";
 import { ConfirmDialog } from "./confirm-dialog";
 
 interface VocabularyTableProps {
@@ -51,6 +52,7 @@ interface VocabularyTableProps {
 
 export function VocabularyTable({ data, tags, isLoading, onRefresh }: VocabularyTableProps) {
     const t = useTranslations("Dashboard.vocabulary");
+    const tErrors = useTranslations("errors");
     const [actionLoading, setActionLoading] = useState<string | null>(null);
     const [editingItem, setEditingItem] = useState<VocabularyDto | null>(null);
     const [itemToDelete, setItemToDelete] = useState<VocabularyDto | null>(null);
@@ -106,7 +108,7 @@ export function VocabularyTable({ data, tags, isLoading, onRefresh }: Vocabulary
                 toast.success(t("table.deleteSuccess", { word }));
                 onRefresh();
             } else {
-                toast.error(res.error || t("table.deleteFailed", { word }));
+                showErrorToast(res, t("table.deleteFailed", { word }), t);
             }
         } finally {
             setActionLoading(null);
@@ -123,7 +125,7 @@ export function VocabularyTable({ data, tags, isLoading, onRefresh }: Vocabulary
                 toast.success(t("table.contributeSuccess", { word }));
                 onRefresh();
             } else {
-                toast.error(res.error || t("table.contributeFailed", { word }));
+                showErrorToast(res, t("table.contributeFailed", { word }), t);
             }
         } finally {
             setActionLoading(null);

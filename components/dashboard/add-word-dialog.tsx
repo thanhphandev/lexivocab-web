@@ -22,10 +22,12 @@ import { Loader2, Plus, Search, Volume2, ArrowLeftRight } from "lucide-react";
 import { QuickModelSwitcher } from "@/components/ai/quick-model-switcher";
 import { useLLMTranslation } from "@/hooks/use-llm-translation";
 import { toast } from "sonner";
+import { showErrorToast } from "@/lib/error-handler";
 
 export function AddWordDialog({ onSuccess }: { onSuccess: () => void }) {
     const t = useTranslations("Dashboard.vocabulary");
     const tDialog = useTranslations("Dashboard.vocabulary.addWordDialog");
+    const tErrors = useTranslations("errors");
     const [open, setOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isSearching, setIsSearching] = useState(false);
@@ -149,13 +151,11 @@ export function AddWordDialog({ onSuccess }: { onSuccess: () => void }) {
                 setLookupResult(null);
                 onSuccess();
             } else {
-                if (res.error?.includes("ERR_QUOTA_EXCEEDED")) {
-                    toast.error(t("quota.exceededDesc"));
-                } else if (res.error?.includes("already saved")) {
-                    toast.error(tDialog("conflict", { word: wordText.trim() }));
-                } else {
-                    toast.error(tDialog("failed"));
-                }
+                showErrorToast(
+                    res,
+                    res.errorCode ? tErrors(res.errorCode as any) : tDialog("failed"),
+                    tErrors
+                );
             }
         } finally {
             setIsLoading(false);

@@ -101,6 +101,45 @@
         "currentStreak": "Chuỗi học liên tiếp",
         "totalStudyDays": "Tổng số ngày học"
       },
+      "liveSync": {
+        "active": "Đồng bộ trực tiếp hoạt động",
+        "paused": "Đã tạm dừng đồng bộ"
+      },
+      "controls": {
+        "refresh": "Làm mới"
+      },
+      "streak": {
+        "title": "Công cụ tính nhất quán",
+        "badge": "NGÀY",
+        "motivationalText": "Hãy tiếp tục! Bạn đang trong top 5% những người học.",
+        "personalBest": "Kỷ lục cá nhân",
+        "completion": "Hoàn thành"
+      },
+      "power": {
+        "title": "Năng lực ôn tập hôm nay",
+        "completed": "Đã hoàn thành",
+        "averageAccuracy": "Độ chính xác trung bình",
+        "retentionRate": "Tỷ lệ giữ lại"
+      },
+      "quota": {
+        "title": "Hạn mức tài khoản",
+        "storageLabel": "Bộ sưu tập từ",
+        "unlimited": "∞",
+        "unlockPro": "Mở khóa Pro 🚀"
+      },
+      "insight": {
+        "title": "Thông tin cấp độ",
+        "toughChallenges": "Những thách thức khó",
+        "noChallenges": "Không có khó khăn. Tuyệt vời!"
+      },
+      "activity": {
+        "subtitle": "Tần suất hoạt động hàng ngày",
+        "warming": "Khởi động động cơ..."
+      },
+      "footer": {
+        "lastUpdated": "Cập nhật lần cuối:",
+        "dataProtection": "Dữ liệu được bảo vệ bởi LexiGuard Engine v1.0"
+      },
       "heatmap": {
         "title": "Lịch sử học tập",
         "less": "Ít hơn",
@@ -322,6 +361,7 @@
       "sessionStats": "Bạn đã ôn tập {count} từ hôm nay. Hãy tiếp tục phát huy!",
       "backToDashboard": "Trở về Tổng quan",
       "noReviews": "Bạn đã hoàn thành mục tiêu! Không có từ nào cần ôn tập lúc này.",
+      "dueToday": "Hôm nay có {count} từ cần ôn tập.",
       "cardFront": "Chạm để xem nghĩa",
       "quality": {
         "score_0": "Lại",
@@ -344,7 +384,13 @@
       "longestStreak": "Chuỗi dài nhất",
       "activeDays": "Ngày hoạt động",
       "distribution": "Phân bổ từ vựng",
-      "performance": "Hiệu suất ôn tập"
+      "performance": "Hiệu suất ôn tập",
+      "loadError": "Không thể tải dữ liệu phân tích.",
+      "masteryRate": "Tỷ lệ thành thạo",
+      "activeLearning": "Đang học",
+      "mastered": "Đã thành thạo",
+      "today": "Hôm nay",
+      "thisWeek": "Tuần này"
     },
     "settings": {
       "title": "Cài đặt",
@@ -426,6 +472,29 @@
         "confirmText": "Thu hồi tất cả",
         "confirmingText": "Đang thu hồi..."
       },
+      "customLlm": {
+        "title": "Nhà cung cấp AI tùy chỉnh",
+        "desc": "Thêm sở khoá API của riêng bạn cho các mô hình tùy chỉnh.",
+        "byok": "BYOK (Mang khoá của riêng bạn)",
+        "add": "Thêm Nhà cung cấp",
+        "edit": "Chỉnh sửa Nhà cung cấp",
+        "editTitle": "Chỉnh sửa Nhà cung cấp tùy chỉnh",
+        "addTitle": "Thêm Nhà cung cấp tùy chỉnh (BYOK)",
+        "displayName": "Tên Hoạt",
+        "displayNamePlaceholder": "Ví dụ: GPT-4o của tôi",
+        "baseUrl": "URL cơ sở",
+        "baseUrlPlaceholder": "Ví dụ: https://openrouter.ai/api/v1",
+        "apiKey": "Khoá API",
+        "apiKeyPlaceholder": "sk-...",
+        "modelId": "ID Mô hình",
+        "modelIdPlaceholder": "Ví dụ: openai/gpt-4o",
+        "cancel": "Hủy",
+        "save": "Lưu Cấu hình",
+        "delete": "Xóa",
+        "deleteConfirm": "Bạn có chắc chắn muốn xóa nhà cung cấp này không?",
+        "noProviders": "Chưa có nhà cung cấp tùy chỉnh nào được cấu hình.",
+        "noProvidersDesc": "Thêm khoá API của bạn cho OpenRouter, xAI, Groq, v.v. để sử dụng chúng trong các công cụ LexiVocab."
+      },
       "notifications": {
         "title": "Tùy chọn thông báo",
         "desc": "Quản lý cách nhận thông báo nhắc nhở ôn tập.",
@@ -498,7 +567,7 @@
     "best_value": "GIÁ TRỊ NHẤT",
     "go_dashboard": "Tới Bảng Điểu Khiển",
     "get_started": "Bắt đầu miễn phí",
-    "already_premium": "Bạn là thành viên Cao cấp ✨",
+    "already_premium": "Bạn đã là thành viên",
     "included_in_higher_plan": "Đã bao gồm trong gói cao hơn",
     "ultimate_plan": "Gói Ultimate",
     "ultimate_desc": "Mở khóa mọi thứ không giới hạn",
@@ -622,7 +691,8 @@
     "coupon_applied": "Đã áp dụng mã giảm giá thành công!",
     "pricing_errors": {
       "invalid_coupon": "Mã giảm giá không hợp lệ hoặc đã hết hạn",
-      "failed_to_create_order": "Không thể tạo đơn hàng"
+      "failed_to_create_order": "Không thể tạo đơn hàng",
+      "coupon_currency_mismatch": "Mã giảm giá này chỉ áp dụng cho thanh toán {currency}."
     }
   },
   "Billing": {
@@ -833,6 +903,10 @@
     "go_dashboard": "Về Dashboard",
     "view_billing": "Xem chi tiết thanh toán"
   },
+  "Modal": {
+    "confirm": "Xác nhận",
+    "cancel": "Hủy"
+  },
   "AI": {
     "tags": {
       "assistant": "Trợ lý AI",
@@ -872,7 +946,14 @@
     "tabs": {
       "explain": "Giải nghĩa",
       "related": "Liên quan",
-      "quiz": "Trắc nghiệm"
+      "quiz": "Trắc nghiệm",
+      "story": "Truyện ngắn"
+    },
+    "story": {
+      "title": "Truyện ngắn thú vị",
+      "translation": "Tạm dịch",
+      "generating": "Đang sáng tác câu chuyện...",
+      "stop": "Dừng lại"
     }
   },
   "Admin": {
@@ -975,5 +1056,63 @@
   "notifications": {
     "testSuccess": "Gửi tin nhắn test thành công! Hãy kiểm tra ứng dụng chat của bạn.",
     "testError": "Kiểm thử thất bại. Vui lòng xem lại Token và User ID."
+  },
+  "errors": {
+    "UNKNOWN_ERROR": "Đã xảy ra lỗi không xác định. Vui lòng thử lại sau.",
+    "GENERIC_ERROR": "Đã xảy ra lỗi không xác định. Vui lòng thử lại sau.",
+    "INTERNAL_SERVER_ERROR": "Hệ thống gặp sự cố. Chúng tôi đã ghi nhận và đang xử lý.",
+    "VALIDATION_FAILED": "Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.",
+    "SERVICE_UNAVAILABLE": "Dịch vụ hiện tạm thời không khả dụng. Vui lòng thử lại sau.",
+    "UNAUTHORIZED": "Vui lòng đăng nhập để tiếp tục.",
+    "RESOURCE_NOT_FOUND": "Không tìm thấy dữ liệu yêu cầu.",
+    "RESOURCE_CONFLICT": "Tài nguyên đang xung đột với trạng thái hiện tại.",
+    "AUTH_INVALID_CREDENTIALS": "Email hoặc mật khẩu không chính xác.",
+    "AUTH_EMAIL_ALREADY_EXISTS": "Email này đã được đăng ký. Vui lòng đăng nhập.",
+    "AUTH_EMAIL_NOT_VERIFIED": "Vui lòng xác minh địa chỉ email của bạn.",
+    "AUTH_ACCOUNT_LOCKED": "Tài khoản của bạn đã bị khóa do đăng nhập sai quá nhiều.",
+    "AUTH_ACCOUNT_DISABLED": "Tài khoản của bạn đã bị vô hiệu hóa.",
+    "AUTH_SOCIAL_LOGIN_CONFLICT": "Vui lòng đăng nhập bằng tài khoản mạng xã hội đã liên kết.",
+    "AUTH_INVALID_TOKEN": "Phiên đăng nhập không hợp lệ.",
+    "AUTH_TOKEN_EXPIRED": "Phiên đăng nhập đã hết hạn.",
+    "AUTH_REFRESH_TOKEN_INVALID": "Không thể làm mới phiên đăng nhập.",
+    "AUTH_GOOGLE_TOKEN_INVALID": "Đăng nhập Google thất bại.",
+    "AUTH_PASSWORD_TOO_WEAK": "Mật khẩu quá yếu.",
+    "AUTH_VERIFICATION_CODE_INVALID": "Mã xác minh không đúng.",
+    "AUTH_VERIFICATION_CODE_EXPIRED": "Mã xác minh đã hết hạn.",
+    "AUTH_SESSION_EXPIRED": "Phiên đăng nhập đã hết hạn.",
+    "AUTHZ_RESOURCE_FORBIDDEN": "Bạn không có quyền truy cập tài nguyên này.",
+    "AUTHZ_ADMIN_ONLY": "Yêu cầu quyền quản trị viên.",
+    "VOCAB_NOT_FOUND": "Không tìm thấy từ vựng.",
+    "VOCAB_ALREADY_EXISTS": "Bạn đã lưu từ vựng này rồi.",
+    "VOCAB_QUOTA_EXCEEDED": "Bạn đã đạt giới hạn từ vựng.",
+    "VOCAB_INVALID_IMPORT_FORMAT": "Định dạng dữ liệu nhập từ vựng không hợp lệ.",
+    "VOCAB_BATCH_IMPORT_FAILED": "Nhập hàng loạt thất bại.",
+    "VOCAB_EXPORT_FAILED": "Xuất dữ liệu từ vựng thất bại.",
+    "TAG_NOT_FOUND": "Không tìm thấy bộ từ vựng.",
+    "TAG_ALREADY_EXISTS": "Bộ từ vựng này đã tồn tại.",
+    "TAG_NAME_ALREADY_EXISTS": "Tên thẻ này đã tồn tại.",
+    "TAG_CANNOT_DELETE_WITH_WORDS": "Không thể xóa thẻ vì vẫn còn từ vựng đang gắn.",
+    "REVIEW_SESSION_NOT_FOUND": "Không tìm thấy phiên ôn tập.",
+    "REVIEW_INVALID_QUALITY_SCORE": "Điểm chất lượng ôn tập không hợp lệ.",
+    "REVIEW_NO_CARDS_DUE": "Hiện không có thẻ nào đến hạn ôn tập.",
+    "PAYMENT_DECLINED": "Thanh toán đã bị từ chối.",
+    "PAYMENT_INVALID_COUPON": "Mã giảm giá không hợp lệ hoặc không còn hiệu lực.",
+    "PAYMENT_COUPON_EXPIRED": "Mã giảm giá đã hết hạn.",
+    "PAYMENT_ORDER_NOT_FOUND": "Không tìm thấy đơn thanh toán.",
+    "PAYMENT_ORDER_EXPIRED": "Đơn thanh toán đã hết hạn.",
+    "PAYMENT_PROVIDER_ERROR": "Nhà cung cấp thanh toán đang gặp lỗi.",
+    "PAYMENT_ALREADY_PROCESSED": "Thanh toán này đã được xử lý trước đó.",
+    "SUB_NOT_FOUND": "Không tìm thấy gói đăng ký.",
+    "SUB_ALREADY_ACTIVE": "Gói đăng ký đã đang hoạt động.",
+    "SUB_EXPIRED": "Gói đăng ký đã hết hạn.",
+    "SUB_CANCELLED": "Gói đăng ký đã bị hủy.",
+    "SUB_PLAN_NOT_FOUND": "Không tìm thấy gói dịch vụ.",
+    "RATE_LIMIT_EXCEEDED": "Bạn thử quá nhiều lần. Vui lòng chậm lại.",
+    "AI_QUOTA_EXCEEDED": "Hết lượt dùng AI. Vui lòng nâng cấp gói Pro.",
+    "AI_SERVICE_UNAVAILABLE": "Dịch vụ AI hiện tạm thời không khả dụng.",
+    "AI_INVALID_REQUEST": "Yêu cầu AI không hợp lệ.",
+    "AI_PROVIDER_ERROR": "Nhà cung cấp AI đang gặp lỗi.",
+    "AI_MODEL_NOT_AVAILABLE": "Mô hình AI đã chọn hiện không khả dụng.",
+    "AUTHZ_INSUFFICIENT_PERMISSIONS": "Bạn không có quyền thực hiện. Vui lòng nâng cấp Pro."
   }
 }

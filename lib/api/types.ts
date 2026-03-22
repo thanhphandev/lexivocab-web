@@ -2,7 +2,60 @@
  * Shared TypeScript types mirroring all LexiVocab API DTOs.
  */
 
-// ─── Generic API Response ────────────────────────────────────
+export enum ErrorCode {
+    INTERNAL_SERVER_ERROR = "INTERNAL_SERVER_ERROR",
+    VALIDATION_FAILED = "VALIDATION_FAILED",
+    UNAUTHORIZED = "UNAUTHORIZED",
+    RESOURCE_NOT_FOUND = "RESOURCE_NOT_FOUND",
+
+    // Auth
+    AUTH_INVALID_CREDENTIALS = "AUTH_INVALID_CREDENTIALS",
+    AUTH_EMAIL_ALREADY_EXISTS = "AUTH_EMAIL_ALREADY_EXISTS",
+    AUTH_EMAIL_NOT_VERIFIED = "AUTH_EMAIL_NOT_VERIFIED",
+    AUTH_ACCOUNT_LOCKED = "AUTH_ACCOUNT_LOCKED",
+    AUTH_ACCOUNT_DISABLED = "AUTH_ACCOUNT_DISABLED",
+    AUTH_SOCIAL_LOGIN_CONFLICT = "AUTH_SOCIAL_LOGIN_CONFLICT",
+    AUTH_INVALID_TOKEN = "AUTH_INVALID_TOKEN",
+    AUTH_TOKEN_EXPIRED = "AUTH_TOKEN_EXPIRED",
+    AUTH_REFRESH_TOKEN_INVALID = "AUTH_REFRESH_TOKEN_INVALID",
+    AUTH_GOOGLE_TOKEN_INVALID = "AUTH_GOOGLE_TOKEN_INVALID",
+    AUTH_PASSWORD_TOO_WEAK = "AUTH_PASSWORD_TOO_WEAK",
+    AUTH_VERIFICATION_CODE_INVALID = "AUTH_VERIFICATION_CODE_INVALID",
+    AUTH_VERIFICATION_CODE_EXPIRED = "AUTH_VERIFICATION_CODE_EXPIRED",
+    AUTH_SESSION_EXPIRED = "AUTH_SESSION_EXPIRED",
+
+    // Vocab
+    VOCAB_NOT_FOUND = "VOCAB_NOT_FOUND",
+    VOCAB_ALREADY_EXISTS = "VOCAB_ALREADY_EXISTS",
+    VOCAB_QUOTA_EXCEEDED = "VOCAB_QUOTA_EXCEEDED",
+
+    // Tags
+    TAG_NOT_FOUND = "TAG_NOT_FOUND",
+    TAG_ALREADY_EXISTS = "TAG_ALREADY_EXISTS",
+
+    // AI
+    AI_QUOTA_EXCEEDED = "AI_QUOTA_EXCEEDED",
+
+    // Authz
+    AUTHZ_INSUFFICIENT_PERMISSIONS = "AUTHZ_INSUFFICIENT_PERMISSIONS",
+
+    // Rate Limiting
+    RATE_LIMIT_EXCEEDED = "RATE_LIMIT_EXCEEDED"
+}
+
+export interface ValidationErrorResponse {
+    field: string;
+    message: string;
+    code: string;
+}
+
+export interface ErrorDetailsResponse {
+    i18nParams?: Record<string, string>;
+    validationErrors?: ValidationErrorResponse[];
+    retryAfterSeconds?: number;
+    helpUrl?: string;
+}
+
 export interface ApiSuccessResponse<T> {
     success: true;
     data: T;
@@ -11,6 +64,31 @@ export interface ApiSuccessResponse<T> {
 export interface ApiErrorResponse {
     success: false;
     error: string;
+    errorCode?: ErrorCode;
+    traceId?: string;
+    details?: ErrorDetailsResponse;
+}
+
+export class ApiError extends Error {
+    public status: number;
+    public errorCode?: ErrorCode;
+    public traceId?: string;
+    public details?: ErrorDetailsResponse;
+
+    constructor(
+        message: string,
+        status: number,
+        errorCode?: ErrorCode,
+        traceId?: string,
+        details?: ErrorDetailsResponse
+    ) {
+        super(message);
+        this.name = 'ApiError';
+        this.status = status;
+        this.errorCode = errorCode;
+        this.traceId = traceId;
+        this.details = details;
+    }
 }
 
 export type ApiResponse<T> = ApiSuccessResponse<T> | ApiErrorResponse;
