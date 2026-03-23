@@ -52,7 +52,6 @@ interface VocabularyTableProps {
 
 export function VocabularyTable({ data, tags, isLoading, onRefresh }: VocabularyTableProps) {
     const t = useTranslations("Dashboard.vocabulary");
-    const tErrors = useTranslations("errors");
     const [actionLoading, setActionLoading] = useState<string | null>(null);
     const [editingItem, setEditingItem] = useState<VocabularyDto | null>(null);
     const [itemToDelete, setItemToDelete] = useState<VocabularyDto | null>(null);
@@ -62,14 +61,14 @@ export function VocabularyTable({ data, tags, isLoading, onRefresh }: Vocabulary
     const getLevelBadge = (level: number, nextReviewDate: string | null) => {
         if (nextReviewDate) {
             const isDue = new Date(nextReviewDate) <= new Date();
-            if (isDue && level > 0) return { label: t("badges.toReview"), className: "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300" };
+            if (isDue && level > 0) return { label: t("badges.toReview"), className: "bg-destructive/10 text-destructive" };
         }
-        if (level === 0) return { label: t("badges.new"), className: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300" };
-        if (level < 5) return { label: t("badges.learning"), className: "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300" };
-        return { label: t("badges.mastered"), className: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300" };
+        if (level === 0) return { label: t("badges.new"), className: "bg-info/10 text-info" };
+        if (level < 5) return { label: t("badges.learning"), className: "bg-warning/10 text-warning-foreground" };
+        return { label: t("badges.mastered"), className: "bg-success/10 text-success" };
     };
 
-    const handleArchiveToggle = async (id: string, currentlyArchived: boolean) => {
+    const handleArchiveToggle = async (id: string) => {
         if (actionLoading) return;
         setActionLoading(id);
 
@@ -202,7 +201,7 @@ export function VocabularyTable({ data, tags, isLoading, onRefresh }: Vocabulary
                                                         style={{ borderColor: item.tagId && tags[item.tagId]?.color ? tags[item.tagId]!.color! : undefined }}
                                                         title={item.contextSentence?.length > 200 ? item.contextSentence.substring(0, 200) + '...' : item.contextSentence}
                                                     >
-                                                        "{item.contextSentence}"
+                                                        &quot;{item.contextSentence}&quot;
                                                     </div>
                                                 )}
 
@@ -219,11 +218,11 @@ export function VocabularyTable({ data, tags, isLoading, onRefresh }: Vocabulary
                                                 {item.isMasterApproved !== undefined && item.isMasterApproved !== null && (
                                                     <div className="mt-2 flex items-center gap-1 text-[10px]">
                                                         {item.isMasterApproved ? (
-                                                            <span className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 px-1.5 py-0.5 rounded flex items-center gap-1 font-medium whitespace-nowrap overflow-hidden">
+                                                            <span className="bg-success/10 text-success px-1.5 py-0.5 rounded flex items-center gap-1 font-medium whitespace-nowrap overflow-hidden">
                                                                 <Sparkles className="w-2.5 h-2.5 shrink-0" /> <span className="truncate">{t("badges.communityApproved")}</span>
                                                             </span>
                                                         ) : (
-                                                            <span className="bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400 px-1.5 py-0.5 rounded flex items-center gap-1 font-medium whitespace-nowrap overflow-hidden">
+                                                            <span className="bg-warning/10 text-warning-foreground px-1.5 py-0.5 rounded flex items-center gap-1 font-medium whitespace-nowrap overflow-hidden">
                                                                 <Loader2 className="w-2.5 h-2.5 shrink-0" /> <span className="truncate">{t("badges.communityPending")}</span>
                                                             </span>
                                                         )}
@@ -391,7 +390,7 @@ export function VocabularyTable({ data, tags, isLoading, onRefresh }: Vocabulary
                                                     </DropdownMenuItem>
                                                 )}
                                                 <DropdownMenuItem
-                                                    onClick={() => handleArchiveToggle(item.id, isArchived)}
+                                                    onClick={() => handleArchiveToggle(item.id)}
                                                 >
                                                     {isArchived ? (
                                                         <><ArchiveRestore className="mr-2 h-4 w-4" /> {t("actions.unarchive")}</>

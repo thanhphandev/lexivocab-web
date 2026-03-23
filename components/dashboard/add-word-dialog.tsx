@@ -21,8 +21,28 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Loader2, Plus, Search, Volume2, ArrowLeftRight } from "lucide-react";
 import { QuickModelSwitcher } from "@/components/ai/quick-model-switcher";
 import { useLLMTranslation } from "@/hooks/use-llm-translation";
-import { toast } from "sonner";
 import { showErrorToast } from "@/lib/error-handler";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { getAddWordSchema, type AddWordInput } from "@/lib/validations/vocabulary";
+
+interface SuggestionResult {
+    word: string;
+    partOfSpeech?: string;
+}
+
+interface LookupResult {
+    word: string;
+    partOfSpeech?: string;
+    audioUrl?: string;
+    phoneticUs?: string;
+    phoneticUk?: string;
+}
+
+interface UserSettings {
+    nativeLanguage?: string;
+    targetLanguage?: string;
+}
 
 export function AddWordDialog({ onSuccess }: { onSuccess: () => void }) {
     const t = useTranslations("Dashboard.vocabulary");
@@ -30,32 +50,38 @@ export function AddWordDialog({ onSuccess }: { onSuccess: () => void }) {
     const tErrors = useTranslations("errors");
     const [open, setOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [isSearching, setIsSearching] = useState(false);
-
-    const [wordText, setWordText] = useState("");
-    const [customMeaning, setCustomMeaning] = useState("");
-    const [contextSentence, setContextSentence] = useState("");
-    const [sourceUrl, setSourceUrl] = useState("");
-    const [tagId, setTagId] = useState<string>("none");
 
     const [aiProvider, setAiProvider] = useState("");
     const [aiProviderName, setAiProviderName] = useState("");
     const { isStreaming, aiData, streamingError, streamTranslation } = useLLMTranslation();
     const [isSwapped, setIsSwapped] = useState(false);
-    const [settings, setSettings] = useState<any>(null);
+    const [settings, setSettings] = useState<UserSettings | null>(null);
+
+    const form = useForm<AddWordInput>({
+        resolver: zodResolver(getAddWordSchema(tDialog)),
+        defaultValues: {
+            wordText: "",
+            customMeaning: "",
+            contextSentence: "",
+            sourceUrl: "",
+            tagId: "none",
+        }
+    });
+
+    const wordText = form.watch("wordText");
 
     useEffect(() => {
         if (open && !settings) {
-            settingsApi.get().then((res: any) => {
+            settingsApi.get().then(res => {
                 if (res.success && res.data) setSettings(res.data);
             }).catch(console.error);
         }
     }, [open, settings]);
 
     useEffect(() => {
-        if (aiData.meaning) setCustomMeaning(aiData.meaning);
-        if (aiData.context) setContextSentence(aiData.context);
-    }, [aiData.meaning, aiData.context]);
+        if (aiData.meaning) form.setValue("customMeaning", aiData.meaning);
+        if (aiData.context) form.setValue("contextSentence", aiData.context);
+    }, [aiData.meaning, aiData.context, form]);
 
     const handleAiAutofill = (modelId: string = aiProvider, trueProvider?: string) => {
         if (!wordText.trim()) return;
@@ -64,8 +90,6 @@ export function AddWordDialog({ onSuccess }: { onSuccess: () => void }) {
         let toLang = "auto";
 
         if (settings) {
-            // Default: Auto -> Native (e.g. English word -> Vietnamese meaning)
-            // Swapped: Native -> Target (e.g. Vietnamese word -> English meaning)
             if (isSwapped) {
                 fromLang = settings.nativeLanguage || "vi";
                 toLang = settings.targetLanguage || "en";
@@ -76,7 +100,6 @@ export function AddWordDialog({ onSuccess }: { onSuccess: () => void }) {
         }
 
         const resolvedProvider = trueProvider || aiProviderName || modelId.split("/")[0];
-
         streamTranslation(wordText.trim(), "", resolvedProvider, modelId, fromLang, toLang);
     };
 
@@ -90,22 +113,21 @@ export function AddWordDialog({ onSuccess }: { onSuccess: () => void }) {
         }
     }, [open]);
 
-    const [suggestions, setSuggestions] = useState<any[]>([]);
+    const [suggestions, setSuggestions] = useState<SuggestionResult[]>([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
-    const [lookupResult, setLookupResult] = useState<any>(null);
+    const [lookupResult, setLookupResult] = useState<LookupResult | null>(null);
 
     useEffect(() => {
         const timer = setTimeout(async () => {
             if (wordText.trim().length > 1) {
-                setIsSearching(true);
                 try {
-                    const res = await clientApi.get<any>(`/api/proxy/master-vocab/search?q=${wordText}`);
-                    if (res.success) {
+                    const res = await clientApi.get<SuggestionResult[]>(`/api/proxy/master-vocab/search?q=${wordText}`);
+                    if (res.success && res.data) {
                         setSuggestions(res.data);
                         setShowSuggestions(true);
                     }
                 } finally {
-                    setIsSearching(false);
+
                 }
             } else {
                 setSuggestions([]);
@@ -115,45 +137,40 @@ export function AddWordDialog({ onSuccess }: { onSuccess: () => void }) {
         return () => clearTimeout(timer);
     }, [wordText]);
 
-    const handleSelectSuggestion = async (suggestion: any) => {
-        setWordText(suggestion.word);
+    const handleSelectSuggestion = async (suggestion: SuggestionResult) => {
+        form.setValue("wordText", suggestion.word);
         setShowSuggestions(false);
-        setCustomMeaning("");
+        form.setValue("customMeaning", "");
         try {
-            const res = await clientApi.get<any>(`/api/proxy/master-vocab/lookup?word=${suggestion.word}`);
+            const res = await clientApi.get<LookupResult>(`/api/proxy/master-vocab/lookup?word=${suggestion.word}`);
             if (res.success && res.data) setLookupResult(res.data);
-        } catch (e: any) {
+        } catch (e) {
             console.error("Lookup failed", e);
         }
     };
 
-    const handleSave = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!wordText.trim()) return;
+    const handleSave = async (data: AddWordInput) => {
+        if (!data.wordText.trim()) return;
 
         setIsLoading(true);
         try {
             const res = await clientApi.post("/api/proxy/vocabularies", {
-                wordText: wordText.trim(),
-                customMeaning: customMeaning.trim() || undefined,
-                contextSentence: contextSentence.trim() || undefined,
-                sourceUrl: sourceUrl.trim() || undefined,
-                tagId: tagId !== "none" ? tagId : undefined,
+                wordText: data.wordText.trim(),
+                customMeaning: data.customMeaning?.trim() || undefined,
+                contextSentence: data.contextSentence?.trim() || undefined,
+                sourceUrl: data.sourceUrl?.trim() || undefined,
+                tagId: data.tagId !== "none" ? data.tagId : undefined,
             });
 
             if (res.success) {
                 setOpen(false);
-                setWordText("");
-                setCustomMeaning("");
-                setContextSentence("");
-                setSourceUrl("");
-                setTagId("none");
+                form.reset();
                 setLookupResult(null);
                 onSuccess();
             } else {
                 showErrorToast(
                     res,
-                    res.errorCode ? tErrors(res.errorCode as any) : tDialog("failed"),
+                    res.errorCode ? tErrors(res.errorCode as Parameters<typeof tErrors>[0]) : tDialog("failed"),
                     tErrors
                 );
             }
@@ -177,7 +194,7 @@ export function AddWordDialog({ onSuccess }: { onSuccess: () => void }) {
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[800px]">
-                <form onSubmit={handleSave}>
+                <form onSubmit={form.handleSubmit(handleSave)}>
                     <DialogHeader>
                         <DialogTitle>{t("addWord")}</DialogTitle>
                         <DialogDescription>{tDialog("desc")}</DialogDescription>
@@ -185,19 +202,22 @@ export function AddWordDialog({ onSuccess }: { onSuccess: () => void }) {
 
                     <div className="grid gap-4 py-4">
                         <div className="space-y-2 relative">
-                            <Label htmlFor="wordText">{tDialog("wordLabel")}</Label>
+                            <Label htmlFor="wordText" className={form.formState.errors.wordText ? "text-destructive" : ""}>
+                                {tDialog("wordLabel")}
+                            </Label>
                             <div className="relative">
                                 <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                                 <Input
                                     id="wordText"
                                     placeholder={tDialog("wordPlaceholder")}
                                     className="pl-9"
-                                    value={wordText}
-                                    onChange={(e) => setWordText(e.target.value)}
                                     autoComplete="off"
-                                    required
+                                    {...form.register("wordText")}
                                 />
                             </div>
+                            {form.formState.errors.wordText && (
+                                <p className="text-sm text-destructive">{form.formState.errors.wordText.message}</p>
+                            )}
 
                             {showSuggestions && suggestions.length > 0 && (
                                 <div className="absolute top-full left-0 z-50 w-full mt-1 bg-popover text-popover-foreground border rounded-md shadow-md max-h-60 overflow-y-auto">
@@ -245,7 +265,7 @@ export function AddWordDialog({ onSuccess }: { onSuccess: () => void }) {
 
                         <div className="space-y-2">
                             <div className="flex items-center justify-between">
-                                <Label htmlFor="customMeaning">
+                                <Label htmlFor="customMeaning" className={form.formState.errors.customMeaning ? "text-destructive" : ""}>
                                     {tDialog("meaningLabel")} <span className="text-muted-foreground text-xs font-normal">({tDialog("optional")})</span>
                                 </Label>
                                 <div className="flex items-center gap-2">
@@ -278,59 +298,71 @@ export function AddWordDialog({ onSuccess }: { onSuccess: () => void }) {
                             <Input
                                 id="customMeaning"
                                 placeholder={tDialog("meaningPlaceholder")}
-                                value={customMeaning}
-                                onChange={(e) => setCustomMeaning(e.target.value)}
+                                {...form.register("customMeaning")}
                             />
+                            {form.formState.errors.customMeaning && (
+                                <p className="text-sm text-destructive">{form.formState.errors.customMeaning.message}</p>
+                            )}
                             {streamingError && (
                                 <p className="text-destructive text-sm mt-1">{streamingError}</p>
                             )}
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="contextSentence">
+                            <Label htmlFor="contextSentence" className={form.formState.errors.contextSentence ? "text-destructive" : ""}>
                                 {tDialog("contextLabel")} <span className="text-muted-foreground text-xs font-normal">({tDialog("optional")})</span>
                             </Label>
                             <Textarea
                                 id="contextSentence"
                                 placeholder={tDialog("contextPlaceholder")}
-                                value={contextSentence}
-                                onChange={(e) => setContextSentence(e.target.value)}
                                 rows={2}
+                                {...form.register("contextSentence")}
                             />
+                            {form.formState.errors.contextSentence && (
+                                <p className="text-sm text-destructive">{form.formState.errors.contextSentence.message}</p>
+                            )}
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="sourceUrl">
+                            <Label htmlFor="sourceUrl" className={form.formState.errors.sourceUrl ? "text-destructive" : ""}>
                                 {tDialog("sourceLabel")} <span className="text-muted-foreground text-xs font-normal">({tDialog("optional")})</span>
                             </Label>
                             <Input
                                 id="sourceUrl"
                                 type="url"
                                 placeholder={tDialog("sourcePlaceholder")}
-                                value={sourceUrl}
-                                onChange={(e) => setSourceUrl(e.target.value)}
+                                {...form.register("sourceUrl")}
                             />
+                            {form.formState.errors.sourceUrl && (
+                                <p className="text-sm text-destructive">{form.formState.errors.sourceUrl.message}</p>
+                            )}
                         </div>
 
                         <div className="space-y-2">
                             <Label htmlFor="tagId">
                                 {tDialog("tagLabel")} <span className="text-muted-foreground text-xs font-normal">({tDialog("optional")})</span>
                             </Label>
-                            <Select value={tagId} onValueChange={setTagId}>
-                                <SelectTrigger>
-                                    <SelectValue placeholder={tDialog("noTag")} />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="none">{tDialog("noTag")}</SelectItem>
-                                    {tags.map((tag) => (
-                                        <SelectItem key={tag.id} value={tag.id}>
-                                            <span className="flex items-center gap-2">
-                                                <span>{tag.icon || "📁"}</span> {tag.name}
-                                            </span>
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                            <Controller
+                                name="tagId"
+                                control={form.control}
+                                render={({ field }) => (
+                                    <Select value={field.value} onValueChange={field.onChange}>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder={tDialog("noTag")} />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="none">{tDialog("noTag")}</SelectItem>
+                                            {tags.map((tag) => (
+                                                <SelectItem key={tag.id} value={tag.id}>
+                                                    <span className="flex items-center gap-2">
+                                                        <span>{tag.icon || "📁"}</span> {tag.name}
+                                                    </span>
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                )}
+                            />
                         </div>
                     </div>
 

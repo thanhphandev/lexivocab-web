@@ -3,6 +3,7 @@
 import { useState, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { clientApi } from "@/lib/api/api-client";
+import { type BatchImportInput } from "@/lib/validations/vocabulary";
 import Papa from "papaparse";
 import {
     Dialog,
@@ -34,7 +35,7 @@ export function BatchImportDialog({ onSuccess }: { onSuccess: () => void }) {
     const [isLoading, setIsLoading] = useState(false);
     const [importText, setImportText] = useState("");
     const [activeTab, setActiveTab] = useState<"file" | "text">("file");
-    const [parsedPreview, setParsedPreview] = useState<any[]>([]);
+    const [parsedPreview, setParsedPreview] = useState<BatchImportInput["words"]>([]);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -96,7 +97,7 @@ export function BatchImportDialog({ onSuccess }: { onSuccess: () => void }) {
             } else {
                 showErrorToast(
                     res,
-                    res.errorCode ? tErrors(res.errorCode as any) : (tImport("failed", { error: res.error }) || res.error || "Failed to import vocabulary."),
+                    res.errorCode ? tErrors(res.errorCode as Parameters<typeof tErrors>[0]) : (tImport("failed", { error: res.error }) || res.error || "Failed to import vocabulary."),
                     tErrors
                 );
             }

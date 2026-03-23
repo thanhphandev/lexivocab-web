@@ -85,9 +85,9 @@ export function SepayQRDialog({ qrData, onOpenChange, onCreateNew, onRefresh }: 
                 </DialogHeader>
                 <div className="flex flex-col items-center justify-center p-4 space-y-6">
                     {qrData && (
-                        <div className="bg-white p-4 rounded-2xl shadow-inner border min-h-[256px] flex items-center justify-center">
+                        <div className="bg-card p-4 rounded-2xl shadow-inner border min-h-[256px] flex items-center justify-center">
                             {isExpired ? (
-                                <div className="w-64 h-64 flex items-center justify-center bg-gray-100 rounded-lg text-red-600 text-sm p-4 text-center">
+                                <div className="w-64 h-64 flex items-center justify-center bg-muted/50 rounded-lg text-destructive font-medium text-sm p-4 text-center">
                                     {t("qr_modal.expired")}
                                 </div>
                             ) : !imageError ? (
@@ -98,7 +98,7 @@ export function SepayQRDialog({ qrData, onOpenChange, onCreateNew, onRefresh }: 
                                     onError={() => setImageError(true)}
                                 />
                             ) : (
-                                <div className="w-64 h-64 flex items-center justify-center bg-gray-100 rounded-lg text-red-500 text-sm p-4 text-center">
+                                <div className="w-64 h-64 flex items-center justify-center bg-muted/50 rounded-lg text-destructive font-medium text-sm p-4 text-center">
                                     {t("qr_modal.error")}
                                 </div>
                             )}

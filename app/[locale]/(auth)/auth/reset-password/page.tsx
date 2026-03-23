@@ -8,7 +8,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2, ArrowLeft, AlertCircle } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 import { motion } from "framer-motion";
 import { authApi } from "@/lib/api/api-client";
 import { getLocalizedApiError } from "@/lib/error-handler";
@@ -18,6 +17,10 @@ import {
     InputOTPSeparator,
     InputOTPSlot,
 } from "@/components/ui/input-otp";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { getResetPasswordSchema, type ResetPasswordInput } from "@/lib/validations/auth";
+import { AuthLogo } from "@/components/auth/auth-logo";
 
 export default function ResetPasswordPage() {
     const t = useTranslations("Auth");
@@ -28,9 +31,21 @@ export default function ResetPasswordPage() {
 
     const [email, setEmail] = useState("");
     const [code, setCode] = useState("");
-    const [newPassword, setNewPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
+    const schema = getResetPasswordSchema(t);
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<ResetPasswordInput>({
+        resolver: zodResolver(schema),
+        defaultValues: {
+            password: "",
+        },
+    });
 
     useEffect(() => {
         const queryEmail = searchParams.get("email");
@@ -39,8 +54,7 @@ export default function ResetPasswordPage() {
         }
     }, [searchParams]);
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const onSubmit = async (data: ResetPasswordInput) => {
         if (code.length !== 6) {
             setError(t("resetPasswordIncompleteCode"));
             return;
@@ -50,7 +64,7 @@ export default function ResetPasswordPage() {
         setError(null);
 
         try {
-            const res = await authApi.resetPassword({ email, code, newPassword });
+            const res = await authApi.resetPassword({ email, code, newPassword: data.password });
             if (res.success) {
                 router.push(`/${locale}/auth/login?reset=success`);
             } else {
@@ -71,18 +85,8 @@ export default function ResetPasswordPage() {
             className="w-full max-w-md space-y-8 rounded-2xl border border-border bg-card p-8 shadow-2xl"
         >
             <div className="text-center">
-                <div className="flex items-center gap-3 mb-6">
-                    {/* Logo Container */}
-                    <div className="flex h-12 w-12 items-center justify-center">
-                        <Image src="/apple-icon.png" alt="Logo" width={32} height={32} />
-                    </div>
-
-                    {/* Branding Text */}
-                    <div className="flex items-baseline">
-                        <span className="text-2xl font-bold tracking-tight text-gray-900">
-                            LexiVocab<span className="text-orange-600">.</span>
-                        </span>
-                    </div>
+                <div className="mb-6">
+                    <AuthLogo />
                 </div>
 
                 <h1 className="text-3xl font-bold tracking-tight text-foreground">
@@ -93,12 +97,12 @@ export default function ResetPasswordPage() {
                 </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 {error && (
                     <motion.div
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="flex items-center gap-2 rounded-lg bg-destructive/10 p-3 text-sm text-destructive"
+                        className="flex items-center gap-2 rounded-lg border border-destructive/20 bg-destructive/15 p-3 text-sm text-destructive"
                     >
                         <AlertCircle className="h-4 w-4 shrink-0" />
                         <p>{error}</p>
@@ -141,24 +145,24 @@ export default function ResetPasswordPage() {
                 </div>
 
                 <div className="space-y-2">
-                    <Label htmlFor="newPassword">{t("resetPasswordNewLabel")}</Label>
+                    <Label htmlFor="password">{t("resetPasswordNewLabel")}</Label>
                     <Input
-                        id="newPassword"
+                        {...register("password")}
+                        id="password"
                         type="password"
                         placeholder="••••••••"
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                        required
                         disabled={isLoading}
-                        minLength={6}
                         className="border-border py-3 focus:ring-primary"
                     />
+                    {errors.password && (
+                        <p className="mt-1 text-xs text-destructive">{errors.password.message}</p>
+                    )}
                 </div>
 
                 <Button
                     className="w-full h-11 text-sm font-semibold transition-all shadow-md hover:shadow-lg"
                     type="submit"
-                    disabled={isLoading || code.length !== 6 || !newPassword}
+                    disabled={isLoading || code.length !== 6}
                 >
                     {isLoading ? (
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />

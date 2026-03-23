@@ -1,24 +1,22 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { TagDto } from "@/lib/api/types";
-import { tagsApi } from "@/lib/api/api-client";
-import { 
-    Tag, 
-    MoreVertical, 
-    Plus, 
-    Hash, 
-    Trash2, 
-    Pencil, 
+import {
+    MoreVertical,
+    Plus,
+    Hash,
+    Trash2,
+    Pencil,
     Loader2,
     ChevronRight,
     Folder
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { 
-    DropdownMenu, 
-    DropdownMenuContent, 
-    DropdownMenuItem, 
-    DropdownMenuTrigger 
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
@@ -27,6 +25,7 @@ import { toast } from "sonner";
 import { showErrorToast } from "@/lib/error-handler";
 import { ConfirmDialog } from "./confirm-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
+import { tagsApi } from "@/lib/api/api-client";
 
 interface TagSidebarProps {
     tags: TagDto[];
@@ -37,10 +36,10 @@ interface TagSidebarProps {
     isLoading?: boolean;
 }
 
-export function TagSidebar({ 
-    tags, 
-    selectedTagId, 
-    onSelectTag, 
+export function TagSidebar({
+    tags,
+    selectedTagId,
+    onSelectTag,
     onRefresh,
     onCreateNew,
     isLoading = false
@@ -50,11 +49,10 @@ export function TagSidebar({
     const [editingTag, setEditingTag] = useState<TagDto | null>(null);
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
     const t = useTranslations("Dashboard.vocabulary.tagSidebar");
-    const tErrors = useTranslations("errors");
 
     const handleDelete = async () => {
         if (!tagToDelete) return;
-        
+
         const id = tagToDelete.id;
         setIsDeleting(id);
         try {
@@ -80,7 +78,7 @@ export function TagSidebar({
 
     return (
         <div className="w-full h-full flex flex-col gap-6 pr-4">
-            <ConfirmDialog 
+            <ConfirmDialog
                 open={!!tagToDelete}
                 onOpenChange={(open) => !open && setTagToDelete(null)}
                 title={t("deleteTitle")}
@@ -93,20 +91,20 @@ export function TagSidebar({
                 <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground ml-2">
                     {t("title")}
                 </h3>
-                <Button 
-                    variant="ghost" 
-                    size="icon" 
+                <Button
+                    variant="ghost"
+                    size="icon"
                     className="h-8 w-8 text-primary hover:bg-primary/10 rounded-full"
                     onClick={onCreateNew}
                 >
                     <Plus className="h-4 w-4" />
                 </Button>
             </div>
-            
+
             {/* Tag Dialog for Editing */}
-            <TagDialog 
-                open={isEditDialogOpen} 
-                onOpenChange={setIsEditDialogOpen} 
+            <TagDialog
+                open={isEditDialogOpen}
+                onOpenChange={setIsEditDialogOpen}
                 onSuccess={() => {
                     onRefresh();
                     setEditingTag(null);
@@ -120,8 +118,8 @@ export function TagSidebar({
                     onClick={() => onSelectTag("all")}
                     className={cn(
                         "w-full justify-start gap-3 h-10 px-3 rounded-lg transition-all border border-transparent",
-                        selectedTagId === "all" 
-                            ? "bg-primary/10 text-primary font-semibold border-primary/20 shadow-sm" 
+                        selectedTagId === "all"
+                            ? "bg-primary/10 text-primary font-semibold border-primary/20 shadow-sm"
                             : "text-muted-foreground hover:bg-accent/50"
                     )}
                 >
@@ -169,9 +167,9 @@ export function TagSidebar({
                                         : "hover:bg-accent/50 border-transparent"
                                 )}
                             >
-                                <div 
+                                <div
                                     className="w-8 h-8 rounded-lg flex items-center justify-center text-lg shadow-sm shrink-0"
-                                    style={{ 
+                                    style={{
                                         backgroundColor: `${tag.color || '#6366f1'}15`,
                                         color: tag.color || '#6366f1'
                                     }}
@@ -192,9 +190,9 @@ export function TagSidebar({
 
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
-                                        <Button 
-                                            variant="ghost" 
-                                            size="icon" 
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
                                             className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity shrink-0 focus:opacity-100"
                                             onClick={(e) => e.stopPropagation()}
                                         >
@@ -202,13 +200,13 @@ export function TagSidebar({
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end" className="w-32">
-                                        <DropdownMenuItem 
+                                        <DropdownMenuItem
                                             className="text-xs cursor-pointer"
                                             onClick={(e) => handleEditClick(e, tag)}
                                         >
                                             <Pencil className="mr-2 h-3 w-3" /> {t("edit")}
                                         </DropdownMenuItem>
-                                        <DropdownMenuItem 
+                                        <DropdownMenuItem
                                             className="text-xs text-destructive cursor-pointer"
                                             onClick={(e) => { e.stopPropagation(); setTagToDelete(tag); }}
                                             disabled={isDeleting === tag.id}
@@ -224,9 +222,9 @@ export function TagSidebar({
                                 </DropdownMenu>
 
                                 {selectedTagId === tag.id && (
-                                    <motion.div 
+                                    <motion.div
                                         layoutId="activeTag"
-                                        className="absolute left-0 w-1 h-6 bg-primary rounded-full ml-1" 
+                                        className="absolute left-0 w-1 h-6 bg-primary rounded-full ml-1"
                                     />
                                 )}
                             </div>

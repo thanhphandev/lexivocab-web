@@ -50,17 +50,17 @@ export function PendingTransactionBanner({
         <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className={`bg-yellow-50 dark:bg-yellow-900/20 border-2 border-yellow-200 dark:border-yellow-900/40 rounded-3xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl shadow-yellow-500/5 ${className}`}
+            className={`bg-warning/10 border-2 border-warning/30 rounded-3xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl shadow-warning/5 ${className}`}
         >
             <div className="flex items-center gap-5 text-left">
-                <div className="h-14 w-14 rounded-2xl bg-yellow-100 dark:bg-yellow-900/40 flex items-center justify-center shrink-0">
-                    <Zap className="h-7 w-7 text-yellow-600 dark:text-yellow-400 animate-pulse" />
+                <div className="h-14 w-14 rounded-2xl bg-warning/20 flex items-center justify-center shrink-0">
+                    <Zap className="h-7 w-7 text-warning animate-pulse" />
                 </div>
                 <div>
-                    <h3 className="text-xl font-bold text-yellow-800 dark:text-yellow-200">
+                    <h3 className="text-xl font-bold text-warning-foreground">
                         {tResource("pending_transaction.title")}
                     </h3>
-                    <div className="text-yellow-700/80 dark:text-yellow-300/70 text-sm md:text-base max-w-xl">
+                    <div className="text-warning-foreground/80 text-sm md:text-base max-w-xl">
                         {tResource("pending_transaction.desc", {
                             provider: transaction.provider,
                             amount: transaction.amount.toLocaleString(locale),
@@ -80,7 +80,7 @@ export function PendingTransactionBanner({
                             </span>
                         )}
                         {isExpired && (
-                            <span className="block mt-1 text-xs font-medium text-red-600 dark:text-red-400">
+                            <span className="block mt-1 text-xs font-medium text-destructive">
                                 {tResource("pending_transaction.expired")}
                             </span>
                         )}
@@ -91,7 +91,7 @@ export function PendingTransactionBanner({
                 <Button 
                     onClick={onResume}
                     disabled={isExpired}
-                    className="bg-yellow-600 hover:bg-yellow-700 text-white border-none shadow-lg shadow-yellow-600/20 px-8 h-12"
+                    className="bg-warning hover:bg-warning/90 text-primary-foreground border-none shadow-lg shadow-warning/20 px-8 h-12"
                 >
                     <Zap className="mr-2 h-4 w-4 fill-current" />
                     {tResource("pending_transaction.resume")}
@@ -99,14 +99,14 @@ export function PendingTransactionBanner({
                 <Button 
                     variant="outline" 
                     onClick={onCancel}
-                    className="border-yellow-200 dark:border-yellow-900/40 text-yellow-800 dark:text-yellow-200 hover:bg-yellow-100 dark:hover:bg-yellow-900/40 h-12"
+                    className="border-warning/30 text-warning-foreground hover:bg-warning/20 h-12 bg-transparent"
                 >
                     {tResource("pending_transaction.cancel")}
                 </Button>
                 <Button
                     variant="outline"
                     onClick={handleRefresh}
-                    className="border-yellow-200 dark:border-yellow-900/40 text-yellow-800 dark:text-yellow-200 hover:bg-yellow-100 dark:hover:bg-yellow-900/40 h-12"
+                    className="border-warning/30 text-warning-foreground hover:bg-warning/20 h-12 bg-transparent"
                 >
                     {tResource("pending_transaction.refresh")}
                 </Button>

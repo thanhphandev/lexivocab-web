@@ -7,6 +7,14 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState, useMemo, useRef } from "react";
 import { settingsApi } from "@/lib/api/api-client";
 
+interface AiModel {
+    id: string;
+    name: string;
+    group?: string;
+    isPro?: boolean;
+    provider?: string;
+}
+
 interface QuickModelSwitcherProps {
     provider: string;
     setProvider: (val: string) => void;
@@ -22,15 +30,15 @@ export function QuickModelSwitcher({ provider, setProvider, onTriggerAi, isStrea
     const llmConfigStr = permissions?.featureFlags?.['AVAILABLE_LLM_MODELS'];
     const isPremium = permissions?.plan === 'Premium' || permissions?.plan === 'Ultimate';
 
-    const [customModels, setCustomModels] = useState<any[]>([]);
+    const [customModels, setCustomModels] = useState<AiModel[]>([]);
     const hasFetched = useRef(false);
 
     // 1. Memoize danh sách model để tránh tính toán thừa
     const availableModels = useMemo(() => {
-        const baseModels: any[] = [
+        const baseModels: AiModel[] = [
             { id: "google", name: "Google", group: "Engines" },
         ];
-        let featureModels: any[] = [];
+        let featureModels: AiModel[] = [];
         try {
             if (llmConfigStr) featureModels = JSON.parse(llmConfigStr);
         } catch { }
@@ -49,9 +57,9 @@ export function QuickModelSwitcher({ provider, setProvider, onTriggerAi, isStrea
     // 2. Phân loại model ngay trong useMemo
     const groups = useMemo(() => {
         return {
-            engines: availableModels.filter((m: any) => m.group === "Engines"),
-            free: availableModels.filter((m: any) => !m.isPro && m.group !== "Engines"),
-            pro: availableModels.filter((m: any) => m.isPro),
+            engines: availableModels.filter((m: AiModel) => m.group === "Engines"),
+            free: availableModels.filter((m: AiModel) => !m.isPro && m.group !== "Engines"),
+            pro: availableModels.filter((m: AiModel) => m.isPro),
         };
     }, [availableModels]);
 
@@ -60,7 +68,7 @@ export function QuickModelSwitcher({ provider, setProvider, onTriggerAi, isStrea
         hasFetched.current = true;
 
         settingsApi.get().then(res => {
-            let loadedCustomModels: any[] = [];
+            let loadedCustomModels: AiModel[] = [];
             if (res.success && res.data?.customLlmsJson) {
                 try {
                     loadedCustomModels = JSON.parse(res.data.customLlmsJson);
@@ -102,7 +110,7 @@ export function QuickModelSwitcher({ provider, setProvider, onTriggerAi, isStrea
     useEffect(() => {
         if (!provider || availableModels.length === 0) return;
         const allPossibleModels = [...availableModels, ...customModels];
-        const selectedModel = allPossibleModels.find((m: any) => m.id === provider);
+        const selectedModel = allPossibleModels.find((m: AiModel) => m.id === provider);
         const actualProvider = selectedModel?.provider || provider.split('/')[0];
         if (onProviderResolved) {
             onProviderResolved(actualProvider);
@@ -120,7 +128,7 @@ export function QuickModelSwitcher({ provider, setProvider, onTriggerAi, isStrea
                     {groups.engines.length > 0 && (
                         <>
                             <div className="px-2 py-1.5 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Engines</div>
-                            {groups.engines.map((m: any) => (
+                            {groups.engines.map((m: AiModel) => (
                                 <SelectItem key={m.id} value={m.id} className="text-xs">{m.name}</SelectItem>
                             ))}
                         </>
@@ -130,7 +138,7 @@ export function QuickModelSwitcher({ provider, setProvider, onTriggerAi, isStrea
                     {groups.free.length > 0 && (
                         <>
                             <div className="px-2 py-1.5 mt-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider border-t border-border/40">Free Models</div>
-                            {groups.free.map((m: any) => (
+                            {groups.free.map((m: AiModel) => (
                                 <SelectItem key={m.id} value={m.id} className="text-xs">{m.name}</SelectItem>
                             ))}
                         </>
@@ -140,7 +148,7 @@ export function QuickModelSwitcher({ provider, setProvider, onTriggerAi, isStrea
                     {groups.pro.length > 0 && (
                         <>
                             <div className="px-2 py-1.5 mt-1 text-[10px] font-bold text-primary uppercase tracking-wider border-t border-border/40">Pro Models</div>
-                            {groups.pro.map((m: any) => (
+                            {groups.pro.map((m: AiModel) => (
                                 <SelectItem key={m.id} value={m.id} className="text-xs" disabled={!isPremium}>
                                     <div className="flex items-center justify-between w-full gap-2">
                                         <span>{m.name}</span>
@@ -155,7 +163,7 @@ export function QuickModelSwitcher({ provider, setProvider, onTriggerAi, isStrea
                     {customModels.length > 0 && (
                         <>
                             <div className="px-2 py-1.5 mt-1 text-[10px] font-bold text-amber-600 uppercase tracking-wider border-t border-border/40">Custom (BYOK)</div>
-                            {customModels.map((cm: any) => (
+                            {customModels.map((cm: AiModel) => (
                                 <SelectItem key={cm.id} value={cm.id} className="text-xs">
                                     <div className="flex items-center justify-between w-full gap-2">
                                         <span>{cm.name}</span>

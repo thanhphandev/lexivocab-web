@@ -87,15 +87,15 @@ export default function CheckoutPage() {
                                 initial={{ scale: 0 }}
                                 animate={{ scale: 1 }}
                                 transition={{ type: "spring", damping: 12, stiffness: 200 }}
-                                className="mx-auto w-24 h-24 bg-emerald-100 dark:bg-emerald-950/30 rounded-full flex items-center justify-center relative z-10"
+                                className="mx-auto w-24 h-24 bg-success/10 rounded-full flex items-center justify-center relative z-10"
                             >
-                                <CheckCircle2 className="h-12 w-12 text-emerald-500" />
+                                <CheckCircle2 className="h-12 w-12 text-success" />
                             </motion.div>
                             {/* Decorative Sparkles */}
                             <motion.div 
                                 animate={{ rotate: 360 }}
                                 transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                                className="absolute inset-0 -m-4 border-2 border-dashed border-emerald-500/20 rounded-full"
+                                className="absolute inset-0 -m-4 border-2 border-dashed border-success/20 rounded-full"
                             />
                         </div>
 
@@ -133,8 +133,8 @@ export default function CheckoutPage() {
 
                 {status === "error" && (
                     <>
-                        <div className="mx-auto w-20 h-20 bg-red-100 dark:bg-red-950/30 rounded-full flex items-center justify-center">
-                            <XCircle className="h-10 w-10 text-red-500" />
+                        <div className="mx-auto w-20 h-20 bg-destructive/10 rounded-full flex items-center justify-center">
+                            <XCircle className="h-10 w-10 text-destructive" />
                         </div>
                         <h2 className="text-2xl font-bold text-foreground">
                             {t("error_title")}

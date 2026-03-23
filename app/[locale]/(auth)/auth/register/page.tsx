@@ -1,26 +1,43 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useEffect } from "react";
 import { useAuth } from "@/lib/auth/auth-context";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useTranslations, useLocale } from "next-intl";
 import { Loader2, AlertCircle } from "lucide-react";
-import { GoogleLogin } from '@react-oauth/google';
-import Image from "next/image";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import { getRegisterSchema, type RegisterInput } from "@/lib/validations/auth";
+import { AuthLogo } from "@/components/auth/auth-logo";
+import { SocialLogin } from "@/components/auth/social-login";
 
 export default function RegisterPage() {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [fullName, setFullName] = useState("");
-    const { register, googleLogin, isLoading, error, errorCode, clearError, isAuthenticated } = useAuth();
+    const { register: authRegister, isLoading, error, errorCode, clearError, isAuthenticated } = useAuth();
     const router = useRouter();
     const locale = useLocale();
     const t = useTranslations("Auth");
-    const [googleLoading, setGoogleLoading] = useState(false);
-
     const searchParams = useSearchParams();
+
+    const schema = getRegisterSchema(t);
+
+    const {
+        register,
+        handleSubmit,
+        watch,
+        formState: { errors },
+    } = useForm<RegisterInput>({
+        resolver: zodResolver(schema),
+        defaultValues: {
+            fullName: "",
+            email: "",
+            password: "",
+        },
+    });
+
+    const emailWatcher = watch("email");
 
     const getSafeRedirectUrl = (url: string | null, fallback: string) => {
         if (!url) return fallback;
@@ -34,27 +51,17 @@ export default function RegisterPage() {
         }
     }, [isAuthenticated, router, locale, searchParams]);
 
-    const handleGoogleResponse = useCallback(async (credential: string) => {
-        setGoogleLoading(true);
-        const success = await googleLogin(credential);
-        setGoogleLoading(false);
-        if (success) {
-            router.push(getSafeRedirectUrl(searchParams.get("redirect"), `/${locale}/dashboard`));
-        }
-    }, [googleLogin, router, locale, searchParams]);
-
     if (isAuthenticated) {
         return null;
     }
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        const success = await register({ email, password, fullName });
+    const onSubmit = async (data: RegisterInput) => {
+        if (error) clearError();
+        const success = await authRegister(data);
         if (success) {
             router.push(getSafeRedirectUrl(searchParams.get("redirect"), `/${locale}/dashboard`));
         }
     };
-
 
     return (
         <motion.div
@@ -64,19 +71,7 @@ export default function RegisterPage() {
             className="w-full max-w-md space-y-8 rounded-2xl border border-border bg-card p-8 shadow-2xl"
         >
             <div className="text-center">
-                <div className="flex items-center gap-3">
-                    {/* Logo Container */}
-                    <div className="flex h-12 w-12 items-center justify-center">
-                        <Image src="/apple-icon.png" alt="Logo" width={32} height={32} />
-                    </div>
-
-                    {/* Branding Text */}
-                    <div className="flex items-baseline">
-                        <span className="text-2xl font-bold tracking-tight text-gray-900">
-                            LexiVocab<span className="text-orange-600">.</span>
-                        </span>
-                    </div>
-                </div>
+                <AuthLogo />
                 <h2 className="mt-6 text-3xl font-bold tracking-tight text-foreground">
                     {t("registerTitle")}
                 </h2>
@@ -85,122 +80,87 @@ export default function RegisterPage() {
                 </p>
             </div>
 
-            {/* Google Sign-In */}
-            <div className="mt-8 flex flex-col items-center gap-4">
-                <div className="w-full flex justify-center h-12">
-                    <GoogleLogin
-                        onSuccess={credentialResponse => {
-                            if (credentialResponse.credential) {
-                                handleGoogleResponse(credentialResponse.credential);
-                            }
-                        }}
-                        onError={() => {
-                            console.error('Google Sign Up Failed');
-                        }}
-                        theme="outline"
-                        size="large"
-                        text="signup_with"
-                        shape="pill"
-                        width="280"
-                    />
-                </div>
-                {googleLoading && (
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                        {t("signingUpWithGoogle")}
-                    </div>
-                )}
+            <div className="mt-8">
+                <SocialLogin action="register" />
             </div>
 
-            {/* Divider */}
             <div className="flex items-center gap-4 py-2">
                 <div className="h-px flex-1 bg-border" />
                 <span className="text-xs text-muted-foreground uppercase font-medium">{t("orDivider")}</span>
                 <div className="h-px flex-1 bg-border" />
             </div>
 
-            <form className="mt-6 space-y-6" onSubmit={handleSubmit}>
+            <form className="mt-6 space-y-6" onSubmit={handleSubmit(onSubmit)}>
                 {error && (
                     <motion.div
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="flex items-center gap-2 rounded-lg bg-destructive/10 p-3 text-sm text-destructive"
+                        className="flex items-center gap-2 rounded-lg border border-destructive/20 bg-destructive/15 p-3 text-sm text-destructive"
                     >
                         <AlertCircle className="h-4 w-4 shrink-0" />
                         <p>{error}</p>
                     </motion.div>
                 )}
 
-                {/* Show a "Verify Email" button if the error suggests the email needs verification */}
                 {errorCode === "AUTH_EMAIL_NOT_VERIFIED" && (
                     <div className="flex justify-center mt-2">
-                        <Link href={`/auth/verify-email?email=${encodeURIComponent(email)}`} className="text-sm font-medium text-primary underline">
+                        <Link href={`/${locale}/auth/verify-email?email=${encodeURIComponent(emailWatcher || "")}`} className="text-sm font-medium text-primary underline">
                             {t("verifyEmailLink")}
                         </Link>
                     </div>
                 )}
 
-                <div className="space-y-4 rounded-md shadow-sm">
+                <div className="space-y-4 rounded-md">
                     <div>
                         <label className="sr-only" htmlFor="fullName">
                             {t("fullName")}
                         </label>
                         <input
+                            {...register("fullName")}
                             id="fullName"
-                            name="fullName"
                             type="text"
                             autoComplete="name"
-                            required
                             className="relative block w-full rounded-t-lg border border-border bg-transparent px-3 py-3 text-foreground placeholder-muted-foreground focus:z-10 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary sm:text-sm transition-colors"
                             placeholder={t("fullNamePlaceholder")}
-                            value={fullName}
-                            onChange={(e) => {
-                                setFullName(e.target.value);
-                                if (error) clearError();
-                            }}
                             disabled={isLoading}
                         />
+                        {errors.fullName && (
+                            <p className="mt-1 text-xs text-destructive">{errors.fullName.message}</p>
+                        )}
                     </div>
                     <div>
                         <label className="sr-only" htmlFor="email-address">
                             {t("email")}
                         </label>
                         <input
+                            {...register("email")}
                             id="email-address"
-                            name="email"
                             type="email"
                             autoComplete="email"
-                            required
                             className="relative block w-full border-x border-border bg-transparent px-3 py-3 text-foreground placeholder-muted-foreground focus:z-10 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary sm:text-sm transition-colors"
                             placeholder={t("emailPlaceholder")}
-                            value={email}
-                            onChange={(e) => {
-                                setEmail(e.target.value);
-                                if (error) clearError();
-                            }}
                             disabled={isLoading}
                         />
+                        {errors.email && (
+                            <p className="mt-1 text-xs text-destructive">{errors.email.message}</p>
+                        )}
                     </div>
                     <div>
                         <label className="sr-only" htmlFor="password">
                             {t("password")}
                         </label>
                         <input
+                            {...register("password")}
                             id="password"
-                            name="password"
                             type="password"
                             autoComplete="new-password"
-                            required
                             className="relative block w-full rounded-b-lg border border-border bg-transparent px-3 py-3 text-foreground placeholder-muted-foreground focus:z-10 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary sm:text-sm transition-colors"
                             placeholder={t("passwordPlaceholder")}
-                            value={password}
-                            onChange={(e) => {
-                                setPassword(e.target.value);
-                                if (error) clearError();
-                            }}
                             disabled={isLoading}
-                            minLength={6}
                         />
+                        {errors.password && (
+                            <p className="mt-1 text-xs text-destructive">{errors.password.message}</p>
+                        )}
                     </div>
                 </div>
 

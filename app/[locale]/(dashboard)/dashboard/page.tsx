@@ -12,6 +12,7 @@ import { Heatmap } from "@/components/dashboard/heatmap";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -84,20 +85,47 @@ export default function DashboardHome() {
 
     if (isLoading) {
         return (
-            <div className="flex flex-col justify-center items-center py-32 gap-4">
-                <Loader2 className="h-10 w-10 animate-spin text-primary opacity-50" />
-                <p className="text-sm text-muted-foreground animate-pulse">Syncing your progress...</p>
+            <div className="space-y-8 pb-20 mt-2">
+                {/* Header Skeleton */}
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+                    <div className="space-y-3">
+                        <Skeleton className="h-12 w-[250px] rounded-xl" />
+                        <Skeleton className="h-6 w-[350px] rounded-md" />
+                    </div>
+                    <Skeleton className="h-10 w-[150px] rounded-xl" />
+                </div>
+                
+                {/* Stats Grid Skeleton */}
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                    {Array(4).fill(0).map((_, i) => (
+                        <Skeleton key={i} className="h-[120px] rounded-2xl" />
+                    ))}
+                </div>
+
+                {/* Second Row Skeleton */}
+                <div className="grid gap-4 md:grid-cols-12">
+                    <Skeleton className="md:col-span-4 h-[300px] rounded-3xl" />
+                    <div className="md:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <Skeleton className="h-[180px] rounded-3xl" />
+                        <Skeleton className="h-[180px] rounded-3xl" />
+                    </div>
+                </div>
             </div>
         );
     }
 
     if (!dashboardData) {
         return (
-            <div className="text-center py-32 border-2 border-dashed rounded-3xl">
-                <AlertCircle className="h-10 w-10 text-muted-foreground mx-auto mb-4" />
-                <h3 className="font-semibold">Failed to load dashboard</h3>
-                <p className="text-sm text-muted-foreground mb-6">We couldn't reach the analytics engine.</p>
-                <Button onClick={() => fetchDashboardData()}>Try Again</Button>
+            <div className="min-h-[50vh] flex flex-col items-center justify-center p-8 bg-gradient-to-b from-transparent to-muted/20 rounded-3xl mt-4">
+                <div className="relative mb-8 mt-12">
+                    <div className="absolute inset-0 bg-rose-500/10 blur-2xl rounded-full" />
+                    <AlertCircle className="h-20 w-20 text-rose-500 relative z-10 animate-pulse shadow-xl rounded-full bg-white dark:bg-card p-4 border border-rose-500/20" />
+                </div>
+                <h3 className="text-2xl font-black mb-2 tracking-tight">Analytics Offline</h3>
+                <p className="text-muted-foreground mb-8 text-center max-w-sm">We couldn't connect to the analytics engine right now. Please check your connection or try again.</p>
+                <Button onClick={() => fetchDashboardData()} size="lg" className="rounded-full shadow-lg hover:shadow-xl transition-all hover:-translate-y-1">
+                    <RefreshCw className="mr-2 h-4 w-4" /> Try Again
+                </Button>
             </div>
         );
     }
@@ -264,15 +292,20 @@ export default function DashboardHome() {
                                     </span>
                                 </div>
                                 <div className="w-full bg-secondary rounded-full h-3 overflow-hidden border border-border/50">
-                                    <motion.div 
-                                        initial={{ width: 0 }}
-                                        animate={{ 
-                                            width: quotaMax > 0 
-                                                ? `${Math.min(((dashboardData.vocabulary?.totalWords || 0) / quotaMax) * 100, 100)}%` 
-                                                : '0%' 
-                                        }}
-                                        className="h-full bg-primary rounded-full"
-                                    />
+                                    {(() => {
+                                        const percent = quotaMax > 0 ? Math.min(((dashboardData.vocabulary?.totalWords || 0) / quotaMax) * 100, 100) : 0;
+                                        const isWarning = percent >= 90;
+                                        return (
+                                            <motion.div 
+                                                initial={{ width: 0 }}
+                                                animate={{ width: `${percent}%` }}
+                                                className={cn(
+                                                    "h-full rounded-full transition-colors duration-500",
+                                                    isWarning ? "bg-rose-500" : "bg-primary"
+                                                )}
+                                            />
+                                        );
+                                    })()}
                                 </div>
                             </div>
 

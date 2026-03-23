@@ -42,6 +42,12 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
   --radius-2xl: calc(var(--radius) + 8px);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
 }
 
 :root {
@@ -78,6 +84,12 @@
   --sidebar-accent-foreground: oklch(0.25 0.02 60);
   --sidebar-border: oklch(0.92 0.02 60);
   --sidebar-ring: oklch(0.7 0.18 50);
+  --warning: oklch(0.85 0.15 80);
+  --warning-foreground: oklch(0.3 0.1 80);
+  --success: oklch(0.65 0.15 150);
+  --success-foreground: oklch(0.2 0.05 150);
+  --info: oklch(0.6 0.15 250);
+  --info-foreground: oklch(0.2 0.05 250);
 }
 
 .dark {
@@ -112,6 +124,12 @@
   --sidebar-accent-foreground: oklch(0.98 0.01 60);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.75 0.18 50);
+  --warning: oklch(0.65 0.2 70);
+  --warning-foreground: oklch(0.95 0.05 80);
+  --success: oklch(0.5 0.15 150);
+  --success-foreground: oklch(0.95 0.05 150);
+  --info: oklch(0.45 0.15 250);
+  --info-foreground: oklch(0.95 0.05 250);
 }
 
 @layer base {

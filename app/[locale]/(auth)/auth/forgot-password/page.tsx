@@ -7,27 +7,44 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2, ArrowLeft, MailCheck, AlertCircle } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 import { authApi } from "@/lib/api/api-client";
 import { getLocalizedApiError } from "@/lib/error-handler";
 import { motion, AnimatePresence } from "framer-motion";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { getForgotPasswordSchema, type ForgotPasswordInput } from "@/lib/validations/auth";
+import { AuthLogo } from "@/components/auth/auth-logo";
 
 export default function ForgotPasswordPage() {
     const t = useTranslations("Auth");
     const tErrors = useTranslations("errors");
     const locale = useLocale();
-    const [email, setEmail] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const schema = getForgotPasswordSchema(t);
+
+    const {
+        register,
+        handleSubmit,
+        watch,
+        formState: { errors },
+    } = useForm<ForgotPasswordInput>({
+        resolver: zodResolver(schema),
+        defaultValues: {
+            email: "",
+        },
+    });
+
+    const emailWatcher = watch("email");
+
+    const onSubmit = async (data: ForgotPasswordInput) => {
         setIsLoading(true);
         setError(null);
 
         try {
-            const res = await authApi.forgotPassword({ email });
+            const res = await authApi.forgotPassword(data);
             if (res.success) {
                 setIsSuccess(true);
             } else {
@@ -47,16 +64,8 @@ export default function ForgotPasswordPage() {
             transition={{ duration: 0.4, ease: "easeOut" }}
             className="w-full max-w-md space-y-8 rounded-2xl border border-border bg-card p-8 shadow-2xl"
         >
-            {/* Logo chung cho toàn bộ Auth Flow */}
-            <div className="flex items-center gap-3 justify-center mb-6">
-                <div className="flex h-12 w-12 items-center justify-center">
-                    <Image src="/apple-icon.png" alt="Logo" width={32} height={32} />
-                </div>
-                <div className="flex items-baseline">
-                    <span className="text-2xl font-bold tracking-tight text-gray-900">
-                        LexiVocab<span className="text-orange-600">.</span>
-                    </span>
-                </div>
+            <div className="mb-6">
+                <AuthLogo />
             </div>
 
             <AnimatePresence mode="wait">
@@ -76,12 +85,12 @@ export default function ForgotPasswordPage() {
                                 {t("forgotPasswordCheckTitle")}
                             </h1>
                             <p className="text-muted-foreground text-sm max-w-xs mx-auto">
-                                {t("forgotPasswordCheckDesc", { email })}
+                                {t("forgotPasswordCheckDesc", { email: emailWatcher })}
                             </p>
                         </div>
                         <div className="flex flex-col gap-3 w-full pt-2">
                             <Button asChild className="w-full h-11 shadow-md hover:shadow-lg transition-all">
-                                <Link href={`/${locale}/auth/reset-password?email=${encodeURIComponent(email)}`}>
+                                <Link href={`/${locale}/auth/reset-password?email=${encodeURIComponent(emailWatcher)}`}>
                                     {t("forgotPasswordEnterCode")}
                                 </Link>
                             </Button>
@@ -111,9 +120,9 @@ export default function ForgotPasswordPage() {
                             </p>
                         </div>
 
-                        <form onSubmit={handleSubmit} className="space-y-6">
+                        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                             {error && (
-                                <div className="flex items-center gap-2 rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
+                                <div className="flex items-center gap-2 rounded-lg border border-destructive/20 bg-destructive/15 p-3 text-sm text-destructive">
                                     <AlertCircle className="h-4 w-4 shrink-0" />
                                     <p>{error}</p>
                                 </div>
@@ -124,21 +133,22 @@ export default function ForgotPasswordPage() {
                                     {t("forgotPasswordEmailLabel")}
                                 </Label>
                                 <Input
+                                    {...register("email")}
                                     id="email"
                                     type="email"
                                     placeholder="name@example.com"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    required
                                     disabled={isLoading}
                                     className="border-border py-6 focus:ring-primary"
                                 />
+                                {errors.email && (
+                                    <p className="mt-1 text-xs text-destructive">{errors.email.message}</p>
+                                )}
                             </div>
 
                             <Button
                                 className="w-full h-11 text-sm font-semibold shadow-md hover:shadow-lg transition-all"
                                 type="submit"
-                                disabled={isLoading || !email}
+                                disabled={isLoading}
                             >
                                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                                 {t("forgotPasswordSubmit")}

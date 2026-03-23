@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { Loader2 } from "lucide-react";
 
-const getNumericQuality = (qualityRaw: any): number => {
+const getNumericQuality = (qualityRaw: string | number): number => {
     if (typeof qualityRaw === 'number') return qualityRaw;
     switch (String(qualityRaw).toLowerCase()) {
         case "perfect": return 5;
@@ -29,7 +29,7 @@ const getNumericQuality = (qualityRaw: any): number => {
     }
 };
 
-const getQualityColor = (qualityRaw: any) => {
+const getQualityColor = (qualityRaw: string | number) => {
     const quality = getNumericQuality(qualityRaw);
     switch (quality) {
         case 5: return "text-emerald-600 bg-emerald-500/10 border border-emerald-500/20";
@@ -60,7 +60,7 @@ export function ReviewHistoryTable() {
 
     useEffect(() => { fetchHistory(); }, [fetchHistory]);
 
-    const getQualityLabel = (qualityRaw: any) => {
+    const getQualityLabel = (qualityRaw: string | number) => {
         const num = getNumericQuality(qualityRaw);
         const key = String(num) as "0" | "1" | "2" | "3" | "4" | "5";
         return t(`quality.${key}`);

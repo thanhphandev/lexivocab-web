@@ -93,7 +93,7 @@ export function DashboardNav({ locale }: { locale: string }) {
             {/* Logo */}
             <Link href={`/${locale}/dashboard`} className="flex items-center gap-3 px-4 py-5 border-b border-border/50 group relative overflow-hidden flex-shrink-0 hover:bg-gradient-to-r hover:from-primary/5 hover:to-transparent transition-all duration-500">
                 {/* Subtle background glow */}
-                <motion.div 
+                <motion.div
                     className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"
                 />
 
@@ -106,7 +106,7 @@ export function DashboardNav({ locale }: { locale: string }) {
                             transition={{ type: "spring", stiffness: 350, damping: 28 }}
                             className="overflow-hidden flex flex-col justify-center"
                         >
-                            <motion.h1 
+                            <motion.h1
                                 className="text-[22px] font-black tracking-tight leading-none bg-clip-text text-transparent bg-gradient-to-r from-foreground via-primary to-foreground bg-[length:200%_auto] pb-0.5"
                                 animate={{
                                     backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
@@ -116,7 +116,7 @@ export function DashboardNav({ locale }: { locale: string }) {
                                 LexiVocab.
                             </motion.h1>
                             <div className="flex items-center gap-1.5 group/subtitle mt-0.5">
-                                <motion.div 
+                                <motion.div
                                     className="h-[2px] w-2 bg-gradient-to-r from-primary to-orange-500 rounded-full group-hover/subtitle:w-5 transition-all duration-300"
                                 />
                                 <p className="text-[10px] font-bold text-muted-foreground/70 tracking-[0.2em] uppercase transition-colors group-hover:text-primary/90">
@@ -185,7 +185,7 @@ export function DashboardNav({ locale }: { locale: string }) {
                 <div className="flex items-center gap-3">
                     <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-primary/80 to-orange-500 text-white font-bold text-xs overflow-hidden">
                         {user?.avatarUrl ? (
-                            <img src={user.avatarUrl} alt={user.fullName} className="w-full h-full object-cover" />
+                            <img src={user.avatarUrl} alt={user.fullName} width={36} height={36} className="w-full h-full object-cover" />
                         ) : (
                             initials
                         )}

@@ -61,7 +61,13 @@
     "verifyEmailResendFailed": "確認メールの再送に失敗しました。",
     "verifyEmailDidntReceive": "メールが届いていませんか？",
     "verifyEmailResend": "コードを再送",
-    "unexpectedError": "予期しないエラーが発生しました"
+    "unexpectedError": "予期しないエラーが発生しました",
+    "errors": {
+      "invalidEmail": "無効なメール形式",
+      "shortPassword": "パスワードは6文字以上である必要があります",
+      "shortName": "名前は2文字以上である必要があります",
+      "passwordsDontMatch": "パスワードが一致しません"
+    }
   },
   "Dashboard": {
     "subtitle": "スマート語彙ビルダー",
@@ -290,7 +296,10 @@
         "cancel": "キャンセル",
         "save": "単語を保存",
         "failed": "単語の追加に失敗しました。",
-        "conflict": "単語はすでに語彙に保存されています。"
+        "conflict": "単語はすでに語彙に保存されています。",
+        "required": "この項目は必須です。",
+        "tooLong": "文字数が長すぎます。",
+        "invalidUrl": "無効なURL形式です。"
       },
       "batchImport": {
         "desc": "CSVファイルをアップロードするか、テキストを貼り付けます（単語、意味、文脈）。UTF-8エンコーディングをサポートしています。",
@@ -320,7 +329,9 @@
         "colMeaning": "意味",
         "colContext": "文脈",
         "moreWords": "ほか {count} 単語",
-        "invalidFormat": "有効な単語が見つかりません。CSVフォーマットを確認してください。"
+        "invalidFormat": "有効な単語が見つかりません。CSVフォーマットを確認してください。",
+        "required": "この項目は必須です。",
+        "tooLong": "文字数が長すぎます。"
       }
     },
     "flashcard": {

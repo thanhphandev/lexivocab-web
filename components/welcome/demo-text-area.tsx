@@ -14,7 +14,7 @@ export function DemoTextArea({ className }: DemoTextAreaProps) {
     return (
         <div className={className}>
             {/* Browser Frame */}
-            <div className="rounded-2xl overflow-hidden shadow-2xl shadow-orange-500/10 border border-orange-100/50 bg-white">
+            <div className="rounded-2xl overflow-hidden shadow-2xl shadow-primary/10 border border-primary/20 bg-background">
                 {/* Browser Header */}
                 <div className="bg-gradient-to-b from-slate-50 to-white px-4 py-3 flex items-center gap-3 border-b border-slate-100">
                     <div className="flex gap-2">
@@ -51,7 +51,7 @@ export function DemoTextArea({ className }: DemoTextAreaProps) {
                                 ]
                             }}
                             transition={{ duration: 2, repeat: Infinity }}
-                            className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200 text-orange-700 text-xs font-medium"
+                            className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-primary/5 to-warning/5 border border-primary/20 text-primary text-xs font-medium"
                         >
                             <MousePointerClick className="w-3.5 h-3.5" />
                             {t('demo_hint')}
@@ -63,7 +63,7 @@ export function DemoTextArea({ className }: DemoTextAreaProps) {
                         <p className="text-slate-700">
                             {t('demo_text_1')}{' '}
                             <span className="relative inline-block">
-                                <span className="font-bold text-slate-900 bg-gradient-to-r from-orange-100/0 via-orange-100/70 to-orange-100/0 bg-[length:200%_100%] animate-[shimmer_3s_ease-in-out_infinite]">
+                                <span className="font-bold text-foreground bg-gradient-to-r from-primary/0 via-primary/20 to-primary/0 bg-[length:200%_100%] animate-[shimmer_3s_ease-in-out_infinite]">
                                     serendipity
                                 </span>
                                 {/* Animated cursor pointer */}
@@ -81,8 +81,8 @@ export function DemoTextArea({ className }: DemoTextAreaProps) {
                                     }}
                                     className="absolute -bottom-4 left-0 pointer-events-none block"
                                 >
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="drop-shadow-md">
-                                        <path d="M5.5 3.21V20.8c0 .45.54.67.85.35l4.86-4.86a.5.5 0 0 1 .35-.15h6.87c.48 0 .72-.58.38-.92L6.35 2.85a.5.5 0 0 0-.85.36z" fill="#f97316" stroke="white" strokeWidth="1.5" />
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="drop-shadow-md text-primary">
+                                        <path d="M5.5 3.21V20.8c0 .45.54.67.85.35l4.86-4.86a.5.5 0 0 1 .35-.15h6.87c.48 0 .72-.58.38-.92L6.35 2.85a.5.5 0 0 0-.85.36z" fill="currentColor" stroke="white" strokeWidth="1.5" />
                                     </svg>
                                 </motion.span>
                             </span>{' '}

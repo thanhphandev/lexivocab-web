@@ -22,7 +22,7 @@ export function Heatmap({ data }: HeatmapProps) {
 
     // Ensure we render exactly 52 or 53 full weeks
     const allDates: Date[] = [];
-    let current = new Date(startDate);
+    const current = new Date(startDate);
     while (current <= endDate || current.getDay() !== 0) {
         allDates.push(new Date(current));
         current.setDate(current.getDate() + 1);
@@ -116,8 +116,3 @@ export function Heatmap({ data }: HeatmapProps) {
         </div>
     );
 }
-
-// Add these custom utilities to globals.css
-// .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
-// .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-// .custom-scrollbar::-webkit-scrollbar-thumb { background: hsl(var(--muted-foreground)/0.2); border-radius: 10px; }

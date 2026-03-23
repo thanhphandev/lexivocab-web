@@ -61,7 +61,13 @@
     "verifyEmailResendFailed": "重新发送验证邮件失败。",
     "verifyEmailDidntReceive": "没有收到邮件？",
     "verifyEmailResend": "重新发送验证码",
-    "unexpectedError": "发生了意外错误"
+    "unexpectedError": "发生了意外错误",
+    "errors": {
+      "invalidEmail": "无效的电子邮件格式",
+      "shortPassword": "密码必须至少为6个字符",
+      "shortName": "姓名必须至少为2个字符",
+      "passwordsDontMatch": "密码不匹配"
+    }
   },
   "Dashboard": {
     "subtitle": "智能词汇构建器",
@@ -290,7 +296,10 @@
         "cancel": "取消",
         "save": "保存单词",
         "failed": "添加单词失败。",
-        "conflict": "单词已保存在您的词汇中。"
+        "conflict": "单词已保存在您的词汇中。",
+        "required": "此字段为必填项。",
+        "tooLong": "超出最大长度。",
+        "invalidUrl": "无效的URL格式。"
       },
       "batchImport": {
         "desc": "上传CSV文件或粘贴文本（单词、含义、语境）。支持真正的UTF-8编码。",
@@ -320,7 +329,9 @@
         "colMeaning": "含义",
         "colContext": "语境",
         "moreWords": "还有 {count} 个单词",
-        "invalidFormat": "未找到有效单词，请检查您的CSV格式。"
+        "invalidFormat": "未找到有效单词，请检查您的CSV格式。",
+        "required": "此字段为必填项。",
+        "tooLong": "超出最大长度。"
       }
     },
     "flashcard": {

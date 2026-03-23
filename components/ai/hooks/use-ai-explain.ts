@@ -1,0 +1,91 @@
+import { useState, useRef } from "react";
+import type { ApiErrorResponse } from "@/lib/api/types";
+
+export function useAiExplain(word: string, context?: string) {
+    const [isStreaming, setIsStreaming] = useState(false);
+    const [streamingContent, setStreamingContent] = useState("");
+    const [explainError, setExplainError] = useState<ApiErrorResponse | null>(null);
+    const abortControllerRef = useRef<AbortController | null>(null);
+
+    const stopStreaming = () => {
+        abortControllerRef.current?.abort();
+    };
+
+    const startStreaming = async (reqModelId: string, reqProvider: string) => {
+        if (!word) return;
+        setStreamingContent("");
+        setExplainError(null);
+        setIsStreaming(true);
+
+        if (abortControllerRef.current) abortControllerRef.current.abort();
+        const controller = new AbortController();
+        abortControllerRef.current = controller;
+
+        try {
+            let url = `/api/proxy/ai/explain-stream?word=${encodeURIComponent(word)}${context ? `&context=${encodeURIComponent(context)}` : ''}&asJson=true`;
+            if (reqProvider) url += `&provider=${encodeURIComponent(reqProvider)}`;
+            if (reqModelId) url += `&modelId=${encodeURIComponent(reqModelId)}`;
+            
+            const response = await fetch(url, { signal: controller.signal });
+
+            if (!response.ok) {
+                let errObj: ApiErrorResponse = { success: false, error: "Failed to connect to AI stream" };
+                try {
+                    const body = await response.json();
+                    if (body.error) errObj = body;
+                } catch {}
+                throw errObj;
+            }
+
+            const reader = response.body?.getReader();
+            const decoder = new TextDecoder();
+            if (!reader) throw new Error("No readable stream");
+
+            let done = false;
+            let buffer = "";
+
+            while (!done) {
+                const { value, done: readerDone } = await reader.read();
+                done = readerDone;
+                if (value) {
+                    buffer += decoder.decode(value, { stream: !done });
+                    const lines = buffer.split("\n\n");
+                    buffer = lines.pop() || ""; 
+
+                    for (const line of lines) {
+                        if (line.startsWith("data: ")) {
+                            const data = line.slice(6);
+                            try {
+                                const parsed = JSON.parse(data);
+                                if (parsed.type === "content") {
+                                    setStreamingContent(prev => prev + parsed.delta);
+                                } else if (parsed.type === "error") {
+                                    setExplainError({ success: false, error: parsed.message, errorCode: parsed.code, traceId: parsed.traceId });
+                                }
+                            } catch (e) {
+                                // Ignore parsing errors of chunks
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (error) {
+            const err = error as Error & { success?: boolean };
+            if (err.name !== "AbortError") {
+                setExplainError(err.success === false ? (err as unknown as ApiErrorResponse) : { success: false, error: err.message || "An error occurred while streaming AI response" });
+            }
+        } finally {
+            if (abortControllerRef.current === controller) {
+                setIsStreaming(false);
+            }
+        }
+    };
+
+    return {
+        isStreaming,
+        streamingContent,
+        explainError,
+        startStreaming,
+        stopStreaming
+    };
+}

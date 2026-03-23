@@ -61,7 +61,13 @@
     "verifyEmailResendFailed": "Failed to resend verification email.",
     "verifyEmailDidntReceive": "Didn't receive the email?",
     "verifyEmailResend": "Resend Code",
-    "unexpectedError": "An unexpected error occurred"
+    "unexpectedError": "An unexpected error occurred",
+    "errors": {
+      "invalidEmail": "Invalid email format",
+      "shortPassword": "Password must be at least 6 characters",
+      "shortName": "Name must be at least 2 characters",
+      "passwordsDontMatch": "Passwords do not match"
+    }
   },
   "Dashboard": {
     "subtitle": "Smart Vocabulary Builder",
@@ -290,7 +296,10 @@
         "cancel": "Cancel",
         "save": "Save Word",
         "failed": "Failed to add word.",
-        "conflict": "Word is already saved in your vocabulary."
+        "conflict": "Word is already saved in your vocabulary.",
+        "required": "This field is required.",
+        "tooLong": "Input is too long.",
+        "invalidUrl": "Please enter a valid URL."
       },
       "batchImport": {
         "desc": "Upload a CSV file or paste text (Word, Meaning, Context). True UTF-8 encoding is supported.",
@@ -320,7 +329,9 @@
         "colMeaning": "Meaning",
         "colContext": "Context",
         "moreWords": "+ {count} more words",
-        "invalidFormat": "No valid words found. Check your CSV format."
+        "invalidFormat": "No valid words found. Check your CSV format.",
+        "required": "This field is required.",
+        "tooLong": "Input is too long."
       }
     },
     "flashcard": {

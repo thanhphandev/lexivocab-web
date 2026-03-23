@@ -91,7 +91,7 @@ export function Flashcard({ card, onRate }: FlashcardProps) {
                                             {tCard("contextLabel")}
                                         </h3>
                                         <p className="text-lg text-foreground italic border-l-4 border-primary/30 pl-4 py-1">
-                                            "{card.contextSentence}"
+                                            &quot;{card.contextSentence}&quot;
                                         </p>
                                     </div>
                                 )}

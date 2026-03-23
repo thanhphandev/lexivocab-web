@@ -61,7 +61,13 @@
     "verifyEmailResendFailed": "Gửi lại email xác minh thất bại.",
     "verifyEmailDidntReceive": "Chưa nhận được email?",
     "verifyEmailResend": "Gửi lại mã",
-    "unexpectedError": "Đã xảy ra lỗi không mong muốn"
+    "unexpectedError": "Đã xảy ra lỗi không mong muốn",
+    "errors": {
+      "invalidEmail": "Định dạng email không hợp lệ",
+      "shortPassword": "Mật khẩu phải có ít nhất 6 ký tự",
+      "shortName": "Tên phải có ít nhất 2 ký tự",
+      "passwordsDontMatch": "Mật khẩu không khớp"
+    }
   },
   "Dashboard": {
     "subtitle": "Xây dựng từ vựng thông minh",
@@ -294,7 +300,10 @@
         "cancel": "Hủy",
         "save": "Lưu từ",
         "failed": "Lỗi khi thêm từ.",
-        "conflict": "Từ này đã có trong danh sách từ vựng của bạn."
+        "conflict": "Từ này đã có trong danh sách từ vựng của bạn.",
+        "required": "Trường này là bắt buộc.",
+        "tooLong": "Nội dung quá dài.",
+        "invalidUrl": "URL không hợp lệ."
       },
       "batchImport": {
         "desc": "Tải lên tệp CSV hoặc dán văn bản (Từ vựng, Ý nghĩa, Ngữ cảnh). Hỗ trợ chuẩn mã hóa UTF-8.",
@@ -324,7 +333,9 @@
         "colMeaning": "Nghĩa",
         "colContext": "Ngữ cảnh",
         "moreWords": "+ {count} từ nữa",
-        "invalidFormat": "Không tìm thấy từ hợp lệ. Vui lòng kiểm tra định dạng CSV."
+        "invalidFormat": "Không tìm thấy từ hợp lệ. Vui lòng kiểm tra định dạng CSV.",
+        "required": "Trường này là bắt buộc.",
+        "tooLong": "Nội dung quá dài."
       }
     },
     "flashcard": {

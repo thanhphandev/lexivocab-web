@@ -19,7 +19,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Loader2, ArrowLeftRight } from "lucide-react";
 import { QuickModelSwitcher } from "@/components/ai/quick-model-switcher";
 import { useLLMTranslation } from "@/hooks/use-llm-translation";
-import { toast } from "sonner";
 import { showErrorToast } from "@/lib/error-handler";
 
 interface EditWordDialogProps {
@@ -42,11 +41,11 @@ export function EditWordDialog({ item, open, onOpenChange, onSuccess }: EditWord
     const [aiProviderName, setAiProviderName] = useState("");
     const { isStreaming, aiData, streamingError, streamTranslation } = useLLMTranslation();
     const [isSwapped, setIsSwapped] = useState(false);
-    const [settings, setSettings] = useState<any>(null);
+    const [settings, setSettings] = useState<{ nativeLanguage?: string; targetLanguage?: string } | null>(null);
 
     useEffect(() => {
         if (open && !settings) {
-            settingsApi.get().then((res: any) => {
+            settingsApi.get().then((res) => {
                 if (res.success && res.data) setSettings(res.data);
             }).catch(console.error);
         }
