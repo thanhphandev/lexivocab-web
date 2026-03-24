@@ -85,7 +85,7 @@ export default function DashboardHome() {
 
     if (isLoading) {
         return (
-            <div className="space-y-8 pb-20 mt-2">
+            <div className="space-y-8 pb-20 mt-2 animate-pulse">
                 {/* Header Skeleton */}
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
                     <div className="space-y-3">
@@ -116,22 +116,22 @@ export default function DashboardHome() {
 
     if (!dashboardData) {
         return (
-            <div className="min-h-[50vh] flex flex-col items-center justify-center p-8 bg-gradient-to-b from-transparent to-muted/20 rounded-3xl mt-4">
+            <div className="min-h-[50vh] flex flex-col items-center justify-center p-8 bg-gradient-to-b from-transparent to-muted/20 rounded-3xl mt-4 animate-in fade-in zoom-in duration-500">
                 <div className="relative mb-8 mt-12">
                     <div className="absolute inset-0 bg-rose-500/10 blur-2xl rounded-full" />
                     <AlertCircle className="h-20 w-20 text-rose-500 relative z-10 animate-pulse shadow-xl rounded-full bg-white dark:bg-card p-4 border border-rose-500/20" />
                 </div>
                 <h3 className="text-2xl font-black mb-2 tracking-tight">Analytics Offline</h3>
                 <p className="text-muted-foreground mb-8 text-center max-w-sm">We couldn't connect to the analytics engine right now. Please check your connection or try again.</p>
-                <Button onClick={() => fetchDashboardData()} size="lg" className="rounded-full shadow-lg hover:shadow-xl transition-all hover:-translate-y-1">
-                    <RefreshCw className="mr-2 h-4 w-4" /> Try Again
+                <Button onClick={() => fetchDashboardData()} size="lg" className="rounded-full shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 group">
+                    <RefreshCw className="mr-2 h-4 w-4 group-hover:rotate-180 transition-transform duration-500" /> Try Again
                 </Button>
             </div>
         );
     }
 
     return (
-        <div className="space-y-8 pb-20">
+        <div className="space-y-8 pb-20 animate-in fade-in slide-in-from-bottom-6 duration-700 ease-out fill-mode-both">
             {/* Header with Live Sync Controls */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
                 <div>
@@ -143,44 +143,53 @@ export default function DashboardHome() {
                     </p>
                 </div>
                 <div className="flex items-center gap-2">
-                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent/50 border text-[10px] font-bold tracking-widest uppercase">
-                        <span className={cn("h-1.5 w-1.5 rounded-full", isPolling ? "bg-emerald-500 animate-pulse" : "bg-muted-foreground/30")} />
+                    <div 
+                        className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent/50 border text-[10px] font-bold tracking-widest uppercase cursor-pointer hover:bg-accent hover:border-accent-foreground/20 transition-all duration-300"
+                        onClick={() => setIsPolling(!isPolling)}
+                    >
+                        <span className={cn("h-1.5 w-1.5 rounded-full transition-colors duration-500", isPolling ? "bg-emerald-500 animate-pulse" : "bg-muted-foreground/30")} />
                         {isPolling ? "Live Sync Active" : "Sync Paused"}
                     </div>
                     <Button 
                         variant="ghost" 
                         size="icon" 
                         onClick={() => setIsPolling(!isPolling)}
-                        className="h-8 w-8 hover:bg-accent"
+                        className="h-8 w-8 hover:bg-accent hover:text-accent-foreground transition-colors rounded-full"
                     >
                         {isPolling ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
                     </Button>
-                    <Button variant="outline" size="sm" onClick={() => fetchDashboardData()} disabled={isLoading} className="h-8 gap-2 border-primary/20 hover:border-primary/50">
-                        <RefreshCw className={cn("h-3.5 w-3.5", isLoading && "animate-spin")} />
+                    <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => fetchDashboardData()} 
+                        disabled={isLoading} 
+                        className="h-8 gap-2 border-primary/20 hover:border-primary/50 hover:bg-primary/5 transition-colors group rounded-full"
+                    >
+                        <RefreshCw className={cn("h-3.5 w-3.5 group-hover:rotate-180 transition-transform duration-500", isLoading && "animate-spin")} />
                         Refresh
                     </Button>
                 </div>
             </div>
 
             {/* Main Stats Grid */}
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 delay-100 animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-both">
                 <StatCard
                     title={t("stats.totalWords")}
                     value={dashboardData.vocabulary?.totalWords || 0}
-                    icon={<BookOpen className="text-blue-500" />}
-                    className="border-none shadow-md bg-white dark:bg-card/50"
+                    icon={<BookOpen className="text-blue-500 h-5 w-5 drop-shadow-sm" />}
+                    className="bg-card dark:bg-card/50"
                 />
                 <StatCard
                     title={t("stats.activeWords")}
                     value={dashboardData.vocabulary?.activeWords || 0}
-                    icon={<Brain className="text-orange-500" />}
-                    className="border-none shadow-md bg-white dark:bg-card/50"
+                    icon={<Brain className="text-orange-500 h-5 w-5 drop-shadow-sm" />}
+                    className="bg-card dark:bg-card/50"
                 />
                 <StatCard
                     title={t("stats.masteredWords")}
                     value={dashboardData.vocabulary?.masteredWords || 0}
-                    icon={<CheckCircle2 className="text-emerald-500" />}
-                    className="border-none shadow-md bg-white dark:bg-card/50"
+                    icon={<CheckCircle2 className="text-emerald-500 h-5 w-5 drop-shadow-sm" />}
+                    className="bg-card dark:bg-card/50"
                     trend={{
                         value: Math.round(((dashboardData.vocabulary?.masteredWords || 0) / Math.max(dashboardData.vocabulary?.totalWords || 1, 1)) * 100),
                         label: "% Mastery",
@@ -190,46 +199,49 @@ export default function DashboardHome() {
                 <StatCard
                     title={t("stats.dueToday")}
                     value={dashboardData.vocabulary?.dueToday || 0}
-                    icon={<CalendarClock className="text-rose-500" />}
-                    className="border-none shadow-md bg-white dark:bg-card/50"
+                    icon={<CalendarClock className="text-rose-500 h-5 w-5 drop-shadow-sm" />}
+                    className="bg-card dark:bg-card/50"
                     description="Pending reviews"
                 />
             </div>
 
             {/* Second Row: Detailed Analytics */}
-            <div className="grid gap-4 md:grid-cols-12">
+            <div className="grid gap-4 md:grid-cols-12 delay-200 animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-both">
                 {/* Streak and Consistency */}
-                <Card className="md:col-span-4 shadow-md overflow-hidden border-none bg-gradient-to-br from-orange-400 to-rose-500 text-white">
+                <Card className="md:col-span-4 shadow-md overflow-hidden border-none bg-gradient-to-br from-orange-400 to-rose-500 text-white group hover:shadow-xl hover:shadow-orange-500/20 hover:-translate-y-1 transition-all duration-500">
                     <CardHeader className="pb-2">
                         <div className="flex justify-between items-center">
-                            <span className="text-[10px] font-bold uppercase tracking-widest opacity-80">{t("streak.title")}</span>
-                            <Flame className="h-5 w-5 fill-white/20" />
+                            <span className="text-[10px] font-bold uppercase tracking-widest opacity-80 group-hover:opacity-100 transition-opacity">
+                                {t("streak.title")}
+                            </span>
+                            <Flame className="h-5 w-5 fill-white/20 group-hover:fill-white/60 group-hover:animate-pulse transition-all duration-500" />
                         </div>
                     </CardHeader>
                     <CardContent className="pt-2 text-center pb-8">
-                        <div className="relative inline-block">
+                        <div className="relative inline-block group-hover:scale-105 transition-transform duration-500 ease-out">
                              <motion.div 
                                 initial={{ scale: 0.8, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
+                                transition={{ type: "spring", stiffness: 200, damping: 15 }}
                                 className="text-7xl font-black mb-1 drop-shadow-lg"
                              >
                                 {dashboardData.currentStreak || 0}
                              </motion.div>
                              <div className="absolute -top-2 -right-6">
-                                <Badge className="bg-white/20 backdrop-blur-md text-white border-none py-0">{t("streak.badge")}</Badge>
+                                <Badge className="bg-white/20 backdrop-blur-md text-white border-none py-0 shadow-sm">{t("streak.badge")}</Badge>
                              </div>
                         </div>
-                        <h3 className="text-lg font-bold opacity-90">{t("stats.currentStreak")}</h3>
+                        <h3 className="text-lg font-bold opacity-90 group-hover:opacity-100 transition-opacity">{t("stats.currentStreak")}</h3>
                         <p className="text-xs opacity-70 mt-2 font-medium">{t("streak.motivationalText")}</p>
                         
                         <div className="mt-8 flex justify-center gap-6 border-t border-white/10 pt-6">
-                            <div>
-                                <p className="text-[9px] font-bold uppercase opacity-60">{t("streak.personalBest")}</p>
-                                <p className="text-xl font-black">{streakDetails?.longestStreak || 0}d</p>
+                            <div className="hover:-translate-y-1 transition-transform cursor-default">
+                                <p className="text-[9px] font-bold uppercase opacity-60 hover:opacity-100 transition-opacity">{t("streak.personalBest")}</p>
+                                <p className="text-xl font-black drop-shadow-sm">{streakDetails?.longestStreak || 0}d</p>
                             </div>
-                            <div>
-                                <p className="text-[9px] font-bold uppercase opacity-60">{t("streak.completion")}</p>
-                                <p className="text-xl font-black">{inDepthStats?.learningProgress || 0}%</p>
+                            <div className="hover:-translate-y-1 transition-transform cursor-default">
+                                <p className="text-[9px] font-bold uppercase opacity-60 hover:opacity-100 transition-opacity">{t("streak.completion")}</p>
+                                <p className="text-xl font-black drop-shadow-sm">{inDepthStats?.learningProgress || 0}%</p>
                             </div>
                         </div>
                     </CardContent>
@@ -237,61 +249,61 @@ export default function DashboardHome() {
 
                 {/* Quota & Reviews */}
                 <div className="md:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                     <Card className="shadow-md border-none bg-card/60 backdrop-blur-sm">
+                     <Card className="shadow-md border-transparent hover:border-primary/20 bg-card/60 backdrop-blur-sm group hover:shadow-xl hover:-translate-y-1 transition-all duration-500">
                         <CardHeader className="pb-2">
-                            <CardTitle className="text-sm font-bold flex items-center gap-2">
-                                <Zap className="h-4 w-4 text-yellow-500" />
+                            <CardTitle className="text-sm font-bold flex items-center gap-2 group-hover:text-primary transition-colors">
+                                <Zap className="h-4 w-4 text-yellow-500 group-hover:scale-110 transition-transform" />
                                 {t("power.title")}
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="flex items-baseline gap-2 mb-4">
+                            <div className="flex items-baseline gap-2 mb-4 group-hover:translate-x-1 transition-transform duration-300">
                                 <span className="text-4xl font-black text-foreground">{dashboardData.reviews?.totalReviewsToday || 0}</span>
                                 <span className="text-xs text-muted-foreground font-bold uppercase tracking-tighter">{t("power.completed")}</span>
                             </div>
                             
                             <div className="space-y-4">
-                                <div>
-                                    <div className="flex justify-between text-[10px] font-bold uppercase mb-1.5 opacity-60">
+                                <div className="group/progress">
+                                    <div className="flex justify-between text-[10px] font-bold uppercase mb-1.5 opacity-60 group-hover/progress:opacity-100 transition-opacity">
                                         <span>{t("power.averageAccuracy")}</span>
                                         <span>{(dashboardData.reviews?.averageQualityScore || 0).toFixed(1)} / 5.0</span>
                                     </div>
-                                    <Progress value={(dashboardData.reviews?.averageQualityScore || 0) * 20} className="h-1.5" />
+                                    <Progress value={(dashboardData.reviews?.averageQualityScore || 0) * 20} className="h-1.5 transition-all group-hover/progress:h-2" />
                                 </div>
-                                <div className="p-3 bg-secondary/50 rounded-xl flex items-center justify-between">
+                                <div className="p-3 bg-secondary/50 hover:bg-secondary/80 rounded-xl flex items-center justify-between transition-colors duration-300">
                                     <div className="flex items-center gap-2">
-                                        <TrendingUp className="h-4 w-4 text-indigo-500" />
+                                        <TrendingUp className="h-4 w-4 text-indigo-500 group-hover:animate-pulse" />
                                         <span className="text-xs font-bold">{t("power.retentionRate")}</span>
                                     </div>
-                                    <span className="text-sm font-black text-indigo-600 dark:text-indigo-400">{inDepthStats?.retentionRate || 0}%</span>
+                                    <span className="text-sm font-black text-indigo-600 dark:text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded-md">{inDepthStats?.retentionRate || 0}%</span>
                                 </div>
                             </div>
                         </CardContent>
                     </Card>
 
-                    <Card className="shadow-md border-none bg-card/60 backdrop-blur-sm flex flex-col justify-between">
+                    <Card className="shadow-md border-transparent hover:border-primary/20 bg-card/60 backdrop-blur-sm flex flex-col justify-between group hover:shadow-xl hover:-translate-y-1 transition-all duration-500">
                         <CardHeader className="pb-2">
                             <div className="flex justify-between items-center">
-                                <CardTitle className="text-sm font-bold flex items-center gap-2">
-                                    <Shield className="h-4 w-4 text-primary" />
+                                <CardTitle className="text-sm font-bold flex items-center gap-2 group-hover:text-primary transition-colors">
+                                    <Shield className="h-4 w-4 text-primary group-hover:scale-110 transition-transform" />
                                     {t("quota.title")}
                                 </CardTitle>
-                                <Badge className="bg-primary/10 text-primary border-none text-[10px] font-black uppercase">
+                                <Badge className="bg-primary/10 text-primary border-none text-[10px] font-black uppercase shadow-sm group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
                                     {permissions?.plan || "Free"}
                                 </Badge>
                             </div>
                         </CardHeader>
-                        <CardContent className="space-y-6 pt-2">
-                            <div className="space-y-2">
-                                <div className="flex items-center justify-between text-[11px] font-bold uppercase opacity-60">
+                        <CardContent className="space-y-6 pt-2 flex-grow flex flex-col justify-between">
+                            <div className="space-y-2 group/quota">
+                                <div className="flex items-center justify-between text-[11px] font-bold uppercase opacity-60 group-hover/quota:opacity-100 transition-opacity">
                                     <span>{t("quota.storageLabel")}</span>
-                                    <span>
+                                    <span className="font-mono">
                                         {quotaMax >= 2147483647 
                                             ? `${dashboardData.vocabulary?.totalWords || 0} / ${t("quota.unlimited")}` 
                                             : `${dashboardData.vocabulary?.totalWords || 0} / ${quotaMax}`}
                                     </span>
                                 </div>
-                                <div className="w-full bg-secondary rounded-full h-3 overflow-hidden border border-border/50">
+                                <div className="w-full bg-secondary/80 rounded-full h-3 overflow-hidden border border-border/50 group-hover/quota:shadow-inner transition-shadow">
                                     {(() => {
                                         const percent = quotaMax > 0 ? Math.min(((dashboardData.vocabulary?.totalWords || 0) / quotaMax) * 100, 100) : 0;
                                         const isWarning = percent >= 90;
@@ -299,11 +311,14 @@ export default function DashboardHome() {
                                             <motion.div 
                                                 initial={{ width: 0 }}
                                                 animate={{ width: `${percent}%` }}
+                                                transition={{ duration: 1, ease: "easeOut" }}
                                                 className={cn(
-                                                    "h-full rounded-full transition-colors duration-500",
+                                                    "h-full rounded-full transition-colors duration-500 relative overflow-hidden",
                                                     isWarning ? "bg-rose-500" : "bg-primary"
                                                 )}
-                                            />
+                                            >
+                                                <div className="absolute inset-0 bg-white/20 w-full h-full animate-[shimmer_2s_infinite]" style={{ transform: 'skewX(-20deg)' }} />
+                                            </motion.div>
                                         );
                                     })()}
                                 </div>
@@ -312,7 +327,7 @@ export default function DashboardHome() {
                             {permissions?.plan === "Free" && (
                                 <Link 
                                     href={`/pricing`} 
-                                    className="block w-full text-center py-2.5 bg-primary text-primary-foreground text-xs font-black uppercase tracking-widest rounded-xl hover:shadow-lg transition-all"
+                                    className="block w-full text-center py-2.5 bg-primary/10 text-primary border border-primary/20 text-xs font-black uppercase tracking-widest rounded-xl hover:bg-primary hover:text-primary-foreground hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 hover:-translate-y-0.5"
                                 >
                                     {t("quota.unlockPro")}
                                 </Link>
@@ -323,12 +338,12 @@ export default function DashboardHome() {
             </div>
 
             {/* Bottom Row: Insights & Heatmap */}
-            <div className="grid gap-4 md:grid-cols-12">
+            <div className="grid gap-4 md:grid-cols-12 delay-300 animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-both">
                 {/* Insights / CEFR Spread */}
-                <Card className="md:col-span-4 shadow-md border-none bg-card/60 backdrop-blur-sm">
+                <Card className="md:col-span-4 shadow-md border-transparent hover:border-primary/20 bg-card/60 backdrop-blur-sm group hover:shadow-xl hover:-translate-y-1 transition-all duration-500">
                     <CardHeader>
-                        <CardTitle className="text-sm font-bold flex items-center gap-2">
-                            <Trophy className="h-4 w-4 text-emerald-500" />
+                        <CardTitle className="text-sm font-bold flex items-center gap-2 group-hover:text-emerald-500 transition-colors">
+                            <Trophy className="h-4 w-4 text-emerald-500 group-hover:scale-110 transition-transform" />
                             {t("insight.title")}
                         </CardTitle>
                     </CardHeader>
@@ -338,12 +353,12 @@ export default function DashboardHome() {
                             {Object.entries(inDepthStats?.cefrSpread || { 'A1': 0, 'A2': 0, 'B1': 0, 'B2': 0, 'C1': 0, 'C2': 0 })
                                 .sort((a, b) => a[0].localeCompare(b[0]))
                                 .map(([level, count]) => (
-                                <div key={level} className="p-2.5 bg-secondary/30 rounded-xl border border-border/50">
-                                    <div className="flex justify-between items-center mb-1">
-                                        <span className="text-[10px] font-black">{level}</span>
-                                        <span className="text-xs font-bold text-primary">{count}</span>
+                                <div key={level} className="p-2.5 bg-secondary/30 hover:bg-secondary/80 rounded-xl border border-border/50 hover:border-border hover:scale-[1.03] transition-all duration-300 cursor-default">
+                                    <div className="flex justify-between items-center mb-1.5">
+                                        <span className="text-[10px] font-black uppercase">{level}</span>
+                                        <span className="text-xs font-bold text-primary bg-primary/10 px-1.5 py-0.5 rounded-md">{count}</span>
                                     </div>
-                                    <Progress value={Math.min((count / (dashboardData.vocabulary?.totalWords || 1)) * 200, 100)} className="h-1 shadow-inner" />
+                                    <Progress value={Math.min((count / (dashboardData.vocabulary?.totalWords || 1)) * 200, 100)} className="h-1 shadow-inner bg-secondary-foreground/10" />
                                 </div>
                             ))}
                         </div>
@@ -353,12 +368,16 @@ export default function DashboardHome() {
                             <div className="flex flex-wrap gap-1.5">
                                 {(inDepthStats?.mostDifficultWords?.length || 0) > 0 ? (
                                     inDepthStats?.mostDifficultWords?.slice(0, 6).map((word, idx) => (
-                                        <Badge key={idx} variant="secondary" className="bg-rose-500/5 text-rose-600 hover:bg-rose-500/10 border-none text-[9px] font-bold px-2.5 py-1">
+                                        <Badge 
+                                            key={idx} 
+                                            variant="secondary" 
+                                            className="bg-rose-500/10 text-rose-600 dark:text-rose-400 hover:bg-rose-500 hover:text-white border-transparent text-[10px] font-bold px-2.5 py-1 transition-all duration-300 hover:scale-105 hover:-translate-y-0.5 hover:shadow-md cursor-default"
+                                        >
                                             {word}
                                         </Badge>
                                     ))
                                 ) : (
-                                    <p className="text-[10px] text-muted-foreground italic px-1">{t("insight.noChallenges")}</p>
+                                    <p className="text-[10px] text-muted-foreground italic px-1 bg-muted p-2 rounded-md">{t("insight.noChallenges")}</p>
                                 )}
                             </div>
                         </div>
@@ -366,21 +385,21 @@ export default function DashboardHome() {
                 </Card>
 
                 {/* Heatmap */}
-                <Card className="md:col-span-8 shadow-md border-none bg-card/60 backdrop-blur-sm overflow-hidden">
+                <Card className="md:col-span-8 shadow-md border-transparent hover:border-primary/20 bg-card/60 backdrop-blur-sm overflow-hidden group hover:shadow-xl hover:-translate-y-1 transition-all duration-500">
                     <CardHeader className="flex flex-row items-center justify-between">
                         <div>
-                            <CardTitle className="text-lg font-bold">{t("heatmap.title")}</CardTitle>
+                            <CardTitle className="text-lg font-bold group-hover:text-primary transition-colors">{t("heatmap.title")}</CardTitle>
                             <p className="text-xs text-muted-foreground">{t("activity.subtitle")}</p>
                         </div>
-                        <Badge className="bg-primary shadow-sm">{heatmapData?.year || new Date().getFullYear()}</Badge>
+                        <Badge className="bg-primary/90 text-primary-foreground shadow-sm group-hover:scale-105 transition-transform">{heatmapData?.year || new Date().getFullYear()}</Badge>
                     </CardHeader>
                     <CardContent>
                         {heatmapData ? (
-                            <div className="p-2 bg-muted/30 rounded-2xl border border-border/50">
+                            <div className="p-3 bg-muted/30 rounded-2xl border border-transparent hover:border-border/50 transition-colors">
                                 <Heatmap data={heatmapData} />
                             </div>
                         ) : (
-                            <div className="h-48 flex items-center justify-center text-muted-foreground italic text-sm">
+                            <div className="h-48 flex items-center justify-center text-muted-foreground italic text-sm bg-muted/20 rounded-2xl border border-dashed">
                                 {t("activity.warming")}
                             </div>
                         )}
@@ -388,9 +407,9 @@ export default function DashboardHome() {
                 </Card>
             </div>
             
-            <div className="flex items-center justify-between text-[10px] text-muted-foreground px-4 italic font-medium">
+            <div className="flex items-center justify-between text-[10px] text-muted-foreground px-4 italic font-medium animate-in fade-in duration-1000 delay-500">
                 <span>{t("footer.lastUpdated")} {lastRefresh.toLocaleTimeString()}</span>
-                <span className="flex items-center gap-1.5 underline decoration-emerald-500/30 underline-offset-4 cursor-help">
+                <span className="flex items-center gap-1.5 underline decoration-emerald-500/30 hover:decoration-emerald-500 hover:text-emerald-500 transition-colors underline-offset-4 cursor-help">
                     <Shield className="h-2.5 w-2.5" /> {t("footer.dataProtection")}
                 </span>
             </div>

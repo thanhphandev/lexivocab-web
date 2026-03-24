@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { clientApi } from "@/lib/api/api-client";
 import { type BatchImportInput } from "@/lib/validations/vocabulary";
+import { notifyQuotaUpdateDebounced } from "@/lib/utils/quota-events";
 import Papa from "papaparse";
 import {
     Dialog,
@@ -94,6 +95,8 @@ export function BatchImportDialog({ onSuccess }: { onSuccess: () => void }) {
                 setParsedPreview([]);
                 toast.success(tImport("success", { count: (res.data as number) || parsedPreview.length }));
                 onSuccess();
+                // Notify quota update after successful batch import
+                notifyQuotaUpdateDebounced();
             } else {
                 showErrorToast(
                     res,

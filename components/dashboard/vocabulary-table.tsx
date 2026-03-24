@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { format } from "date-fns";
 import type { VocabularyDto, PagedResult } from "@/lib/api/types";
 import { clientApi, vocabularyApi } from "@/lib/api/api-client";
+import { notifyQuotaUpdateDebounced } from "@/lib/utils/quota-events";
 import {
     Table,
     TableBody,
@@ -106,6 +107,8 @@ export function VocabularyTable({ data, tags, isLoading, onRefresh }: Vocabulary
             if (res.success) {
                 toast.success(t("table.deleteSuccess", { word }));
                 onRefresh();
+                // Notify quota update after successful deletion
+                notifyQuotaUpdateDebounced();
             } else {
                 showErrorToast(res, t("table.deleteFailed", { word }), t);
             }

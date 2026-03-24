@@ -402,6 +402,13 @@
     "settings": {
       "title": "Settings",
       "subtitle": "Manage your account and app preferences.",
+      "tabs": {
+        "profile": "Profile",
+        "password": "Security",
+        "notifications": "Notifications",
+        "extension": "Extension",
+        "danger": "Danger Zone"
+      },
       "profile": {
         "title": "Profile",
         "desc": "Update your personal details.",
@@ -965,101 +972,7 @@
     }
   },
   "Admin": {
-    "auditLogs": {
-      "title": "Audit Logs",
-      "subtitle": "Real-time monitoring of all system activities and user actions",
-      "searchPlaceholder": "Search by email, request, IP address...",
-      "filters": {
-        "action": "Action Type",
-        "allActions": "All Actions",
-        "entityType": "Entity Type",
-        "allEntities": "All Entities",
-        "status": "Status",
-        "allStatus": "All Status",
-        "success": "Success",
-        "failed": "Failed",
-        "dateFrom": "From",
-        "dateTo": "To",
-        "clearFilters": "Clear Filters",
-        "activeFilters": "{count} active"
-      },
-      "actions": {
-        "Login": "Login",
-        "LoginFailed": "Login Failed",
-        "Register": "Register",
-        "Logout": "Logout",
-        "TokenRefresh": "Token Refresh",
-        "GoogleLogin": "Google Login",
-        "VocabularyCreated": "Vocab Created",
-        "VocabularyUpdated": "Vocab Updated",
-        "VocabularyDeleted": "Vocab Deleted",
-        "VocabularyBulkImported": "Bulk Import",
-        "VocabularyExported": "Export",
-        "ReviewCompleted": "Review Done",
-        "SettingsUpdated": "Settings Updated",
-        "ProfileUpdated": "Profile Updated",
-        "UserUpdated": "User Updated",
-        "PasswordChanged": "Password Changed",
-        "UserDeleted": "User Deleted",
-        "SubscriptionCreated": "Sub Created",
-        "SubscriptionCancelled": "Sub Cancelled",
-        "PaymentCompleted": "Payment OK",
-        "PaymentFailed": "Payment Failed",
-        "AdminUserDeactivated": "User Deactivated",
-        "AdminUserActivated": "User Activated",
-        "AdminRoleChanged": "Role Changed",
-        "SystemSettingUpdated": "System Updated",
-        "RateLimited": "Rate Limited",
-        "SuspiciousActivity": "Suspicious"
-      },
-      "table": {
-        "timestamp": "Timestamp",
-        "user": "User",
-        "action": "Action",
-        "entity": "Entity",
-        "status": "Status",
-        "duration": "Duration",
-        "details": "Details"
-      },
-      "detail": {
-        "title": "Log Details",
-        "general": "General Information",
-        "timestamp": "Timestamp",
-        "action": "Action",
-        "status": "Status",
-        "duration": "Duration",
-        "technical": "Technical Details",
-        "requestName": "Request",
-        "traceId": "Trace ID",
-        "ipAddress": "IP Address",
-        "userAgent": "User Agent",
-        "entity": "Entity Information",
-        "entityType": "Entity Type",
-        "entityId": "Entity ID",
-        "user": "User Information",
-        "email": "Email",
-        "userId": "User ID",
-        "additionalInfo": "Additional Info",
-        "noData": "No additional information",
-        "copyId": "Copy ID",
-        "copied": "Copied!"
-      },
-      "status": {
-        "success": "Success",
-        "failed": "Failed"
-      },
-      "pagination": {
-        "showing": "Showing {from}-{to} of {total}",
-        "page": "Page {page} of {totalPages}",
-        "perPage": "per page",
-        "previous": "Previous",
-        "next": "Next"
-      },
-      "empty": "No audit logs found",
-      "emptySubtitle": "No records match the current filters. Try adjusting your search criteria.",
-      "system": "System",
-      "ms": "{ms}ms"
-    }
+    "auditLogs": {}
   },
   "notifications": {
     "testSuccess": "Ping successful! Check your messaging apps.",

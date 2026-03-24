@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import type { ApiErrorResponse } from "@/lib/api/types";
+import { notifyQuotaUpdateDebounced } from "@/lib/utils/quota-events";
 
 export function useAiStory(word: string) {
     const [isStoryStreaming, setIsStoryStreaming] = useState(false);
@@ -66,6 +67,11 @@ export function useAiStory(word: string) {
                         }
                     }
                 }
+            }
+            
+            // Notify quota update after successful story generation
+            if (!controller.signal.aborted) {
+                notifyQuotaUpdateDebounced();
             }
         } catch (error) {
             const err = error as Error & { success?: boolean };

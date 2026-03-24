@@ -402,6 +402,13 @@
     "settings": {
       "title": "设置",
       "subtitle": "管理您的账户和应用偏好。",
+      "tabs": {
+        "profile": "个人资料",
+        "password": "安全",
+        "notifications": "通知",
+        "extension": "扩展程序",
+        "danger": "危险区域"
+      },
       "profile": {
         "title": "个人资料",
         "desc": "更新您的个人信息。",
@@ -962,103 +969,6 @@
       "translation": "简介翻译",
       "generating": "正在编写故事...",
       "stop": "停止"
-    }
-  },
-  "Admin": {
-    "auditLogs": {
-      "title": "审计日志",
-      "subtitle": "实时监控所有系统活动和用户操作",
-      "searchPlaceholder": "按邮箱、请求、IP地址搜索...",
-      "filters": {
-        "action": "操作类型",
-        "allActions": "全部",
-        "entityType": "实体类型",
-        "allEntities": "全部",
-        "status": "状态",
-        "allStatus": "全部",
-        "success": "成功",
-        "failed": "失败",
-        "dateFrom": "开始日期",
-        "dateTo": "结束日期",
-        "clearFilters": "清除筛选",
-        "activeFilters": "{count}个筛选"
-      },
-      "actions": {
-        "Login": "登录",
-        "LoginFailed": "登录失败",
-        "Register": "注册",
-        "Logout": "登出",
-        "TokenRefresh": "刷新令牌",
-        "GoogleLogin": "Google登录",
-        "VocabularyCreated": "创建词汇",
-        "VocabularyUpdated": "更新词汇",
-        "VocabularyDeleted": "删除词汇",
-        "VocabularyBulkImported": "批量导入",
-        "VocabularyExported": "导出",
-        "ReviewCompleted": "完成复习",
-        "SettingsUpdated": "更新设置",
-        "ProfileUpdated": "更新资料",
-        "UserUpdated": "更新用户",
-        "PasswordChanged": "修改密码",
-        "UserDeleted": "删除用户",
-        "SubscriptionCreated": "创建订阅",
-        "SubscriptionCancelled": "取消订阅",
-        "PaymentCompleted": "支付成功",
-        "PaymentFailed": "支付失败",
-        "AdminUserDeactivated": "禁用用户",
-        "AdminUserActivated": "启用用户",
-        "AdminRoleChanged": "角色变更",
-        "SystemSettingUpdated": "系统更新",
-        "RateLimited": "速率限制",
-        "SuspiciousActivity": "可疑活动"
-      },
-      "table": {
-        "timestamp": "时间戳",
-        "user": "用户",
-        "action": "操作",
-        "entity": "实体",
-        "status": "状态",
-        "duration": "耗时",
-        "details": "详情"
-      },
-      "detail": {
-        "title": "日志详情",
-        "general": "基本信息",
-        "timestamp": "时间戳",
-        "action": "操作",
-        "status": "状态",
-        "duration": "耗时",
-        "technical": "技术详情",
-        "requestName": "请求",
-        "traceId": "跟踪ID",
-        "ipAddress": "IP地址",
-        "userAgent": "用户代理",
-        "entity": "实体信息",
-        "entityType": "实体类型",
-        "entityId": "实体ID",
-        "user": "用户信息",
-        "email": "邮箱",
-        "userId": "用户ID",
-        "additionalInfo": "附加信息",
-        "noData": "无附加信息",
-        "copyId": "复制ID",
-        "copied": "已复制！"
-      },
-      "status": {
-        "success": "成功",
-        "failed": "失败"
-      },
-      "pagination": {
-        "showing": "显示第{from}-{to}条，共{total}条",
-        "page": "第{page}页 / 共{totalPages}页",
-        "perPage": "每页",
-        "previous": "上一页",
-        "next": "下一页"
-      },
-      "empty": "未找到审计日志",
-      "emptySubtitle": "没有记录匹配当前筛选条件，请尝试调整搜索条件。",
-      "system": "系统",
-      "ms": "{ms}ms"
     }
   },
   "notifications": {

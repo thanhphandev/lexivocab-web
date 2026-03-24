@@ -13,6 +13,7 @@ import { useVocabularyData } from "./_hooks/use-vocabulary-data";
 import { useTagsData } from "./_hooks/use-tags-data";
 import { useVocabularyExport } from "./_hooks/use-vocabulary-export";
 import { useDebouncedSearch } from "./_hooks/use-debounced-search";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function VocabularyPage() {
   const t = useTranslations("Dashboard.vocabulary");
@@ -47,18 +48,34 @@ export default function VocabularyPage() {
   };
 
   return (
-    <div className="space-y-6 pb-10">
-      <VocabularyHeader
-        t={t}
-        locale={locale}
-        canExport={canExport}
-        onExport={handleExport}
-        onRefresh={refetch}
-        onCreateTag={() => setIsCreateTagOpen(true)}
-      />
+    <motion.div 
+      className="space-y-6 pb-10"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+    >
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1, duration: 0.3 }}
+      >
+        <VocabularyHeader
+          t={t}
+          locale={locale}
+          canExport={canExport}
+          onExport={handleExport}
+          onRefresh={refetch}
+          onCreateTag={() => setIsCreateTagOpen(true)}
+        />
+      </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8 items-start">
-        <aside className="hidden lg:block sticky top-6 self-start">
+        <motion.aside 
+          className="hidden lg:block sticky top-6 self-start"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.2, duration: 0.4 }}
+        >
           <TagSidebar
             tags={tags}
             selectedTagId={tagFilter}
@@ -67,36 +84,64 @@ export default function VocabularyPage() {
             onCreateNew={() => setIsCreateTagOpen(true)}
             isLoading={isLoading}
           />
-        </aside>
+        </motion.aside>
 
-        <div className="space-y-6 min-w-0">
-          <VocabularyToolbar
-            t={t}
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-            filter={filter}
-            onFilterChange={handleFilterChange}
-            tagFilter={tagFilter}
-            onTagFilterChange={handleTagFilterChange}
-            tags={tags}
-          />
-
-          <div className="min-h-[400px]">
-            <VocabularyContent
+        <motion.div 
+          className="space-y-6 min-w-0"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3, duration: 0.4 }}
+        >
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.35, duration: 0.3 }}
+          >
+            <VocabularyToolbar
               t={t}
-              isLoading={isLoading}
-              data={data}
-              tagMap={tagMap}
-              debouncedSearch={debouncedSearch}
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+              filter={filter}
+              onFilterChange={handleFilterChange}
               tagFilter={tagFilter}
-              onRefresh={refetch}
-              onClearSearch={() => setSearchQuery("")}
-              onClearTagFilter={() => setTagFilter("all")}
+              onTagFilterChange={handleTagFilterChange}
+              tags={tags}
             />
-          </div>
+          </motion.div>
 
-          {data && <VocabularyPagination t={t} data={data} page={page} onPageChange={setPage} />}
-        </div>
+          <AnimatePresence mode="wait">
+            <motion.div 
+              key={`${debouncedSearch}-${tagFilter}-${filter}-${page}`}
+              className="min-h-[400px]"
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.98 }}
+              transition={{ duration: 0.2 }}
+            >
+              <VocabularyContent
+                t={t}
+                isLoading={isLoading}
+                data={data}
+                tagMap={tagMap}
+                debouncedSearch={debouncedSearch}
+                tagFilter={tagFilter}
+                onRefresh={refetch}
+                onClearSearch={() => setSearchQuery("")}
+                onClearTagFilter={() => setTagFilter("all")}
+              />
+            </motion.div>
+          </AnimatePresence>
+
+          {data && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1, duration: 0.3 }}
+            >
+              <VocabularyPagination t={t} data={data} page={page} onPageChange={setPage} />
+            </motion.div>
+          )}
+        </motion.div>
       </div>
 
       <TagDialog
@@ -104,6 +149,6 @@ export default function VocabularyPage() {
         onOpenChange={setIsCreateTagOpen}
         onSuccess={refetchTags}
       />
-    </div>
+    </motion.div>
   );
 }

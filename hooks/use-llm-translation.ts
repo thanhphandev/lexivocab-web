@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef } from "react";
 import { aiApi } from "@/lib/api/api-client";
+import { notifyQuotaUpdateDebounced } from "@/lib/utils/quota-events";
 
 export interface LLMTranslationData {
     word: string;
@@ -63,6 +64,8 @@ export function useLLMTranslation() {
                     phonetic: result.phonetic || "",
                     context: result.context || ""
                 });
+                // Notify quota update after successful translation
+                notifyQuotaUpdateDebounced();
             } else {
                 const stream = aiApi.streamTranslation(word, context, provider, modelId, from, to, customParams);
                 let fullText = "";
@@ -78,6 +81,8 @@ export function useLLMTranslation() {
                         setStreamingError(chunk.message || "AI Error");
                     }
                 }
+                // Notify quota update after successful streaming translation
+                notifyQuotaUpdateDebounced();
             }
         } catch (err: any) {
             const status = err?.status;

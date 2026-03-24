@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { useTranslations } from "next-intl";
 import { adminApi } from "@/lib/api/api-client";
 import { AuditLogDto, PagedResult } from "@/lib/api/types";
 import { format } from "date-fns";
@@ -29,23 +28,21 @@ import {
     ChevronLeft,
     ChevronRight,
     Eye,
-    CheckCircle2,
-    XCircle,
     Shield,
     Clock,
     Activity,
     Filter,
     X,
     RefreshCw,
+    Calendar,
 } from "lucide-react";
 
-import { AUDIT_ACTIONS, ACTION_CONFIG, PAGE_SIZE_OPTIONS } from "./_components/constants";
+import { AUDIT_ACTIONS, ACTION_CONFIG, PAGE_SIZE_OPTIONS, ACTION_LABELS } from "./_components/constants";
 import { formatDuration, getDurationColor } from "./_components/helpers";
 import { ActionBadge, StatusIndicator, SkeletonRow, DetailDialog } from "./_components/audit-log-components";
 
 // ─── Main Page ──────────────────────────────────────────
 export default function AuditLogsPage() {
-    const t = useTranslations("Admin.auditLogs");
     const [data, setData] = useState<PagedResult<AuditLogDto> | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
@@ -142,8 +139,8 @@ export default function AuditLogsPage() {
                             <Shield className="h-6 w-6 text-violet-600 dark:text-violet-400" />
                         </div>
                         <div>
-                            <h2 className="text-2xl font-bold tracking-tight">{t("title")}</h2>
-                            <p className="text-sm text-muted-foreground mt-0.5">{t("subtitle")}</p>
+                            <h2 className="text-2xl font-bold tracking-tight">Audit Logs</h2>
+                            <p className="text-sm text-muted-foreground mt-0.5">Real-time monitoring of all system activities and user actions</p>
                         </div>
                     </div>
                 </div>
@@ -152,7 +149,7 @@ export default function AuditLogsPage() {
                         <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-muted/50 border">
                             <Activity className="h-4 w-4 text-muted-foreground" />
                             <span className="text-sm font-medium">{data.totalCount.toLocaleString()}</span>
-                            <span className="text-xs text-muted-foreground">total</span>
+                            <span className="text-xs text-muted-foreground">total logs</span>
                         </div>
                         <Button
                             variant="outline"
@@ -160,6 +157,7 @@ export default function AuditLogsPage() {
                             onClick={fetchLogs}
                             disabled={isLoading}
                             className="gap-1.5"
+                            title="Refresh logs"
                         >
                             <RefreshCw className={`h-3.5 w-3.5 ${isLoading ? "animate-spin" : ""}`} />
                         </Button>
@@ -172,7 +170,7 @@ export default function AuditLogsPage() {
                 <div className="relative flex-1 max-w-lg">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
-                        placeholder={t("searchPlaceholder")}
+                        placeholder="Search by email, request, IP address..."
                         className="pl-9 bg-card border-muted-foreground/20"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
@@ -193,7 +191,7 @@ export default function AuditLogsPage() {
                     className="gap-2 shrink-0"
                 >
                     <Filter className="h-4 w-4" />
-                    <span className="hidden sm:inline">{t("filters.action")}</span>
+                    <span className="hidden sm:inline">Filters</span>
                     {activeFilterCount > 0 && (
                         <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-[10px]">
                             {activeFilterCount}
@@ -208,7 +206,7 @@ export default function AuditLogsPage() {
                         className="gap-1.5 text-muted-foreground hover:text-destructive shrink-0"
                     >
                         <X className="h-3.5 w-3.5" />
-                        {t("filters.clearFilters")}
+                        Clear all
                     </Button>
                 )}
             </div>
@@ -218,18 +216,21 @@ export default function AuditLogsPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 p-4 rounded-xl border bg-card/50 backdrop-blur-sm animate-in fade-in slide-in-from-top-2 duration-200">
                     {/* Action Filter */}
                     <div className="space-y-1.5">
-                        <label className="text-xs font-medium text-muted-foreground">{t("filters.action")}</label>
+                        <label className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
+                            <Activity className="h-3 w-3" />
+                            Action Type
+                        </label>
                         <Select value={actionFilter} onValueChange={(v) => { setActionFilter(v === "__all__" ? "" : v); setPage(1); }}>
                             <SelectTrigger size="sm" className="w-full bg-background">
-                                <SelectValue placeholder={t("filters.allActions")} />
+                                <SelectValue placeholder="All Actions" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="__all__">{t("filters.allActions")}</SelectItem>
+                                <SelectItem value="__all__">All Actions</SelectItem>
                                 {AUDIT_ACTIONS.map((a) => (
                                     <SelectItem key={a} value={a}>
                                         <span className="flex items-center gap-2">
                                             {(() => { const Ic = ACTION_CONFIG[a]?.icon || Activity; return <Ic className="h-3 w-3" />; })()}
-                                            {t(`actions.${a}`)}
+                                            {ACTION_LABELS[a] || a}
                                         </span>
                                     </SelectItem>
                                 ))}
@@ -239,13 +240,16 @@ export default function AuditLogsPage() {
 
                     {/* Entity Filter */}
                     <div className="space-y-1.5">
-                        <label className="text-xs font-medium text-muted-foreground">{t("filters.entityType")}</label>
+                        <label className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
+                            <Shield className="h-3 w-3" />
+                            Entity Type
+                        </label>
                         <Select value={entityFilter} onValueChange={(v) => { setEntityFilter(v === "__all__" ? "" : v); setPage(1); }}>
                             <SelectTrigger size="sm" className="w-full bg-background">
-                                <SelectValue placeholder={t("filters.allEntities")} />
+                                <SelectValue placeholder="All Entities" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="__all__">{t("filters.allEntities")}</SelectItem>
+                                <SelectItem value="__all__">All Entities</SelectItem>
                                 {entityTypes.map((e) => (
                                     <SelectItem key={e} value={e}>{e}</SelectItem>
                                 ))}
@@ -255,21 +259,26 @@ export default function AuditLogsPage() {
 
                     {/* Status Filter */}
                     <div className="space-y-1.5">
-                        <label className="text-xs font-medium text-muted-foreground">{t("filters.status")}</label>
+                        <label className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
+                            <Activity className="h-3 w-3" />
+                            Status
+                        </label>
                         <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v === "__all__" ? "" : v); setPage(1); }}>
                             <SelectTrigger size="sm" className="w-full bg-background">
-                                <SelectValue placeholder={t("filters.allStatus")} />
+                                <SelectValue placeholder="All Status" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="__all__">{t("filters.allStatus")}</SelectItem>
+                                <SelectItem value="__all__">All Status</SelectItem>
                                 <SelectItem value="success">
                                     <span className="flex items-center gap-2">
-                                        <CheckCircle2 className="h-3 w-3 text-emerald-500" />{t("filters.success")}
+                                        <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                                        Success
                                     </span>
                                 </SelectItem>
                                 <SelectItem value="failed">
                                     <span className="flex items-center gap-2">
-                                        <XCircle className="h-3 w-3 text-red-500" />{t("filters.failed")}
+                                        <span className="h-2 w-2 rounded-full bg-red-500" />
+                                        Failed
                                     </span>
                                 </SelectItem>
                             </SelectContent>
@@ -278,7 +287,10 @@ export default function AuditLogsPage() {
 
                     {/* Date From */}
                     <div className="space-y-1.5">
-                        <label className="text-xs font-medium text-muted-foreground">{t("filters.dateFrom")}</label>
+                        <label className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
+                            <Calendar className="h-3 w-3" />
+                            From Date
+                        </label>
                         <Input
                             type="date"
                             value={fromDate}
@@ -289,7 +301,10 @@ export default function AuditLogsPage() {
 
                     {/* Date To */}
                     <div className="space-y-1.5">
-                        <label className="text-xs font-medium text-muted-foreground">{t("filters.dateTo")}</label>
+                        <label className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
+                            <Calendar className="h-3 w-3" />
+                            To Date
+                        </label>
                         <Input
                             type="date"
                             value={toDate}
@@ -306,13 +321,13 @@ export default function AuditLogsPage() {
                     <Table>
                         <TableHeader>
                             <TableRow className="bg-muted/30 hover:bg-muted/30">
-                                <TableHead className="w-[170px] font-semibold">{t("table.timestamp")}</TableHead>
-                                <TableHead className="w-[200px] font-semibold">{t("table.user")}</TableHead>
-                                <TableHead className="w-[160px] font-semibold">{t("table.action")}</TableHead>
-                                <TableHead className="w-[140px] font-semibold">{t("table.entity")}</TableHead>
-                                <TableHead className="w-[85px] text-center font-semibold">{t("table.status")}</TableHead>
-                                <TableHead className="w-[90px] text-right font-semibold">{t("table.duration")}</TableHead>
-                                <TableHead className="w-[60px] text-center font-semibold">{t("table.details")}</TableHead>
+                                <TableHead className="w-[170px] font-semibold">Timestamp</TableHead>
+                                <TableHead className="w-[200px] font-semibold">User</TableHead>
+                                <TableHead className="w-[160px] font-semibold">Action</TableHead>
+                                <TableHead className="w-[140px] font-semibold">Entity</TableHead>
+                                <TableHead className="w-[85px] text-center font-semibold">Status</TableHead>
+                                <TableHead className="w-[90px] text-right font-semibold">Duration</TableHead>
+                                <TableHead className="w-[60px] text-center font-semibold">Details</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -325,12 +340,12 @@ export default function AuditLogsPage() {
                                             <div className="p-4 rounded-2xl bg-muted/50 mb-4">
                                                 <AlertCircle className="h-10 w-10 opacity-40" />
                                             </div>
-                                            <p className="font-semibold text-base">{t("empty")}</p>
-                                            <p className="text-sm mt-1 max-w-sm text-center">{t("emptySubtitle")}</p>
+                                            <p className="font-semibold text-base">No audit logs found</p>
+                                            <p className="text-sm mt-1 max-w-sm text-center">No records match the current filters. Try adjusting your search criteria.</p>
                                             {activeFilterCount > 0 && (
                                                 <Button variant="outline" size="sm" className="mt-4 gap-1.5" onClick={clearAllFilters}>
                                                     <X className="h-3.5 w-3.5" />
-                                                    {t("filters.clearFilters")}
+                                                    Clear all filters
                                                 </Button>
                                             )}
                                         </div>
@@ -360,7 +375,7 @@ export default function AuditLogsPage() {
                                                     </span>
                                                 </div>
                                                 <div className="min-w-0">
-                                                    <div className="text-sm font-medium truncate">{log.userEmail || t("system")}</div>
+                                                    <div className="text-sm font-medium truncate">{log.userEmail || "System"}</div>
                                                     {log.ipAddress && (
                                                         <div className="text-[11px] text-muted-foreground font-mono truncate">{log.ipAddress}</div>
                                                     )}
@@ -370,7 +385,7 @@ export default function AuditLogsPage() {
 
                                         {/* Action */}
                                         <TableCell>
-                                            <ActionBadge action={log.action} t={t} />
+                                            <ActionBadge action={log.action} />
                                         </TableCell>
 
                                         {/* Entity */}
@@ -385,7 +400,7 @@ export default function AuditLogsPage() {
 
                                         {/* Status */}
                                         <TableCell className="text-center">
-                                            <StatusIndicator isSuccess={log.isSuccess} t={t} />
+                                            <StatusIndicator isSuccess={log.isSuccess} />
                                         </TableCell>
 
                                         {/* Duration */}
@@ -418,7 +433,7 @@ export default function AuditLogsPage() {
                     <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-3 border-t bg-muted/20">
                         <div className="flex items-center gap-3 text-sm text-muted-foreground">
                             <span>
-                                {t("pagination.showing", { from: from.toString(), to: to.toString(), total: data.totalCount.toString() })}
+                                Showing {from}-{to} of {data.totalCount.toLocaleString()}
                             </span>
                             <Select value={pageSize.toString()} onValueChange={(v) => { setPageSize(Number(v)); setPage(1); }}>
                                 <SelectTrigger size="sm" className="w-auto h-7 text-xs">
@@ -426,7 +441,7 @@ export default function AuditLogsPage() {
                                 </SelectTrigger>
                                 <SelectContent>
                                     {PAGE_SIZE_OPTIONS.map((s) => (
-                                        <SelectItem key={s} value={s.toString()}>{s} {t("pagination.perPage")}</SelectItem>
+                                        <SelectItem key={s} value={s.toString()}>{s} per page</SelectItem>
                                     ))}
                                 </SelectContent>
                             </Select>
@@ -440,10 +455,10 @@ export default function AuditLogsPage() {
                                 className="h-8 gap-1"
                             >
                                 <ChevronLeft className="h-4 w-4" />
-                                <span className="hidden sm:inline">{t("pagination.previous")}</span>
+                                <span className="hidden sm:inline">Previous</span>
                             </Button>
                             <span className="text-sm font-medium px-2 min-w-[100px] text-center">
-                                {t("pagination.page", { page: page.toString(), totalPages: data.totalPages.toString() })}
+                                Page {page} of {data.totalPages}
                             </span>
                             <Button
                                 variant="outline"
@@ -452,7 +467,7 @@ export default function AuditLogsPage() {
                                 onClick={() => setPage((p) => Math.min(data.totalPages, p + 1))}
                                 className="h-8 gap-1"
                             >
-                                <span className="hidden sm:inline">{t("pagination.next")}</span>
+                                <span className="hidden sm:inline">Next</span>
                                 <ChevronRight className="h-4 w-4" />
                             </Button>
                         </div>
@@ -465,7 +480,6 @@ export default function AuditLogsPage() {
                 log={selectedLog}
                 open={!!selectedLog}
                 onOpenChange={(open) => { if (!open) setSelectedLog(null); }}
-                t={t}
             />
         </div>
     );

@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import type { ApiErrorResponse } from "@/lib/api/types";
+import { notifyQuotaUpdateDebounced } from "@/lib/utils/quota-events";
 
 export function useAiExplain(word: string, context?: string) {
     const [isStreaming, setIsStreaming] = useState(false);
@@ -68,6 +69,11 @@ export function useAiExplain(word: string, context?: string) {
                         }
                     }
                 }
+            }
+            
+            // Notify quota update after successful AI explanation
+            if (!controller.signal.aborted) {
+                notifyQuotaUpdateDebounced();
             }
         } catch (error) {
             const err = error as Error & { success?: boolean };

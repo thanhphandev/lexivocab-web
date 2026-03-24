@@ -406,6 +406,13 @@
     "settings": {
       "title": "Cài đặt",
       "subtitle": "Quản lý tài khoản và tùy chọn ứng dụng.",
+      "tabs": {
+        "profile": "Hồ sơ",
+        "password": "Bảo mật",
+        "notifications": "Thông báo",
+        "extension": "Tiện ích",
+        "danger": "Vùng nguy hiểm"
+      },
       "profile": {
         "title": "Hồ sơ",
         "desc": "Cập nhật thông tin cá nhân của bạn.",
@@ -968,101 +975,7 @@
     }
   },
   "Admin": {
-    "auditLogs": {
-      "title": "Nhật ký hệ thống",
-      "subtitle": "Giám sát thời gian thực mọi hoạt động hệ thống và hành động người dùng",
-      "searchPlaceholder": "Tìm theo email, request, địa chỉ IP...",
-      "filters": {
-        "action": "Loại hành động",
-        "allActions": "Tất cả",
-        "entityType": "Loại thực thể",
-        "allEntities": "Tất cả",
-        "status": "Trạng thái",
-        "allStatus": "Tất cả",
-        "success": "Thành công",
-        "failed": "Thất bại",
-        "dateFrom": "Từ ngày",
-        "dateTo": "Đến ngày",
-        "clearFilters": "Xóa bộ lọc",
-        "activeFilters": "{count} đang lọc"
-      },
-      "actions": {
-        "Login": "Đăng nhập",
-        "LoginFailed": "Đăng nhập thất bại",
-        "Register": "Đăng ký",
-        "Logout": "Đăng xuất",
-        "TokenRefresh": "Làm mới token",
-        "GoogleLogin": "Google Login",
-        "VocabularyCreated": "Tạo từ vựng",
-        "VocabularyUpdated": "Cập nhật từ vựng",
-        "VocabularyDeleted": "Xóa từ vựng",
-        "VocabularyBulkImported": "Nhập hàng loạt",
-        "VocabularyExported": "Xuất dữ liệu",
-        "ReviewCompleted": "Hoàn thành ôn tập",
-        "SettingsUpdated": "Cập nhật cài đặt",
-        "ProfileUpdated": "Cập nhật hồ sơ",
-        "UserUpdated": "Cập nhật người dùng",
-        "PasswordChanged": "Đổi mật khẩu",
-        "UserDeleted": "Xóa người dùng",
-        "SubscriptionCreated": "Tạo đăng ký",
-        "SubscriptionCancelled": "Hủy đăng ký",
-        "PaymentCompleted": "Thanh toán OK",
-        "PaymentFailed": "Thanh toán thất bại",
-        "AdminUserDeactivated": "Vô hiệu hóa",
-        "AdminUserActivated": "Kích hoạt",
-        "AdminRoleChanged": "Đổi vai trò",
-        "SystemSettingUpdated": "Cập nhật hệ thống",
-        "RateLimited": "Giới hạn tốc độ",
-        "SuspiciousActivity": "Đáng ngờ"
-      },
-      "table": {
-        "timestamp": "Thời gian",
-        "user": "Người dùng",
-        "action": "Hành động",
-        "entity": "Thực thể",
-        "status": "Trạng thái",
-        "duration": "Thời lượng",
-        "details": "Chi tiết"
-      },
-      "detail": {
-        "title": "Chi tiết nhật ký",
-        "general": "Thông tin chung",
-        "timestamp": "Thời gian",
-        "action": "Hành động",
-        "status": "Trạng thái",
-        "duration": "Thời lượng",
-        "technical": "Chi tiết kỹ thuật",
-        "requestName": "Request",
-        "traceId": "Trace ID",
-        "ipAddress": "Địa chỉ IP",
-        "userAgent": "User Agent",
-        "entity": "Thông tin thực thể",
-        "entityType": "Loại thực thể",
-        "entityId": "ID thực thể",
-        "user": "Thông tin người dùng",
-        "email": "Email",
-        "userId": "ID người dùng",
-        "additionalInfo": "Thông tin bổ sung",
-        "noData": "Không có thông tin bổ sung",
-        "copyId": "Sao chép ID",
-        "copied": "Đã sao chép!"
-      },
-      "status": {
-        "success": "Thành công",
-        "failed": "Thất bại"
-      },
-      "pagination": {
-        "showing": "Hiển thị {from}-{to} / {total}",
-        "page": "Trang {page} / {totalPages}",
-        "perPage": "mỗi trang",
-        "previous": "Trước",
-        "next": "Sau"
-      },
-      "empty": "Không có nhật ký nào",
-      "emptySubtitle": "Không có bản ghi nào phù hợp với bộ lọc. Hãy thử điều chỉnh tiêu chí tìm kiếm.",
-      "system": "Hệ thống",
-      "ms": "{ms}ms"
-    }
+    "auditLogs": {}
   },
   "notifications": {
     "testSuccess": "Gửi tin nhắn test thành công! Hãy kiểm tra ứng dụng chat của bạn.",

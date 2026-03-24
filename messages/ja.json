@@ -402,6 +402,13 @@
     "settings": {
       "title": "設定",
       "subtitle": "アカウントとアプリの環境設定を管理します。",
+      "tabs": {
+        "profile": "プロフィール",
+        "password": "セキュリティ",
+        "notifications": "通知",
+        "extension": "拡張機能",
+        "danger": "危険ゾーン"
+      },
       "profile": {
         "title": "プロフィール",
         "desc": "個人情報を更新します。",
@@ -965,101 +972,7 @@
     }
   },
   "Admin": {
-    "auditLogs": {
-      "title": "監査ログ",
-      "subtitle": "システム活動とユーザーアクションのリアルタイム監視",
-      "searchPlaceholder": "メール、リクエスト、IPアドレスで検索...",
-      "filters": {
-        "action": "アクション種別",
-        "allActions": "すべて",
-        "entityType": "エンティティ種別",
-        "allEntities": "すべて",
-        "status": "ステータス",
-        "allStatus": "すべて",
-        "success": "成功",
-        "failed": "失敗",
-        "dateFrom": "開始日",
-        "dateTo": "終了日",
-        "clearFilters": "フィルターをクリア",
-        "activeFilters": "{count}件適用中"
-      },
-      "actions": {
-        "Login": "ログイン",
-        "LoginFailed": "ログイン失敗",
-        "Register": "登録",
-        "Logout": "ログアウト",
-        "TokenRefresh": "トークン更新",
-        "GoogleLogin": "Googleログイン",
-        "VocabularyCreated": "語彙作成",
-        "VocabularyUpdated": "語彙更新",
-        "VocabularyDeleted": "語彙削除",
-        "VocabularyBulkImported": "一括インポート",
-        "VocabularyExported": "エクスポート",
-        "ReviewCompleted": "復習完了",
-        "SettingsUpdated": "設定更新",
-        "ProfileUpdated": "プロフィール更新",
-        "UserUpdated": "ユーザー更新",
-        "PasswordChanged": "パスワード変更",
-        "UserDeleted": "ユーザー削除",
-        "SubscriptionCreated": "サブスク作成",
-        "SubscriptionCancelled": "サブスク解約",
-        "PaymentCompleted": "支払い完了",
-        "PaymentFailed": "支払い失敗",
-        "AdminUserDeactivated": "ユーザー無効化",
-        "AdminUserActivated": "ユーザー有効化",
-        "AdminRoleChanged": "ロール変更",
-        "SystemSettingUpdated": "システム更新",
-        "RateLimited": "レート制限",
-        "SuspiciousActivity": "不審な活動"
-      },
-      "table": {
-        "timestamp": "タイムスタンプ",
-        "user": "ユーザー",
-        "action": "アクション",
-        "entity": "エンティティ",
-        "status": "ステータス",
-        "duration": "所要時間",
-        "details": "詳細"
-      },
-      "detail": {
-        "title": "ログ詳細",
-        "general": "基本情報",
-        "timestamp": "タイムスタンプ",
-        "action": "アクション",
-        "status": "ステータス",
-        "duration": "所要時間",
-        "technical": "技術情報",
-        "requestName": "リクエスト",
-        "traceId": "トレースID",
-        "ipAddress": "IPアドレス",
-        "userAgent": "ユーザーエージェント",
-        "entity": "エンティティ情報",
-        "entityType": "エンティティ種別",
-        "entityId": "エンティティID",
-        "user": "ユーザー情報",
-        "email": "メール",
-        "userId": "ユーザーID",
-        "additionalInfo": "追加情報",
-        "noData": "追加情報なし",
-        "copyId": "IDをコピー",
-        "copied": "コピーしました！"
-      },
-      "status": {
-        "success": "成功",
-        "failed": "失敗"
-      },
-      "pagination": {
-        "showing": "{from}-{to} / {total}件",
-        "page": "{page} / {totalPages}ページ",
-        "perPage": "件表示",
-        "previous": "前へ",
-        "next": "次へ"
-      },
-      "empty": "監査ログが見つかりません",
-      "emptySubtitle": "現在のフィルターに一致するレコードがありません。検索条件を調整してください。",
-      "system": "システム",
-      "ms": "{ms}ms"
-    }
+    "auditLogs": {}
   },
   "notifications": {
     "testSuccess": "テストが無事送信されました！チャットアプリを確認してください。",

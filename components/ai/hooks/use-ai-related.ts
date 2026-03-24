@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { aiApi } from "@/lib/api/api-client";
 import type { RelatedWordsDto, ApiErrorResponse } from "@/lib/api/types";
+import { notifyQuotaUpdateDebounced } from "@/lib/utils/quota-events";
 
 export function useAiRelated(word: string) {
     const [related, setRelated] = useState<RelatedWordsDto | null>(null);
@@ -16,6 +17,8 @@ export function useAiRelated(word: string) {
             const res = await aiApi.getRelated(word, reqProvider, reqModelId);
             if (res.success) {
                 setRelated(res.data);
+                // Notify quota update after successful related words generation
+                notifyQuotaUpdateDebounced();
             } else {
                 setRelatedError(res);
             }

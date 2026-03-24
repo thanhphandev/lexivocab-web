@@ -1,4 +1,4 @@
-import {
+ import {
     AlertTriangle,
     BookOpen,
     CheckCircle2,
@@ -63,4 +63,35 @@ export const ACTION_CONFIG: Record<string, { category: ActionCategory; icon: Rea
     SystemSettingUpdated: { category: "admin", icon: Settings, color: "bg-blue-500/15 text-blue-600 dark:text-blue-400 border-blue-500/20" },
     RateLimited: { category: "system", icon: Zap, color: "bg-yellow-500/15 text-yellow-600 dark:text-yellow-400 border-yellow-500/20" },
     SuspiciousActivity: { category: "system", icon: AlertTriangle, color: "bg-red-500/15 text-red-600 dark:text-red-400 border-red-500/20" },
+};
+
+// English labels for actions
+export const ACTION_LABELS: Record<string, string> = {
+    Login: "Login",
+    LoginFailed: "Login Failed",
+    Register: "Register",
+    Logout: "Logout",
+    TokenRefresh: "Token Refresh",
+    GoogleLogin: "Google Login",
+    VocabularyCreated: "Vocab Created",
+    VocabularyUpdated: "Vocab Updated",
+    VocabularyDeleted: "Vocab Deleted",
+    VocabularyBulkImported: "Bulk Import",
+    VocabularyExported: "Export",
+    ReviewCompleted: "Review Done",
+    SettingsUpdated: "Settings Updated",
+    ProfileUpdated: "Profile Updated",
+    UserUpdated: "User Updated",
+    PasswordChanged: "Password Changed",
+    UserDeleted: "User Deleted",
+    SubscriptionCreated: "Sub Created",
+    SubscriptionCancelled: "Sub Cancelled",
+    PaymentCompleted: "Payment OK",
+    PaymentFailed: "Payment Failed",
+    AdminUserDeactivated: "User Deactivated",
+    AdminUserActivated: "User Activated",
+    AdminRoleChanged: "Role Changed",
+    SystemSettingUpdated: "System Updated",
+    RateLimited: "Rate Limited",
+    SuspiciousActivity: "Suspicious",
 };

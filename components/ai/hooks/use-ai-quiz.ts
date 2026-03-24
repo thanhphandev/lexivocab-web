@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { aiApi } from "@/lib/api/api-client";
 import type { QuizDto, ApiErrorResponse } from "@/lib/api/types";
+import { notifyQuotaUpdateDebounced } from "@/lib/utils/quota-events";
 
 export function useAiQuiz(word: string) {
     const [quiz, setQuiz] = useState<QuizDto | null>(null);
@@ -20,6 +21,8 @@ export function useAiQuiz(word: string) {
             const res = await aiApi.getQuiz(word, reqProvider, reqModelId);
             if (res.success) {
                 setQuiz(res.data);
+                // Notify quota update after successful quiz generation
+                notifyQuotaUpdateDebounced();
             } else {
                 setQuizError(res);
             }

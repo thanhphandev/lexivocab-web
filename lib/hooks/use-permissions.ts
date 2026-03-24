@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuth } from "@/lib/auth/auth-context";
+import { useEffect } from "react";
 
 /**
  * Convenience hook for accessing feature gates and quota info.
@@ -8,6 +9,20 @@ import { useAuth } from "@/lib/auth/auth-context";
  */
 export function usePermissions() {
     const { permissions, refreshPermissions } = useAuth();
+
+    // Auto-refresh permissions when quota usage events occur
+    useEffect(() => {
+        const handleQuotaUpdate = () => {
+            refreshPermissions();
+        };
+
+        // Listen for custom quota update events
+        window.addEventListener("quota-updated", handleQuotaUpdate);
+        
+        return () => {
+            window.removeEventListener("quota-updated", handleQuotaUpdate);
+        };
+    }, [refreshPermissions]);
 
     // Helper to safely get flag values
     const getFlag = (code: string, defaultValue: string) => permissions?.featureFlags?.[code] ?? defaultValue;

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { clientApi, tagsApi, settingsApi } from "@/lib/api/api-client";
 import type { TagDto } from "@/lib/api/types";
+import { notifyQuotaUpdateDebounced } from "@/lib/utils/quota-events";
 import {
     Dialog,
     DialogContent,
@@ -167,6 +168,8 @@ export function AddWordDialog({ onSuccess }: { onSuccess: () => void }) {
                 form.reset();
                 setLookupResult(null);
                 onSuccess();
+                // Notify quota update after successfully adding a word
+                notifyQuotaUpdateDebounced();
             } else {
                 showErrorToast(
                     res,

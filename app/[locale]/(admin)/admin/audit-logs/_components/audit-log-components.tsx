@@ -9,17 +9,17 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { AuditLogDto } from "@/lib/api/types";
-import { ACTION_CONFIG, ActionCategory } from "./constants";
+import { ACTION_CONFIG, ActionCategory, ACTION_LABELS } from "./constants";
 import { formatDuration, getDurationColor, tryFormatJson } from "./helpers";
 
-export function ActionBadge({ action, t }: { action: string; t: (key: string) => string }) {
+export function ActionBadge({ action }: { action: string }) {
     const config = ACTION_CONFIG[action] || {
         category: "system" as ActionCategory,
         icon: Activity,
         color: "bg-gray-500/15 text-gray-600 dark:text-gray-400 border-gray-500/20",
     };
     const Icon = config.icon;
-    const label = t(`actions.${action}`) || action;
+    const label = ACTION_LABELS[action] || action;
 
     return (
         <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold border transition-all ${config.color}`}>
@@ -29,21 +29,21 @@ export function ActionBadge({ action, t }: { action: string; t: (key: string) =>
     );
 }
 
-export function StatusIndicator({ isSuccess, t }: { isSuccess: boolean; t: (key: string) => string }) {
+export function StatusIndicator({ isSuccess }: { isSuccess: boolean }) {
     return isSuccess ? (
         <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-600 dark:text-emerald-400">
             <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
             </span>
-            {t("status.success")}
+            Success
         </span>
     ) : (
         <span className="inline-flex items-center gap-1.5 text-xs font-medium text-red-600 dark:text-red-400">
             <span className="relative flex h-2 w-2">
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
             </span>
-            {t("status.failed")}
+            Failed
         </span>
     );
 }
@@ -66,12 +66,10 @@ export function DetailDialog({
     log,
     open,
     onOpenChange,
-    t,
 }: {
     log: AuditLogDto | null;
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    t: (key: string) => string;
 }) {
     const [copiedField, setCopiedField] = useState<string | null>(null);
 
@@ -95,7 +93,7 @@ export function DetailDialog({
                             <Icon className="h-5 w-5" />
                         </div>
                         <div>
-                            <div className="text-lg">{t("detail.title")}</div>
+                            <div className="text-lg">Log Details</div>
                             <div className="text-sm font-normal text-muted-foreground mt-0.5">
                                 {log.id.substring(0, 8)}...
                             </div>
@@ -107,17 +105,17 @@ export function DetailDialog({
                     {/* General Info */}
                     <div>
                         <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
-                            {t("detail.general")}
+                            General Information
                         </h4>
                         <div className="grid grid-cols-2 gap-3">
-                            <InfoCard label={t("detail.timestamp")} value={format(new Date(log.timestamp), "PPpp")} />
-                            <InfoCard label={t("detail.action")}>
-                                <ActionBadge action={log.action} t={t} />
+                            <InfoCard label="Timestamp" value={format(new Date(log.timestamp), "PPpp")} />
+                            <InfoCard label="Action">
+                                <ActionBadge action={log.action} />
                             </InfoCard>
-                            <InfoCard label={t("detail.status")}>
-                                <StatusIndicator isSuccess={log.isSuccess} t={t} />
+                            <InfoCard label="Status">
+                                <StatusIndicator isSuccess={log.isSuccess} />
                             </InfoCard>
-                            <InfoCard label={t("detail.duration")}>
+                            <InfoCard label="Duration">
                                 <span className={`font-mono text-sm font-semibold ${getDurationColor(log.durationMs)}`}>
                                     {formatDuration(log.durationMs)}
                                 </span>
@@ -128,11 +126,11 @@ export function DetailDialog({
                     {/* User Info */}
                     <div>
                         <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
-                            {t("detail.user")}
+                            User Information
                         </h4>
                         <div className="grid grid-cols-2 gap-3">
-                            <InfoCard label={t("detail.email")} value={log.userEmail || t("system")} />
-                            <InfoCard label={t("detail.userId")}>
+                            <InfoCard label="Email" value={log.userEmail || "System"} />
+                            <InfoCard label="User ID">
                                 <CopyableValue
                                     value={log.userId || "-"}
                                     field="userId"
@@ -146,11 +144,11 @@ export function DetailDialog({
                     {/* Entity Info */}
                     <div>
                         <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
-                            {t("detail.entity")}
+                            Entity Information
                         </h4>
                         <div className="grid grid-cols-2 gap-3">
-                            <InfoCard label={t("detail.entityType")} value={log.entityType || "-"} />
-                            <InfoCard label={t("detail.entityId")}>
+                            <InfoCard label="Entity Type" value={log.entityType || "-"} />
+                            <InfoCard label="Entity ID">
                                 <CopyableValue
                                     value={log.entityId || "-"}
                                     field="entityId"
@@ -164,11 +162,11 @@ export function DetailDialog({
                     {/* Technical Details */}
                     <div>
                         <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
-                            {t("detail.technical")}
+                            Technical Details
                         </h4>
                         <div className="grid grid-cols-2 gap-3">
-                            <InfoCard label={t("detail.requestName")} value={log.requestName || "-"} />
-                            <InfoCard label={t("detail.traceId")}>
+                            <InfoCard label="Request Name" value={log.requestName || "-"} />
+                            <InfoCard label="Trace ID">
                                 <CopyableValue
                                     value={log.traceId || "-"}
                                     field="traceId"
@@ -176,9 +174,9 @@ export function DetailDialog({
                                     onCopy={handleCopy}
                                 />
                             </InfoCard>
-                            <InfoCard label={t("detail.ipAddress")} value={log.ipAddress || "-"} />
+                            <InfoCard label="IP Address" value={log.ipAddress || "-"} />
                             <InfoCard
-                                label={t("detail.userAgent")}
+                                label="User Agent"
                                 value={log.userAgent ? (log.userAgent.length > 60 ? log.userAgent.substring(0, 60) + "..." : log.userAgent) : "-"}
                                 className="col-span-1"
                             />
@@ -189,7 +187,7 @@ export function DetailDialog({
                     {(log.oldValues || log.newValues) && (
                         <div>
                             <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
-                                {t("detail.dataPayload") || "Data Payload"}
+                                Data Payload
                             </h4>
                             <div className={`grid gap-3 ${log.oldValues && log.newValues ? "grid-cols-2" : "grid-cols-1"}`}>
                                 {log.oldValues && (
@@ -216,7 +214,7 @@ export function DetailDialog({
                     {log.additionalInfo && (
                         <div>
                             <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
-                                {t("detail.additionalInfo")}
+                                Additional Information
                             </h4>
                             <pre className="bg-muted/50 border rounded-lg p-4 text-xs font-mono overflow-x-auto whitespace-pre-wrap break-all max-h-48 scrollbar-thin">
                                 {tryFormatJson(log.additionalInfo)}

@@ -4,7 +4,7 @@
 import { useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { useAuth } from "@/lib/auth/auth-context";
-import { Loader2 } from "lucide-react";
+import { Loader2, User, Lock, Bell, Puzzle, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { settingsApi } from "@/lib/api/api-client";
 import { showErrorToast } from "@/lib/error-handler";
@@ -22,6 +22,18 @@ import { useAccountActions } from "./_hooks/use-account-actions";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { settingsSchema, SettingsInput } from "@/lib/validations/settings";
+import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
+
+type SettingsTab = "profile" | "password" | "notifications" | "extension" | "danger";
+
+const tabs = [
+  { id: "profile" as const, icon: User, labelKey: "tabs.profile" },
+  { id: "password" as const, icon: Lock, labelKey: "tabs.password" },
+  { id: "notifications" as const, icon: Bell, labelKey: "tabs.notifications" },
+  { id: "extension" as const, icon: Puzzle, labelKey: "tabs.extension" },
+  { id: "danger" as const, icon: AlertTriangle, labelKey: "tabs.danger" },
+];
 
 export default function SettingsPage() {
   const t = useTranslations("Dashboard.settings");
@@ -29,6 +41,7 @@ export default function SettingsPage() {
   const locale = useLocale();
   const { user, logout, updateProfile } = useAuth();
 
+  const [activeTab, setActiveTab] = useState<SettingsTab>("profile");
   const [isSaving, setIsSaving] = useState(false);
   const [isTesting, setIsTesting] = useState(false);
 
@@ -115,63 +128,168 @@ export default function SettingsPage() {
     setIsTesting(false);
   };
 
+  if (isLoading) {
+    return (
+      <motion.div 
+        className="flex items-center justify-center py-20"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}
+      >
+        <motion.div
+          animate={{ 
+            rotate: 360,
+            scale: [1, 1.05, 1]
+          }}
+          transition={{ 
+            rotate: { duration: 1, repeat: Infinity, ease: "linear" },
+            scale: { duration: 0.6, repeat: Infinity }
+          }}
+        >
+          <Loader2 className="w-8 h-8 text-primary" />
+        </motion.div>
+      </motion.div>
+    );
+  }
+
   return (
-    <div className="space-y-8 pb-10 max-w-4xl">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">{t("title")}</h1>
-        <p className="mt-1 text-muted-foreground">{t("subtitle")}</p>
+    <motion.div 
+      className="pb-10 max-w-6xl mx-auto"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+    >
+      {/* Header */}
+      <motion.div 
+        className="mb-8"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1, duration: 0.4 }}
+      >
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">{t("title")}</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{t("subtitle")}</p>
+      </motion.div>
+
+      <div className="grid gap-8 lg:grid-cols-[240px_1fr]">
+        {/* Sidebar Navigation */}
+        <motion.aside 
+          className="space-y-2"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.2, duration: 0.4 }}
+        >
+          <nav className="sticky top-6 space-y-1">
+            {tabs.map((tab, index) => {
+              const Icon = tab.icon;
+              const isActive = activeTab === tab.id;
+              const isDanger = tab.id === "danger";
+              
+              return (
+                <motion.button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.25 + index * 0.05, duration: 0.3 }}
+                  whileHover={{ x: 4 }}
+                  whileTap={{ scale: 0.98 }}
+                  className={cn(
+                    "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all",
+                    "hover:bg-accent/50",
+                    isActive && "bg-accent text-accent-foreground shadow-sm",
+                    !isActive && "text-muted-foreground hover:text-foreground",
+                    isDanger && !isActive && "hover:bg-destructive/10 hover:text-destructive",
+                    isDanger && isActive && "bg-destructive/10 text-destructive"
+                  )}
+                >
+                  <Icon className="h-4 w-4 shrink-0" />
+                  <span>{t(tab.labelKey)}</span>
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeTab"
+                      className="ml-auto h-1.5 w-1.5 rounded-full bg-primary"
+                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                    />
+                  )}
+                </motion.button>
+              );
+            })}
+          </nav>
+        </motion.aside>
+
+        {/* Content Area */}
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.3, duration: 0.4 }}
+        >
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              {activeTab === "profile" && (
+                <ProfileSection
+                  t={t}
+                  locale={locale}
+                  user={user}
+                  isUpdatingProfile={isUpdatingProfile}
+                  onUpdateProfile={handleUpdateProfile}
+                />
+              )}
+
+              {activeTab === "password" && (
+                <PasswordSection
+                  t={t}
+                  form={passwordChange.form}
+                  onSubmit={passwordChange.onSubmit}
+                  isChangingPassword={passwordChange.isChangingPassword}
+                  passwordError={passwordChange.passwordError}
+                  passwordSuccess={passwordChange.passwordSuccess}
+                />
+              )}
+
+              {activeTab === "notifications" && (
+                <FormProvider {...settingsForm}>
+                  <NotificationSection
+                    t={t}
+                    isSaving={isSaving}
+                    isTesting={isTesting}
+                    onTest={handleTestNotificationsWrapper}
+                    onSubmit={settingsForm.handleSubmit(handleSave)}
+                  />
+                </FormProvider>
+              )}
+
+              {activeTab === "extension" && (
+                <FormProvider {...settingsForm}>
+                  <ExtensionSection
+                    t={t}
+                    isSaving={isSaving}
+                    onSubmit={settingsForm.handleSubmit(handleSave)}
+                    syncSettingField={syncSettingField}
+                  />
+                </FormProvider>
+              )}
+
+              {activeTab === "danger" && (
+                <DangerZoneSection
+                  t={t}
+                  isRevoking={accountActions.isRevoking}
+                  onLogout={logout}
+                  onRevokeAllSessions={() => accountActions.setConfirmRevokeOpen(true)}
+                  onDeleteAccount={() => accountActions.setConfirmDeleteOpen(true)}
+                />
+              )}
+            </motion.div>
+          </AnimatePresence>
+        </motion.div>
       </div>
 
-      {isLoading ? (
-        <div className="flex items-center justify-center py-20">
-          <Loader2 className="w-8 h-8 animate-spin text-primary" />
-        </div>
-      ) : (
-        <div className="space-y-8">
-          <ProfileSection
-            t={t}
-            locale={locale}
-            user={user}
-            isUpdatingProfile={isUpdatingProfile}
-            onUpdateProfile={handleUpdateProfile}
-          />
-
-          <PasswordSection
-            t={t}
-            form={passwordChange.form}
-            onSubmit={passwordChange.onSubmit}
-            isChangingPassword={passwordChange.isChangingPassword}
-            passwordError={passwordChange.passwordError}
-            passwordSuccess={passwordChange.passwordSuccess}
-          />
-
-          <FormProvider {...settingsForm}>
-            <NotificationSection
-              t={t}
-              isSaving={isSaving}
-              isTesting={isTesting}
-              onTest={handleTestNotificationsWrapper}
-              onSubmit={settingsForm.handleSubmit(handleSave)}
-            />
-
-            <ExtensionSection
-              t={t}
-              isSaving={isSaving}
-              onSubmit={settingsForm.handleSubmit(handleSave)}
-              syncSettingField={syncSettingField}
-            />
-          </FormProvider>
-
-          <DangerZoneSection
-            t={t}
-            isRevoking={accountActions.isRevoking}
-            onLogout={logout}
-            onRevokeAllSessions={() => accountActions.setConfirmRevokeOpen(true)}
-            onDeleteAccount={() => accountActions.setConfirmDeleteOpen(true)}
-          />
-        </div>
-      )}
-
+      {/* Dialogs */}
       <ConfirmDialog
         open={accountActions.confirmDeleteOpen}
         onOpenChange={accountActions.setConfirmDeleteOpen}
@@ -195,6 +313,6 @@ export default function SettingsPage() {
         }
         variant="destructive"
       />
-    </div>
+    </motion.div>
   );
 }
