@@ -165,6 +165,7 @@ export default function HeroSection() {
                                                 src={avatar.src}
                                                 alt={avatar.alt}
                                                 fill
+                                                sizes="40px"
                                                 className="object-cover"
                                             />
                                         </motion.div>

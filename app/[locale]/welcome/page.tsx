@@ -115,32 +115,8 @@ export default function WelcomePage() {
                     >
                         {/* Slide 0: Highlight Demo */}
                         {currentSlide === 0 && (
-                            <div className="w-full py-6 md:py-10">
-                                <div className="container px-4 md:px-6 mx-auto">
-                                    <motion.div
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ duration: 0.5, delay: 0.1 }}
-                                        className="text-center mb-8"
-                                    >
-
-                                        <h2 className="text-2xl mt-10 md:text-3xl font-bold mb-3">
-                                            {t('demo_title')}
-                                        </h2>
-                                        <p className="text-muted-foreground max-w-xl mx-auto">
-                                            {t('demo_description')}
-                                        </p>
-                                    </motion.div>
-
-                                    <motion.div
-                                        initial={{ opacity: 0, scale: 0.95 }}
-                                        animate={{ opacity: 1, scale: 1 }}
-                                        transition={{ duration: 0.5, delay: 0.25 }}
-                                        className="max-w-4xl mx-auto"
-                                    >
-                                        <DemoTextArea />
-                                    </motion.div>
-                                </div>
+                            <div className="w-full h-full">
+                                <DemoTextArea />
                             </div>
                         )}
 
