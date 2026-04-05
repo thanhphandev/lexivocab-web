@@ -11,7 +11,7 @@
         "language": "言語"
     },
     "Hero": {
-        "badge": "🚀 新リリース v1.0",
+        "badge": "新リリース {version}",
         "title": "ウェブを<highlight>閲覧</highlight>しながら自然に単語を学ぶ",
         "subtitle": "辞書を引くために読書の流れを中断しないでください。LexiVocabは、英語の単語を自然に翻訳、保存、復習するのに役立ちます。",
         "cta_install": "Chromeに追加",

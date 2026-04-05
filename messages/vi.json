@@ -11,7 +11,7 @@
         "language": "Ngôn ngữ"
     },
     "Hero": {
-        "badge": "🚀 Phiên bản mới v1.0",
+        "badge": "Phiên bản mới {version}",
         "title": "Học từ vựng thụ động ngay khi <highlight>lướt web</highlight>",
         "highlight": "lướt web",
         "subtitle": "Đừng để việc tra từ làm gián đoạn việc đọc của bạn. LexiVocab giúp bạn dịch, lưu và ôn tập từ vựng tiếng Anh một cách tự nhiên nhất.",

@@ -11,7 +11,7 @@
         "language": "语言"
     },
     "Hero": {
-        "badge": "🚀 全新发布 v1.0",
+        "badge": "全新发布 {version}",
         "title": "在<highlight>浏览网页</highlight>时被动学习词汇",
         "subtitle": "不要让查词典打断你的阅读流程。LexiVocab帮助你自然地翻译、保存和复习英语词汇。",
         "cta_install": "添加到Chrome",

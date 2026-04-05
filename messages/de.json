@@ -11,7 +11,7 @@
         "language": "Sprache"
     },
     "Hero": {
-        "badge": "🚀 Neue Version v1.0",
+        "badge": "Neue Version {version}",
         "title": "Vokabeln passiv lernen beim <highlight>Surfen im Internet</highlight>",
         "subtitle": "Lassen Sie sich nicht durch das Nachschlagen im Wörterbuch beim Lesen unterbrechen. LexiVocab hilft Ihnen, englische Vokabeln ganz natürlich zu übersetzen, zu speichern und zu wiederholen.",
         "cta_install": "Zu Chrome hinzufügen",

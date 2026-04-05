@@ -11,7 +11,7 @@
         "language": "Language"
     },
     "Hero": {
-        "badge": "🚀 New Release v1.0",
+        "badge": "New Release {version}",
         "title": "Learn vocabulary passively while <highlight>browsing the web</highlight>",
         "subtitle": "Don't let dictionary lookups interrupt your reading flow. LexiVocab helps you translate, save, and review English vocabulary naturally.",
         "cta_install": "Add to Chrome",
