@@ -179,7 +179,9 @@
         "update_enforcement": "Added version update enforcement mechanism",
         "mode_toggle_feature": "Mode Toggle: Quickly switch between Standard Mode and Compact Mode",
         "realtime_input_translation": "Real-time Input Translation: Translate text while typing by pressing Space 3 times",
-        "highlight_performance_optimization": "Improved highlight performance for vocabulary words"
+        "highlight_performance_optimization": "Improved highlight performance for vocabulary words",
+        "add_german_russian_ui_languages": "Added UI language support for German and Russian",
+        "improve_translation_performance": "Improved translation performance"
     },
     "VideoDemo": {
         "badge": "Video Demo",

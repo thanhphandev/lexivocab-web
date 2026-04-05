@@ -179,7 +179,9 @@
         "update_enforcement": "バージョン強制更新メカニズムを追加",
         "mode_toggle_feature": "モード切替: スタンダードモードとコンパクトモードを素早く切り替え",
         "realtime_input_translation": "リアルタイム入力翻訳: スペースキーを3回押すと入力中のテキストを翻訳",
-        "highlight_performance_optimization": "単語ハイライトのパフォーマンスを改善"
+        "highlight_performance_optimization": "単語ハイライトのパフォーマンスを改善",
+        "add_german_russian_ui_languages": "ドイツ語とロシア語のUI言語サポートを追加",
+        "improve_translation_performance": "翻訳のパフォーマンスを向上"
     },
     "VideoDemo": {
         "badge": "動画デモ",

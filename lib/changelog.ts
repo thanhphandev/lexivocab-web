@@ -1,5 +1,13 @@
 export const versions = [
     {
+        version: "1.2.0",
+        date: "2026-04-05",
+        changes: [
+            "add_german_russian_ui_languages",
+            "improve_translation_performance"
+        ]
+    },
+    {
         version: "1.1.0",
         date: "2026-01-18",
         changes: [

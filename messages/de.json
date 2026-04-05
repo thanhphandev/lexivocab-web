@@ -179,7 +179,9 @@
         "update_enforcement": "Mechanismus zur Erzwingung von Versions-Updates hinzugefügt",
         "mode_toggle_feature": "Modus-Umschalter: Schnelles Wechseln zwischen Standard- und Kompaktmodus",
         "realtime_input_translation": "Echtzeit-Eingabeübersetzung: Übersetzen von Text beim Tippen durch 3-maliges Drücken der Leertaste",
-        "highlight_performance_optimization": "Verbesserte Hervorhebungsleistung für Vokabeln"
+        "highlight_performance_optimization": "Verbesserte Hervorhebungsleistung für Vokabeln",
+        "add_german_russian_ui_languages": "Benutzeroberfläche auf Deutsch und Russisch hinzugefügt",
+        "improve_translation_performance": "Verbesserte Übersetzungsleistung"
     },
     "VideoDemo": {
         "badge": "Video-Demo",

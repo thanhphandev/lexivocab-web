@@ -179,7 +179,9 @@
         "update_enforcement": "添加版本强制更新机制",
         "mode_toggle_feature": "模式切换: 在标准模式和紧凑模式之间快速切换",
         "realtime_input_translation": "实时输入翻译: 连续按3次空格键即可翻译正在输入的文本",
-        "highlight_performance_optimization": "改进词汇高亮性能"
+        "highlight_performance_optimization": "改进词汇高亮性能",
+        "add_german_russian_ui_languages": "添加了对德语和俄语的UI界面语言支持",
+        "improve_translation_performance": "改进了翻译性能"
     },
     "VideoDemo": {
         "badge": "视频演示",

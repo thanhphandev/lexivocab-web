@@ -180,7 +180,9 @@
         "update_enforcement": "Thêm cơ chế bắt buộc cập nhật phiên bản",
         "mode_toggle_feature": "Chuyển đổi chế độ: Chuyển nhanh giữa Standard Mode và Compact Mode",
         "realtime_input_translation": "Dịch khi gõ: Dịch văn bản ngay khi nhập bằng cách nhấn Space 3 lần",
-        "highlight_performance_optimization": "Tối ưu hiệu suất tô màu từ vựng"
+        "highlight_performance_optimization": "Tối ưu hiệu suất tô màu từ vựng",
+        "add_german_russian_ui_languages": "Cập nhật hỗ trợ ngôn ngữ UI tiếng Đức và Nga",
+        "improve_translation_performance": "Cải thiện hiệu năng dịch thuật"
     },
     "VideoDemo": {
         "badge": "Video Demo",
