@@ -12,7 +12,7 @@ export default function HeroSection() {
     const t = useTranslations('Hero');
 
     return (
-        <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden bg-slate-50 pt-16">
+        <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden bg-slate-50 pt-16 md:pt-20">
             {/* Modern Mesh Background & Dots */}
             <div className="absolute inset-0 z-0 flex items-center justify-center overflow-hidden">
                 <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-orange-400/20 blur-[120px] rounded-full mix-blend-multiply opacity-70 animate-pulse-slow" />

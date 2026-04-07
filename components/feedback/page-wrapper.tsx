@@ -9,7 +9,7 @@ interface PageWrapperProps {
 
 export function PageWrapper({ children }: PageWrapperProps) {
     return (
-        <div className="min-h-screen w-full flex items-center justify-center p-4 md:p-6 relative overflow-hidden">
+        <div className="min-h-screen w-full flex flex-col items-center justify-center pt-16 md:pt-20 p-4 md:p-6 relative overflow-hidden">
             {/* Modern Mesh Gradient Background */}
             <div className="absolute inset-0 -z-10">
                 {/* Base gradient */}

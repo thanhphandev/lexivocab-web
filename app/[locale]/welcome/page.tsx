@@ -50,7 +50,7 @@ export default function WelcomePage() {
     }, []);
 
     return (
-        <main className="h-[calc(100dvh-64px)] bg-gradient-to-b from-white via-orange-50/30 to-white overflow-hidden flex flex-col relative">
+        <main className="min-h-svh pt-16 md:pt-20 bg-gradient-to-b from-white via-orange-50/30 to-white overflow-hidden flex flex-col relative">
             {/* ── Top Navigation Bar ──────────────────────────────────── */}
             <header className="flex-shrink-0 relative z-20">
                 <div className="container px-4 md:px-6 mx-auto flex items-center justify-between py-4">
