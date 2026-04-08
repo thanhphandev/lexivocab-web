@@ -212,7 +212,9 @@
         "deleteDesc": "确定要删除「{word}」吗？此操作不可撤销。",
         "deleteConfirm": "删除",
         "deleteSuccess": "已成功删除「{word}」",
-        "deleteFailed": "删除「{word}」失败"
+        "deleteFailed": "删除「{word}」失败",
+        "contributeSuccess": "已成功将「{word}」贡献给社区",
+        "contributeFailed": "贡献「{word}」给社区失败"
       },
       "badges": {
         "active": "学习中",

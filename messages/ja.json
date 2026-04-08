@@ -212,7 +212,9 @@
         "deleteDesc": "「{word}」を削除してもよろしいですか？この操作は元に戻せません。",
         "deleteConfirm": "削除",
         "deleteSuccess": "「{word}」を削除しました",
-        "deleteFailed": "「{word}」の削除に失敗しました"
+        "deleteFailed": "「{word}」の削除に失敗しました",
+        "contributeSuccess": "「{word}」をコミュニティに貢献しました",
+        "contributeFailed": "「{word}」をコミュニティに貢献できませんでした"
       },
       "badges": {
         "active": "学習中",

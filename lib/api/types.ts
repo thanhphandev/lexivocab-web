@@ -106,6 +106,7 @@ export interface AuthUser {
     email: string;
     fullName: string;
     role: string;
+    avatarUrl?: string;
 }
 
 
@@ -158,6 +159,7 @@ export interface AuthResponse {
     accessToken: string;
     refreshToken: string;
     expiresAt: string;
+    avatarUrl: string;
 }
 
 export interface UserProfile {
@@ -168,6 +170,7 @@ export interface UserProfile {
     isActive: boolean;
     createdAt: string;
     lastLogin: string | null;
+    avatarUrl?: string;
 }
 
 // ─── Vocabulary DTOs ─────────────────────────────────────────

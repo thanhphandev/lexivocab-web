@@ -246,7 +246,9 @@
         "deleteDesc": "Are you sure you want to delete \"{word}\"? This action cannot be undone.",
         "deleteConfirm": "Delete",
         "deleteSuccess": "Successfully deleted \"{word}\"",
-        "deleteFailed": "Failed to delete \"{word}\""
+        "deleteFailed": "Failed to delete \"{word}\"",
+        "contributeSuccess": "Successfully contributed \"{word}\" to the community",
+        "contributeFailed": "Failed to contribute \"{word}\" to the community"
       },
       "tagDialog": {
         "createTitle": "Create New Tag",
