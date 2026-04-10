@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { usePermissions } from "@/lib/hooks/use-permissions";
 import { TagSidebar } from "@/components/dashboard/tag-sidebar";
@@ -14,6 +14,7 @@ import { useTagsData } from "./_hooks/use-tags-data";
 import { useVocabularyExport } from "./_hooks/use-vocabulary-export";
 import { useDebouncedSearch } from "./_hooks/use-debounced-search";
 import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 export default function VocabularyPage() {
   const t = useTranslations("Dashboard.vocabulary");
@@ -25,6 +26,21 @@ export default function VocabularyPage() {
   const [filter, setFilter] = useState<"all" | "active" | "archived">("active");
   const [tagFilter, setTagFilter] = useState<string>("all");
   const [isCreateTagOpen, setIsCreateTagOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
+  // Load sidebar state from localStorage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem("vocabulary-sidebar-collapsed");
+    if (saved !== null) {
+      setIsSidebarCollapsed(saved === "true");
+    }
+  }, []);
+
+  const toggleSidebar = () => {
+    const newState = !isSidebarCollapsed;
+    setIsSidebarCollapsed(newState);
+    localStorage.setItem("vocabulary-sidebar-collapsed", String(newState));
+  };
 
   const { searchQuery, debouncedSearch, setSearchQuery } = useDebouncedSearch();
   const { tags, tagMap, refetchTags } = useTagsData();
@@ -69,7 +85,10 @@ export default function VocabularyPage() {
         />
       </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8 items-start">
+      <div className={cn(
+        "grid grid-cols-1 gap-8 items-start transition-all duration-300",
+        isSidebarCollapsed ? "lg:grid-cols-[64px_1fr]" : "lg:grid-cols-[280px_1fr]"
+      )}>
         <motion.aside 
           className="hidden lg:block sticky top-6 self-start"
           initial={{ opacity: 0, x: -20 }}
@@ -83,6 +102,8 @@ export default function VocabularyPage() {
             onRefresh={refetchTags}
             onCreateNew={() => setIsCreateTagOpen(true)}
             isLoading={isLoading}
+            isCollapsed={isSidebarCollapsed}
+            onToggleCollapse={toggleSidebar}
           />
         </motion.aside>
 

@@ -29,7 +29,9 @@ import {
     Zap,
     Trophy,
     AlertCircle,
-    RefreshCw
+    RefreshCw,
+    ChevronRight,
+    Search
 } from "lucide-react";
 
 
@@ -203,6 +205,62 @@ export default function DashboardHome() {
                     className="bg-card dark:bg-card/50"
                     description="Pending reviews"
                 />
+            </div>
+            
+            {/* Recent Vocabulary Quick View - Synchronized with Mobile & Widget */}
+            <div className="delay-150 animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-both">
+                <Card className="shadow-md border-transparent hover:border-primary/20 bg-card/60 backdrop-blur-sm group hover:shadow-xl transition-all duration-500 overflow-hidden">
+                    <CardHeader className="flex flex-row items-center justify-between pb-3 border-b border-border/50">
+                        <CardTitle className="text-lg font-bold flex items-center gap-2 group-hover:text-primary transition-colors">
+                            <BookOpen className="h-5 w-5 text-primary" />
+                            {t("recentVocabulary")}
+                        </CardTitle>
+                        <Button variant="ghost" size="sm" asChild className="text-xs font-bold text-muted-foreground hover:text-primary transition-colors rounded-full">
+                            <Link href="/vocabulary" className="flex items-center gap-1">
+                                {t("viewAll")} <ChevronRight className="h-3 w-3" />
+                            </Link>
+                        </Button>
+                    </CardHeader>
+                    <CardContent className="p-0">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 divide-x divide-y md:divide-y-0 divide-border/50">
+                            {dashboardData.vocabulary.recentVocabulary?.length ? (
+                                dashboardData.vocabulary.recentVocabulary.slice(0, 5).map((item) => (
+                                    <Link 
+                                        key={item.id} 
+                                        href={`/vocabulary?id=${item.id}`}
+                                        className="flex flex-col p-5 hover:bg-accent/50 transition-all group/item relative overflow-hidden"
+                                    >
+                                        <div className="absolute top-0 right-0 p-2 opacity-0 group-hover/item:opacity-100 transition-opacity">
+                                            <Search className="h-3 w-3 text-primary/40" />
+                                        </div>
+                                        <div className="space-y-1.5 relative z-10">
+                                            <div className="flex items-center justify-between">
+                                                <p className="font-extrabold text-sm group-hover/item:text-primary transition-colors tracking-tight">{item.wordText}</p>
+                                                {item.partOfSpeech && (
+                                                    <span className="text-[9px] font-black uppercase text-muted-foreground/40 bg-muted px-1.5 py-0.5 rounded-sm">{item.partOfSpeech}</span>
+                                                )}
+                                            </div>
+                                            <p className="text-xs text-muted-foreground line-clamp-2 min-h-[32px] leading-relaxed">
+                                                {item.customMeaning || (item as any).meaning || "No definition available"}
+                                            </p>
+                                        </div>
+                                        {item.phoneticUs && (
+                                            <div className="mt-auto pt-4 flex items-center justify-between">
+                                                <span className="text-[10px] font-mono font-medium text-muted-foreground/60 bg-accent/30 px-2 py-0.5 rounded-full">{item.phoneticUs}</span>
+                                                <div className="h-1.5 w-1.5 rounded-full bg-emerald-500/40" />
+                                            </div>
+                                        )}
+                                    </Link>
+                                ))
+                            ) : (
+                                <div className="col-span-full p-12 text-center text-muted-foreground italic text-sm flex flex-col items-center gap-2">
+                                    <BookOpen className="h-8 w-8 opacity-20" />
+                                    {t("noRecentWords")}
+                                </div>
+                            )}
+                        </div>
+                    </CardContent>
+                </Card>
             </div>
 
             {/* Second Row: Detailed Analytics */}

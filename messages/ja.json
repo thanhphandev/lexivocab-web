@@ -97,6 +97,9 @@
     "home": {
       "title": "おかえりなさい",
       "subtitle": "学習の進捗概要はこちらです",
+      "recentVocabulary": "最近の語彙",
+      "viewAll": "全ての語彙を表示",
+      "noRecentWords": "最近学習した単語はありません。新しい単語を追加しましょう！",
       "stats": {
         "totalWords": "合計単語数",
         "activeWords": "学習中",

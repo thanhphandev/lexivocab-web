@@ -9,7 +9,9 @@ import {
     Pencil,
     Loader2,
     ChevronRight,
-    Folder
+    Folder,
+    PanelLeftClose,
+    PanelLeftOpen
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -34,6 +36,8 @@ interface TagSidebarProps {
     onRefresh: () => void;
     onCreateNew: () => void;
     isLoading?: boolean;
+    isCollapsed?: boolean;
+    onToggleCollapse?: () => void;
 }
 
 export function TagSidebar({
@@ -42,7 +46,9 @@ export function TagSidebar({
     onSelectTag,
     onRefresh,
     onCreateNew,
-    isLoading = false
+    isLoading = false,
+    isCollapsed = false,
+    onToggleCollapse
 }: TagSidebarProps) {
     const [isDeleting, setIsDeleting] = useState<string | null>(null);
     const [tagToDelete, setTagToDelete] = useState<TagDto | null>(null);
@@ -77,7 +83,10 @@ export function TagSidebar({
     };
 
     return (
-        <div className="w-full h-full flex flex-col gap-6 pr-4">
+        <div className={cn(
+            "h-full flex flex-col gap-6 transition-all duration-300",
+            isCollapsed ? "w-16 pr-0" : "w-full pr-4"
+        )}>
             <ConfirmDialog
                 open={!!tagToDelete}
                 onOpenChange={(open) => !open && setTagToDelete(null)}
@@ -87,18 +96,33 @@ export function TagSidebar({
                 variant="destructive"
                 onConfirm={handleDelete}
             />
-            <div className="flex items-center justify-between">
-                <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground ml-2">
-                    {t("title")}
-                </h3>
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-primary hover:bg-primary/10 rounded-full"
-                    onClick={onCreateNew}
-                >
-                    <Plus className="h-4 w-4" />
-                </Button>
+            <div className={cn(
+                "flex items-center",
+                isCollapsed ? "flex-col gap-4" : "justify-between"
+            )}>
+                {!isCollapsed && (
+                    <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground ml-2">
+                        {t("title")}
+                    </h3>
+                )}
+                <div className="flex gap-1">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-primary hover:bg-primary/10 rounded-full"
+                        onClick={onCreateNew}
+                    >
+                        <Plus className="h-4 w-4" />
+                    </Button>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-muted-foreground hover:bg-accent rounded-full hidden lg:flex"
+                        onClick={onToggleCollapse}
+                    >
+                        {isCollapsed ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
+                    </Button>
+                </div>
             </div>
 
             {/* Tag Dialog for Editing */}
@@ -117,15 +141,16 @@ export function TagSidebar({
                     variant="ghost"
                     onClick={() => onSelectTag("all")}
                     className={cn(
-                        "w-full justify-start gap-3 h-10 px-3 rounded-lg transition-all border border-transparent",
+                        "w-full justify-start h-10 px-3 rounded-lg transition-all border border-transparent",
+                        isCollapsed ? "justify-center px-0" : "gap-3",
                         selectedTagId === "all"
                             ? "bg-primary/10 text-primary font-semibold border-primary/20 shadow-sm"
                             : "text-muted-foreground hover:bg-accent/50"
                     )}
                 >
-                    <Hash className="h-4 w-4" />
-                    <span className="flex-1 text-left">{t("allWords")}</span>
-                    {selectedTagId === "all" && <ChevronRight className="h-3 w-3" />}
+                    <Hash className={cn("h-4 w-4 shrink-0", isCollapsed && "mx-auto")} />
+                    {!isCollapsed && <span className="flex-1 text-left">{t("allWords")}</span>}
+                    {!isCollapsed && selectedTagId === "all" && <ChevronRight className="h-3 w-3" />}
                 </Button>
             </div>
 
@@ -161,7 +186,8 @@ export function TagSidebar({
                                     }
                                 }}
                                 className={cn(
-                                    "flex items-center w-full justify-start gap-3 h-11 px-3 rounded-xl transition-all border group relative overflow-hidden cursor-pointer",
+                                    "flex items-center w-full justify-start h-11 px-3 rounded-xl transition-all border group relative overflow-hidden cursor-pointer",
+                                    isCollapsed ? "justify-center px-0" : "gap-3",
                                     selectedTagId === tag.id
                                         ? "bg-card border-border/50 shadow-md ring-1 ring-primary/20"
                                         : "hover:bg-accent/50 border-transparent"
@@ -176,50 +202,54 @@ export function TagSidebar({
                                 >
                                     {tag.icon || "📁"}
                                 </div>
-                                <div className="flex-1 text-left truncate">
-                                    <div className={cn(
-                                        "text-sm font-medium leading-none mb-1",
-                                        selectedTagId === tag.id ? "text-foreground" : "text-muted-foreground"
-                                    )}>
-                                        {tag.name}
-                                    </div>
-                                    <div className="text-[10px] text-muted-foreground opacity-60">
-                                        {t("wordCount", { count: tag.wordCount })}
-                                    </div>
-                                </div>
+                                {!isCollapsed && (
+                                    <>
+                                        <div className="flex-1 text-left truncate">
+                                            <div className={cn(
+                                                "text-sm font-medium leading-none mb-1",
+                                                selectedTagId === tag.id ? "text-foreground" : "text-muted-foreground"
+                                            )}>
+                                                {tag.name}
+                                            </div>
+                                            <div className="text-[10px] text-muted-foreground opacity-60">
+                                                {t("wordCount", { count: tag.wordCount })}
+                                            </div>
+                                        </div>
 
-                                <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity shrink-0 focus:opacity-100"
-                                            onClick={(e) => e.stopPropagation()}
-                                        >
-                                            <MoreVertical className="h-3 w-3" />
-                                        </Button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent align="end" className="w-32">
-                                        <DropdownMenuItem
-                                            className="text-xs cursor-pointer"
-                                            onClick={(e) => handleEditClick(e, tag)}
-                                        >
-                                            <Pencil className="mr-2 h-3 w-3" /> {t("edit")}
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem
-                                            className="text-xs text-destructive cursor-pointer"
-                                            onClick={(e) => { e.stopPropagation(); setTagToDelete(tag); }}
-                                            disabled={isDeleting === tag.id}
-                                        >
-                                            {isDeleting === tag.id ? (
-                                                <Loader2 className="mr-2 h-3 w-3 animate-spin" />
-                                            ) : (
-                                                <Trash2 className="mr-2 h-3 w-3" />
-                                            )}
-                                            {t("delete")}
-                                        </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity shrink-0 focus:opacity-100"
+                                                    onClick={(e) => e.stopPropagation()}
+                                                >
+                                                    <MoreVertical className="h-3 w-3" />
+                                                </Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent align="end" className="w-32">
+                                                <DropdownMenuItem
+                                                    className="text-xs cursor-pointer"
+                                                    onClick={(e) => handleEditClick(e, tag)}
+                                                >
+                                                    <Pencil className="mr-2 h-3 w-3" /> {t("edit")}
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem
+                                                    className="text-xs text-destructive cursor-pointer"
+                                                    onClick={(e) => { e.stopPropagation(); setTagToDelete(tag); }}
+                                                    disabled={isDeleting === tag.id}
+                                                >
+                                                    {isDeleting === tag.id ? (
+                                                        <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+                                                    ) : (
+                                                        <Trash2 className="mr-2 h-3 w-3" />
+                                                    )}
+                                                    {t("delete")}
+                                                </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    </>
+                                )}
 
                                 {selectedTagId === tag.id && (
                                     <motion.div
@@ -233,12 +263,14 @@ export function TagSidebar({
                 )}
             </div>
 
-            <div className="mt-auto p-4 rounded-2xl bg-primary/5 border border-primary/10 hidden lg:block">
-                <p className="text-[10px] uppercase font-bold text-primary tracking-widest mb-1">{t("tipLabel")}</p>
-                <p className="text-[11px] text-muted-foreground leading-relaxed">
-                    {t("tipDesc")}
-                </p>
-            </div>
+            {!isCollapsed && (
+                <div className="mt-auto p-4 rounded-2xl bg-primary/5 border border-primary/10 hidden lg:block">
+                    <p className="text-[10px] uppercase font-bold text-primary tracking-widest mb-1">{t("tipLabel")}</p>
+                    <p className="text-[11px] text-muted-foreground leading-relaxed">
+                        {t("tipDesc")}
+                    </p>
+                </div>
+            )}
         </div>
     );
 }

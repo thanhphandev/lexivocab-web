@@ -89,14 +89,7 @@ export function CurrentPlanCard({
                 <CheckCircle2 className="h-4 w-4" />
                 {t("current_plan.active")}
               </span>
-            ) : (
-              <Link href={`/${locale}/pricing`}>
-                <Button size="sm">
-                  <Crown className="mr-2 h-4 w-4" />
-                  {tPricing("upgrade")}
-                </Button>
-              </Link>
-            )}
+            ) : null}
           </div>
         </CardHeader>
 

@@ -97,6 +97,9 @@
     "home": {
       "title": "Welcome Back",
       "subtitle": "Here is your learning progress overview",
+      "recentVocabulary": "Recent Vocabulary",
+      "viewAll": "View All Vocabulary",
+      "noRecentWords": "No recent vocabulary to show. Start adding new words!",
       "stats": {
         "totalWords": "Total Words",
         "activeWords": "Active Words",

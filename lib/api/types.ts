@@ -358,6 +358,7 @@ export interface VocabularyOverviewDto {
     activeWords: number;
     masteredWords: number;
     dueToday: number;
+    recentVocabulary?: VocabularyDto[];
 }
 
 export interface ReviewOverviewDto {

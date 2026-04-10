@@ -245,6 +245,8 @@ export default function BillingPage() {
               aiMax={perms.aiMax}
               transUsed={perms.transUsed}
               transMax={perms.transMax}
+              quizUsed={perms.quizUsed}
+              quizMax={perms.quizMax}
             />
           </motion.div>
         </motion.div>

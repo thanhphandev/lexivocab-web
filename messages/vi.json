@@ -97,6 +97,9 @@
     "home": {
       "title": "Chào mừng trở lại",
       "subtitle": "Đây là tổng quan tiến độ học tập của bạn",
+      "recentVocabulary": "Từ vựng gần đây",
+      "viewAll": "Xem tất cả từ vựng",
+      "noRecentWords": "Chưa có từ vựng gần đây. Hãy bắt đầu thêm từ mới!",
       "stats": {
         "totalWords": "Tổng số từ",
         "activeWords": "Đang học",

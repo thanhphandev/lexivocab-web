@@ -97,6 +97,9 @@
     "home": {
       "title": "欢迎回来",
       "subtitle": "这是您的学习进度概览",
+      "recentVocabulary": "最近的词汇",
+      "viewAll": "查看所有词汇",
+      "noRecentWords": "最近没有学习任何单词。开始添加新单词吧！",
       "stats": {
         "totalWords": "总单词数",
         "activeWords": "学习中单词",
