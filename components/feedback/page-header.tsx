@@ -3,10 +3,12 @@
 import { motion } from 'framer-motion';
 import { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
 
 interface PageHeaderProps {
     icon: LucideIcon;
     iconColor?: 'orange' | 'red' | 'blue' | 'green';
+    illustration?: string;
     title: string;
     subtitle: string;
 }
@@ -18,7 +20,7 @@ const colorVariants = {
     green: 'bg-green-100/80 ring-green-200/60 text-green-600',
 };
 
-export function PageHeader({ icon: Icon, iconColor = 'orange', title, subtitle }: PageHeaderProps) {
+export function PageHeader({ icon: Icon, iconColor = 'orange', illustration, title, subtitle }: PageHeaderProps) {
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -26,17 +28,33 @@ export function PageHeader({ icon: Icon, iconColor = 'orange', title, subtitle }
             transition={{ duration: 0.5 }}
             className="mb-8 text-center space-y-4"
         >
-            <motion.div
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.4, delay: 0.1 }}
-                className={cn(
-                    "inline-flex items-center justify-center p-4 rounded-2xl ring-1 shadow-lg",
-                    colorVariants[iconColor]
-                )}
-            >
-                <Icon className="w-7 h-7" strokeWidth={1.8} />
-            </motion.div>
+            {illustration ? (
+                <motion.div
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ duration: 0.4, delay: 0.1 }}
+                >
+                    <Image
+                        src={illustration}
+                        alt={title}
+                        width={180}
+                        height={180}
+                        className="mx-auto opacity-90 dark:opacity-80"
+                    />
+                </motion.div>
+            ) : (
+                <motion.div
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ duration: 0.4, delay: 0.1 }}
+                    className={cn(
+                        "inline-flex items-center justify-center p-4 rounded-2xl ring-1 shadow-lg",
+                        colorVariants[iconColor]
+                    )}
+                >
+                    <Icon className="w-7 h-7" strokeWidth={1.8} />
+                </motion.div>
+            )}
 
             <motion.h1
                 initial={{ opacity: 0, y: 10 }}

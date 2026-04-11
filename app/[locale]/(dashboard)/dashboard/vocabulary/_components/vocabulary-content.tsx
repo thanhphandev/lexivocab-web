@@ -48,6 +48,13 @@ export function VocabularyContent({
     return (
       <EmptyState
         icon={debouncedSearch ? SearchX : tagFilter !== "all" ? FilterX : Inbox}
+        illustration={
+          debouncedSearch
+            ? "/illustrations/search-empty.png"
+            : !tagFilter || tagFilter === "all"
+              ? "/illustrations/empty-vocab.png"
+              : undefined
+        }
         title={
           debouncedSearch
             ? t("empty.noMatchTitle")

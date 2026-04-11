@@ -1,8 +1,8 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { BrainCircuit } from "lucide-react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 interface ReviewStartScreenProps {
   t: (key: string, params?: Record<string, number>) => string;
@@ -18,9 +18,13 @@ export function ReviewStartScreen({ t, cardCount, onStart }: ReviewStartScreenPr
         animate={{ opacity: 1, scale: 1 }}
         className="max-w-md text-center space-y-6 p-8 border bg-card rounded-3xl shadow-lg"
       >
-        <div className="mx-auto w-20 h-20 bg-primary/10 text-primary rounded-2xl flex flex-col items-center justify-center">
-          <BrainCircuit className="h-10 w-10" />
-        </div>
+        <Image
+          src="/illustrations/review-start.png"
+          alt="Ready to review"
+          width={180}
+          height={180}
+          className="mx-auto opacity-90 dark:opacity-80"
+        />
         <div>
           <h2 className="text-2xl font-bold text-foreground mb-2">{t("title")}</h2>
           <p className="text-muted-foreground">{t("dueToday", { count: cardCount })}</p>

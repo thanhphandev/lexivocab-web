@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2, ArrowLeft, MailCheck, AlertCircle } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { authApi } from "@/lib/api/api-client";
 import { getLocalizedApiError } from "@/lib/error-handler";
 import { motion, AnimatePresence } from "framer-motion";
@@ -77,9 +78,13 @@ export default function ForgotPasswordPage() {
                         exit={{ opacity: 0, y: -10 }}
                         className="flex flex-col items-center text-center space-y-6"
                     >
-                        <div className="w-20 h-20 bg-primary/10 text-primary rounded-full flex items-center justify-center shadow-inner">
-                            <MailCheck className="w-10 h-10" />
-                        </div>
+                        <Image
+                            src="/illustrations/forgot-password.png"
+                            alt="Check your email"
+                            width={160}
+                            height={160}
+                            className="mx-auto opacity-90 dark:opacity-80"
+                        />
                         <div className="space-y-2">
                             <h1 className="text-2xl font-bold tracking-tight text-foreground">
                                 {t("forgotPasswordCheckTitle")}

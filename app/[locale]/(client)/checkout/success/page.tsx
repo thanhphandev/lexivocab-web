@@ -9,6 +9,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, Loader2, XCircle, ArrowRight, Crown, Sparkles } from "lucide-react";
+import Image from "next/image";
 import confetti from "canvas-confetti";
 import { getLocalizedApiError } from "@/lib/error-handler";
 
@@ -108,17 +109,16 @@ export default function CheckoutSuccessPage() {
                                 initial={{ scale: 0 }}
                                 animate={{ scale: 1 }}
                                 transition={{ type: "spring", damping: 12, stiffness: 200 }}
-                                className="mx-auto w-24 h-24 bg-emerald-100 dark:bg-emerald-950/30 rounded-full flex items-center justify-center relative z-10"
                             >
-                                <CheckCircle2 className="h-12 w-12 text-emerald-500" />
+                                <Image
+                                    src="/illustrations/checkout-success.png"
+                                    alt="Payment successful"
+                                    width={200}
+                                    height={200}
+                                    className="mx-auto opacity-90 dark:opacity-80"
+                                    priority
+                                />
                             </motion.div>
-
-                            {/* Animated Rings */}
-                            <motion.div
-                                animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.2, 0.5] }}
-                                transition={{ duration: 4, repeat: Infinity }}
-                                className="absolute inset-0 m-auto w-24 h-24 border-4 border-emerald-500/20 rounded-full"
-                            />
                         </div>
 
                         <div className="space-y-2">

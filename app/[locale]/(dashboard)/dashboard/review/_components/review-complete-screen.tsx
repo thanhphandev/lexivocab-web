@@ -1,9 +1,10 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { PartyPopper, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 
 interface ReviewCompleteScreenProps {
   t: (key: string, params?: Record<string, number>) => string;
@@ -19,9 +20,20 @@ export function ReviewCompleteScreen({ t, locale, reviewedCount }: ReviewComplet
         animate={{ opacity: 1, scale: 1 }}
         className="max-w-md text-center space-y-6"
       >
-        <div className="mx-auto w-24 h-24 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mb-6">
-          <PartyPopper className="h-12 w-12" />
-        </div>
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.1 }}
+        >
+          <Image
+            src="/illustrations/review-complete.png"
+            alt="Review complete"
+            width={220}
+            height={220}
+            className="mx-auto opacity-90 dark:opacity-80"
+            priority
+          />
+        </motion.div>
         <h2 className="text-3xl font-bold text-foreground">
           {reviewedCount > 0 ? t("sessionComplete") : t("allCaughtUp")}
         </h2>

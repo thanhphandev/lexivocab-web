@@ -79,6 +79,7 @@ export default function UninstallPage() {
                         <PageHeader
                             icon={AlertTriangle}
                             iconColor="red"
+                            illustration="/illustrations/farewell.png"
                             title={t('title')}
                             subtitle={t('subtitle')}
                         />

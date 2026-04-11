@@ -1041,5 +1041,19 @@
     "AI_PROVIDER_ERROR": "Nhà cung cấp AI đang gặp lỗi.",
     "AI_MODEL_NOT_AVAILABLE": "Mô hình AI đã chọn hiện không khả dụng.",
     "AUTHZ_INSUFFICIENT_PERMISSIONS": "Bạn không có quyền thực hiện. Vui lòng nâng cấp Pro."
+  },
+  "ErrorPages": {
+    "notFound": {
+      "title": "Trang Không Tìm Thấy",
+      "description": "Rất tiếc! Trang bạn đang tìm kiếm không tồn tại hoặc đã được di chuyển.",
+      "backHome": "Về Trang Chủ",
+      "backDashboard": "Đi tới Bảng Điều Khiển"
+    },
+    "error": {
+      "title": "Đã Xảy Ra Lỗi",
+      "description": "Đã xảy ra lỗi không mong muốn. Đội ngũ của chúng tôi đã được thông báo và đang khắc phục.",
+      "tryAgain": "Thử Lại",
+      "backHome": "Về Trang Chủ"
+    }
   }
 }

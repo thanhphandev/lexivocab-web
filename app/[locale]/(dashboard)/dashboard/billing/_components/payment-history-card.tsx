@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { CreditCard, Calendar, Download, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { StatusBadge } from "./status-badge";
 import type { PaymentHistoryDto } from "@/lib/api/types";
 
@@ -43,7 +44,13 @@ export function PaymentHistoryCard({
         <CardContent>
           {(history?.length ?? 0) === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
-              <CreditCard className="h-12 w-12 mx-auto mb-4 opacity-30" />
+              <Image
+                src="/illustrations/empty-billing.png"
+                alt="No transactions"
+                width={160}
+                height={160}
+                className="mx-auto mb-4 opacity-80 dark:opacity-70"
+              />
               <p className="text-lg font-medium">{t("history.no_transactions")}</p>
               <p className="text-sm mt-1">{t("history.empty_desc")}</p>
             </div>

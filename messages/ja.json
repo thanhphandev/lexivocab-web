@@ -1040,5 +1040,19 @@
     "AI_PROVIDER_ERROR": "AIプロバイダーでエラーが発生しました。",
     "AI_MODEL_NOT_AVAILABLE": "選択したAIモデルは利用できません。",
     "AUTHZ_INSUFFICIENT_PERMISSIONS": "権限がありません。Proにアップグレードしてください。"
+  },
+  "ErrorPages": {
+    "notFound": {
+      "title": "ページが見つかりません",
+      "description": "お探しのページは存在しないか、移動された可能性があります。",
+      "backHome": "ホームに戻る",
+      "backDashboard": "ダッシュボードへ"
+    },
+    "error": {
+      "title": "エラーが発生しました",
+      "description": "予期しないエラーが発生しました。チームに通知され、修正に取り組んでいます。",
+      "tryAgain": "もう一度試す",
+      "backHome": "ホームに戻る"
+    }
   }
 }

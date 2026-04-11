@@ -6,6 +6,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Loader2, ArrowLeft, MailCheck, AlertCircle } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { authApi } from "@/lib/api/api-client";
 import { getLocalizedApiError } from "@/lib/error-handler";
 import {
@@ -98,9 +99,14 @@ export default function VerifyEmailPage() {
                 <motion.div
                     initial={{ scale: 0.8, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
-                    className="w-16 h-16 bg-primary/10 text-primary rounded-full flex items-center justify-center mx-auto mb-4 shadow-inner"
                 >
-                    <MailCheck className="w-8 h-8" />
+                    <Image
+                        src="/illustrations/verify-email.png"
+                        alt="Verify email"
+                        width={160}
+                        height={160}
+                        className="mx-auto mb-4 opacity-90 dark:opacity-80"
+                    />
                 </motion.div>
 
                 <h1 className="text-3xl font-bold tracking-tight text-foreground">

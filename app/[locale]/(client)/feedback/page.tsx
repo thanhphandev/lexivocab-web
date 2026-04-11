@@ -105,6 +105,7 @@ export default function FeedbackPage() {
                         <PageHeader
                             icon={MessageSquare}
                             iconColor="blue"
+                            illustration="/illustrations/feedback.png"
                             title={t('title')}
                             subtitle={t('subtitle')}
                         />
