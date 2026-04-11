@@ -211,8 +211,11 @@
         "actions": "Hành động",
         "noMeaning": "Chưa có nghĩa",
         "assignTag": "Gán thẻ",
+        "addTag": "Thêm thẻ",
         "removeTag": "Bỏ thẻ",
         "noTagsAvailable": "Chưa có thẻ nào",
+        "assignTagSuccess": "Đã cập nhật nhãn thành công",
+        "assignTagFailed": "Cập nhật nhãn thất bại",
         "deleteTitle": "Xóa từ",
         "deleteDesc": "Bạn có chắc muốn xóa \"{word}\"? Hành động này không thể hoàn tác.",
         "deleteConfirm": "Xóa",
@@ -232,6 +235,7 @@
         "communityPending": "Chờ Duyệt"
       },
       "actions": {
+        "viewDetails": "Xem chi tiết",
         "edit": "Chỉnh sửa",
         "archive": "Lưu trữ",
         "unarchive": "Khôi phục",
@@ -339,6 +343,51 @@
         "invalidFormat": "Không tìm thấy từ hợp lệ. Vui lòng kiểm tra định dạng CSV.",
         "required": "Trường này là bắt buộc.",
         "tooLong": "Nội dung quá dài."
+      }
+    },
+    "vocabularyDetail": {
+      "back": "Quay lại Thư viện",
+      "errorNotfound": "Không tìm thấy từ vựng này.",
+      "word": "Từ vựng",
+      "meaning": "Ý nghĩa",
+      "context": "Ngữ cảnh",
+      "source": "Nguồn",
+      "tag": "Thẻ",
+      "srs": {
+        "title": "Tiến trình học tập",
+        "nextReview": "Ôn tập kế tiếp",
+        "lastReviewed": "Lần cuối ôn tập",
+        "repetition": "Cấp độ Thành thạo",
+        "easiness": "Chỉ số Easiness",
+        "never": "Chưa từng ôn tập",
+        "days": "{count} ngày"
+      },
+      "ai": {
+        "consultAssistant": "Tham vấn Trợ lý AI",
+        "teaserDescription": "Khai phá phân tích ngôn ngữ sâu sắc, sắc thái ngữ cảnh và các câu đố ghi nhớ tương tác được thiết kế riêng cho từ này.",
+        "activateNow": "Kích hoạt Trợ lý",
+        "explanation": "AI Phân tích sâu",
+        "nuances": "Sắc thái sử dụng",
+        "examples": "Ví dụ ngữ cảnh từ AI",
+        "related": "Từ đồng nghĩa & Trái nghĩa",
+        "synonyms": "Đồng nghĩa",
+        "antonyms": "Trái nghĩa",
+        "collocations": "Các cụm từ đi kèm",
+        "mnemonic": "Mẹo ghi nhớ (Mnemonic)",
+        "tips": "Mẹo học tập chuyên sâu",
+        "loading": "Đang tham vấn trợ lý AI...",
+        "error": "Lỗi khi tải thông tin từ AI."
+      },
+      "quiz": {
+        "title": "Kiểm tra kiến thức",
+        "description": "Để AI tạo một câu đố nhanh để kiểm tra mức độ hiểu của bạn về từ này.",
+        "start": "Bắt đầu AI Quiz",
+        "aiPoweredLabel": "Hỗ trợ bởi AI",
+        "refresh": "Tạo câu đố mới",
+        "generating": "Đang tạo câu đố cho bạn...",
+        "explanationTitle": "Tại sao câu này đúng?",
+        "nextQuiz": "Thử câu khác",
+        "errorFetch": "Lỗi khi tạo câu đố. Vui lòng thử lại."
       }
     },
     "flashcard": {

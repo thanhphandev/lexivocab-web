@@ -13,7 +13,11 @@ export async function POST(request: Request) {
 
     const data = await res.json().catch(() => null);
     if (!res.ok) {
-        return NextResponse.json({ success: false, error: data?.error || "Failed to resend email" }, { status: 400 });
+        return NextResponse.json({ 
+            success: false, 
+            error: data?.error || "Failed to resend email",
+            errorCode: data?.errorCode
+        }, { status: 400 });
     }
 
     return NextResponse.json({ success: true, data });

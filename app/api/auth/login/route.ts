@@ -15,7 +15,11 @@ export async function POST(request: Request) {
 
     const data = await res.json().catch(() => null);
     if (!res.ok) {
-        return NextResponse.json({ success: false, error: data?.error || "Login failed" }, { status: 401 });
+        return NextResponse.json({
+            success: false,
+            error: data?.error || "Login failed",
+            errorCode: data?.errorCode
+        }, { status: 401 });
     }
 
     const payload = data.data || data;

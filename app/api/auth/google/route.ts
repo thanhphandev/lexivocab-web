@@ -17,7 +17,11 @@ export async function POST(request: Request) {
         // Pass through the actual status code (403 for deactivated, 401 for invalid token, etc.)
         const status = res.status === 403 ? 403 : 401;
         return NextResponse.json(
-            { success: false, error: data?.error || "Google login failed" },
+            { 
+                success: false, 
+                error: data?.error || "Google login failed",
+                errorCode: data?.errorCode
+            },
             { status }
         );
     }

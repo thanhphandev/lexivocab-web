@@ -19,7 +19,11 @@ export async function POST(request: Request) {
 
     const data = await res.json().catch(() => null);
     if (!res.ok) {
-        return NextResponse.json({ success: false, error: data?.error || "Verification failed" }, { status: 400 });
+        return NextResponse.json({ 
+            success: false, 
+            error: data?.error || "Verification failed",
+            errorCode: data?.errorCode
+        }, { status: 400 });
     }
 
     return NextResponse.json({ success: true, data });

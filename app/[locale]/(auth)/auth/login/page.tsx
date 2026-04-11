@@ -55,9 +55,11 @@ export default function LoginPage() {
 
     const onSubmit = async (data: LoginInput) => {
         if (error) clearError();
-        const success = await login(data);
-        if (success) {
+        const result = await login(data);
+        if (result.success) {
             router.push(getSafeRedirectUrl(searchParams.get("redirect"), `/${locale}/dashboard`));
+        } else if (result.errorCode === "AUTH_EMAIL_NOT_VERIFIED") {
+            router.push(`/${locale}/auth/verify-email?email=${encodeURIComponent(data.email)}`);
         }
     };
 

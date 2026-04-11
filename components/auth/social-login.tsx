@@ -27,9 +27,9 @@ export function SocialLogin({ action }: SocialLoginProps) {
 
     const handleGoogleResponse = useCallback(async (credential: string) => {
         setGoogleLoading(true);
-        const success = await googleLogin(credential);
+        const result = await googleLogin(credential);
         setGoogleLoading(false);
-        if (success) {
+        if (result.success) {
             router.push(getSafeRedirectUrl(searchParams.get("redirect"), `/${locale}/dashboard`));
         }
     }, [googleLogin, router, locale, searchParams]);

@@ -13,7 +13,11 @@ export async function POST(request: Request) {
 
     const data = await res.json().catch(() => null);
     if (!res.ok) {
-        return NextResponse.json({ success: false, error: data?.error || "Forgot password request failed" }, { status: 400 });
+        return NextResponse.json({ 
+            success: false, 
+            error: data?.error || "Forgot password request failed",
+            errorCode: data?.errorCode
+        }, { status: 400 });
     }
 
     return NextResponse.json({ success: true, data });

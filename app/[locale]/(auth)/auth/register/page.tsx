@@ -57,9 +57,13 @@ export default function RegisterPage() {
 
     const onSubmit = async (data: RegisterInput) => {
         if (error) clearError();
-        const success = await authRegister(data);
-        if (success) {
-            router.push(getSafeRedirectUrl(searchParams.get("redirect"), `/${locale}/dashboard`));
+        const result = await authRegister(data);
+        if (result.success) {
+            if (result.requiresVerification) {
+                router.push(`/${locale}/auth/verify-email?email=${encodeURIComponent(data.email)}`);
+            } else {
+                router.push(getSafeRedirectUrl(searchParams.get("redirect"), `/${locale}/dashboard`));
+            }
         }
     };
 

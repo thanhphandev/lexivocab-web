@@ -39,7 +39,7 @@ export function PageHeader({ icon: Icon, iconColor = 'orange', illustration, tit
                         alt={title}
                         width={180}
                         height={180}
-                        className="mx-auto opacity-90 dark:opacity-80"
+                        className="mx-auto opacity-100 dark:opacity-80"
                     />
                 </motion.div>
             ) : (

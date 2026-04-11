@@ -28,7 +28,8 @@ import {
     Brain,
     Sparkles,
     Plus,
-    Globe
+    Globe,
+    BookOpen
 } from "lucide-react";
 import { AIWordAssistant } from "../ai/ai-word-assistant";
 import {
@@ -43,6 +44,9 @@ import { EditWordDialog } from "./edit-word-dialog";
 import { toast } from "sonner";
 import { showErrorToast } from "@/lib/error-handler";
 import { ConfirmDialog } from "./confirm-dialog";
+import Link from "next/link";
+import { useParams } from "next/navigation";
+
 
 interface VocabularyTableProps {
     data: PagedResult<VocabularyDto> | null;
@@ -58,6 +62,8 @@ export function VocabularyTable({ data, tags, isLoading, onRefresh }: Vocabulary
     const [itemToDelete, setItemToDelete] = useState<VocabularyDto | null>(null);
     const [aiAssistantData, setAiAssistantData] = useState<{ word: string, context?: string } | null>(null);
     const [aiProvider, setAiProvider] = useState<string>("");
+    const { locale } = useParams();
+
 
     const getLevelBadge = (level: number, nextReviewDate: string | null) => {
         if (nextReviewDate) {
@@ -181,8 +187,8 @@ export function VocabularyTable({ data, tags, isLoading, onRefresh }: Vocabulary
                             const isArchived = item.isArchived;
 
                             return (
-                                <TableRow 
-                                    key={item.id} 
+                                <TableRow
+                                    key={item.id}
                                     className={cn(
                                         "group transition-all duration-200 hover:bg-muted/40 hover:shadow-[0_2px_15px_-5px_rgba(0,0,0,0.05)] relative z-0 hover:z-10",
                                         isArchived ? "opacity-60 bg-muted/20" : "bg-card"
@@ -191,15 +197,16 @@ export function VocabularyTable({ data, tags, isLoading, onRefresh }: Vocabulary
                                     <TableCell className="font-medium align-top">
                                         <div className="flex items-start justify-between gap-2 h-full">
                                             <div className="min-w-0 flex-1">
-                                                <div 
-                                                    className="text-lg font-bold line-clamp-3 break-words"
+                                                <Link
+                                                    href={`/${locale}/dashboard/vocabulary/${item.id}`}
+                                                    className="text-lg font-bold line-clamp-3 break-words hover:text-primary transition-colors cursor-pointer"
                                                     title={item.wordText?.length > 150 ? item.wordText.substring(0, 150) + '...' : item.wordText}
                                                 >
                                                     {item.wordText}
-                                                </div>
+                                                </Link>
 
                                                 {item.contextSentence && (
-                                                    <div 
+                                                    <div
                                                         className="text-xs text-muted-foreground/80 mt-1.5 line-clamp-2 italic border-l-[3px] py-0.5 border-primary/40 pl-2 break-words"
                                                         style={{ borderColor: item.tagId && tags[item.tagId]?.color ? tags[item.tagId]!.color! : undefined }}
                                                         title={item.contextSentence?.length > 200 ? item.contextSentence.substring(0, 200) + '...' : item.contextSentence}
@@ -254,8 +261,8 @@ export function VocabularyTable({ data, tags, isLoading, onRefresh }: Vocabulary
                                         </div>
                                     </TableCell>
                                     <TableCell className="align-top">
-                                        <div 
-                                            className="line-clamp-4 break-words text-sm" 
+                                        <div
+                                            className="line-clamp-4 break-words text-sm"
                                             title={item.customMeaning && item.customMeaning.length > 300 ? item.customMeaning.substring(0, 300) + '...' : item.customMeaning || ""}
                                         >
                                             {item.customMeaning || <span className="text-muted-foreground italic">{t("table.noMeaning")}</span>}
@@ -375,7 +382,13 @@ export function VocabularyTable({ data, tags, isLoading, onRefresh }: Vocabulary
                                                     )}
                                                 </Button>
                                             </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="end" className="w-[160px]">
+                                            <DropdownMenuContent align="end" className="w-[180px]">
+                                                <DropdownMenuItem asChild>
+                                                    <Link href={`/${locale}/dashboard/vocabulary/${item.id}`} className="cursor-pointer">
+                                                        <BookOpen className="mr-2 h-4 w-4" />
+                                                        {t("actions.viewDetails")}
+                                                    </Link>
+                                                </DropdownMenuItem>
                                                 {item.sourceUrl && (
                                                     <DropdownMenuItem onClick={() => window.open(item.sourceUrl!, '_blank')}>
                                                         <ExternalLink className="mr-2 h-4 w-4" />

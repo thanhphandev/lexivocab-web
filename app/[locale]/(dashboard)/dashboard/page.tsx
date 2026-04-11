@@ -96,7 +96,7 @@ export default function DashboardHome() {
                     </div>
                     <Skeleton className="h-10 w-[150px] rounded-xl" />
                 </div>
-                
+
                 {/* Stats Grid Skeleton */}
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                     {Array(4).fill(0).map((_, i) => (
@@ -145,26 +145,26 @@ export default function DashboardHome() {
                     </p>
                 </div>
                 <div className="flex items-center gap-2">
-                    <div 
+                    <div
                         className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent/50 border text-[10px] font-bold tracking-widest uppercase cursor-pointer hover:bg-accent hover:border-accent-foreground/20 transition-all duration-300"
                         onClick={() => setIsPolling(!isPolling)}
                     >
                         <span className={cn("h-1.5 w-1.5 rounded-full transition-colors duration-500", isPolling ? "bg-emerald-500 animate-pulse" : "bg-muted-foreground/30")} />
                         {isPolling ? "Live Sync Active" : "Sync Paused"}
                     </div>
-                    <Button 
-                        variant="ghost" 
-                        size="icon" 
+                    <Button
+                        variant="ghost"
+                        size="icon"
                         onClick={() => setIsPolling(!isPolling)}
                         className="h-8 w-8 hover:bg-accent hover:text-accent-foreground transition-colors rounded-full"
                     >
                         {isPolling ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
                     </Button>
-                    <Button 
-                        variant="outline" 
-                        size="sm" 
-                        onClick={() => fetchDashboardData()} 
-                        disabled={isLoading} 
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => fetchDashboardData()}
+                        disabled={isLoading}
                         className="h-8 gap-2 border-primary/20 hover:border-primary/50 hover:bg-primary/5 transition-colors group rounded-full"
                     >
                         <RefreshCw className={cn("h-3.5 w-3.5 group-hover:rotate-180 transition-transform duration-500", isLoading && "animate-spin")} />
@@ -206,7 +206,7 @@ export default function DashboardHome() {
                     description="Pending reviews"
                 />
             </div>
-            
+
             {/* Recent Vocabulary Quick View - Synchronized with Mobile & Widget */}
             <div className="delay-150 animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-both">
                 <Card className="shadow-md border-transparent hover:border-primary/20 bg-card/60 backdrop-blur-sm group hover:shadow-xl transition-all duration-500 overflow-hidden">
@@ -216,7 +216,7 @@ export default function DashboardHome() {
                             {t("recentVocabulary")}
                         </CardTitle>
                         <Button variant="ghost" size="sm" asChild className="text-xs font-bold text-muted-foreground hover:text-primary transition-colors rounded-full">
-                            <Link href="/vocabulary" className="flex items-center gap-1">
+                            <Link href="/dashboard/vocabulary" className="flex items-center gap-1">
                                 {t("viewAll")} <ChevronRight className="h-3 w-3" />
                             </Link>
                         </Button>
@@ -225,9 +225,9 @@ export default function DashboardHome() {
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 divide-x divide-y md:divide-y-0 divide-border/50">
                             {dashboardData.vocabulary.recentVocabulary?.length ? (
                                 dashboardData.vocabulary.recentVocabulary.slice(0, 5).map((item) => (
-                                    <Link 
-                                        key={item.id} 
-                                        href={`/vocabulary?id=${item.id}`}
+                                    <Link
+                                        key={item.id}
+                                        href={`/dashboard/vocabulary/${item.id}`}
                                         className="flex flex-col p-5 hover:bg-accent/50 transition-all group/item relative overflow-hidden"
                                     >
                                         <div className="absolute top-0 right-0 p-2 opacity-0 group-hover/item:opacity-100 transition-opacity">
@@ -277,21 +277,21 @@ export default function DashboardHome() {
                     </CardHeader>
                     <CardContent className="pt-2 text-center pb-8">
                         <div className="relative inline-block group-hover:scale-105 transition-transform duration-500 ease-out">
-                             <motion.div 
+                            <motion.div
                                 initial={{ scale: 0.8, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
                                 transition={{ type: "spring", stiffness: 200, damping: 15 }}
                                 className="text-7xl font-black mb-1 drop-shadow-lg"
-                             >
+                            >
                                 {dashboardData.currentStreak || 0}
-                             </motion.div>
-                             <div className="absolute -top-2 -right-6">
+                            </motion.div>
+                            <div className="absolute -top-2 -right-6">
                                 <Badge className="bg-white/20 backdrop-blur-md text-white border-none py-0 shadow-sm">{t("streak.badge")}</Badge>
-                             </div>
+                            </div>
                         </div>
                         <h3 className="text-lg font-bold opacity-90 group-hover:opacity-100 transition-opacity">{t("stats.currentStreak")}</h3>
                         <p className="text-xs opacity-70 mt-2 font-medium">{t("streak.motivationalText")}</p>
-                        
+
                         <div className="mt-8 flex justify-center gap-6 border-t border-white/10 pt-6">
                             <div className="hover:-translate-y-1 transition-transform cursor-default">
                                 <p className="text-[9px] font-bold uppercase opacity-60 hover:opacity-100 transition-opacity">{t("streak.personalBest")}</p>
@@ -307,7 +307,7 @@ export default function DashboardHome() {
 
                 {/* Quota & Reviews */}
                 <div className="md:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                     <Card className="shadow-md border-transparent hover:border-primary/20 bg-card/60 backdrop-blur-sm group hover:shadow-xl hover:-translate-y-1 transition-all duration-500">
+                    <Card className="shadow-md border-transparent hover:border-primary/20 bg-card/60 backdrop-blur-sm group hover:shadow-xl hover:-translate-y-1 transition-all duration-500">
                         <CardHeader className="pb-2">
                             <CardTitle className="text-sm font-bold flex items-center gap-2 group-hover:text-primary transition-colors">
                                 <Zap className="h-4 w-4 text-yellow-500 group-hover:scale-110 transition-transform" />
@@ -319,7 +319,7 @@ export default function DashboardHome() {
                                 <span className="text-4xl font-black text-foreground">{dashboardData.reviews?.totalReviewsToday || 0}</span>
                                 <span className="text-xs text-muted-foreground font-bold uppercase tracking-tighter">{t("power.completed")}</span>
                             </div>
-                            
+
                             <div className="space-y-4">
                                 <div className="group/progress">
                                     <div className="flex justify-between text-[10px] font-bold uppercase mb-1.5 opacity-60 group-hover/progress:opacity-100 transition-opacity">
@@ -356,8 +356,8 @@ export default function DashboardHome() {
                                 <div className="flex items-center justify-between text-[11px] font-bold uppercase opacity-60 group-hover/quota:opacity-100 transition-opacity">
                                     <span>{t("quota.storageLabel")}</span>
                                     <span className="font-mono">
-                                        {quotaMax >= 2147483647 
-                                            ? `${dashboardData.vocabulary?.totalWords || 0} / ${t("quota.unlimited")}` 
+                                        {quotaMax >= 2147483647
+                                            ? `${dashboardData.vocabulary?.totalWords || 0} / ${t("quota.unlimited")}`
                                             : `${dashboardData.vocabulary?.totalWords || 0} / ${quotaMax}`}
                                     </span>
                                 </div>
@@ -366,7 +366,7 @@ export default function DashboardHome() {
                                         const percent = quotaMax > 0 ? Math.min(((dashboardData.vocabulary?.totalWords || 0) / quotaMax) * 100, 100) : 0;
                                         const isWarning = percent >= 90;
                                         return (
-                                            <motion.div 
+                                            <motion.div
                                                 initial={{ width: 0 }}
                                                 animate={{ width: `${percent}%` }}
                                                 transition={{ duration: 1, ease: "easeOut" }}
@@ -383,8 +383,8 @@ export default function DashboardHome() {
                             </div>
 
                             {permissions?.plan === "Free" && (
-                                <Link 
-                                    href={`/pricing`} 
+                                <Link
+                                    href={`/pricing`}
                                     className="block w-full text-center py-2.5 bg-primary/10 text-primary border border-primary/20 text-xs font-black uppercase tracking-widest rounded-xl hover:bg-primary hover:text-primary-foreground hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 hover:-translate-y-0.5"
                                 >
                                     {t("quota.unlockPro")}
@@ -411,14 +411,14 @@ export default function DashboardHome() {
                             {Object.entries(inDepthStats?.cefrSpread || { 'A1': 0, 'A2': 0, 'B1': 0, 'B2': 0, 'C1': 0, 'C2': 0 })
                                 .sort((a, b) => a[0].localeCompare(b[0]))
                                 .map(([level, count]) => (
-                                <div key={level} className="p-2.5 bg-secondary/30 hover:bg-secondary/80 rounded-xl border border-border/50 hover:border-border hover:scale-[1.03] transition-all duration-300 cursor-default">
-                                    <div className="flex justify-between items-center mb-1.5">
-                                        <span className="text-[10px] font-black uppercase">{level}</span>
-                                        <span className="text-xs font-bold text-primary bg-primary/10 px-1.5 py-0.5 rounded-md">{count}</span>
+                                    <div key={level} className="p-2.5 bg-secondary/30 hover:bg-secondary/80 rounded-xl border border-border/50 hover:border-border hover:scale-[1.03] transition-all duration-300 cursor-default">
+                                        <div className="flex justify-between items-center mb-1.5">
+                                            <span className="text-[10px] font-black uppercase">{level}</span>
+                                            <span className="text-xs font-bold text-primary bg-primary/10 px-1.5 py-0.5 rounded-md">{count}</span>
+                                        </div>
+                                        <Progress value={Math.min((count / (dashboardData.vocabulary?.totalWords || 1)) * 200, 100)} className="h-1 shadow-inner bg-secondary-foreground/10" />
                                     </div>
-                                    <Progress value={Math.min((count / (dashboardData.vocabulary?.totalWords || 1)) * 200, 100)} className="h-1 shadow-inner bg-secondary-foreground/10" />
-                                </div>
-                            ))}
+                                ))}
                         </div>
 
                         <div className="pt-4 border-t border-border/50">
@@ -426,9 +426,9 @@ export default function DashboardHome() {
                             <div className="flex flex-wrap gap-1.5">
                                 {(inDepthStats?.mostDifficultWords?.length || 0) > 0 ? (
                                     inDepthStats?.mostDifficultWords?.slice(0, 6).map((word, idx) => (
-                                        <Badge 
-                                            key={idx} 
-                                            variant="secondary" 
+                                        <Badge
+                                            key={idx}
+                                            variant="secondary"
                                             className="bg-rose-500/10 text-rose-600 dark:text-rose-400 hover:bg-rose-500 hover:text-white border-transparent text-[10px] font-bold px-2.5 py-1 transition-all duration-300 hover:scale-105 hover:-translate-y-0.5 hover:shadow-md cursor-default"
                                         >
                                             {word}
@@ -464,7 +464,7 @@ export default function DashboardHome() {
                     </CardContent>
                 </Card>
             </div>
-            
+
             <div className="flex items-center justify-between text-[10px] text-muted-foreground px-4 italic font-medium animate-in fade-in duration-1000 delay-500">
                 <span>{t("footer.lastUpdated")} {lastRefresh.toLocaleTimeString()}</span>
                 <span className="flex items-center gap-1.5 underline decoration-emerald-500/30 hover:decoration-emerald-500 hover:text-emerald-500 transition-colors underline-offset-4 cursor-help">

@@ -40,7 +40,11 @@ export async function POST() {
         // Refresh failed — clear cookies to force re-login
         cookieStore.delete("access_token");
         cookieStore.delete("refresh_token");
-        return NextResponse.json({ success: false, error: data?.error || "Refresh failed" }, { status: 401 });
+        return NextResponse.json({ 
+            success: false, 
+            error: data?.error || "Refresh failed",
+            errorCode: data?.errorCode
+        }, { status: 401 });
     }
 
     const { accessToken: newAccessToken, expiresAt } = data.data || data;

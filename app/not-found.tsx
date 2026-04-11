@@ -3,8 +3,8 @@ import Link from "next/link";
 
 export default function RootNotFound() {
     return (
-        <html lang="en">
-            <body style={{ margin: 0, fontFamily: "system-ui, -apple-system, sans-serif" }}>
+        <html lang="en" suppressHydrationWarning>
+            <body style={{ margin: 0, fontFamily: "system-ui, -apple-system, sans-serif" }} suppressHydrationWarning>
                 <div style={{
                     minHeight: "100vh",
                     display: "flex",

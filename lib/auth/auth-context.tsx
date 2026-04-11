@@ -34,9 +34,9 @@ interface AuthContextType {
     isLoading: boolean;
     error: string | null;
     errorCode: string | null;
-    login: (data: LoginRequest) => Promise<boolean>;
-    register: (data: RegisterRequest) => Promise<boolean>;
-    googleLogin: (idToken: string) => Promise<boolean>;
+    login: (data: LoginRequest) => Promise<{ success: boolean; errorCode?: string }>;
+    register: (data: RegisterRequest) => Promise<{ success: boolean; requiresVerification?: boolean; errorCode?: string }>;
+    googleLogin: (idToken: string) => Promise<{ success: boolean; errorCode?: string }>;
     logout: () => Promise<void>;
     refreshSession: () => Promise<boolean>;
     refreshPermissions: () => Promise<void>;
@@ -141,7 +141,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         initAuth();
     }, [refreshSession, refreshPermissions]);
 
-    const login = useCallback(async (data: LoginRequest): Promise<boolean> => {
+    const login = useCallback(async (data: LoginRequest): Promise<{ success: boolean; errorCode?: string }> => {
         setIsLoading(true);
         setError(null);
         try {
@@ -156,38 +156,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 });
                 localStorage.setItem("lexivocab_auth_hint", "true");
                 refreshPermissions();
-                return true;
+                return { success: true };
             }
             handleError(result, t("GENERIC_ERROR"));
-            return false;
+            return { success: false, errorCode: (result as any).errorCode };
         } catch {
             setError(t("GENERIC_ERROR"));
-            return false;
+            return { success: false, errorCode: "GENERIC_ERROR" };
         } finally {
             setIsLoading(false);
         }
-    }, [refreshPermissions]);
+    }, [refreshPermissions, t]);
 
-    const register = useCallback(async (data: RegisterRequest): Promise<boolean> => {
+    const register = useCallback(async (data: RegisterRequest): Promise<{ success: boolean; requiresVerification?: boolean; errorCode?: string }> => {
         setIsLoading(true);
         setError(null);
         try {
             const result = await authApi.register(data);
             if (result.success) {
-                // Thường sau khi register thành công ta sẽ login luôn hoặc redirect
-                return true;
+                const requiresVerification = (result.data as any)?.requiresVerification;
+                return { success: true, requiresVerification };
             }
             handleError(result, t("GENERIC_ERROR"));
-            return false;
+            return { success: false, errorCode: (result as any).errorCode };
         } catch {
             setError(t("GENERIC_ERROR"));
-            return false;
+            return { success: false, errorCode: "GENERIC_ERROR" };
         } finally {
             setIsLoading(false);
         }
-    }, []);
+    }, [t]);
 
-    const googleLogin = useCallback(async (idToken: string): Promise<boolean> => {
+    const googleLogin = useCallback(async (idToken: string): Promise<{ success: boolean; errorCode?: string }> => {
         setIsLoading(true);
         setError(null);
         try {
@@ -202,17 +202,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 });
                 localStorage.setItem("lexivocab_auth_hint", "true");
                 refreshPermissions();
-                return true;
+                return { success: true };
             }
             handleError(result, t("AUTH_GOOGLE_TOKEN_INVALID"));
-            return false;
+            return { success: false, errorCode: (result as any).errorCode };
         } catch {
             setError(t("AUTH_GOOGLE_TOKEN_INVALID"));
-            return false;
+            return { success: false, errorCode: "AUTH_GOOGLE_TOKEN_INVALID" };
         } finally {
             setIsLoading(false);
         }
-    }, [refreshPermissions]);
+    }, [refreshPermissions, t]);
 
     const logout = useCallback(async () => {
         try {

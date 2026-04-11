@@ -209,6 +209,7 @@
         "communityPending": "Pending Community"
       },
       "actions": {
+        "viewDetails": "View Details",
         "edit": "Edit",
         "archive": "Archive",
         "unarchive": "Restore",
@@ -243,8 +244,11 @@
         "tag": "Tag",
         "noMeaning": "No meaning provided",
         "assignTag": "Assign Tag",
+        "addTag": "Add Tag",
         "removeTag": "Remove Tag",
         "noTagsAvailable": "No tags available",
+        "assignTagSuccess": "Successfully updated tag",
+        "assignTagFailed": "Failed to update tag",
         "deleteTitle": "Delete Word",
         "deleteDesc": "Are you sure you want to delete \"{word}\"? This action cannot be undone.",
         "deleteConfirm": "Delete",
@@ -337,6 +341,51 @@
         "invalidFormat": "No valid words found. Check your CSV format.",
         "required": "This field is required.",
         "tooLong": "Input is too long."
+      }
+    },
+    "vocabularyDetail": {
+      "back": "Back to Library",
+      "errorNotfound": "Vocabulary word not found.",
+      "word": "Word",
+      "meaning": "Meaning",
+      "context": "Context",
+      "source": "Source",
+      "tag": "Tag",
+      "srs": {
+        "title": "Learning Progress",
+        "nextReview": "Next Review",
+        "lastReviewed": "Last Reviewed",
+        "repetition": "Mastery Progress",
+        "easiness": "Easiness Factor",
+        "never": "Never reviewed",
+        "days": "{count} days"
+      },
+      "ai": {
+        "consultAssistant": "Consult AI Intelligence",
+        "teaserDescription": "Unlock deep linguistic insights, contextual nuances, and interactive memory quizzes tailored specifically for this word.",
+        "activateNow": "Activate Assistant",
+        "explanation": "AI Deep Dive",
+        "nuances": "Usage Nuances",
+        "examples": "AI Contextual Examples",
+        "related": "Synonyms & Antonyms",
+        "synonyms": "Synonyms",
+        "antonyms": "Antonyms",
+        "collocations": "Common Collocations",
+        "mnemonic": "Memory Tip (Mnemonic)",
+        "tips": "Pro Learning Tips",
+        "loading": "Consulting AI Assistant...",
+        "error": "Failed to fetch AI insights."
+      },
+      "quiz": {
+        "title": "Test Your Knowledge",
+        "description": "Let AI generate a quick quiz to verify your understanding of this word.",
+        "start": "Start AI Quiz",
+        "aiPoweredLabel": "AI Powered",
+        "refresh": "Generate New Quiz",
+        "generating": "Generating your quiz...",
+        "explanationTitle": "Why is this correct?",
+        "nextQuiz": "Try Another One",
+        "errorFetch": "Failed to generate quiz. Please try again."
       }
     },
     "flashcard": {

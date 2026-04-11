@@ -6,17 +6,15 @@ export default function NotFoundPage() {
     const t = useTranslations("ErrorPages.notFound");
 
     return (
-        <html>
-            <body>
+        <>
                 <div className="min-h-screen flex items-center justify-center px-4 bg-gradient-to-b from-background to-muted/30">
                     <div className="max-w-md w-full text-center space-y-6">
-                        <Image
+                        <img
                             src="/illustrations/not-found.png"
                             alt="Page not found"
-                            width={240}
-                            height={240}
-                            className="mx-auto opacity-90"
-                            priority
+                            width="240"
+                            height="240"
+                            className="mx-auto opacity-90 block bg-transparent"
                         />
 
                         <div className="space-y-3">
@@ -45,7 +43,6 @@ export default function NotFoundPage() {
                         </div>
                     </div>
                 </div>
-            </body>
-        </html>
+        </>
     );
 }
